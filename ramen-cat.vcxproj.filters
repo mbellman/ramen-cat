@@ -467,9 +467,6 @@
     <ClInclude Include="gamma\system\flags.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="demo\gamma_flags.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="gamma\system\ObjLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -507,6 +504,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="gamma\system\scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\gamma_flags.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

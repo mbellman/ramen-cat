@@ -80,7 +80,7 @@ namespace Gamma {
       Console::log(error);
     }
 
-    auto& fsPath = std::filesystem::current_path() / path;
+    auto fsPath = std::filesystem::current_path() / path;
     auto lastWriteTime = std::filesystem::last_write_time(fsPath);
 
     return {
@@ -138,14 +138,14 @@ namespace Gamma {
 
     if ((SDL_GetTicks() - lastShaderFileCheckTime) > CHECK_INTERVAL) {
       for (auto& record : glShaderRecords) {
-        auto& fsPath = std::filesystem::current_path() / record.path;
+        auto fsPath = std::filesystem::current_path() / record.path;
         auto lastWriteTime = std::filesystem::last_write_time(fsPath);
 
         if (lastWriteTime != record.lastWriteTime) {
           glDetachShader(program, record.shader);
           glDeleteShader(record.shader);
 
-          GLShaderRecord& updatedRecord = Gm_CompileShader(record.shaderType, record.path.c_str(), defineVariables);
+          GLShaderRecord updatedRecord = Gm_CompileShader(record.shaderType, record.path.c_str(), defineVariables);
 
           glAttachShader(program, updatedRecord.shader);
           glLinkProgram(program);
@@ -175,7 +175,7 @@ namespace Gamma {
       glDetachShader(program, record.shader);
       glDeleteShader(record.shader);
 
-      GLShaderRecord& updatedRecord = Gm_CompileShader(record.shaderType, record.path.c_str(), defineVariables);
+      GLShaderRecord updatedRecord = Gm_CompileShader(record.shaderType, record.path.c_str(), defineVariables);
 
       glAttachShader(program, updatedRecord.shader);
 
