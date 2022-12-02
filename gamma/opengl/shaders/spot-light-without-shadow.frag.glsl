@@ -26,6 +26,9 @@ layout (location = 0) out vec4 out_color_and_depth;
 #include "utils/conversion.glsl";
 
 void main() {
+  // @todo use from roughness buffer
+  float roughness = 0.6;
+
   #include "inline/spot-light.glsl";
 
   out_color_and_depth = vec4(illuminated_color, frag_color_and_depth.w);

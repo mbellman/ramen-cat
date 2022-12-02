@@ -4,12 +4,16 @@
 
 uniform sampler2D texColorAndDepth;
 uniform sampler2D texNormalAndEmissivity;
+uniform vec3 cameraPosition;
+uniform mat4 matInverseProjection;
+uniform mat4 matInverseView;
 
 in vec2 fragUv;
 
 layout (location = 0) out vec4 out_color_and_depth;
 
 #include "utils/skybox.glsl";
+#include "utils/conversion.glsl";
 
 const vec3 sky_sample_offsets[] = {
   vec3(1, 0, 0),
@@ -25,9 +29,11 @@ vec3 getIndirectSkyLightContribution(vec3 fragment_normal) {
   const float indirect_sky_light_intensity = 0.5;
   vec3 contribution = vec3(0);
 
+  // @todo use from roughness buffer
+  float roughness = 0.6;
+
   for (int i = 0; i < 6; i++) {
-    // @todo use roughness to determine sample offset range
-    vec3 direction = normalize(0.2 * fragment_normal + sky_sample_offsets[i]);
+    vec3 direction = normalize(0.2 * fragment_normal + sky_sample_offsets[i] * roughness);
 
     contribution += getSkyColor(direction) * indirect_sky_light_intensity;
   }
@@ -37,13 +43,18 @@ vec3 getIndirectSkyLightContribution(vec3 fragment_normal) {
 
 void main() {
   vec4 frag_color_and_depth = texture(texColorAndDepth, fragUv);
+  vec3 fragment_normal = texture(texNormalAndEmissivity, fragUv).xyz;
   vec3 out_color = vec3(0.0);
 
   #if USE_INDIRECT_SKY_LIGHT == 1
-    vec3 frag_normal = texture(texNormalAndEmissivity, fragUv).xyz;
-
-    out_color += frag_color_and_depth.rgb * getIndirectSkyLightContribution(frag_normal);
+    out_color += frag_color_and_depth.rgb * getIndirectSkyLightContribution(fragment_normal);
   #endif
+
+  vec3 fragment_position = getWorldPosition(frag_color_and_depth.w, fragUv, matInverseProjection, matInverseView);
+  vec3 fragment_to_camera = normalize(cameraPosition - fragment_position);
+  float fresnel_factor = pow(1.0 - max(dot(fragment_normal, fragment_to_camera), 0.0), 5);
+
+  out_color += vec3(1) * fresnel_factor * 0.1;
 
   out_color_and_depth = vec4(out_color, frag_color_and_depth.w);
 }

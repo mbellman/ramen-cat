@@ -75,6 +75,9 @@ float getLightFactor(vec3 position, float incidence, float light_distance) {
 }
 
 void main() {
+  // @todo use from roughness buffer
+  float roughness = 0.6;
+
   #include "inline/spot-light.glsl";
 
   float light_factor = getLightFactor(position, incidence, light_distance);

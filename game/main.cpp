@@ -38,7 +38,7 @@ static void initScene(GmContext* context) {
 
   // Default scene objects/lighting
   addMesh("plane", 1, Mesh::Plane(5));
-  addMesh("sphere", 1, Mesh::Sphere(12));
+  addMesh("sphere", 1, Mesh::Sphere(18));
 
   auto& plane = createObjectFrom("plane");
   auto& sphere = createObjectFrom("sphere");
@@ -66,6 +66,12 @@ static void initScene(GmContext* context) {
 
 static void updateScene(GmContext* context, float dt) {
   Gm_HandleFreeCameraMode(context, dt);
+
+  for (auto& sphere : objects("sphere")) {
+    sphere.position.y = 20.f + std::sinf(getRunningTime()) * 5.f;
+
+    commit(sphere);
+  }
 }
 
 int main(int argc, char* argv[]) {

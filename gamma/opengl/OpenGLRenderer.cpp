@@ -724,6 +724,9 @@ namespace Gamma {
     shader.setVec4f("transform", FULL_SCREEN_TRANSFORM);
     shader.setInt("texColorAndDepth", 0);
     shader.setInt("texNormalAndEmissivity", 1);
+    shader.setVec3f("cameraPosition", ctx.activeCamera->position);
+    shader.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
+    shader.setMatrix4f("matInverseView", ctx.matInverseView);
 
     // @todo allow for custom skylight configuration
 

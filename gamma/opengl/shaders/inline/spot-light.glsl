@@ -31,7 +31,7 @@ vec3 normalized_surface_to_camera = normalize(cameraPosition - position);
 vec3 half_vector = normalize(normalized_surface_to_light + normalized_surface_to_camera);
 float incidence = max(dot(normalized_surface_to_light, normal), 0.0);
 float attenuation = pow(1.0 / light_distance, 2);
-float specularity = pow(max(dot(half_vector, normal), 0.0), 50);
+float specularity = pow(max(dot(half_vector, normal), 0.0), 50) * (1.0 - roughness);
 
 // Have light intensity 'fall off' toward radius boundary
 float hack_radial_influence = max(1.0 - light_distance / light.radius, 0.0);
@@ -39,7 +39,7 @@ float hack_radial_influence = max(1.0 - light_distance / light.radius, 0.0);
 float hack_soft_tapering = (20.0 * (light_distance / light.radius));
 
 vec3 radiant_flux = light.color * light.power * light.radius;
-vec3 diffuse_term = color * radiant_flux * incidence * attenuation * hack_radial_influence * hack_soft_tapering * (1.0 - specularity);
+vec3 diffuse_term = color * radiant_flux * incidence * attenuation * hack_radial_influence * hack_soft_tapering * (1.0 - specularity) * sqrt(roughness);
 vec3 specular_term = 5.0 * radiant_flux * specularity * attenuation;
 
 float emissivity = frag_normal_and_emissivity.w;
