@@ -1,19 +1,24 @@
 #include "Gamma.h"
 
-static void initScene(GmContext* context) {
+#include "game_state.h"
+
+static void initScene(GmContext* context, GameState& state) {
   using namespace Gamma;
 
   // Default camera control/window focus
   auto& input = context->scene.input;
   auto& camera = context->scene.camera;
 
+  state.camera.radius = 100.f;
+  state.camera.altitude = state.camera.radius / 300.f * Gm_HALF_PI * 0.5f;
+
   input.on<MouseMoveEvent>("mousemove", [&](const MouseMoveEvent& event) {
     if (SDL_GetRelativeMouseMode()) {
-      camera.orientation.pitch += event.deltaY / 1000.0f;
-      camera.orientation.yaw += event.deltaX / 1000.0f;
+      state.camera.azimuth -= event.deltaX / 1000.f;
+      state.camera.radius += float(event.deltaY) / 4.f;
+      state.camera.radius = Gm_Clampf(state.camera.radius, 50.f, 300.f);
+      state.camera.altitude = state.camera.radius / 300.f * Gm_HALF_PI * 0.5f;
     }
-
-    camera.rotation = camera.orientation.toQuaternion();
   });
 
   input.on<MouseButtonEvent>("mousedown", [&](const MouseButtonEvent& event) {
@@ -64,25 +69,22 @@ static void initScene(GmContext* context) {
   Gm_PointCameraAt(context, sphere);
 }
 
-static void updateScene(GmContext* context, float dt) {
-  Gm_HandleFreeCameraMode(context, dt);
+static void updateScene(GmContext* context, GameState& state, float dt) {
+  getCamera().position = state.camera.calculatePosition();
 
-  for (auto& sphere : objects("sphere")) {
-    sphere.position.y = 20.f + std::sinf(getRunningTime()) * 5.f;
-
-    commit(sphere);
-  }
+  pointCameraAt(objects("sphere")[0]);
 }
 
 int main(int argc, char* argv[]) {
   using namespace Gamma;
 
   auto* context = Gm_CreateContext();
+  GameState state;
 
   Gm_OpenWindow(context, "Gamma Project", { 1200, 675 });
   Gm_SetRenderMode(context, GmRenderMode::OPENGL);
 
-  initScene(context);
+  initScene(context, state);
 
   while (!context->window.closed) {
     float dt = Gm_GetDeltaTime(context);
@@ -90,7 +92,7 @@ int main(int argc, char* argv[]) {
     Gm_LogFrameStart(context);
     Gm_HandleEvents(context);
 
-    updateScene(context, dt);
+    updateScene(context, state, dt);
 
     Gm_RenderScene(context);
     Gm_LogFrameEnd(context);
