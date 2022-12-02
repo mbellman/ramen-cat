@@ -70,7 +70,27 @@ static void initScene(GmContext* context, GameState& state) {
 }
 
 static void updateScene(GmContext* context, GameState& state, float dt) {
-  getCamera().position = state.camera.calculatePosition();
+  using namespace Gamma;
+
+  auto& input = getInput();
+  auto& sphere = objects("sphere")[0];
+
+  Vec3f forward = getCamera().orientation.getDirection().xz();
+  Vec3f left = getCamera().orientation.getLeftDirection().xz();
+
+  if (input.isKeyHeld(Key::W)) {
+    sphere.position += forward * 300.f * dt;
+  } else if (input.isKeyHeld(Key::S)) {
+    sphere.position += forward.invert() * 300.f * dt;
+  } else if (input.isKeyHeld(Key::A)) {
+    sphere.position += left * 300.f * dt;
+  } else if (input.isKeyHeld(Key::D)) {
+    sphere.position += left.invert() * 300.f * dt;
+  }
+
+  commit(sphere);
+
+  getCamera().position = sphere.position + state.camera.calculatePosition();
 
   pointCameraAt(objects("sphere")[0]);
 }
