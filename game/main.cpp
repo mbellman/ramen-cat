@@ -38,7 +38,7 @@ static void initScene(GmContext* context) {
 
   // Default scene objects/lighting
   addMesh("plane", 1, Mesh::Plane(5));
-  addMesh("sphere", 1, Mesh::Sphere(14));
+  addMesh("sphere", 1, Mesh::Sphere(12));
 
   auto& plane = createObjectFrom("plane");
   auto& sphere = createObjectFrom("sphere");
@@ -47,7 +47,7 @@ static void initScene(GmContext* context) {
 
   sphere.scale = 20.0f;
   sphere.position.y = 20.0f;
-  sphere.color = Vec3f(1.f);
+  sphere.color = Vec3f(1.f, 0.4f, 0.4f);
 
   commit(plane);
   commit(sphere);

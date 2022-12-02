@@ -725,7 +725,7 @@ namespace Gamma {
     shader.setInt("texColorAndDepth", 0);
     shader.setInt("texNormalAndEmissivity", 1);
 
-    // @todo allow for custom configuration
+    // @todo allow for custom skylight configuration
 
     OpenGLScreenQuad::render();
   }
