@@ -38,30 +38,30 @@ static void initScene(GmContext* context) {
 
   // Default scene objects/lighting
   addMesh("plane", 1, Mesh::Plane(5));
-  addMesh("cube", 1, Mesh::Cube());
+  addMesh("sphere", 1, Mesh::Sphere(14));
 
   auto& plane = createObjectFrom("plane");
-  auto& cube = createObjectFrom("cube");
+  auto& sphere = createObjectFrom("sphere");
 
   plane.scale = 1000.0f;
 
-  cube.scale = 20.0f;
-  cube.position.y = 20.0f;
-  cube.color = pVec4(255, 50, 50);
+  sphere.scale = 20.0f;
+  sphere.position.y = 20.0f;
+  sphere.color = Vec3f(1.f);
 
   commit(plane);
-  commit(cube);
+  commit(sphere);
 
   auto& light = createLight(LightType::SPOT_SHADOWCASTER);
 
-  light.position = cube.position + Vec3f(-30.0f, 30.0f, -30.0f);
-  light.direction = cube.position - light.position;
+  light.position = sphere.position + Vec3f(-30.0f, 30.0f, -30.0f);
+  light.direction = sphere.position - light.position;
   light.color = Vec3f(1.0f, 0.9f, 0.2f);
   light.radius = 500.0f;
 
   camera.position = Vec3f(-100.0f, 75.0f, -150.0f);
 
-  Gm_PointCameraAt(context, cube);
+  Gm_PointCameraAt(context, sphere);
 }
 
 static void updateScene(GmContext* context, float dt) {

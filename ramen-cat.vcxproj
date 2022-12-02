@@ -144,6 +144,7 @@
     <ClCompile Include="gamma\system\ObjectPool.cpp" />
     <ClCompile Include="gamma\system\ObjLoader.cpp" />
     <ClCompile Include="gamma\system\packed_data.cpp" />
+    <ClCompile Include="gamma\system\random.cpp" />
     <ClCompile Include="gamma\system\scene.cpp" />
     <ClCompile Include="gamma\system\string_helpers.cpp" />
     <ClCompile Include="gamma\system\yaml_parser.cpp" />
@@ -274,11 +275,13 @@
     <ClInclude Include="gamma\system\ObjectPool.h" />
     <ClInclude Include="gamma\system\ObjLoader.h" />
     <ClInclude Include="gamma\system\packed_data.h" />
+    <ClInclude Include="gamma\system\random.h" />
     <ClInclude Include="gamma\system\scene.h" />
     <ClInclude Include="gamma\system\Signaler.h" />
     <ClInclude Include="gamma\system\string_helpers.h" />
     <ClInclude Include="gamma\system\traits.h" />
     <ClInclude Include="gamma\system\type_aliases.h" />
+    <ClInclude Include="gamma\system\vector_helpers.h" />
     <ClInclude Include="gamma\system\yaml_parser.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

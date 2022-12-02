@@ -312,11 +312,11 @@ namespace Gamma {
     float emissivity = 0.f;
 
     static Mesh* Cube();
+    static Mesh* Sphere(u8 divisions = 5);
     static Mesh* Model(const char* path);
     static Mesh* Model(const std::vector<std::string>& paths);
     static Mesh* Particles();
     static Mesh* Plane(u32 size, bool useLoopingTexture = false);
-    // @todo Sphere(u32 divisions)
     // @todo Cylinder(u32 divisions)
 
     // @todo remove?

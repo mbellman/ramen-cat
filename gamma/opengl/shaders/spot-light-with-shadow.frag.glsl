@@ -58,7 +58,7 @@ float getLightFactor(vec3 position, float incidence, float light_distance) {
 
   const int TOTAL_SAMPLES = 12;
   const vec2 shadow_map_texel_size = 1.0 / vec2(1024.0);
-  float bias = mix(0.001, 0.0002, saturate(light_distance / 100.0));
+  float bias = 0.001;
   float factor = 0.0;
 
   for (int i = 0; i < TOTAL_SAMPLES; i++) {

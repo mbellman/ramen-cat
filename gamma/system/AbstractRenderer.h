@@ -21,9 +21,9 @@ namespace Gamma {
   };
 
   struct RenderStats {
-    u32 gpuMemoryTotal;
-    u32 gpuMemoryUsed;
-    bool isVSynced;
+    u32 gpuMemoryTotal = 0;
+    u32 gpuMemoryUsed = 0;
+    bool isVSynced = false;
   };
 
   class AbstractRenderer : public Initable, public Renderable, public Destroyable {
@@ -50,6 +50,6 @@ namespace Gamma {
   protected:
     GmContext* gmContext = nullptr;
     Area<u32> internalResolution = { 1920, 1080 };
-    RenderStats stats;
+    RenderStats stats = { 0, 0, false };
   };
 }

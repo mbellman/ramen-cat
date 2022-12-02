@@ -97,7 +97,7 @@ void Gm_UseSceneFile(GmContext* context, const std::string& filename) {
       mesh = Mesh::Cube();
     } else if (Gm_HasYamlProperty(meshConfig, "model")) {
       std::vector<std::string> filepaths;
-      auto& paths = Gm_ReadYamlProperty<YamlArray<std::string*>>(meshConfig, "model");
+      auto paths = Gm_ReadYamlProperty<YamlArray<std::string*>>(meshConfig, "model");
 
       for (auto* path : paths) {
         filepaths.push_back(*path);

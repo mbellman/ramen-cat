@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cmath>
+
 namespace Gamma {
   constexpr float Gm_PI = 3.141592f;
   constexpr float Gm_TAU = Gm_PI * 2.f;
@@ -30,5 +32,9 @@ namespace Gamma {
     }
 
     return a + (b - a) * alpha;
+  }
+
+  inline float Gm_EaseInOut(float t) {
+    return -(std::cosf(Gm_PI * t) - 1.f) / 2.f;
   }
 }

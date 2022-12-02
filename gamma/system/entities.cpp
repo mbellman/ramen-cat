@@ -4,6 +4,7 @@
 #include <utility>
 
 #include "math/vector.h"
+#include "math/utilities.h"
 #include "system/assert.h"
 #include "system/entities.h"
 #include "system/ObjLoader.h"
@@ -230,6 +231,107 @@ namespace Gamma {
         vertex.position = cubeCornerPositions[face[j]];
         vertex.uv = cubeUvs[j];
       }
+    }
+
+    Gm_ComputeNormals(mesh);
+    Gm_ComputeTangents(mesh);
+
+    return mesh;
+  }
+
+  /**
+   * Mesh::Sphere()
+   * --------------
+   * 
+   * Constructs a sphere Mesh with a given number of curvature divisions.
+   */
+  Mesh* Mesh::Sphere(u8 divisions) {
+    auto* mesh = new Mesh();
+    auto& vertices = mesh->vertices;
+    auto& faceElements = mesh->faceElements;
+
+    // Pole vertices
+    Vertex pole1, pole2;
+
+    // Top pole vertex
+    pole1.position = Vec3f(0, 1.f, 0);
+
+    vertices.push_back(pole1);
+
+    // Surface vertices
+    for (u8 i = 1; i < divisions - 1; i++) {
+      for (u8 j = 0; j < divisions; j++) {
+        float y_progress = float(i) / float(divisions - 1);
+        float radius = std::sinf(y_progress * Gm_PI);
+        float x = radius * std::cosf(float(j) / float(divisions) * Gm_TAU);
+        float y = 1.f - 2.f * Gm_EaseInOut(y_progress);
+        float z = radius * std::sinf(float(j) / float(divisions) * Gm_TAU);
+
+        Vertex vertex;
+
+        vertex.position = Vec3f(x, y, z);
+
+        vertices.push_back(vertex);
+      }
+    }
+
+    // Bottom pole vertex
+    pole2.position = Vec3f(0, -1.f, 0);
+
+    vertices.push_back(pole2);
+
+    // Top cap faces
+    for (u8 i = 0; i < divisions; i++) {
+      u32 f1 = 0;
+      u32 f2 = (i + 1) % divisions + 1;
+      u32 f3 = i + 1;
+
+      faceElements.push_back(f1);
+      faceElements.push_back(f2);
+      faceElements.push_back(f3);
+    }
+
+    // Mid-section faces
+    for (u8 i = 1; i < divisions - 2; i++) {
+      u32 v_start = 1 + (i - 1) * divisions;
+      u32 v_end = v_start + divisions;
+
+      for (u8 j = 0; j < divisions; j++) {
+        u32 v_offset = v_start + j;
+
+        u32 f1 = v_offset;
+        u32 f2 = v_offset + 1;
+        u32 f3 = v_offset + divisions;
+
+        // Ensure that the second vertex index stays on
+        // the same horizontal 'line' of the sphere
+        if (f2 >= v_end) f2 -= divisions;
+
+        u32 f4 = f2;
+        u32 f5 = f2 + divisions;
+        u32 f6 = f1 + divisions;
+
+        faceElements.push_back(f1);
+        faceElements.push_back(f2);
+        faceElements.push_back(f3);
+
+        faceElements.push_back(f4);
+        faceElements.push_back(f5);
+        faceElements.push_back(f6);
+      }
+    }
+
+    // Bottom cap faces
+    u32 lastVertexIndex = vertices.size() - 1;
+
+    for (u8 i = 0; i < divisions; i++) {
+      u32 f1 = lastVertexIndex;
+      u32 f2 = lastVertexIndex - (i + 1) % divisions - 1;
+      u32 f3 = lastVertexIndex - (i + 1);
+
+      faceElements.push_back(f1);
+      faceElements.push_back(f2);
+      faceElements.push_back(f3);
     }
 
     Gm_ComputeNormals(mesh);
