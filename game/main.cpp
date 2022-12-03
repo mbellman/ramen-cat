@@ -10,6 +10,7 @@ static void initScene(GmContext* context, GameState& state) {
   auto& camera = context->scene.camera;
 
   state.camera.radius = 100.f;
+  state.camera.azimuth = Gm_PI + Gm_HALF_PI;
   state.camera.altitude = state.camera.radius / 300.f * Gm_HALF_PI * 0.5f;
 
   input.on<MouseMoveEvent>("mousemove", [&](const MouseMoveEvent& event) {
