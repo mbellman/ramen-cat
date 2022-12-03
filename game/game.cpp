@@ -2,23 +2,32 @@
 
 #include "game.h"
 
+static inline void initializeThirdPersonCamera(GameState& state) {
+  state.camera.radius = 100.f;
+  state.camera.azimuth = Gm_PI + Gm_HALF_PI;
+}
+
+static inline void normalizeThirdPersonCamera(GameState& state) {
+  state.camera.radius = Gm_Clampf(state.camera.radius, 50.f, 300.f);
+  state.camera.altitude = std::powf(state.camera.radius / 300.f, 3.f) * Gm_HALF_PI * 0.5f;
+}
+
 void initializeGame(GmContext* context, GameState& state) {
   using namespace Gamma;
+
+  Gm_EnableFlags(GammaFlags::VSYNC);
+
+  initializeThirdPersonCamera(state);
+  normalizeThirdPersonCamera(state);
 
   // Default camera control/window focus
   auto& input = context->scene.input;
   auto& camera = context->scene.camera;
 
-  state.camera.radius = 100.f;
-  state.camera.azimuth = Gm_PI + Gm_HALF_PI;
-  state.camera.altitude = state.camera.radius / 300.f * Gm_HALF_PI * 0.5f;
-
   input.on<MouseMoveEvent>("mousemove", [&](const MouseMoveEvent& event) {
     if (SDL_GetRelativeMouseMode()) {
       state.camera.azimuth -= event.deltaX / 1000.f;
       state.camera.radius += float(event.deltaY) / 4.f;
-      state.camera.radius = Gm_Clampf(state.camera.radius, 50.f, 300.f);
-      state.camera.altitude = state.camera.radius / 300.f * Gm_HALF_PI * 0.5f;
     }
   });
 
@@ -58,7 +67,7 @@ void initializeGame(GmContext* context, GameState& state) {
   commit(plane);
   commit(sphere);
 
-  auto& light = createLight(LightType::SPOT_SHADOWCASTER);
+  auto& light = createLight(LightType::POINT_SHADOWCASTER);
 
   light.position = sphere.position + Vec3f(-30.0f, 30.0f, -30.0f);
   light.direction = sphere.position - light.position;
@@ -79,6 +88,8 @@ void updateGame(GmContext* context, GameState& state, float dt) {
   Vec3f forward = getCamera().orientation.getDirection().xz();
   Vec3f left = getCamera().orientation.getLeftDirection().xz();
 
+  auto moving = true;
+
   if (input.isKeyHeld(Key::W)) {
     sphere.position += forward * 300.f * dt;
   } else if (input.isKeyHeld(Key::S)) {
@@ -87,9 +98,17 @@ void updateGame(GmContext* context, GameState& state, float dt) {
     sphere.position += left * 300.f * dt;
   } else if (input.isKeyHeld(Key::D)) {
     sphere.position += left.invert() * 300.f * dt;
+  } else {
+    moving = false;
   }
 
   commit(sphere);
+
+  if (moving && state.camera.radius < 130.f) {
+    state.camera.radius += 100.f * dt;
+  }
+
+  normalizeThirdPersonCamera(state);
 
   getCamera().position = sphere.position + state.camera.calculatePosition();
 
