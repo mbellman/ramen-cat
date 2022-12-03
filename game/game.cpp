@@ -2,23 +2,26 @@
 
 #include "game.h"
 
-static inline void initializeThirdPersonCamera(GameState& state) {
-  state.camera.radius = 100.f;
-  state.camera.azimuth = Gm_PI + Gm_HALF_PI;
-}
-
 static inline void normalizeThirdPersonCamera(GameState& state) {
   state.camera.radius = Gm_Clampf(state.camera.radius, 50.f, 300.f);
   state.camera.altitude = std::powf(state.camera.radius / 300.f, 3.f) * Gm_HALF_PI * 0.5f;
+}
+
+static inline void initializeThirdPersonCamera(GmContext* context, GameState& state) {
+  state.camera.radius = 100.f;
+  state.camera.azimuth = Gm_PI + Gm_HALF_PI;
+
+  normalizeThirdPersonCamera(state);
+
+  auto& player = objects("sphere")[0];
+
+  getCamera().position = player.position + state.camera.calculatePosition();
 }
 
 void initializeGame(GmContext* context, GameState& state) {
   using namespace Gamma;
 
   Gm_EnableFlags(GammaFlags::VSYNC);
-
-  initializeThirdPersonCamera(state);
-  normalizeThirdPersonCamera(state);
 
   // Default camera control/window focus
   auto& input = context->scene.input;
@@ -74,9 +77,7 @@ void initializeGame(GmContext* context, GameState& state) {
   light.color = Vec3f(1.0f, 0.9f, 0.2f);
   light.radius = 500.0f;
 
-  camera.position = Vec3f(-100.0f, 75.0f, -150.0f);
-
-  Gm_PointCameraAt(context, sphere);
+  initializeThirdPersonCamera(context, state);
 }
 
 void updateGame(GmContext* context, GameState& state, float dt) {
@@ -110,7 +111,7 @@ void updateGame(GmContext* context, GameState& state, float dt) {
 
   normalizeThirdPersonCamera(state);
 
-  getCamera().position = sphere.position + state.camera.calculatePosition();
+  getCamera().position = Vec3f::lerp(getCamera().position, sphere.position + state.camera.calculatePosition(), dt * 15.f);
 
   pointCameraAt(objects("sphere")[0]);
 }
