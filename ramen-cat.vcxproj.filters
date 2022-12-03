@@ -117,6 +117,9 @@
     <ClCompile Include="gamma\system\random.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="game\game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="external\glew\include\eglew.h">
@@ -516,6 +519,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="gamma\system\random.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

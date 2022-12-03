@@ -114,6 +114,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="game\game.cpp" />
     <ClCompile Include="game\main.cpp" />
     <ClCompile Include="gamma\math\matrix.cpp" />
     <ClCompile Include="gamma\math\orientation.cpp" />
@@ -150,6 +151,7 @@
     <ClCompile Include="gamma\system\yaml_parser.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="game\game.h" />
     <ClInclude Include="game\gamma_flags.h" />
     <ClInclude Include="external\glew\include\eglew.h" />
     <ClInclude Include="external\glew\include\glew.h" />
