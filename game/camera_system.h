@@ -3,7 +3,6 @@
 #include "Gamma.h"
 
 #include "game.h"
-#include "macros.h"
 
 namespace CameraSystem {
   void initializeGameCamera(GmContext* context, GameState& state);

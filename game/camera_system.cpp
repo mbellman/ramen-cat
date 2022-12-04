@@ -1,4 +1,5 @@
 #include "camera_system.h"
+#include "macros.h"
 
 using namespace Gamma;
 

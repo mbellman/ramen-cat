@@ -1,5 +1,3 @@
-#include "Gamma.h"
-
 #include "movement_system.h"
 #include "macros.h"
 
