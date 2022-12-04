@@ -40,27 +40,35 @@ internal void initializeInputHandlers(GmContext* context, GameState& state) {
 }
 
 internal void initializeGameScene(GmContext* context, GameState& state) {
-  addMesh("plane", 1, Mesh::Plane(5));
+  addMesh("platform", 9, Mesh::Cube());
   addMesh("sphere", 1, Mesh::Sphere(18));
 
-  auto& plane = createObjectFrom("plane");
-  auto& sphere = createObjectFrom("sphere");
+  for (u8 i = 0; i < 9; i++) {
+    auto& platform = createObjectFrom("platform");
 
-  plane.scale = 1000.0f;
+    platform.scale = Vec3f(50.f, 10.f, 50.f);
 
-  sphere.scale = 20.0f;
-  sphere.position.y = 20.0f;
-  sphere.color = Vec3f(1.f, 0.4f, 0.4f);
+    platform.position.x = -200.f + 200.f * (i % 3);
+    platform.position.z = -200.f + 200.f * (i / 3);
+    platform.position.y -= 10.f;
 
-  commit(plane);
-  commit(sphere);
+    commit(platform);
+  }
+
+  auto& player = createObjectFrom("sphere");
+
+  player.scale = 20.0f;
+  player.position.y = 20.0f;
+  player.color = Vec3f(1.f, 0.4f, 0.4f);
+
+  commit(player);
 
   auto& light = createLight(LightType::DIRECTIONAL_SHADOWCASTER);
 
   light.direction = Vec3f(0.5f, -1.f, -1.f);
   light.color = Vec3f(1.0f, 0.6f, 0.2f);
 
-  state.lastFrameY = sphere.position.y;
+  state.lastFrameY = player.position.y;
 }
 
 internal void normalizeThirdPersonCamera(ThirdPersonCamera& camera3p) {
@@ -83,28 +91,30 @@ internal void handleInput(GmContext* context, GameState& state, float dt) {
   auto& input = getInput();
   auto& player = getPlayer();
 
-  const float rate = 3000.f * dt;
+  auto rate = 3000.f * dt;
   auto initialVelocity = state.velocity;
 
   Vec3f forward = getCamera().orientation.getDirection().xz();
   Vec3f left = getCamera().orientation.getLeftDirection().xz();
 
-  if (player.position.y == 20.f) {
-    if (input.isKeyHeld(Key::W)) {
-      state.velocity += forward * rate;
-    }
-    
-    if (input.isKeyHeld(Key::S)) {
-      state.velocity += forward.invert() * rate;
-    }
-    
-    if (input.isKeyHeld(Key::A)) {
-      state.velocity += left * rate;
-    }
-    
-    if (input.isKeyHeld(Key::D)) {
-      state.velocity += left.invert() * rate;
-    }
+  if (player.position.y > 20.f) {
+    rate *= 0.05f;
+  }
+
+  if (input.isKeyHeld(Key::W)) {
+    state.velocity += forward * rate;
+  }
+  
+  if (input.isKeyHeld(Key::S)) {
+    state.velocity += forward.invert() * rate;
+  }
+  
+  if (input.isKeyHeld(Key::A)) {
+    state.velocity += left * rate;
+  }
+  
+  if (input.isKeyHeld(Key::D)) {
+    state.velocity += left.invert() * rate;
   }
 
   auto moving = state.velocity != initialVelocity;
@@ -137,7 +147,7 @@ internal void handlePlayerMovement(GmContext* context, GameState& state, float d
 
     if (state.lastFrameY > 20.f && delta > 2.f) {
       player.position.y = 20.f;
-      state.velocity.y *= -0.6f;
+      state.velocity.y *= -0.2f;
     } else {
       player.position.y = 20.f;
       state.velocity.y = 0.f;
