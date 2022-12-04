@@ -92,11 +92,11 @@ internal void handleMovementInput(GmContext* context, GameState& state, float dt
   auto& input = getInput();
   auto& player = getPlayer();
 
-  auto rate = 6000.f * dt;
+  auto rate = 5000.f * dt;
   auto initialVelocity = state.velocity;
 
-  Vec3f forward = getCamera().orientation.getDirection().xz();
-  Vec3f left = getCamera().orientation.getLeftDirection().xz();
+  Vec3f forward = getCamera().orientation.getDirection().xz().unit();
+  Vec3f left = getCamera().orientation.getLeftDirection().xz().unit();
 
   if (player.position.y > 20.f) {
     rate *= 0.05f;
@@ -157,6 +157,8 @@ void initializeGame(GmContext* context, GameState& state) {
 
 void updateGame(GmContext* context, GameState& state, float dt) {
   handleInput(context, state, dt);
-  handlePlayerMovement(context, state, dt);
+
+  MovementSystem::handlePlayerMovement(context, state, dt);
+
   handlePlayerCamera(context, state, dt);
 }
