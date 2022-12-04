@@ -26,21 +26,20 @@ vec2 getPixelCoords() {
   return gl_FragCoord.xy / screenSize;
 }
 
-vec2 createRadialWave(vec2 offset) {
+vec2 createRadialWave(vec3 world_position, vec2 offset) {
   const float TAU = 3.141592 * 2.0;
+
   // @todo make configurable
   const float speed = 1.0;
-  const float frequency = 10.0;
+  const float scale = 50.0;
 
-  float u = fragUv.x;
-  float v = fragUv.y;
-  float radius = length(fragUv - vec2(0.5) + offset);
+  float radius = length(world_position.xz / scale - offset);
   float t = -time * speed;
-  float r = radius * frequency * TAU;
+  float r = radius * TAU;
 
   return vec2(
-    sin(t + r + u),
-    cos(t + r + v)
+    sin(t + r),
+    cos(t + r)
   );
 }
 
@@ -51,16 +50,16 @@ vec3 getNormal(vec3 world_position) {
   vec2 n = vec2(0);
 
   // @todo make configurable
-  n += createRadialWave(vec2(0)) * 0.5;
-  n += createRadialWave(vec2(0.3, -0.2)) * 0.4;
-  n += createRadialWave(vec2(-0.7, 0.3)) * 0.3;
+  n += createRadialWave(world_position, vec2(0)) * 0.5;
+  n += createRadialWave(world_position, vec2(20.0, -6.0)) * 0.4;
+  n += createRadialWave(world_position, vec2(10.0, 5.0)) * 0.3;
 
-  n.x += 0.3 * sin(t + wx * 0.05 + sin(t * 3 + wz * 0.1));
-  n.y += 0.3 * sin(t + wz * 0.05 + sin(t * 3 + wx * 0.1));
+  n.x += 0.3 * sin(t + wx * 0.1 + sin(t * 3 + wz * 0.1));
+  n.y += 0.3 * sin(t + wz * 0.1 + sin(t * 3 + wx * 0.1));
 
   // @todo improve micro-perturbations
-  n.x += 0.1 * sin(t + wx * 0.2 + sin(wz * 0.1) + sin(wz * 0.2));
-  n.y += 0.1 * sin(t + wz * 0.2 + sin(wx * 0.1) + sin(wx * 0.2));
+  // n.x += 0.1 * sin(t + wx * 0.2 + sin(wz * 0.1) + sin(wz * 0.2));
+  // n.y += 0.1 * sin(t + wz * 0.2 + sin(wx * 0.1) + sin(wx * 0.2));
 
   vec3 n_normal = normalize(fragNormal);
   vec3 n_tangent = normalize(fragTangent);
