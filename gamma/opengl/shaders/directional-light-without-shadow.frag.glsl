@@ -39,7 +39,7 @@ void main() {
 
     #include "inline/directional-light.glsl";
 
-    accumulatedColor += illuminated_color + fresnel_term;
+    accumulatedColor += illuminated_color;
   }
 
   out_colorAndDepth = vec4(accumulatedColor * (1.0 - emissivity), frag_color_and_depth.w);

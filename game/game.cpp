@@ -2,25 +2,74 @@
 
 #include "game.h"
 
-static inline void normalizeThirdPersonCamera(GameState& state) {
-  state.camera.radius = Gm_Clampf(state.camera.radius, 50.f, 300.f);
-  state.camera.altitude = std::powf(state.camera.radius / 300.f, 3.f) * Gm_HALF_PI * 0.5f;
+#define internal static inline
+
+using namespace Gamma;
+
+internal void normalizeThirdPersonCamera(ThirdPersonCamera& camera3p) {
+  constexpr static float MAX_RADIUS = 400.f;
+
+  camera3p.radius = Gm_Clampf(camera3p.radius, 50.f, MAX_RADIUS);
+  camera3p.altitude = std::powf(camera3p.radius / MAX_RADIUS, 3.f) * Gm_HALF_PI * 0.8f;
 }
 
-static inline void initializeThirdPersonCamera(GmContext* context, GameState& state) {
-  state.camera.radius = 100.f;
-  state.camera.azimuth = Gm_PI + Gm_HALF_PI;
+internal void initializeThirdPersonCamera(GmContext* context, GameState& state) {
+  state.camera3p.radius = 100.f;
+  state.camera3p.azimuth = Gm_PI + Gm_HALF_PI;
 
-  normalizeThirdPersonCamera(state);
+  normalizeThirdPersonCamera(state.camera3p);
 
   auto& player = objects("sphere")[0];
 
-  getCamera().position = player.position + state.camera.calculatePosition();
+  getCamera().position = player.position + state.camera3p.calculatePosition();
+}
+
+internal void handleMovementInput(GmContext* context, GameState& state, float dt) {
+  auto& input = getInput();
+  auto& player = objects("sphere")[0];
+
+  Vec3f forward = getCamera().orientation.getDirection().xz();
+  Vec3f left = getCamera().orientation.getLeftDirection().xz();
+
+  auto moving = true;
+
+  if (input.isKeyHeld(Key::W)) {
+    player.position += forward * 300.f * dt;
+  } else if (input.isKeyHeld(Key::S)) {
+    player.position += forward.invert() * 300.f * dt;
+  } else if (input.isKeyHeld(Key::A)) {
+    player.position += left * 300.f * dt;
+  } else if (input.isKeyHeld(Key::D)) {
+    player.position += left.invert() * 300.f * dt;
+  } else {
+    moving = false;
+  }
+
+  if (input.isKeyHeld(Key::SPACE) && state.velocity.y == 0.f) {
+    state.velocity.y = 500.f;
+  }
+
+  if (moving && state.camera3p.radius < 130.f) {
+    state.camera3p.radius += 100.f * dt;
+  }
+}
+
+internal void handlePlayerMotion(GmContext* context, GameState& state, float dt) {
+  state.velocity.y -= 750.f * dt;
+
+  auto& player = objects("sphere")[0];
+
+  player.position += state.velocity * dt;
+
+  if (player.position.y < 20.f) {
+    player.position.y = 20.f;
+    state.velocity.y = 0.f;
+  }
+
+  commit(player);
 }
 
 void initializeGame(GmContext* context, GameState& state) {
-  using namespace Gamma;
-
   Gm_EnableFlags(GammaFlags::VSYNC);
 
   // Default camera control/window focus
@@ -29,8 +78,8 @@ void initializeGame(GmContext* context, GameState& state) {
 
   input.on<MouseMoveEvent>("mousemove", [&](const MouseMoveEvent& event) {
     if (SDL_GetRelativeMouseMode()) {
-      state.camera.azimuth -= event.deltaX / 1000.f;
-      state.camera.radius += float(event.deltaY) / 4.f;
+      state.camera3p.azimuth -= event.deltaX / 1000.f;
+      state.camera3p.radius += float(event.deltaY) / 4.f;
     }
   });
 
@@ -70,48 +119,23 @@ void initializeGame(GmContext* context, GameState& state) {
   commit(plane);
   commit(sphere);
 
-  auto& light = createLight(LightType::POINT_SHADOWCASTER);
+  auto& light = createLight(LightType::DIRECTIONAL_SHADOWCASTER);
 
-  light.position = sphere.position + Vec3f(-30.0f, 30.0f, -30.0f);
-  light.direction = sphere.position - light.position;
-  light.color = Vec3f(1.0f, 0.9f, 0.2f);
-  light.radius = 500.0f;
+  light.direction = Vec3f(0.5f, -1.f, -1.f);
+  light.color = Vec3f(1.0f, 0.6f, 0.2f);
 
   initializeThirdPersonCamera(context, state);
 }
 
 void updateGame(GmContext* context, GameState& state, float dt) {
-  using namespace Gamma;
+  handleMovementInput(context, state, dt);
+  handlePlayerMotion(context, state, dt);
 
-  auto& input = getInput();
-  auto& sphere = objects("sphere")[0];
+  normalizeThirdPersonCamera(state.camera3p);
 
-  Vec3f forward = getCamera().orientation.getDirection().xz();
-  Vec3f left = getCamera().orientation.getLeftDirection().xz();
+  auto& player = objects("sphere")[0];
 
-  auto moving = true;
+  getCamera().position = Vec3f::lerp(getCamera().position, player.position + state.camera3p.calculatePosition(), dt * 15.f);
 
-  if (input.isKeyHeld(Key::W)) {
-    sphere.position += forward * 300.f * dt;
-  } else if (input.isKeyHeld(Key::S)) {
-    sphere.position += forward.invert() * 300.f * dt;
-  } else if (input.isKeyHeld(Key::A)) {
-    sphere.position += left * 300.f * dt;
-  } else if (input.isKeyHeld(Key::D)) {
-    sphere.position += left.invert() * 300.f * dt;
-  } else {
-    moving = false;
-  }
-
-  commit(sphere);
-
-  if (moving && state.camera.radius < 130.f) {
-    state.camera.radius += 100.f * dt;
-  }
-
-  normalizeThirdPersonCamera(state);
-
-  getCamera().position = Vec3f::lerp(getCamera().position, sphere.position + state.camera.calculatePosition(), dt * 15.f);
-
-  pointCameraAt(objects("sphere")[0]);
+  pointCameraAt(player);
 }

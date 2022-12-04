@@ -146,5 +146,5 @@ void main() {
   vec4 light_space_transform = getLightSpaceTransform(lightMatrices[cascade.index], position);
   float light_intensity = getLightIntensity(cascade, light_space_transform);
 
-  out_color_and_depth = vec4(illuminated_color * light_intensity * (1.0 - emissivity) + fresnel_term, frag_color_and_depth.w);
+  out_color_and_depth = vec4(illuminated_color * light_intensity * (1.0 - emissivity), frag_color_and_depth.w);
 }
