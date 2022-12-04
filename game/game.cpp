@@ -2,6 +2,7 @@
 
 #include "game.h"
 #include "movement_system.h"
+#include "camera_system.h"
 
 #define internal static inline
 #define getPlayer() objects("sphere")[0]
@@ -72,22 +73,6 @@ internal void initializeGameScene(GmContext* context, GameState& state) {
   state.lastFrameY = player.position.y;
 }
 
-internal void normalizeThirdPersonCamera(ThirdPersonCamera& camera3p) {
-  constexpr static float MAX_RADIUS = 400.f;
-
-  camera3p.radius = Gm_Clampf(camera3p.radius, 50.f, MAX_RADIUS);
-  camera3p.altitude = std::powf(camera3p.radius / MAX_RADIUS, 3.f) * Gm_HALF_PI * 0.8f;
-}
-
-internal void initializeCamera(GmContext* context, GameState& state) {
-  state.camera3p.radius = 100.f;
-  state.camera3p.azimuth = Gm_PI + Gm_HALF_PI;
-
-  normalizeThirdPersonCamera(state.camera3p);
-
-  getCamera().position = getPlayer().position + state.camera3p.calculatePosition();
-}
-
 internal void handleMovementInput(GmContext* context, GameState& state, float dt) {
   auto& input = getInput();
   auto& player = getPlayer();
@@ -137,28 +122,18 @@ internal void handleInput(GmContext* context, GameState& state, float dt) {
   }
 }
 
-internal void handlePlayerCamera(GmContext* context, GameState& state, float dt) {
-  normalizeThirdPersonCamera(state.camera3p);
-
-  auto& player = getPlayer();
-
-  getCamera().position = Vec3f::lerp(getCamera().position, player.position + state.camera3p.calculatePosition(), dt * 15.f);
-
-  pointCameraAt(player);
-}
-
 void initializeGame(GmContext* context, GameState& state) {
   Gm_EnableFlags(GammaFlags::VSYNC);
 
   initializeInputHandlers(context, state);
   initializeGameScene(context, state);
-  initializeCamera(context, state);
+
+  CameraSystem::initializeGameCamera(context, state);
 }
 
 void updateGame(GmContext* context, GameState& state, float dt) {
   handleInput(context, state, dt);
 
   MovementSystem::handlePlayerMovement(context, state, dt);
-
-  handlePlayerCamera(context, state, dt);
+  CameraSystem::handleGameCamera(context, state, dt);
 }
