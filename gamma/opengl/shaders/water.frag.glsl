@@ -58,11 +58,9 @@ vec3 getNormal(vec3 world_position) {
   n.x += 0.3 * sin(t + wx * 0.05 + sin(t * 3 + wz * 0.1));
   n.y += 0.3 * sin(t + wz * 0.05 + sin(t * 3 + wx * 0.1));
 
-  n.x += 0.2 * sin(wx * 0.05 + sin(wz * 0.05));
-  n.y += 0.2 * sin(wz * 0.05 + sin(wx * 0.05));
-
-  n.x += 0.01 * sin(time + wz * 0.5 + sin(time + wx * 0.1));
-  n.y += 0.01 * sin(time + wx * 0.5 + sin(time + wz * 0.1));
+  // @todo improve micro-perturbations
+  n.x += 0.1 * sin(t + wx * 0.2 + sin(wz * 0.1) + sin(wz * 0.2));
+  n.y += 0.1 * sin(t + wz * 0.2 + sin(wx * 0.1) + sin(wx * 0.2));
 
   vec3 n_normal = normalize(fragNormal);
   vec3 n_tangent = normalize(fragTangent);
@@ -74,7 +72,10 @@ vec3 getNormal(vec3 world_position) {
     n_normal
   );
 
-  vec3 tangent_normal = vec3(n.x, n.y, 1.0);
+  // @todo make configurable
+  float flatness = 1.0;
+
+  vec3 tangent_normal = vec3(n.x, n.y, flatness);
   vec3 world_normal = normalize(tbn_matrix * tangent_normal);
 
   world_normal.y += n_normal.y * 3.0;
@@ -131,7 +132,8 @@ void main() {
     water_color = vec3(0);
   }
 
-  water_color += vec3(0, 0.5, 1.0) * (1.0 - fresnel_factor) * 0.5;
+  // @todo make water color configurable
+  water_color += vec3(0, 0.5, 1.0) * (1.0 - fresnel_factor);
 
   // Reflection
   vec3 reflection_ray = reflect(normalized_fragment_to_camera * -1, normal);
