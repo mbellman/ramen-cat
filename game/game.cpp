@@ -3,6 +3,7 @@
 #include "game.h"
 
 #define internal static inline
+#define getPlayer() objects("sphere")[0]
 
 using namespace Gamma;
 
@@ -73,31 +74,41 @@ internal void initializeCamera(GmContext* context, GameState& state) {
 
   normalizeThirdPersonCamera(state.camera3p);
 
-  auto& player = objects("sphere")[0];
-
-  getCamera().position = player.position + state.camera3p.calculatePosition();
+  getCamera().position = getPlayer().position + state.camera3p.calculatePosition();
 }
 
 internal void handleInput(GmContext* context, GameState& state, float dt) {
   auto& input = getInput();
-  auto& player = objects("sphere")[0];
+  auto& player = getPlayer();
+
+  const float rate = 3000.f * dt;
+  auto initialVelocity = state.velocity;
 
   Vec3f forward = getCamera().orientation.getDirection().xz();
   Vec3f left = getCamera().orientation.getLeftDirection().xz();
 
-  auto moving = true;
-
   if (input.isKeyHeld(Key::W)) {
-    player.position += forward * 300.f * dt;
-  } else if (input.isKeyHeld(Key::S)) {
-    player.position += forward.invert() * 300.f * dt;
-  } else if (input.isKeyHeld(Key::A)) {
-    player.position += left * 300.f * dt;
-  } else if (input.isKeyHeld(Key::D)) {
-    player.position += left.invert() * 300.f * dt;
-  } else {
-    moving = false;
+    state.velocity += forward * rate;
   }
+  
+  if (input.isKeyHeld(Key::S)) {
+    state.velocity += forward.invert() * rate;
+  }
+  
+  if (input.isKeyHeld(Key::A)) {
+    state.velocity += left * rate;
+  }
+  
+  if (input.isKeyHeld(Key::D)) {
+    state.velocity += left.invert() * rate;
+  }
+
+  auto moving = state.velocity != initialVelocity;
+
+  player.position += state.velocity * dt;
+
+  state.velocity.x *= 0.9f;
+  state.velocity.z *= 0.9f;
 
   if (input.isKeyHeld(Key::SPACE) && state.velocity.y == 0.f) {
     state.velocity.y = 500.f;
@@ -111,7 +122,7 @@ internal void handleInput(GmContext* context, GameState& state, float dt) {
 internal void handlePlayerMovement(GmContext* context, GameState& state, float dt) {
   state.velocity.y -= 750.f * dt;
 
-  auto& player = objects("sphere")[0];
+  auto& player = getPlayer();
 
   player.position += state.velocity * dt;
 
@@ -126,7 +137,7 @@ internal void handlePlayerMovement(GmContext* context, GameState& state, float d
 internal void handlePlayerCamera(GmContext* context, GameState& state, float dt) {
   normalizeThirdPersonCamera(state.camera3p);
 
-  auto& player = objects("sphere")[0];
+  auto& player = getPlayer();
 
   getCamera().position = Vec3f::lerp(getCamera().position, player.position + state.camera3p.calculatePosition(), dt * 15.f);
 

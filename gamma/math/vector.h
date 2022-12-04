@@ -22,6 +22,7 @@ namespace Gamma {
     static Vec3f lerp(const Vec3f& v1, const Vec3f& v2, float alpha);
 
     bool operator==(const Vec3f& vector) const;
+    bool operator!=(const Vec3f& vector) const;
     Vec3f operator+(const Vec3f& vector) const;
     void operator+=(const Vec3f& vector);
     Vec3f operator-(const Vec3f& vector) const;
