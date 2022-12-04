@@ -5,6 +5,7 @@
 struct GameState {
   Gamma::ThirdPersonCamera camera3p;
   Gamma::Vec3f velocity;
+  float lastFrameY = 0.f;
 };
 
 void initializeGame(GmContext* context, GameState& state);

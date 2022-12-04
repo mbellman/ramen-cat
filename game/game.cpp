@@ -59,6 +59,8 @@ internal void initializeGameScene(GmContext* context, GameState& state) {
 
   light.direction = Vec3f(0.5f, -1.f, -1.f);
   light.color = Vec3f(1.0f, 0.6f, 0.2f);
+
+  state.lastFrameY = sphere.position.y;
 }
 
 internal void normalizeThirdPersonCamera(ThirdPersonCamera& camera3p) {
@@ -114,7 +116,7 @@ internal void handleInput(GmContext* context, GameState& state, float dt) {
     state.velocity.z *= 0.9f;
   }
 
-  if (input.isKeyHeld(Key::SPACE) && state.velocity.y == 0.f) {
+  if (input.isKeyHeld(Key::SPACE) && player.position.y == 20.f) {
     state.velocity.y = 500.f;
   }
 
@@ -124,18 +126,27 @@ internal void handleInput(GmContext* context, GameState& state, float dt) {
 }
 
 internal void handlePlayerMovement(GmContext* context, GameState& state, float dt) {
-  state.velocity.y -= 750.f * dt;
-
   auto& player = getPlayer();
+  const float gravity = 750.f * dt;
 
+  state.velocity.y -= gravity;
   player.position += state.velocity * dt;
 
   if (player.position.y < 20.f) {
-    player.position.y = 20.f;
-    state.velocity.y = 0.f;
+    float delta = state.lastFrameY - player.position.y;
+
+    if (state.lastFrameY > 20.f && delta > 2.f) {
+      player.position.y = 20.f;
+      state.velocity.y *= -0.6f;
+    } else {
+      player.position.y = 20.f;
+      state.velocity.y = 0.f;
+    }
   }
 
   commit(player);
+
+  state.lastFrameY = player.position.y;
 }
 
 internal void handlePlayerCamera(GmContext* context, GameState& state, float dt) {
