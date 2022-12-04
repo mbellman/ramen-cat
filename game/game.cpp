@@ -87,28 +87,32 @@ internal void handleInput(GmContext* context, GameState& state, float dt) {
   Vec3f forward = getCamera().orientation.getDirection().xz();
   Vec3f left = getCamera().orientation.getLeftDirection().xz();
 
-  if (input.isKeyHeld(Key::W)) {
-    state.velocity += forward * rate;
-  }
-  
-  if (input.isKeyHeld(Key::S)) {
-    state.velocity += forward.invert() * rate;
-  }
-  
-  if (input.isKeyHeld(Key::A)) {
-    state.velocity += left * rate;
-  }
-  
-  if (input.isKeyHeld(Key::D)) {
-    state.velocity += left.invert() * rate;
+  if (player.position.y == 20.f) {
+    if (input.isKeyHeld(Key::W)) {
+      state.velocity += forward * rate;
+    }
+    
+    if (input.isKeyHeld(Key::S)) {
+      state.velocity += forward.invert() * rate;
+    }
+    
+    if (input.isKeyHeld(Key::A)) {
+      state.velocity += left * rate;
+    }
+    
+    if (input.isKeyHeld(Key::D)) {
+      state.velocity += left.invert() * rate;
+    }
   }
 
   auto moving = state.velocity != initialVelocity;
 
   player.position += state.velocity * dt;
 
-  state.velocity.x *= 0.9f;
-  state.velocity.z *= 0.9f;
+  if (player.position.y == 20.f) {
+    state.velocity.x *= 0.9f;
+    state.velocity.z *= 0.9f;
+  }
 
   if (input.isKeyHeld(Key::SPACE) && state.velocity.y == 0.f) {
     state.velocity.y = 500.f;
