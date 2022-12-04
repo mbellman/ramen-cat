@@ -78,7 +78,7 @@ internal void initializeCamera(GmContext* context, GameState& state) {
   getCamera().position = player.position + state.camera3p.calculatePosition();
 }
 
-internal void handleInputForMovement(GmContext* context, GameState& state, float dt) {
+internal void handleInput(GmContext* context, GameState& state, float dt) {
   auto& input = getInput();
   auto& player = objects("sphere")[0];
 
@@ -142,7 +142,7 @@ void initializeGame(GmContext* context, GameState& state) {
 }
 
 void updateGame(GmContext* context, GameState& state, float dt) {
-  handleInputForMovement(context, state, dt);
+  handleInput(context, state, dt);
   handlePlayerMovement(context, state, dt);
   handlePlayerCamera(context, state, dt);
 }
