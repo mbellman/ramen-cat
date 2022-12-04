@@ -32,9 +32,11 @@ namespace MovementSystem {
     handleCollisions(context, state);
 
     // @todo dampen velocity more robustly
+    const float frictionCoefficient = 0.9f;
+
     if (player.position.y == 20.f) {
-      state.velocity.x *= 0.9f;
-      state.velocity.z *= 0.9f;
+      state.velocity.x *= frictionCoefficient;
+      state.velocity.z *= frictionCoefficient;
     }
 
     state.previousPlayerPosition = player.position;

@@ -84,6 +84,7 @@ internal void handleMovementInput(GmContext* context, GameState& state, float dt
   Vec3f left = getCamera().orientation.getLeftDirection().xz().unit();
 
   if (player.position.y > 20.f) {
+    // Reduce movement rate in midair
     rate *= 0.05f;
   }
 
