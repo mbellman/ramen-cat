@@ -131,7 +131,7 @@ void main() {
     water_color = vec3(0);
   }
 
-  water_color *= fresnel_factor;
+  water_color += vec3(0, 0.5, 1.0) * (1.0 - fresnel_factor) * 0.5;
 
   // Reflection
   vec3 reflection_ray = reflect(normalized_fragment_to_camera * -1, normal);
