@@ -1,6 +1,7 @@
 #include "Gamma.h"
 
 #include "game.h"
+#include "movement_system.h"
 
 #define internal static inline
 #define getPlayer() objects("sphere")[0]
@@ -87,11 +88,11 @@ internal void initializeCamera(GmContext* context, GameState& state) {
   getCamera().position = getPlayer().position + state.camera3p.calculatePosition();
 }
 
-internal void handleInput(GmContext* context, GameState& state, float dt) {
+internal void handleMovementInput(GmContext* context, GameState& state, float dt) {
   auto& input = getInput();
   auto& player = getPlayer();
 
-  auto rate = 3000.f * dt;
+  auto rate = 6000.f * dt;
   auto initialVelocity = state.velocity;
 
   Vec3f forward = getCamera().orientation.getDirection().xz();
@@ -119,44 +120,21 @@ internal void handleInput(GmContext* context, GameState& state, float dt) {
 
   auto moving = state.velocity != initialVelocity;
 
-  player.position += state.velocity * dt;
-
-  if (player.position.y == 20.f) {
-    state.velocity.x *= 0.9f;
-    state.velocity.z *= 0.9f;
-  }
-
   if (input.isKeyHeld(Key::SPACE) && player.position.y == 20.f) {
     state.velocity.y = 500.f;
   }
+}
+
+internal void handleInput(GmContext* context, GameState& state, float dt) {
+  auto initialVelocity = state.velocity;
+
+  handleMovementInput(context, state, dt);
+
+  auto moving = initialVelocity != state.velocity;
 
   if (moving && state.camera3p.radius < 130.f) {
     state.camera3p.radius += 100.f * dt;
   }
-}
-
-internal void handlePlayerMovement(GmContext* context, GameState& state, float dt) {
-  auto& player = getPlayer();
-  const float gravity = 750.f * dt;
-
-  state.velocity.y -= gravity;
-  player.position += state.velocity * dt;
-
-  if (player.position.y < 20.f) {
-    float delta = state.lastFrameY - player.position.y;
-
-    if (state.lastFrameY > 20.f && delta > 2.f) {
-      player.position.y = 20.f;
-      state.velocity.y *= -0.2f;
-    } else {
-      player.position.y = 20.f;
-      state.velocity.y = 0.f;
-    }
-  }
-
-  commit(player);
-
-  state.lastFrameY = player.position.y;
 }
 
 internal void handlePlayerCamera(GmContext* context, GameState& state, float dt) {
