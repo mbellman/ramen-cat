@@ -70,7 +70,7 @@ internal void initializeGameScene(GmContext* context, GameState& state) {
   light.direction = Vec3f(0.5f, -1.f, -1.f);
   light.color = Vec3f(1.0f, 0.6f, 0.2f);
 
-  state.lastFrameY = player.position.y;
+  state.previousPlayerPosition = player.position;
 }
 
 internal void handleMovementInput(GmContext* context, GameState& state, float dt) {

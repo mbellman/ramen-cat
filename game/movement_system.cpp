@@ -8,9 +8,9 @@ internal void handleCollisions(GmContext* context, GameState& state) {
 
   // @todo handle collisions more robustly
   if (player.position.y < 20.f) {
-    float delta = state.lastFrameY - player.position.y;
+    float delta = state.previousPlayerPosition.y - player.position.y;
 
-    if (state.lastFrameY > 20.f && delta > 2.f) {
+    if (state.previousPlayerPosition.y > 20.f && delta > 2.f) {
       player.position.y = 20.f;
       state.velocity.y *= -0.2f;
     } else {
@@ -37,7 +37,7 @@ namespace MovementSystem {
       state.velocity.z *= 0.9f;
     }
 
-    state.lastFrameY = player.position.y;
+    state.previousPlayerPosition = player.position;
 
     commit(player);
   }
