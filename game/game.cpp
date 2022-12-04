@@ -7,8 +7,8 @@
 using namespace Gamma;
 
 internal void initializeInputHandlers(GmContext* context, GameState& state) {
-  auto& input = context->scene.input;
-  auto& camera = context->scene.camera;
+  auto& input = getInput();
+  auto& camera = getCamera();
 
   input.on<MouseMoveEvent>("mousemove", [&](const MouseMoveEvent& event) {
     if (SDL_GetRelativeMouseMode()) {
