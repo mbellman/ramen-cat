@@ -19,6 +19,11 @@ int main(int argc, char* argv[]) {
     Gm_LogFrameStart(context);
     Gm_HandleEvents(context);
 
+    // @todo handle this within the engine (?)
+    if (dt > 0.1f) {
+      dt = 0.1f;
+    }
+
     updateGame(context, state, dt);
 
     Gm_RenderScene(context);
