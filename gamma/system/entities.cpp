@@ -69,6 +69,10 @@ namespace Gamma {
       v2.normal += normal;
       v3.normal += normal;
     }
+
+    for (auto& vertex : vertices) {
+      vertex.normal = vertex.normal.unit();
+    }
   }
 
   /**
@@ -103,6 +107,10 @@ namespace Gamma {
       v1.tangent += tangent;
       v2.tangent += tangent;
       v3.tangent += tangent;
+    }
+
+    for (auto& vertex : vertices) {
+      vertex.tangent = vertex.tangent.unit();
     }
   }
 

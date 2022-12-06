@@ -24,15 +24,12 @@ out vec2 fragUv;
  * normal/tangent vectors using the Gram-Schmidt process.
  */
 vec3 getFragBitangent(vec3 normal, vec3 tangent) {
-  vec3 n_normal = normalize(normal);
-  vec3 n_tangent = normalize(tangent);
-
   // Redefine the tangent by using the projection of the tangent
   // onto the normal line and defining a vector from that to the
   // original tangent, orthonormalizing the normal/tangent
-  n_tangent = normalize(n_tangent - dot(n_tangent, n_normal) * n_normal);
+  tangent = normalize(tangent - dot(tangent, normal) * normal);
 
-  return cross(n_tangent, n_normal);
+  return cross(tangent, normal);
 }
 
 // @todo move to utils
