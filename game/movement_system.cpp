@@ -59,7 +59,48 @@ internal void handleCollisions(GmContext* context, GameState& state) {
 }
 
 namespace MovementSystem {
-  void handlePlayerMovement(GmContext* context, GameState& state, float dt) {
+  void handlePlayerMovementInput(GmContext* context, GameState& state, float dt) {
+    auto& input = getInput();
+    auto& player = getPlayer();
+
+    auto rate = 5000.f * dt;
+    auto initialVelocity = state.velocity;
+
+    Vec3f forward = getCamera().orientation.getDirection().xz().unit();
+    Vec3f left = getCamera().orientation.getLeftDirection().xz().unit();
+
+    if (state.velocity.y != 0.f) {
+      // Reduce movement rate in midair
+      rate *= 0.05f;
+    } else if (state.velocity.xz().magnitude() > 500.f) {
+      // Limit top xz speed
+      rate = 0.f;
+    }
+
+    if (input.isKeyHeld(Key::W)) {
+      state.velocity += forward * rate;
+    }
+    
+    if (input.isKeyHeld(Key::S)) {
+      state.velocity += forward.invert() * rate;
+    }
+    
+    if (input.isKeyHeld(Key::A)) {
+      state.velocity += left * rate;
+    }
+    
+    if (input.isKeyHeld(Key::D)) {
+      state.velocity += left.invert() * rate;
+    }
+
+    auto moving = state.velocity != initialVelocity;
+
+    if (input.isKeyHeld(Key::SPACE) && state.velocity.y == 0.f) {
+      state.velocity.y = 500.f;
+    }
+  }
+
+  void handlePlayerMovementPhysics(GmContext* context, GameState& state, float dt) {
     auto& player = getPlayer();
     const float gravity = 750.f * dt;
 

@@ -55,9 +55,14 @@ internal std::vector<Platform> platforms = {
     Vec3f(0.2f, 0.3f, 1.f)
   },
   {
-    Vec3f(-50.f, 0.f, 300.f),
+    Vec3f(-70.f, 0.f, 300.f),
     Vec3f(50.f, 30.f, 200.f),
     Vec3f(1.f, 0.5, 0.2f)
+  },
+  {
+    Vec3f(50.f, 0.f, 700.f),
+    Vec3f(100.f, 50.f, 250.f),
+    Vec3f(0.5f, 1.f, 0.5f)
   }
 };
 
@@ -92,48 +97,10 @@ internal void initializeGameScene(GmContext* context, GameState& state) {
   state.previousPlayerPosition = player.position;
 }
 
-internal void handleMovementInput(GmContext* context, GameState& state, float dt) {
-  auto& input = getInput();
-  auto& player = getPlayer();
-
-  auto rate = 5000.f * dt;
-  auto initialVelocity = state.velocity;
-
-  Vec3f forward = getCamera().orientation.getDirection().xz().unit();
-  Vec3f left = getCamera().orientation.getLeftDirection().xz().unit();
-
-  if (state.velocity.y != 0.f) {
-    // Reduce movement rate in midair
-    rate *= 0.05f;
-  }
-
-  if (input.isKeyHeld(Key::W)) {
-    state.velocity += forward * rate;
-  }
-  
-  if (input.isKeyHeld(Key::S)) {
-    state.velocity += forward.invert() * rate;
-  }
-  
-  if (input.isKeyHeld(Key::A)) {
-    state.velocity += left * rate;
-  }
-  
-  if (input.isKeyHeld(Key::D)) {
-    state.velocity += left.invert() * rate;
-  }
-
-  auto moving = state.velocity != initialVelocity;
-
-  if (input.isKeyHeld(Key::SPACE) && state.velocity.y == 0.f) {
-    state.velocity.y = 500.f;
-  }
-}
-
 internal void handleInput(GmContext* context, GameState& state, float dt) {
   auto initialVelocity = state.velocity;
 
-  handleMovementInput(context, state, dt);
+  MovementSystem::handlePlayerMovementInput(context, state, dt);
 
   auto moving = initialVelocity != state.velocity;
 
@@ -154,6 +121,6 @@ void initializeGame(GmContext* context, GameState& state) {
 void updateGame(GmContext* context, GameState& state, float dt) {
   handleInput(context, state, dt);
 
-  MovementSystem::handlePlayerMovement(context, state, dt);
+  MovementSystem::handlePlayerMovementPhysics(context, state, dt);
   CameraSystem::handleGameCamera(context, state, dt);
 }

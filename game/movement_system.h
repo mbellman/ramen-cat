@@ -5,5 +5,6 @@
 #include "game.h"
 
 namespace MovementSystem {
-  void handlePlayerMovement(GmContext* context, GameState& state, float dt);
+  void handlePlayerMovementInput(GmContext* context, GameState& state, float dt);
+  void handlePlayerMovementPhysics(GmContext* context, GameState& state, float dt);
 }
