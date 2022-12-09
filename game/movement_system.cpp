@@ -48,7 +48,7 @@ internal void handleCollisions(GmContext* context, GameState& state) {
     player.position.y = corner1.y + player.scale.y;
 
     if (state.previousPlayerPosition.y > corner1.y && fallDelta > 1.f) {
-      state.velocity *= -0.2f;
+      state.velocity.y *= -0.2f;
     } else {
       state.velocity.y = 0.f;
     }

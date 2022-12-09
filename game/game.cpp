@@ -53,6 +53,11 @@ internal std::vector<Platform> platforms = {
     Vec3f(0.f),
     Vec3f(100.f, 50.f, 200.f),
     Vec3f(0.2f, 0.3f, 1.f)
+  },
+  {
+    Vec3f(-50.f, 0.f, 300.f),
+    Vec3f(50.f, 30.f, 200.f),
+    Vec3f(1.f, 0.5, 0.2f)
   }
 };
 
