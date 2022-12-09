@@ -3,8 +3,8 @@
 
 using namespace Gamma;
 
-// @todo refactor to check against collision volumes
-internal bool isPlayerOnPlatform(GmContext* context, GameState& state) {
+// @todo refactor to check against game state collision volumes
+internal CollisionVolume* getCollision(GmContext* context, GameState& state) {
   auto& player = getPlayer();
 
   for (auto& platform : objects("platform")) {
@@ -24,26 +24,37 @@ internal bool isPlayerOnPlatform(GmContext* context, GameState& state) {
       continue;
     }
 
-    return true;
+    // @todo return a pointer to a collision volume stored in game state
+    auto* collision = new CollisionVolume();
+
+    collision->corner1 = platform.position + platform.scale;
+    collision->corner2 = platform.position - platform.scale;
+
+    return collision;
   }
 
-  return false;
+  return nullptr;
 }
 
 internal void handleCollisions(GmContext* context, GameState& state) {
   auto& player = getPlayer();
+  auto* collision = getCollision(context, state);
 
-  // @todo handle collisions more robustly
-  if (player.position.y < 20.f && isPlayerOnPlatform(context, state)) {
-    float delta = state.previousPlayerPosition.y - player.position.y;
+  if (collision != nullptr) {
+    float fallDelta = state.previousPlayerPosition.y - player.position.y;
+    auto& corner1 = collision->corner1;
+    auto& corner2 = collision->corner2;
 
-    if (state.previousPlayerPosition.y > 20.f && delta > 2.f) {
-      player.position.y = 20.f;
-      state.velocity.y *= -0.2f;
+    player.position.y = corner1.y + player.scale.y;
+
+    if (state.previousPlayerPosition.y > corner1.y && fallDelta > 1.f) {
+      state.velocity *= -0.2f;
     } else {
-      player.position.y = 20.f;
       state.velocity.y = 0.f;
     }
+
+    // @temporary
+    delete collision;
   }
 }
 
@@ -61,7 +72,7 @@ namespace MovementSystem {
     // @todo dampen velocity more robustly
     const float frictionCoefficient = 0.9f;
 
-    if (player.position.y == 20.f) {
+    if (state.velocity.y == 0.f) {
       state.velocity.x *= frictionCoefficient;
       state.velocity.z *= frictionCoefficient;
     }

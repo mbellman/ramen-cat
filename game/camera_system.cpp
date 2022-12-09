@@ -24,8 +24,13 @@ namespace CameraSystem {
     normalizeThirdPersonCamera(state.camera3p);
 
     auto& player = getPlayer();
+    auto targetCameraPosition = player.position + state.camera3p.calculatePosition();
 
-    getCamera().position = Vec3f::lerp(getCamera().position, player.position + state.camera3p.calculatePosition(), dt * 15.f);
+    if (context->scene.frame > 0) {
+      getCamera().position = Vec3f::lerp(getCamera().position, targetCameraPosition, dt * 15.f);
+    } else {
+      getCamera().position = targetCameraPosition;
+    }
 
     pointCameraAt(player);
   }

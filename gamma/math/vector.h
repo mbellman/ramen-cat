@@ -34,6 +34,11 @@ namespace Gamma {
     Vec3f operator/(float divisor) const;
     void operator/=(float divisor);
 
+    // Prevent inadvertent assignment of a vector to a float,
+    // instead preferring an explicit = Vec3f(...) assignment
+    // if the assignment was intentional.
+    void operator=(float value) = delete;
+
     void debug() const;
     Vec3f gl() const;
     Vec3f invert() const;

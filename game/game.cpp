@@ -41,25 +41,39 @@ internal void initializeInputHandlers(GmContext* context, GameState& state) {
   });
 }
 
+// @temporary
+struct Platform {
+  Vec3f position;
+  Vec3f scale;
+  Vec3f color;
+};
+
+internal std::vector<Platform> platforms = {
+  {
+    Vec3f(0.f),
+    Vec3f(100.f, 50.f, 200.f),
+    Vec3f(0.2f, 0.3f, 1.f)
+  }
+};
+
 internal void initializeGameScene(GmContext* context, GameState& state) {
-  addMesh("platform", 9, Mesh::Cube());
+  addMesh("platform", (u16)platforms.size(), Mesh::Cube());
   addMesh("sphere", 1, Mesh::Sphere(18));
 
-  for (u8 i = 0; i < 9; i++) {
+  for (auto& [ position, scale, color ] : platforms) {
     auto& platform = createObjectFrom("platform");
 
-    platform.scale = Vec3f(50.f, 10.f, 50.f);
-
-    platform.position.x = -200.f + 200.f * (i % 3);
-    platform.position.z = -200.f + 200.f * (i / 3);
+    platform.position = position;
     platform.position.y -= 10.f;
+    platform.scale = scale;
+    platform.color = color;
 
     commit(platform);
   }
 
   auto& player = createObjectFrom("sphere");
 
-  player.scale = 20.0f;
+  player.scale = Vec3f(20.0f);
   player.position.y = 20.0f;
   player.color = Vec3f(1.f, 0.4f, 0.4f);
 
@@ -68,7 +82,7 @@ internal void initializeGameScene(GmContext* context, GameState& state) {
   auto& light = createLight(LightType::DIRECTIONAL_SHADOWCASTER);
 
   light.direction = Vec3f(0.5f, -1.f, -1.f);
-  light.color = Vec3f(1.0f, 0.6f, 0.2f);
+  light.color = Vec3f(1.0f, 0.7f, 0.5f);
 
   state.previousPlayerPosition = player.position;
 }
@@ -83,7 +97,7 @@ internal void handleMovementInput(GmContext* context, GameState& state, float dt
   Vec3f forward = getCamera().orientation.getDirection().xz().unit();
   Vec3f left = getCamera().orientation.getLeftDirection().xz().unit();
 
-  if (player.position.y > 20.f) {
+  if (state.velocity.y != 0.f) {
     // Reduce movement rate in midair
     rate *= 0.05f;
   }
@@ -106,7 +120,7 @@ internal void handleMovementInput(GmContext* context, GameState& state, float dt
 
   auto moving = state.velocity != initialVelocity;
 
-  if (input.isKeyHeld(Key::SPACE) && player.position.y == 20.f) {
+  if (input.isKeyHeld(Key::SPACE) && state.velocity.y == 0.f) {
     state.velocity.y = 500.f;
   }
 }
