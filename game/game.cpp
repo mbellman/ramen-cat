@@ -55,8 +55,8 @@ internal std::vector<Platform> platforms = {
     Vec3f(0.2f, 0.3f, 1.f)
   },
   {
-    Vec3f(-70.f, 0.f, 300.f),
-    Vec3f(50.f, 30.f, 200.f),
+    Vec3f(-150.f, 0.f, 300.f),
+    Vec3f(50.f, 300.f, 200.f),
     Vec3f(1.f, 0.5, 0.2f)
   },
   {
@@ -84,7 +84,7 @@ internal void initializeGameScene(GmContext* context, GameState& state) {
   auto& player = createObjectFrom("sphere");
 
   player.scale = Vec3f(20.0f);
-  player.position.y = 20.0f;
+  player.position.y = 200.0f;
   player.color = Vec3f(1.f, 0.4f, 0.4f);
 
   commit(player);

@@ -3,58 +3,126 @@
 
 using namespace Gamma;
 
-// @todo refactor to check against game state collision volumes
-internal CollisionVolume* getCollision(GmContext* context, GameState& state) {
-  auto& player = getPlayer();
+struct Plane {
+  Vec3f p1, p2, p3, p4;
+  Vec3f normal;
+};
 
+struct Collision {
+  Plane plane;
+  Vec3f point;
+  bool hit = false;
+};
+
+#define min(a, b) (a > b ? b : a)
+#define max(a, b) (a > b ? a : b)
+
+internal bool isInBetween(float n, float a, float b) {
+  return n >= min(a, b) && n <= max(a, b);
+}
+
+internal Collision getLinePlaneCollision(const Vec3f& lineStart, const Vec3f& lineEnd, const Plane& plane) {
+  Collision collision;
+  Vec3f line = lineEnd - lineStart;
+
+  if (Vec3f::dot(plane.normal, line) != 0.f) {
+    float d = Vec3f::dot(plane.normal, plane.p1);
+    float t = (d - Vec3f::dot(plane.normal, lineStart)) / Vec3f::dot(plane.normal, line);
+    Vec3f intersection = lineStart + line * t;
+
+    if (
+      isInBetween(intersection.x, plane.p1.x, plane.p4.x) &&
+      isInBetween(intersection.y, plane.p1.y, plane.p4.y) &&
+      isInBetween(intersection.z, plane.p1.z, plane.p4.z) &&
+      isInBetween(intersection.x, lineStart.x, lineEnd.x) &&
+      isInBetween(intersection.y, lineStart.y, lineEnd.y) &&
+      isInBetween(intersection.z, lineStart.z, lineEnd.z)
+    ) {
+      collision.plane = plane;
+      collision.point = intersection;
+      collision.hit = true;
+    }
+  }
+
+  return collision;
+}
+
+internal Collision getPlayerCollision(GmContext* context, GameState& state) {
+  auto& player = getPlayer();
+  
+  // @temporary
+  for (auto& platform : objects("platform")) {
+    platform.color = Vec3f(1.f);
+
+    commit(platform);
+  }
+
+  // @todo rewrite to check against game state collision planes
   for (auto& platform : objects("platform")) {
     auto& position = platform.position;
     auto& scale = platform.scale;
 
     // @todo cleanup
-    if (player.position.x + player.scale.x < position.x - scale.x || player.position.x - player.scale.x > position.x + scale.x) {
-      continue;
+    Plane plane;
+
+    plane.p1 = Vec3f(
+      platform.position.x - platform.scale.x,
+      platform.position.y + platform.scale.y,
+      platform.position.z - platform.scale.z
+    );
+
+    plane.p2 = Vec3f(
+      platform.position.x + platform.scale.x,
+      platform.position.y + platform.scale.y,
+      platform.position.z - platform.scale.z
+    );
+
+    plane.p3 = Vec3f(
+      platform.position.x - platform.scale.x,
+      platform.position.y + platform.scale.y,
+      platform.position.z + platform.scale.z
+    );
+
+    plane.p4 = Vec3f(
+      platform.position.x + platform.scale.x,
+      platform.position.y + platform.scale.y,
+      platform.position.z + platform.scale.z
+    );
+
+    plane.normal = Vec3f::cross(plane.p3 - plane.p1, plane.p2 - plane.p1).unit();
+
+    Vec3f lineStart = player.position + plane.normal * player.scale.x;
+    Vec3f lineEnd = player.position - plane.normal * player.scale.x;
+
+    auto collision = getLinePlaneCollision(lineStart, lineEnd, plane);
+
+    if (collision.hit) {
+      // @temporary
+      platform.color = Vec3f(0.3f, 1.f, 0.3f);
+      commit(platform);
+
+      return collision;
     }
-
-    if (player.position.z + player.scale.z < position.z - scale.z || player.position.z - player.scale.z > position.z + scale.z) {
-      continue;
-    }
-
-    if (player.position.y + player.scale.y < position.y - scale.y || player.position.y - player.scale.y > position.y + scale.y) {
-      continue;
-    }
-
-    // @todo return a pointer to a collision volume stored in game state
-    auto* collision = new CollisionVolume();
-
-    collision->corner1 = platform.position + platform.scale;
-    collision->corner2 = platform.position - platform.scale;
-
-    return collision;
   }
 
-  return nullptr;
+  return Collision();
 }
 
 internal void handleCollisions(GmContext* context, GameState& state) {
   auto& player = getPlayer();
-  auto* collision = getCollision(context, state);
+  auto collision = getPlayerCollision(context, state);
 
-  if (collision != nullptr) {
-    float fallDelta = state.previousPlayerPosition.y - player.position.y;
-    auto& corner1 = collision->corner1;
-    auto& corner2 = collision->corner2;
+  if (collision.hit) {
+    Vec3f movementDelta = (player.position - state.previousPlayerPosition) * collision.plane.normal;
 
-    player.position.y = corner1.y + player.scale.y;
+    player.position = collision.point + collision.plane.normal * player.scale.x;
 
-    if (state.previousPlayerPosition.y > corner1.y && fallDelta > 1.f) {
+    if (movementDelta.magnitude() > 1.f) {
+      // @todo reflect velocity vector along the collision plane normal
       state.velocity.y *= -0.2f;
     } else {
       state.velocity.y = 0.f;
     }
-
-    // @temporary
-    delete collision;
   }
 }
 
