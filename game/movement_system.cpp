@@ -120,6 +120,11 @@ internal void handleCollisions(GmContext* context, GameState& state) {
     if (movementDelta.magnitude() > 1.f) {
       // @todo reflect velocity vector along the collision plane normal
       state.velocity.y *= -0.2f;
+
+      // @temporary
+      // @todo only do this if the collision plane normal is sufficiently vertical
+      state.velocity.x *= 0.5f;
+      state.velocity.z *= 0.5f;
     } else {
       state.velocity.y = 0.f;
     }
@@ -161,7 +166,7 @@ namespace MovementSystem {
       state.velocity += left.invert() * rate;
     }
 
-    auto moving = state.velocity != initialVelocity;
+    state.isPlayerMovingThisFrame = state.velocity != initialVelocity;
 
     if (input.isKeyHeld(Key::SPACE) && state.velocity.y == 0.f) {
       state.velocity.y = 500.f;
@@ -181,7 +186,7 @@ namespace MovementSystem {
     // @todo dampen velocity more robustly
     const float frictionCoefficient = 0.9f;
 
-    if (state.velocity.y == 0.f) {
+    if (state.velocity.y == 0.f && !state.isPlayerMovingThisFrame) {
       state.velocity.x *= frictionCoefficient;
       state.velocity.z *= frictionCoefficient;
     }

@@ -12,6 +12,7 @@ struct GameState {
   Gamma::ThirdPersonCamera camera3p;
   Gamma::Vec3f velocity;
   Gamma::Vec3f previousPlayerPosition;
+  bool isPlayerMovingThisFrame = false;
 
   // @todo
   std::vector<CollisionVolume> collisions;

@@ -55,7 +55,7 @@ internal std::vector<Platform> platforms = {
     Vec3f(0.2f, 0.3f, 1.f)
   },
   {
-    Vec3f(-150.f, 0.f, 300.f),
+    Vec3f(150.f, 0.f, 300.f),
     Vec3f(50.f, 300.f, 200.f),
     Vec3f(1.f, 0.5, 0.2f)
   },
@@ -98,13 +98,9 @@ internal void initializeGameScene(GmContext* context, GameState& state) {
 }
 
 internal void handleInput(GmContext* context, GameState& state, float dt) {
-  auto initialVelocity = state.velocity;
-
   MovementSystem::handlePlayerMovementInput(context, state, dt);
 
-  auto moving = initialVelocity != state.velocity;
-
-  if (moving && state.camera3p.radius < 130.f) {
+  if (state.isPlayerMovingThisFrame && state.camera3p.radius < 130.f) {
     state.camera3p.radius += 100.f * dt;
   }
 }
@@ -119,6 +115,9 @@ void initializeGame(GmContext* context, GameState& state) {
 }
 
 void updateGame(GmContext* context, GameState& state, float dt) {
+  // @todo beginFrame()/startFrame()/initializeFrame()/etc.
+  state.isPlayerMovingThisFrame = false;
+
   handleInput(context, state, dt);
 
   MovementSystem::handlePlayerMovementPhysics(context, state, dt);
