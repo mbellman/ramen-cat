@@ -61,7 +61,9 @@ internal void handleCollisions(GmContext* context, GameState& state) {
         state.lastSolidGroundPosition = player.position;
         state.lastTimeOnSolidGround = Gm_GetMicroseconds();
       } else {
-        state.velocity = Vec3f::reflect(state.velocity, collision.plane.normal) * 0.5f;
+        Vec3f friction = state.velocity.y == 0.f ? Vec3f(0.5f) : Vec3f(0.8f, 1.f, 0.8f);
+
+        state.velocity = Vec3f::reflect(state.velocity, collision.plane.normal) * friction;
       }
     }
   }
