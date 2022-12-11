@@ -59,19 +59,17 @@ internal Collision getPlayerCollision(GmContext* context, GameState& state) {
   return Collision();
 }
 
-internal void handleCollisions(GmContext* context, GameState& state) {
+internal void handleCollisions(GmContext* context, GameState& state, float dt) {
   auto& player = getPlayer();
   auto collision = getPlayerCollision(context, state);
 
   if (collision.hit) {
-    Vec3f normalAlignedMovementDelta = (player.position - state.previousPlayerPosition) * collision.plane.normal;
-
     player.position = collision.point + collision.plane.normal * player.scale.x;
 
-    if (normalAlignedMovementDelta.magnitude() > 1.f) {
-      state.velocity = Vec3f::reflect(state.velocity, collision.plane.normal) * 0.5f;
-    } else {
+    if (Gm_Absf(state.velocity.y / dt) < 1000.f) {
       state.velocity.y = 0.f;
+    } else {
+      state.velocity = Vec3f::reflect(state.velocity, collision.plane.normal) * 0.5f;
     }
   }
 }
@@ -126,14 +124,13 @@ namespace MovementSystem {
     state.velocity.y -= gravity;
     player.position += state.velocity * dt;
 
-    handleCollisions(context, state);
-
-    // @todo dampen velocity more robustly
-    const float frictionCoefficient = 0.9f;
+    handleCollisions(context, state, dt);
 
     if (state.velocity.y == 0.f && !state.isPlayerMovingThisFrame) {
-      state.velocity.x *= frictionCoefficient;
-      state.velocity.z *= frictionCoefficient;
+      const float friction = 5.f;
+
+      state.velocity.x = Gm_Lerpf(state.velocity.x, 0.f, friction * dt);
+      state.velocity.z = Gm_Lerpf(state.velocity.z, 0.f, friction * dt);
     }
 
     state.previousPlayerPosition = player.position;
