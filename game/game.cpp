@@ -86,16 +86,19 @@ internal void initializeGameScene(GmContext* context, GameState& state) {
     platform.position.y -= 10.f;
     platform.scale = scale;
     platform.color = color;
+    platform.rotation.z = 0.3f;
 
     commit(platform);
+
+    auto rotation = Matrix4f::rotation(platform.rotation);
 
     for (auto& points : platformPlanePoints) {
       Plane plane;
 
-      plane.p1 = platform.position + platform.scale * points[0];
-      plane.p2 = platform.position + platform.scale * points[1];
-      plane.p3 = platform.position + platform.scale * points[2];
-      plane.p4 = platform.position + platform.scale * points[3];
+      plane.p1 = platform.position + (rotation * (platform.scale * points[0])).toVec3f();
+      plane.p2 = platform.position + (rotation * (platform.scale * points[1])).toVec3f();
+      plane.p3 = platform.position + (rotation * (platform.scale * points[2])).toVec3f();
+      plane.p4 = platform.position + (rotation * (platform.scale * points[3])).toVec3f();
 
       plane.normal = Vec3f::cross(plane.p3 - plane.p1, plane.p2 - plane.p1).unit();
 

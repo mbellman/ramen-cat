@@ -26,7 +26,7 @@ internal Collision getLinePlaneCollision(const Vec3f& lineStart, const Vec3f& li
     Vec3f intersection = lineStart + line * t;
 
     if (
-      // @todo this does not take plane rotation into account
+      // @todo this does not take multi-axis rotation into account
       isInBetween(intersection.x, plane.p1.x, plane.p4.x) &&
       isInBetween(intersection.y, plane.p1.y, plane.p4.y) &&
       isInBetween(intersection.z, plane.p1.z, plane.p4.z) &&
@@ -56,7 +56,7 @@ internal void handleCollisions(GmContext* context, GameState& state) {
 
       player.position = collision.point + collision.plane.normal * player.scale.x;
 
-      if (uDotN > 0.8f) {
+      if (uDotN  > 0.8f) {
         // If the collision plane normal points sufficiently upward,
         // treat it as a solid ground collision and stop falling
         state.velocity.y = 0.f;
@@ -70,7 +70,7 @@ internal void handleCollisions(GmContext* context, GameState& state) {
         state.velocity = Vec3f::reflect(state.velocity, collision.plane.normal) * friction;
       }
 
-      if (uDotN < 0.2f) {
+      if (uDotN  < 0.2f) {
         state.lastWallBumpTime = state.frameStartTime;
       }
     }
