@@ -119,11 +119,30 @@ internal void initializeGameScene(GmContext* context, GameState& state) {
   state.previousPlayerPosition = player.position;
 }
 
+internal void beginFrame(GameState& state) {
+  state.frameStartTime = Gm_GetMicroseconds();
+  state.isPlayerMovingThisFrame = false;
+}
+
 internal void handleInput(GmContext* context, GameState& state, float dt) {
   MovementSystem::handlePlayerMovementInput(context, state, dt);
 
   if (state.isPlayerMovingThisFrame && state.camera3p.radius < 130.f) {
     state.camera3p.radius += 100.f * dt;
+  }
+}
+
+internal void checkAndResetPositionOnFall(GmContext* context, GameState& state) {
+  auto& player = getPlayer();
+
+  if (
+    state.frameStartTime - state.lastTimeOnSolidGround > 2000000 &&
+    state.lastSolidGroundPosition.y - player.position.y > 1000.f
+  ) {
+    state.velocity = Vec3f(0.f);
+    state.lastTimeOnSolidGround = state.frameStartTime;
+
+    player.position = state.lastSolidGroundPosition;
   }
 }
 
@@ -140,22 +159,11 @@ void initializeGame(GmContext* context, GameState& state) {
 }
 
 void updateGame(GmContext* context, GameState& state, float dt) {
-  // @todo beginFrame()/startFrame()/initializeFrame()/etc.
-  state.isPlayerMovingThisFrame = false;
-  state.frameStartTime = Gm_GetMicroseconds();
-
+  beginFrame(state);
   handleInput(context, state, dt);
 
   MovementSystem::handlePlayerMovementPhysics(context, state, dt);
   CameraSystem::handleGameCamera(context, state, dt);
 
-  if (
-    state.frameStartTime - state.lastTimeOnSolidGround > 2000000 &&
-    state.lastSolidGroundPosition.y - getPlayer().position.y > 1000.f
-  ) {
-    state.velocity = Vec3f(0.f);
-    state.lastTimeOnSolidGround = state.frameStartTime;
-
-    getPlayer().position = state.lastSolidGroundPosition;
-  }
+  checkAndResetPositionOnFall(context, state);
 }
