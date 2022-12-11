@@ -70,7 +70,9 @@ internal std::vector<Platform> platforms = {
 // @temporary
 internal std::vector<std::vector<Vec3f>> platformPlanePoints = {
   // Top
-  { Vec3f(-1.f, 1.f, -1.f ), Vec3f(1.f, 1.f, -1.f), Vec3f(-1.f, 1.f, 1.f), Vec3f(1.f, 1.f, 1.f) }
+  { Vec3f(-1.f, 1.f, -1.f ), Vec3f(1.f, 1.f, -1.f), Vec3f(-1.f, 1.f, 1.f), Vec3f(1.f, 1.f, 1.f) },
+  // Left
+  { Vec3f(-1.f, -1.f, -1.f), Vec3f(-1.f, 1.f, -1.f), Vec3f(-1.f, -1.f, 1.f), Vec3f(-1.f, 1.f, 1.f) }
 };
 
 internal void initializeGameScene(GmContext* context, GameState& state) {

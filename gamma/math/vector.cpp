@@ -99,6 +99,10 @@ namespace Gamma {
     return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
   }
 
+  Vec3f Vec3f::reflect(const Vec3f& v1, const Vec3f& v2) {
+    return v1 - v2 * (Vec3f::dot(v1, v2) * 2.f);
+  }
+
   Vec3f Vec3f::gl() const {
     return *this * Vec3f(1.0f, 1.0f, -1.0f);
   }

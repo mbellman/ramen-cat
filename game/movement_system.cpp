@@ -64,18 +64,12 @@ internal void handleCollisions(GmContext* context, GameState& state) {
   auto collision = getPlayerCollision(context, state);
 
   if (collision.hit) {
-    Vec3f movementDelta = (player.position - state.previousPlayerPosition) * collision.plane.normal;
+    Vec3f normalAlignedMovementDelta = (player.position - state.previousPlayerPosition) * collision.plane.normal;
 
     player.position = collision.point + collision.plane.normal * player.scale.x;
 
-    if (movementDelta.magnitude() > 1.f) {
-      // @todo reflect velocity vector along the collision plane normal
-      state.velocity.y *= -0.2f;
-
-      // @temporary
-      // @todo only do this if the collision plane normal is sufficiently vertical
-      state.velocity.x *= 0.5f;
-      state.velocity.z *= 0.5f;
+    if (normalAlignedMovementDelta.magnitude() > 1.f) {
+      state.velocity = Vec3f::reflect(state.velocity, collision.plane.normal) * 0.5f;
     } else {
       state.velocity.y = 0.f;
     }
