@@ -43,7 +43,7 @@ internal Collision getLinePlaneCollision(const Vec3f& lineStart, const Vec3f& li
   return collision;
 }
 
-internal Collision getPlayerCollision(GmContext* context, GameState& state) {
+internal void handleCollisions(GmContext* context, GameState& state) {
   auto& player = getPlayer();
 
   for (auto& plane : state.collisionPlanes) {
@@ -52,24 +52,17 @@ internal Collision getPlayerCollision(GmContext* context, GameState& state) {
     auto collision = getLinePlaneCollision(lineStart, lineEnd, plane);
 
     if (collision.hit) {
-      return collision;
-    }
-  }
+      player.position = collision.point + collision.plane.normal * player.scale.x;
 
-  return Collision();
-}
-
-internal void handleCollisions(GmContext* context, GameState& state, float dt) {
-  auto& player = getPlayer();
-  auto collision = getPlayerCollision(context, state);
-
-  if (collision.hit) {
-    player.position = collision.point + collision.plane.normal * player.scale.x;
-
-    if (Gm_Absf(state.velocity.y / dt) < 1000.f) {
-      state.velocity.y = 0.f;
-    } else {
-      state.velocity = Vec3f::reflect(state.velocity, collision.plane.normal) * 0.5f;
+      if (Vec3f::dot(collision.plane.normal, Vec3f(0, 1.f, 0)) > 0.8f) {
+        // If the collision plane normal points sufficiently upward,
+        // treat it as a solid ground collision and stop falling
+        state.velocity.y = 0.f;
+        state.lastSolidGroundPosition = player.position;
+        state.lastTimeOnSolidGround = Gm_GetMicroseconds();
+      } else {
+        state.velocity = Vec3f::reflect(state.velocity, collision.plane.normal) * 0.5f;
+      }
     }
   }
 }
@@ -124,7 +117,7 @@ namespace MovementSystem {
     state.velocity.y -= gravity;
     player.position += state.velocity * dt;
 
-    handleCollisions(context, state, dt);
+    handleCollisions(context, state);
 
     if (state.velocity.y == 0.f && !state.isPlayerMovingThisFrame) {
       const float friction = 5.f;

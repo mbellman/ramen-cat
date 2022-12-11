@@ -11,6 +11,8 @@ struct GameState {
   Gamma::ThirdPersonCamera camera3p;
   Gamma::Vec3f velocity;
   Gamma::Vec3f previousPlayerPosition;
+  Gamma::Vec3f lastSolidGroundPosition;
+  u64 lastTimeOnSolidGround = 0;
   bool isPlayerMovingThisFrame = false;
 
   std::vector<Plane> collisionPlanes;

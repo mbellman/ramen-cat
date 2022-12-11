@@ -134,6 +134,8 @@ void initializeGame(GmContext* context, GameState& state) {
   initializeGameScene(context, state);
 
   CameraSystem::initializeGameCamera(context, state);
+
+  state.lastTimeOnSolidGround = Gm_GetMicroseconds();
 }
 
 void updateGame(GmContext* context, GameState& state, float dt) {
@@ -144,4 +146,11 @@ void updateGame(GmContext* context, GameState& state, float dt) {
 
   MovementSystem::handlePlayerMovementPhysics(context, state, dt);
   CameraSystem::handleGameCamera(context, state, dt);
+
+  if (Gm_GetMicroseconds() - state.lastTimeOnSolidGround > 2000000) {
+    state.velocity = Vec3f(0.f);
+    state.lastTimeOnSolidGround = Gm_GetMicroseconds();
+
+    getPlayer().position = state.lastSolidGroundPosition;
+  }
 }
