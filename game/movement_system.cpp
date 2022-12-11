@@ -43,7 +43,32 @@ internal Collision getLinePlaneCollision(const Vec3f& lineStart, const Vec3f& li
   return collision;
 }
 
-internal void handleCollisions(GmContext* context, GameState& state) {
+internal void resolveSingleCollision(GmContext* context, GameState& state, const Collision& collision) {
+  auto& player = getPlayer();
+  float uDotN = Vec3f::dot(Vec3f(0, 1.f, 0), collision.plane.normal);
+
+  player.position = collision.point + collision.plane.normal * player.scale.x;
+
+  if (uDotN  > 0.8f) {
+    // If the collision plane normal points sufficiently upward,
+    // treat it as a solid ground collision and stop falling
+    state.velocity.y = 0.f;
+    state.lastSolidGroundPosition = player.position;
+    state.lastTimeOnSolidGround = state.frameStartTime;
+  } else {
+    // Adjust bounce friction based on whether we're falling,
+    // or walking solid ground (e.g. running into a wall)
+    Vec3f friction = state.velocity.y == 0.f ? Vec3f(0.5f) : Vec3f(0.8f, 1.f, 0.8f);
+
+    state.velocity = Vec3f::reflect(state.velocity, collision.plane.normal) * friction;
+  }
+
+  if (uDotN  < 0.2f) {
+    state.lastWallBumpTime = state.frameStartTime;
+  }
+}
+
+internal void resolveAllCollisions(GmContext* context, GameState& state) {
   auto& player = getPlayer();
 
   for (auto& plane : state.collisionPlanes) {
@@ -52,27 +77,7 @@ internal void handleCollisions(GmContext* context, GameState& state) {
     auto collision = getLinePlaneCollision(lineStart, lineEnd, plane);
 
     if (collision.hit) {
-      float uDotN = Vec3f::dot(Vec3f(0, 1.f, 0), collision.plane.normal);
-
-      player.position = collision.point + collision.plane.normal * player.scale.x;
-
-      if (uDotN  > 0.8f) {
-        // If the collision plane normal points sufficiently upward,
-        // treat it as a solid ground collision and stop falling
-        state.velocity.y = 0.f;
-        state.lastSolidGroundPosition = player.position;
-        state.lastTimeOnSolidGround = state.frameStartTime;
-      } else {
-        // Adjust bounce friction based on whether we're falling,
-        // or walking solid ground (e.g. running into a wall)
-        Vec3f friction = state.velocity.y == 0.f ? Vec3f(0.5f) : Vec3f(0.8f, 1.f, 0.8f);
-
-        state.velocity = Vec3f::reflect(state.velocity, collision.plane.normal) * friction;
-      }
-
-      if (uDotN  < 0.2f) {
-        state.lastWallBumpTime = state.frameStartTime;
-      }
+      resolveSingleCollision(context, state, collision);
     }
   }
 }
@@ -116,7 +121,7 @@ namespace MovementSystem {
 
     if (input.isKeyHeld(Key::SPACE) && (
       state.velocity.y == 0.f ||
-      state.frameStartTime - state.lastWallBumpTime < 150000
+      state.frameStartTime - state.lastWallBumpTime < 200000
     )) {
       state.velocity.y = 500.f;
     }
@@ -130,7 +135,7 @@ namespace MovementSystem {
     state.velocity.y -= gravity;
     player.position += state.velocity * dt;
 
-    handleCollisions(context, state);
+    resolveAllCollisions(context, state);
 
     if (state.velocity.y == 0.f && !state.isPlayerMovingThisFrame) {
       const float slowdown = 5.f;
