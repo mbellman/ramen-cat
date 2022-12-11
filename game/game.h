@@ -12,6 +12,8 @@ struct GameState {
   Gamma::Vec3f velocity;
   Gamma::Vec3f previousPlayerPosition;
   Gamma::Vec3f lastSolidGroundPosition;
+  u64 frameStartTime = 0;
+  u64 lastWallBumpTime = 0;
   u64 lastTimeOnSolidGround = 0;
   bool isPlayerMovingThisFrame = false;
 

@@ -51,18 +51,18 @@ struct Platform {
 // @temporary
 internal std::vector<Platform> platforms = {
   {
-    Vec3f(0.f),
-    Vec3f(100.f, 50.f, 200.f),
+    Vec3f(-100.f, 0, 0),
+    Vec3f(250.f, 50.f, 200.f),
     Vec3f(0.2f, 0.3f, 1.f)
   },
   {
     Vec3f(150.f, 0.f, 300.f),
-    Vec3f(50.f, 300.f, 200.f),
+    Vec3f(50.f, 300.f, 1000.f),
     Vec3f(1.f, 0.5, 0.2f)
   },
   {
-    Vec3f(50.f, 0.f, 700.f),
-    Vec3f(100.f, 50.f, 250.f),
+    Vec3f(-50.f, 0.f, 1500.f),
+    Vec3f(200.f, 50.f, 250.f),
     Vec3f(0.5f, 1.f, 0.5f)
   }
 };
@@ -136,20 +136,25 @@ void initializeGame(GmContext* context, GameState& state) {
   CameraSystem::initializeGameCamera(context, state);
 
   state.lastTimeOnSolidGround = Gm_GetMicroseconds();
+  state.lastWallBumpTime = Gm_GetMicroseconds();
 }
 
 void updateGame(GmContext* context, GameState& state, float dt) {
   // @todo beginFrame()/startFrame()/initializeFrame()/etc.
   state.isPlayerMovingThisFrame = false;
+  state.frameStartTime = Gm_GetMicroseconds();
 
   handleInput(context, state, dt);
 
   MovementSystem::handlePlayerMovementPhysics(context, state, dt);
   CameraSystem::handleGameCamera(context, state, dt);
 
-  if (Gm_GetMicroseconds() - state.lastTimeOnSolidGround > 2000000) {
+  if (
+    state.frameStartTime - state.lastTimeOnSolidGround > 2000000 &&
+    state.lastSolidGroundPosition.y - getPlayer().position.y > 1000.f
+  ) {
     state.velocity = Vec3f(0.f);
-    state.lastTimeOnSolidGround = Gm_GetMicroseconds();
+    state.lastTimeOnSolidGround = state.frameStartTime;
 
     getPlayer().position = state.lastSolidGroundPosition;
   }

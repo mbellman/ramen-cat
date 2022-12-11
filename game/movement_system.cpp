@@ -52,18 +52,26 @@ internal void handleCollisions(GmContext* context, GameState& state) {
     auto collision = getLinePlaneCollision(lineStart, lineEnd, plane);
 
     if (collision.hit) {
+      float uDotN = Vec3f::dot(Vec3f(0, 1.f, 0), collision.plane.normal);
+
       player.position = collision.point + collision.plane.normal * player.scale.x;
 
-      if (Vec3f::dot(collision.plane.normal, Vec3f(0, 1.f, 0)) > 0.8f) {
+      if (uDotN > 0.8f) {
         // If the collision plane normal points sufficiently upward,
         // treat it as a solid ground collision and stop falling
         state.velocity.y = 0.f;
         state.lastSolidGroundPosition = player.position;
-        state.lastTimeOnSolidGround = Gm_GetMicroseconds();
+        state.lastTimeOnSolidGround = state.frameStartTime;
       } else {
+        // Adjust bounce friction based on whether we're falling,
+        // or walking solid ground (e.g. running into a wall)
         Vec3f friction = state.velocity.y == 0.f ? Vec3f(0.5f) : Vec3f(0.8f, 1.f, 0.8f);
 
         state.velocity = Vec3f::reflect(state.velocity, collision.plane.normal) * friction;
+      }
+
+      if (uDotN < 0.2f) {
+        state.lastWallBumpTime = state.frameStartTime;
       }
     }
   }
@@ -106,7 +114,10 @@ namespace MovementSystem {
 
     state.isPlayerMovingThisFrame = state.velocity != initialVelocity;
 
-    if (input.isKeyHeld(Key::SPACE) && state.velocity.y == 0.f) {
+    if (input.isKeyHeld(Key::SPACE) && (
+      state.velocity.y == 0.f ||
+      state.frameStartTime - state.lastWallBumpTime < 150000
+    )) {
       state.velocity.y = 500.f;
     }
   }
@@ -122,10 +133,10 @@ namespace MovementSystem {
     handleCollisions(context, state);
 
     if (state.velocity.y == 0.f && !state.isPlayerMovingThisFrame) {
-      const float friction = 5.f;
+      const float slowdown = 5.f;
 
-      state.velocity.x = Gm_Lerpf(state.velocity.x, 0.f, friction * dt);
-      state.velocity.z = Gm_Lerpf(state.velocity.z, 0.f, friction * dt);
+      state.velocity.x = Gm_Lerpf(state.velocity.x, 0.f, slowdown * dt);
+      state.velocity.z = Gm_Lerpf(state.velocity.z, 0.f, slowdown * dt);
     }
 
     state.previousPlayerPosition = player.position;
