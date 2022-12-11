@@ -2,10 +2,9 @@
 
 #include "Gamma.h"
 
-struct CollisionVolume {
-  Gamma::Vec3f corner1;
-  Gamma::Vec3f corner2;
-  // @todo account for rotation
+struct Plane {
+  Gamma::Vec3f p1, p2, p3, p4;
+  Gamma::Vec3f normal;
 };
 
 struct GameState {
@@ -14,8 +13,7 @@ struct GameState {
   Gamma::Vec3f previousPlayerPosition;
   bool isPlayerMovingThisFrame = false;
 
-  // @todo
-  std::vector<CollisionVolume> collisions;
+  std::vector<Plane> collisionPlanes;
 };
 
 void initializeGame(GmContext* context, GameState& state);

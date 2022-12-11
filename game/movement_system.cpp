@@ -3,11 +3,6 @@
 
 using namespace Gamma;
 
-struct Plane {
-  Vec3f p1, p2, p3, p4;
-  Vec3f normal;
-};
-
 struct Collision {
   Plane plane;
   Vec3f point;
@@ -31,6 +26,7 @@ internal Collision getLinePlaneCollision(const Vec3f& lineStart, const Vec3f& li
     Vec3f intersection = lineStart + line * t;
 
     if (
+      // @todo this does not take plane rotation into account
       isInBetween(intersection.x, plane.p1.x, plane.p4.x) &&
       isInBetween(intersection.y, plane.p1.y, plane.p4.y) &&
       isInBetween(intersection.z, plane.p1.z, plane.p4.z) &&
@@ -49,58 +45,13 @@ internal Collision getLinePlaneCollision(const Vec3f& lineStart, const Vec3f& li
 
 internal Collision getPlayerCollision(GmContext* context, GameState& state) {
   auto& player = getPlayer();
-  
-  // @temporary
-  for (auto& platform : objects("platform")) {
-    platform.color = Vec3f(1.f);
 
-    commit(platform);
-  }
-
-  // @todo rewrite to check against game state collision planes
-  for (auto& platform : objects("platform")) {
-    auto& position = platform.position;
-    auto& scale = platform.scale;
-
-    // @todo cleanup
-    Plane plane;
-
-    plane.p1 = Vec3f(
-      platform.position.x - platform.scale.x,
-      platform.position.y + platform.scale.y,
-      platform.position.z - platform.scale.z
-    );
-
-    plane.p2 = Vec3f(
-      platform.position.x + platform.scale.x,
-      platform.position.y + platform.scale.y,
-      platform.position.z - platform.scale.z
-    );
-
-    plane.p3 = Vec3f(
-      platform.position.x - platform.scale.x,
-      platform.position.y + platform.scale.y,
-      platform.position.z + platform.scale.z
-    );
-
-    plane.p4 = Vec3f(
-      platform.position.x + platform.scale.x,
-      platform.position.y + platform.scale.y,
-      platform.position.z + platform.scale.z
-    );
-
-    plane.normal = Vec3f::cross(plane.p3 - plane.p1, plane.p2 - plane.p1).unit();
-
+  for (auto& plane : state.collisionPlanes) {
     Vec3f lineStart = player.position + plane.normal * player.scale.x;
     Vec3f lineEnd = player.position - plane.normal * player.scale.x;
-
     auto collision = getLinePlaneCollision(lineStart, lineEnd, plane);
 
     if (collision.hit) {
-      // @temporary
-      platform.color = Vec3f(0.3f, 1.f, 0.3f);
-      commit(platform);
-
       return collision;
     }
   }
@@ -157,7 +108,7 @@ namespace MovementSystem {
     if (input.isKeyHeld(Key::S)) {
       state.velocity += forward.invert() * rate;
     }
-    
+
     if (input.isKeyHeld(Key::A)) {
       state.velocity += left * rate;
     }

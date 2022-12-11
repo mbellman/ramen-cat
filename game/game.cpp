@@ -48,6 +48,7 @@ struct Platform {
   Vec3f color;
 };
 
+// @temporary
 internal std::vector<Platform> platforms = {
   {
     Vec3f(0.f),
@@ -66,6 +67,12 @@ internal std::vector<Platform> platforms = {
   }
 };
 
+// @temporary
+internal std::vector<std::vector<Vec3f>> platformPlanePoints = {
+  // Top
+  { Vec3f(-1.f, 1.f, -1.f ), Vec3f(1.f, 1.f, -1.f), Vec3f(-1.f, 1.f, 1.f), Vec3f(1.f, 1.f, 1.f) }
+};
+
 internal void initializeGameScene(GmContext* context, GameState& state) {
   addMesh("platform", (u16)platforms.size(), Mesh::Cube());
   addMesh("sphere", 1, Mesh::Sphere(18));
@@ -79,6 +86,19 @@ internal void initializeGameScene(GmContext* context, GameState& state) {
     platform.color = color;
 
     commit(platform);
+
+    for (auto& points : platformPlanePoints) {
+      Plane plane;
+
+      plane.p1 = platform.position + platform.scale * points[0];
+      plane.p2 = platform.position + platform.scale * points[1];
+      plane.p3 = platform.position + platform.scale * points[2];
+      plane.p4 = platform.position + platform.scale * points[3];
+
+      plane.normal = Vec3f::cross(plane.p3 - plane.p1, plane.p2 - plane.p1).unit();
+
+      state.collisionPlanes.push_back(plane);
+    }
   }
 
   auto& player = createObjectFrom("sphere");
