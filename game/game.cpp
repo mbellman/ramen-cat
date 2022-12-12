@@ -86,6 +86,8 @@ internal void initializeGameScene(GmContext* context, GameState& state) {
     platform.position.y -= 10.f;
     platform.scale = scale;
     platform.color = color;
+
+    // @temporary
     platform.rotation.z = 0.3f;
 
     commit(platform);
@@ -101,6 +103,7 @@ internal void initializeGameScene(GmContext* context, GameState& state) {
       plane.p4 = platform.position + (rotation * (platform.scale * points[3])).toVec3f();
 
       plane.normal = Vec3f::cross(plane.p3 - plane.p1, plane.p2 - plane.p1).unit();
+      plane.nDotU = Vec3f::dot(plane.normal, Vec3f(0, 1.f, 0));
 
       state.collisionPlanes.push_back(plane);
     }

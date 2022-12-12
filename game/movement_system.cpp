@@ -45,11 +45,11 @@ internal Collision getLinePlaneCollision(const Vec3f& lineStart, const Vec3f& li
 
 internal void resolveSingleCollision(GmContext* context, GameState& state, const Collision& collision) {
   auto& player = getPlayer();
-  float uDotN = Vec3f::dot(Vec3f(0, 1.f, 0), collision.plane.normal);
+  auto& plane = collision.plane;
 
-  player.position = collision.point + collision.plane.normal * player.scale.x;
+  player.position = collision.point + plane.normal * player.scale.x;
 
-  if (uDotN > 0.8f) {
+  if (plane.nDotU > 0.8f) {
     // If the collision plane normal points sufficiently upward,
     // treat it as a solid ground collision and stop falling
     state.velocity.y = 0.f;
@@ -60,10 +60,10 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
     // or walking solid ground (e.g. running into a wall)
     Vec3f friction = state.velocity.y == 0.f ? Vec3f(0.5f) : Vec3f(0.8f, 1.f, 0.8f);
 
-    state.velocity = Vec3f::reflect(state.velocity, collision.plane.normal) * friction;
+    state.velocity = Vec3f::reflect(state.velocity, plane.normal) * friction;
   }
 
-  if (uDotN < 0.2f) {
+  if (plane.nDotU < 0.2f) {
     state.lastWallBumpTime = state.frameStartTime;
   }
 }
@@ -71,6 +71,7 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
 internal void resolveAllCollisions(GmContext* context, GameState& state) {
   auto& player = getPlayer();
   float playerRadius = player.scale.x;
+  bool isFalling = state.previousPlayerPosition.y - player.position.y > 0.f;
 
   for (auto& plane : state.collisionPlanes) {
     Vec3f lineStart = player.position + plane.normal * playerRadius;
@@ -79,18 +80,12 @@ internal void resolveAllCollisions(GmContext* context, GameState& state) {
 
     if (collision.hit) {
       resolveSingleCollision(context, state, collision);
-    } else {
-      // @todo cleanup/fixes
-      Vec3f fallCheckStart = player.position;
-      Vec3f fallCheckEnd = fallCheckStart - Vec3f(0, playerRadius + 5.f, 0);
-      auto fallCollision = getLinePlaneCollision(fallCheckStart, fallCheckEnd, plane);
+    } else if (isFalling && plane.nDotU > 0.6f) {
+      Vec3f fallCollisionLineEnd = player.position - plane.normal * (playerRadius + 5.f);
+      auto fallCollision = getLinePlaneCollision(player.position, fallCollisionLineEnd, plane);
 
       if (fallCollision.hit) {
-        float moveDistance = (player.position - state.previousPlayerPosition).magnitude();
-        Vec3f target = fallCollision.point + plane.normal * playerRadius;
-        Vec3f adjustedMove = (target - state.previousPlayerPosition).unit() * moveDistance;
-
-        player.position = state.previousPlayerPosition + adjustedMove;
+        player.position = fallCollision.point + plane.normal * playerRadius;
 
         state.velocity.y = 0.f;
         state.lastSolidGroundPosition = player.position;
