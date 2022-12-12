@@ -42,7 +42,7 @@ internal void initializeInputHandlers(GmContext* context, GameState& state) {
 
   input.on<Key>("keystart", [&state, context](Key key) {
     if (key == Key::SPACE) {
-      state.lastJumpInputTime = Gm_GetMicroseconds();
+      state.lastJumpInputTime = getRunningTime();
     }
   });
 }
@@ -149,9 +149,6 @@ void initializeGame(GmContext* context, GameState& state) {
   initializeGameScene(context, state);
 
   CameraSystem::initializeGameCamera(context, state);
-
-  state.lastTimeOnSolidGround = Gm_GetMicroseconds();
-  state.lastWallBumpTime = Gm_GetMicroseconds();
 }
 
 void updateGame(GmContext* context, GameState& state, float dt) {
@@ -159,7 +156,7 @@ void updateGame(GmContext* context, GameState& state, float dt) {
 
   // Track start-of-frame variables
   {
-    state.frameStartTime = Gm_GetMicroseconds();
+    state.frameStartTime = getRunningTime();
     state.isPlayerMovingThisFrame = false;
   }
 
@@ -175,10 +172,10 @@ void updateGame(GmContext* context, GameState& state, float dt) {
   MovementSystem::handlePlayerMovementPhysics(context, state, dt);
   CameraSystem::handleGameCamera(context, state, dt);
 
-  // Reset the player position after long falls
+  // Reset the player position after falling longer than 2 seconds
   {
     if (
-      state.frameStartTime - state.lastTimeOnSolidGround > 2000000 &&
+      state.frameStartTime - state.lastTimeOnSolidGround > 2.f &&
       state.lastSolidGroundPosition.y - player.position.y > 1000.f
     ) {
       state.velocity = Vec3f(0.f);

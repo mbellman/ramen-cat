@@ -148,13 +148,13 @@ namespace MovementSystem {
 
     // Handle jump actions
     {
-      u64 wallKickTimeDelta = state.lastJumpInputTime - state.lastWallBumpTime;
+      float wallKickTimeDelta = state.lastJumpInputTime - state.lastWallBumpTime;
 
       if (input.isKeyHeld(Key::SPACE) && (
         // Allow jumping if on solid ground (@todo use state.isOnSolidGround?)
         state.velocity.y == 0.f ||
         // Allow wall kicks
-        wallKickTimeDelta > 0 && wallKickTimeDelta < 200000
+        wallKickTimeDelta > 0 && wallKickTimeDelta < 0.2f
       )) {
         state.velocity.y = 500.f;
       }
