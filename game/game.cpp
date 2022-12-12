@@ -136,33 +136,6 @@ internal void initializeGameScene(GmContext* context, GameState& state) {
   state.previousPlayerPosition = player.position;
 }
 
-internal void beginFrame(GameState& state) {
-  state.frameStartTime = Gm_GetMicroseconds();
-  state.isPlayerMovingThisFrame = false;
-}
-
-internal void handleInput(GmContext* context, GameState& state, float dt) {
-  MovementSystem::handlePlayerMovementInput(context, state, dt);
-
-  if (state.isPlayerMovingThisFrame && state.camera3p.radius < 130.f) {
-    state.camera3p.radius += 100.f * dt;
-  }
-}
-
-internal void checkAndResetPositionAfterFall(GmContext* context, GameState& state) {
-  auto& player = getPlayer();
-
-  if (
-    state.frameStartTime - state.lastTimeOnSolidGround > 2000000 &&
-    state.lastSolidGroundPosition.y - player.position.y > 1000.f
-  ) {
-    state.velocity = Vec3f(0.f);
-    state.lastTimeOnSolidGround = state.frameStartTime;
-
-    player.position = state.lastSolidGroundPosition;
-  }
-}
-
 void initializeGame(GmContext* context, GameState& state) {
   Gm_EnableFlags(GammaFlags::VSYNC);
 
@@ -176,13 +149,38 @@ void initializeGame(GmContext* context, GameState& state) {
 }
 
 void updateGame(GmContext* context, GameState& state, float dt) {
-  beginFrame(state);
-  handleInput(context, state, dt);
+  auto& player = getPlayer();
+
+  // Track start-of-frame variables
+  {
+    state.frameStartTime = Gm_GetMicroseconds();
+    state.isPlayerMovingThisFrame = false;
+  }
+
+  // Handle input
+  {
+    MovementSystem::handlePlayerMovementInput(context, state, dt);
+
+    if (state.isPlayerMovingThisFrame && state.camera3p.radius < 130.f) {
+      state.camera3p.radius += 100.f * dt;
+    }
+  }
 
   MovementSystem::handlePlayerMovementPhysics(context, state, dt);
   CameraSystem::handleGameCamera(context, state, dt);
 
-  checkAndResetPositionAfterFall(context, state);
+  // Reset the player position after long falls
+  {
+    if (
+      state.frameStartTime - state.lastTimeOnSolidGround > 2000000 &&
+      state.lastSolidGroundPosition.y - player.position.y > 1000.f
+    ) {
+      state.velocity = Vec3f(0.f);
+      state.lastTimeOnSolidGround = state.frameStartTime;
+
+      player.position = state.lastSolidGroundPosition;
+    }
+  }
 
   // Track end-of-frame variables
   {
@@ -192,6 +190,6 @@ void updateGame(GmContext* context, GameState& state, float dt) {
       state.isOnSolidGround = false;
     }
 
-    state.previousPlayerPosition = getPlayer().position;
+    state.previousPlayerPosition = player.position;
   }
 }
