@@ -70,10 +70,21 @@ internal std::vector<Platform> platforms = {
 // @temporary
 internal std::vector<std::vector<Vec3f>> platformPlanePoints = {
   // Top
-  { Vec3f(-1.f, 1.f, -1.f ), Vec3f(1.f, 1.f, -1.f), Vec3f(-1.f, 1.f, 1.f), Vec3f(1.f, 1.f, 1.f) },
+  { Vec3f(-1.f, 1.f, -1.f ), Vec3f(-1.f, 1.f, 1.f), Vec3f(1.f, 1.f, 1.f), Vec3f(1.f, 1.f, -1.f) },
   // Left
-  { Vec3f(-1.f, -1.f, -1.f), Vec3f(-1.f, 1.f, -1.f), Vec3f(-1.f, -1.f, 1.f), Vec3f(-1.f, 1.f, 1.f) }
+  { Vec3f(-1.f, -1.f, -1.f), Vec3f(-1.f, -1.f, 1.f), Vec3f(-1.f, 1.f, 1.f), Vec3f(-1.f, 1.f, -1.f) }
 };
+
+internal void setupCollisionPlane(Plane& plane) {
+  plane.normal = Vec3f::cross(plane.p2 - plane.p1, plane.p3 - plane.p2).unit();
+
+  plane.t1 = Vec3f::cross(plane.normal, plane.p2 - plane.p1);
+  plane.t2 = Vec3f::cross(plane.normal, plane.p3 - plane.p2);
+  plane.t3 = Vec3f::cross(plane.normal, plane.p4 - plane.p3);
+  plane.t4 = Vec3f::cross(plane.normal, plane.p1 - plane.p4);
+
+  plane.nDotU = Vec3f::dot(plane.normal, Vec3f(0, 1.f, 0));
+}
 
 internal void initializeGameScene(GmContext* context, GameState& state) {
   addMesh("platform", (u16)platforms.size(), Mesh::Cube());
@@ -88,6 +99,7 @@ internal void initializeGameScene(GmContext* context, GameState& state) {
     platform.color = color;
 
     // @temporary
+    platform.rotation.y = 0.3f;
     platform.rotation.z = 0.3f;
 
     commit(platform);
@@ -102,8 +114,7 @@ internal void initializeGameScene(GmContext* context, GameState& state) {
       plane.p3 = platform.position + (rotation * (platform.scale * points[2])).toVec3f();
       plane.p4 = platform.position + (rotation * (platform.scale * points[3])).toVec3f();
 
-      plane.normal = Vec3f::cross(plane.p3 - plane.p1, plane.p2 - plane.p1).unit();
-      plane.nDotU = Vec3f::dot(plane.normal, Vec3f(0, 1.f, 0));
+      setupCollisionPlane(plane);
 
       state.collisionPlanes.push_back(plane);
     }

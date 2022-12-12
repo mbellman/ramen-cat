@@ -21,21 +21,23 @@ internal Collision getLinePlaneCollision(const Vec3f& lineStart, const Vec3f& li
   Vec3f line = lineEnd - lineStart;
 
   if (Vec3f::dot(plane.normal, line) != 0.f) {
-    float d = Vec3f::dot(plane.normal, plane.p1);
-    float t = (d - Vec3f::dot(plane.normal, lineStart)) / Vec3f::dot(plane.normal, line);
-    Vec3f intersection = lineStart + line * t;
+    float nDotP = Vec3f::dot(plane.normal, plane.p1);
+    float length = (nDotP - Vec3f::dot(plane.normal, lineStart)) / Vec3f::dot(plane.normal, line);
+    Vec3f point = lineStart + line * length;
 
     if (
-      // @todo this does not take multi-axis rotation into account
-      isInBetween(intersection.x, plane.p1.x, plane.p4.x) &&
-      isInBetween(intersection.y, plane.p1.y, plane.p4.y) &&
-      isInBetween(intersection.z, plane.p1.z, plane.p4.z) &&
-      isInBetween(intersection.x, lineStart.x, lineEnd.x) &&
-      isInBetween(intersection.y, lineStart.y, lineEnd.y) &&
-      isInBetween(intersection.z, lineStart.z, lineEnd.z)
+      // If the point is on the line segment
+      isInBetween(point.x, lineStart.x, lineEnd.x) &&
+      isInBetween(point.y, lineStart.y, lineEnd.y) &&
+      isInBetween(point.z, lineStart.z, lineEnd.z) &&
+      // And the point is inside the plane area
+      Vec3f::dot(point - plane.p1, plane.t1) >= 0.f &&
+      Vec3f::dot(point - plane.p2, plane.t2) >= 0.f &&
+      Vec3f::dot(point - plane.p3, plane.t3) >= 0.f &&
+      Vec3f::dot(point - plane.p4, plane.t4) >= 0.f
     ) {
       collision.plane = plane;
-      collision.point = intersection;
+      collision.point = point;
       collision.hit = true;
     }
   }
