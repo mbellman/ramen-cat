@@ -49,7 +49,7 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
 
   player.position = collision.point + collision.plane.normal * player.scale.x;
 
-  if (uDotN  > 0.8f) {
+  if (uDotN > 0.8f) {
     // If the collision plane normal points sufficiently upward,
     // treat it as a solid ground collision and stop falling
     state.velocity.y = 0.f;
@@ -63,21 +63,39 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
     state.velocity = Vec3f::reflect(state.velocity, collision.plane.normal) * friction;
   }
 
-  if (uDotN  < 0.2f) {
+  if (uDotN < 0.2f) {
     state.lastWallBumpTime = state.frameStartTime;
   }
 }
 
 internal void resolveAllCollisions(GmContext* context, GameState& state) {
   auto& player = getPlayer();
+  float playerRadius = player.scale.x;
 
   for (auto& plane : state.collisionPlanes) {
-    Vec3f lineStart = player.position + plane.normal * player.scale.x;
-    Vec3f lineEnd = player.position - plane.normal * player.scale.x;
+    Vec3f lineStart = player.position + plane.normal * playerRadius;
+    Vec3f lineEnd = player.position - plane.normal * playerRadius;
     auto collision = getLinePlaneCollision(lineStart, lineEnd, plane);
 
     if (collision.hit) {
       resolveSingleCollision(context, state, collision);
+    } else {
+      // @todo cleanup/fixes
+      Vec3f fallCheckStart = player.position;
+      Vec3f fallCheckEnd = fallCheckStart - Vec3f(0, playerRadius + 5.f, 0);
+      auto fallCollision = getLinePlaneCollision(fallCheckStart, fallCheckEnd, plane);
+
+      if (fallCollision.hit) {
+        float moveDistance = (player.position - state.previousPlayerPosition).magnitude();
+        Vec3f target = fallCollision.point + plane.normal * playerRadius;
+        Vec3f adjustedMove = (target - state.previousPlayerPosition).unit() * moveDistance;
+
+        player.position = state.previousPlayerPosition + adjustedMove;
+
+        state.velocity.y = 0.f;
+        state.lastSolidGroundPosition = player.position;
+        state.lastTimeOnSolidGround = state.frameStartTime;
+      }
     }
   }
 }

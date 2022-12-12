@@ -135,7 +135,7 @@ internal void handleInput(GmContext* context, GameState& state, float dt) {
   }
 }
 
-internal void checkAndResetPositionOnFall(GmContext* context, GameState& state) {
+internal void checkAndResetPositionAfterFall(GmContext* context, GameState& state) {
   auto& player = getPlayer();
 
   if (
@@ -168,5 +168,5 @@ void updateGame(GmContext* context, GameState& state, float dt) {
   MovementSystem::handlePlayerMovementPhysics(context, state, dt);
   CameraSystem::handleGameCamera(context, state, dt);
 
-  checkAndResetPositionOnFall(context, state);
+  checkAndResetPositionAfterFall(context, state);
 }
