@@ -183,4 +183,15 @@ void updateGame(GmContext* context, GameState& state, float dt) {
   CameraSystem::handleGameCamera(context, state, dt);
 
   checkAndResetPositionAfterFall(context, state);
+
+  // Track end-of-frame variables
+  {
+    if (state.isOnSolidGround && state.velocity.xz().magnitude() > 1.f) {
+      // If we were on solid ground, but any movement
+      // occurs along the xz plane, all bets are off!
+      state.isOnSolidGround = false;
+    }
+
+    state.previousPlayerPosition = getPlayer().position;
+  }
 }

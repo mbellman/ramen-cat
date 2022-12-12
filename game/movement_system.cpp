@@ -51,12 +51,23 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
 
   player.position = collision.point + plane.normal * player.scale.x;
 
-  if (plane.nDotU > 0.8f) {
+  if (plane.nDotU > 0.7f) {
     // If the collision plane normal points sufficiently upward,
     // treat it as a solid ground collision and stop falling
+
+    if (state.isOnSolidGround) {
+      // If we're already on solid ground, we don't
+      // need to re-resolve the player position, so
+      // avoid doing this. Otherwise, the player
+      // gradually slides down angled slopes, even
+      // without user input.
+      player.position = state.previousPlayerPosition;
+    }
+
     state.velocity.y = 0.f;
     state.lastSolidGroundPosition = player.position;
     state.lastTimeOnSolidGround = state.frameStartTime;
+    state.isOnSolidGround = true;
   } else {
     // Adjust bounce friction based on whether we're falling,
     // or walking solid ground (e.g. running into a wall)
@@ -65,7 +76,7 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
     state.velocity = Vec3f::reflect(state.velocity, plane.normal) * friction;
   }
 
-  if (plane.nDotU < 0.2f) {
+  if (Gm_Absf(plane.nDotU) < 0.35f) {
     state.lastWallBumpTime = state.frameStartTime;
   }
 }
@@ -92,6 +103,7 @@ internal void resolveAllCollisions(GmContext* context, GameState& state) {
         state.velocity.y = 0.f;
         state.lastSolidGroundPosition = player.position;
         state.lastTimeOnSolidGround = state.frameStartTime;
+        state.isOnSolidGround = true;
       }
     }
   }
@@ -158,8 +170,6 @@ namespace MovementSystem {
       state.velocity.x = Gm_Lerpf(state.velocity.x, 0.f, slowdown * dt);
       state.velocity.z = Gm_Lerpf(state.velocity.z, 0.f, slowdown * dt);
     }
-
-    state.previousPlayerPosition = player.position;
 
     commit(player);
   }
