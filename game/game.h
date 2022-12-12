@@ -17,6 +17,7 @@ struct GameState {
   u64 frameStartTime = 0;
   u64 lastWallBumpTime = 0;
   u64 lastTimeOnSolidGround = 0;
+  u64 lastJumpInputTime = 0;
   bool isOnSolidGround = false;
   bool isPlayerMovingThisFrame = false;
 

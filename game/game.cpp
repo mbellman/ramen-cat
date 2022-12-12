@@ -39,6 +39,12 @@ internal void initializeInputHandlers(GmContext* context, GameState& state) {
       }
     }
   });
+
+  input.on<Key>("keystart", [&state, context](Key key) {
+    if (key == Key::SPACE) {
+      state.lastJumpInputTime = Gm_GetMicroseconds();
+    }
+  });
 }
 
 // @temporary

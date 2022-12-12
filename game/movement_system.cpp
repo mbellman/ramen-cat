@@ -146,11 +146,18 @@ namespace MovementSystem {
 
     state.isPlayerMovingThisFrame = state.velocity != initialVelocity;
 
-    if (input.isKeyHeld(Key::SPACE) && (
-      state.velocity.y == 0.f ||
-      state.frameStartTime - state.lastWallBumpTime < 200000
-    )) {
-      state.velocity.y = 500.f;
+    // Handle jump actions
+    {
+      u64 wallKickTimeDelta = state.lastJumpInputTime - state.lastWallBumpTime;
+
+      if (input.isKeyHeld(Key::SPACE) && (
+        // Allow jumping if on solid ground (@todo use state.isOnSolidGround?)
+        state.velocity.y == 0.f ||
+        // Allow wall kicks
+        wallKickTimeDelta > 0 && wallKickTimeDelta < 200000
+      )) {
+        state.velocity.y = 500.f;
+      }
     }
   }
 

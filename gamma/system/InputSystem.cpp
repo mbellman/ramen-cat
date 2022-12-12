@@ -85,6 +85,11 @@ namespace Gamma {
   void InputSystem::handleKeyDown(const SDL_Keycode& code) {
     if (keyMap.find(code) != keyMap.end()) {
       Key key = keyMap.at(code);
+
+      if (!(keyState & (u64)key)) {
+        signal("keystart", key);
+      }
+
       keyState |= (u64)key;
       lastKeyDown = (u64)key;
 
