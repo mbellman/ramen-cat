@@ -16,7 +16,9 @@ internal void initializeInputHandlers(GmContext* context, GameState& state) {
   input.on<MouseMoveEvent>("mousemove", [&](const MouseMoveEvent& event) {
     if (SDL_GetRelativeMouseMode()) {
       state.camera3p.azimuth -= event.deltaX / 1000.f;
-      state.camera3p.radius += float(event.deltaY) / 4.f;
+      state.camera3p.altitude += event.deltaY / 1000.f;
+
+      state.camera3p.limitAltitude(0.99f);
     }
   });
 
@@ -57,19 +59,14 @@ struct Platform {
 // @temporary
 internal std::vector<Platform> platforms = {
   {
-    Vec3f(-100.f, 0, 0),
-    Vec3f(250.f, 50.f, 200.f),
-    Vec3f(0.2f, 0.3f, 1.f)
+    .position = Vec3f(0, 0, 500.f),
+    .scale = Vec3f(250.f, 50.f, 1500.f),
+    .color = Vec3f(0.2f, 0.3f, 1.f)
   },
   {
-    Vec3f(150.f, 0.f, 300.f),
-    Vec3f(50.f, 300.f, 1000.f),
-    Vec3f(1.f, 0.5, 0.2f)
-  },
-  {
-    Vec3f(-50.f, 0.f, 1500.f),
-    Vec3f(200.f, 50.f, 250.f),
-    Vec3f(0.5f, 1.f, 0.5f)
+    .position = Vec3f(225.f, 500.f, 500.f),
+    .scale = Vec3f(50.f, 1000.f, 1500.f),
+    .color = Vec3f(1.f, 0.5, 0.2f)
   }
 };
 
@@ -104,14 +101,12 @@ internal void initializeGameScene(GmContext* context, GameState& state) {
     platform.scale = scale;
     platform.color = color;
 
-    // @temporary
-    platform.rotation.y = 0.3f;
-    platform.rotation.z = 0.3f;
-
     commit(platform);
 
+    // @temporary
     auto rotation = Matrix4f::rotation(platform.rotation);
 
+    // @temporary
     for (auto& points : platformPlanePoints) {
       Plane plane;
 

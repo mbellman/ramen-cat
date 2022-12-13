@@ -58,7 +58,7 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
     if (state.isOnSolidGround) {
       // If we're already on solid ground, we don't
       // need to re-resolve the player position, so
-      // avoid doing this. Otherwise, the player
+      // avoid doing that. Otherwise, the player
       // gradually slides down angled slopes, even
       // without user input.
       player.position = state.previousPlayerPosition;
