@@ -64,6 +64,11 @@ internal std::vector<Platform> platforms = {
     .color = Vec3f(0.2f, 0.3f, 1.f)
   },
   {
+    .position = Vec3f(-250.f, 0, 500.f),
+    .scale = Vec3f(500.f, 50.f, 250.f),
+    .color = Vec3f(0.2f, 0.3f, 1.f)
+  },
+  {
     .position = Vec3f(225.f, 500.f, 500.f),
     .scale = Vec3f(50.f, 1000.f, 1500.f),
     .color = Vec3f(1.f, 0.5, 0.2f)

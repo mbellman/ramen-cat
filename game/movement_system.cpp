@@ -58,16 +58,15 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
     if (state.isOnSolidGround) {
       // If we're already on solid ground, we don't
       // need to re-resolve the player position, so
-      // avoid doing that. Otherwise, the player
-      // gradually slides down angled slopes, even
-      // without user input.
+      // set it back to the previous frame position.
+      // Otherwise, the player gradually slides down
+      // angled slopes, even without user input.
       player.position = state.previousPlayerPosition;
     }
 
     state.velocity.y = 0.f;
     state.lastSolidGroundPosition = player.position;
     state.lastTimeOnSolidGround = state.frameStartTime;
-    state.isOnSolidGround = true;
   } else {
     // Adjust bounce friction based on whether we're falling,
     // or walking solid ground (e.g. running into a wall)
@@ -103,9 +102,16 @@ internal void resolveAllCollisions(GmContext* context, GameState& state) {
         state.velocity.y = 0.f;
         state.lastSolidGroundPosition = player.position;
         state.lastTimeOnSolidGround = state.frameStartTime;
-        state.isOnSolidGround = true;
       }
     }
+  }
+
+  if (state.velocity.y == 0.f) {
+    // Set the solid ground flag after all collisions are resolved.
+    // Setting it within ground collision resolution can cause
+    // subsequent ground collisions to trigger previous-position
+    // reset behavior, causing the player to get stuck.
+    state.isOnSolidGround = true;
   }
 }
 
