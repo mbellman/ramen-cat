@@ -1,3 +1,5 @@
+#include <string>
+
 #include "Gamma.h"
 
 #include "game.h"
@@ -57,25 +59,6 @@ struct Platform {
 };
 
 // @temporary
-internal std::vector<Platform> platforms = {
-  {
-    .position = Vec3f(0, 0, 500.f),
-    .scale = Vec3f(250.f, 50.f, 1500.f),
-    .color = Vec3f(0.2f, 0.3f, 1.f)
-  },
-  {
-    .position = Vec3f(-250.f, 0, 500.f),
-    .scale = Vec3f(500.f, 50.f, 250.f),
-    .color = Vec3f(0.2f, 0.3f, 1.f)
-  },
-  {
-    .position = Vec3f(225.f, 500.f, 500.f),
-    .scale = Vec3f(50.f, 1000.f, 1500.f),
-    .color = Vec3f(1.f, 0.5, 0.2f)
-  }
-};
-
-// @temporary
 internal std::vector<std::vector<Vec3f>> platformPlanePoints = {
   // Top
   { Vec3f(-1.f, 1.f, -1.f ), Vec3f(-1.f, 1.f, 1.f), Vec3f(1.f, 1.f, 1.f), Vec3f(1.f, 1.f, -1.f) },
@@ -94,10 +77,50 @@ internal void setupCollisionPlane(Plane& plane) {
   plane.nDotU = Vec3f::dot(plane.normal, Vec3f(0, 1.f, 0));
 }
 
-internal void initializeGameScene(GmContext* context, GameState& state) {
-  addMesh("platform", (u16)platforms.size(), Mesh::Cube());
-  addMesh("sphere", 1, Mesh::Sphere(18));
+internal void loadWorldData(GmContext* context, GameState& state) {
+  auto worldData = Gm_LoadFileContents("./game/world_data.txt");
+  auto lines = Gm_SplitString(worldData, "\n");
 
+  // @temporary
+  objects("platform").reset();
+  state.collisionPlanes.clear();
+
+  // @temporary
+  std::vector<Platform> platforms;
+  Platform platform;
+
+  // @temporary
+  for (auto& line : lines) {
+    if (line.size() == 0 || line[0] == '\n') {
+      platforms.push_back(platform);
+
+      platform.position = Vec3f(0.f);
+      platform.scale = Vec3f(0.f);
+      platform.color = Vec3f(0.f);
+
+      continue;
+    }
+
+    auto parts = Gm_SplitString(line, ":");
+    auto label = parts[0];
+    auto values = Gm_SplitString(parts[1], ",");
+
+    Vec3f value = {
+      std::stof(values[0]),
+      std::stof(values[1]),
+      std::stof(values[2])
+    };
+
+    if (label == "position") {
+      platform.position = value;
+    } else if (label == "scale") {
+      platform.scale = value;
+    } else if (label == "color") {
+      platform.color = value;
+    }
+  }
+
+  // @temporary
   for (auto& [ position, scale, color ] : platforms) {
     auto& platform = createObjectFrom("platform");
 
@@ -108,10 +131,8 @@ internal void initializeGameScene(GmContext* context, GameState& state) {
 
     commit(platform);
 
-    // @temporary
     auto rotation = Matrix4f::rotation(platform.rotation);
 
-    // @temporary
     for (auto& points : platformPlanePoints) {
       Plane plane;
 
@@ -125,6 +146,17 @@ internal void initializeGameScene(GmContext* context, GameState& state) {
       state.collisionPlanes.push_back(plane);
     }
   }
+}
+
+internal void initializeGameScene(GmContext* context, GameState& state) {
+  addMesh("platform", 1000, Mesh::Cube());
+  addMesh("sphere", 1, Mesh::Sphere(18));
+
+  loadWorldData(context, state);
+
+  Gm_WatchFile("./game/world_data.txt", [context, &state]() {
+    loadWorldData(context, state);
+  });
 
   auto& player = createObjectFrom("sphere");
 
