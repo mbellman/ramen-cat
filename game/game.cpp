@@ -149,6 +149,7 @@ internal void loadWorldData(GmContext* context, GameState& state) {
 }
 
 internal void initializeGameScene(GmContext* context, GameState& state) {
+  addMesh("ocean", 1, Mesh::Plane(2));
   addMesh("platform", 1000, Mesh::Cube());
   addMesh("sphere", 1, Mesh::Sphere(18));
 
@@ -157,6 +158,15 @@ internal void initializeGameScene(GmContext* context, GameState& state) {
   Gm_WatchFile("./game/world_data.txt", [context, &state]() {
     loadWorldData(context, state);
   });
+
+  mesh("ocean")->type = MeshType::WATER;
+
+  auto& ocean = createObjectFrom("ocean");
+
+  ocean.position = Vec3f(0, -2000.f, 0);
+  ocean.scale = Vec3f(10000.f, 1.f, 10000.f);
+
+  commit(ocean);
 
   auto& player = createObjectFrom("sphere");
 

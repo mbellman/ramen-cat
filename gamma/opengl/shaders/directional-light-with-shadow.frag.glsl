@@ -41,7 +41,7 @@ Cascade getCascadeByDepth(float linearized_depth) {
   if (linearized_depth < cascade_depth_1) {
     return Cascade(0, lightMatrices[0], 0.0002, 5000.0, 70.0, 50.0);
   } else if (linearized_depth < cascade_depth_2) {
-    return Cascade(1, lightMatrices[1], 0.0005, 800.0, 15.0, 15.0);
+    return Cascade(1, lightMatrices[1], 0.001, 800.0, 15.0, 15.0);
   } else {
     return Cascade(2, lightMatrices[2], 0.0005, 400.0, 15.0, 5.0);
   }
