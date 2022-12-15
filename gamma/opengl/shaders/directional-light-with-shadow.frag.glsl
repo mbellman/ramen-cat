@@ -13,6 +13,7 @@ struct Cascade {
   mat4 matrix;
   float bias;
   float spread_factor;
+  float max_spread;
   float occluder_sweep_radius;
 };
 
@@ -30,7 +31,7 @@ noperspective in vec2 fragUv;
 layout (location = 0) out vec4 out_color_and_depth;
 
 const float cascade_depth_1 = 200.0;
-const float cascade_depth_2 = 600.0;
+const float cascade_depth_2 = 1000.0;
 
 #include "utils/gl.glsl";
 #include "utils/conversion.glsl";
@@ -38,11 +39,11 @@ const float cascade_depth_2 = 600.0;
 
 Cascade getCascadeByDepth(float linearized_depth) {
   if (linearized_depth < cascade_depth_1) {
-    return Cascade(0, lightMatrices[0], 0.0002, 1000.0, 20.0);
+    return Cascade(0, lightMatrices[0], 0.0002, 5000.0, 70.0, 50.0);
   } else if (linearized_depth < cascade_depth_2) {
-    return Cascade(1, lightMatrices[1], 0.0005, 800.0, 15.0);
+    return Cascade(1, lightMatrices[1], 0.0005, 800.0, 15.0, 15.0);
   } else {
-    return Cascade(2, lightMatrices[2], 0.0005, 700.0, 10.0);
+    return Cascade(2, lightMatrices[2], 0.0005, 400.0, 15.0, 5.0);
   }
 }
 
@@ -94,10 +95,8 @@ float getLightIntensity(Cascade cascade, vec4 transform) {
   vec2 shadow_map_texel_size = 1.0 / textureSize(texShadowMaps[cascade.index], 0);
 
   #if USE_VARIABLE_PENUMBRA_SIZE == 1
-    const float MAX_SPREAD = 15.0;
-
     float closest_occluder = getClosestOccluder(texShadowMaps[cascade.index], shadow_map_texel_size, transform, cascade.occluder_sweep_radius);
-    float spread = min(MAX_SPREAD, 1.0 + cascade.spread_factor * pow(distance(transform.z, closest_occluder), 2));
+    float spread = min(cascade.max_spread, 1.0 + cascade.spread_factor * pow(distance(transform.z, closest_occluder), 2));
   #else
     float spread = cascade.spread_factor / 500.0;
   #endif

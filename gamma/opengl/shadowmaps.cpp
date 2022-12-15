@@ -12,8 +12,8 @@ namespace Gamma {
   // { near, far }
   const static float cascadeDepthRanges[3][2] = {
     { 1.0f, 200.0f },
-    { 200.0f, 600.0f },
-    { 600.0f, 1250.0f }
+    { 200.0f, 1000.0f },
+    { 1000.0f, 3000.0f }
   };
 
   /**
