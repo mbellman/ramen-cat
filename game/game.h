@@ -23,6 +23,8 @@ struct GameState {
   bool isOnSolidGround = false;
   bool isPlayerMovingThisFrame = false;
 
+  // @todo calculate nearby collision planes on each frame,
+  // and only check collisions against those
   std::vector<Plane> collisionPlanes;
 };
 

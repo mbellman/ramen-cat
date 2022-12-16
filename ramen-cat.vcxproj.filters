@@ -126,6 +126,9 @@
     <ClCompile Include="game\camera_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="game\collision.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="external\glew\include\eglew.h">
@@ -537,6 +540,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="game\camera_system.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\collision.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

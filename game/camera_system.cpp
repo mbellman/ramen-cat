@@ -1,4 +1,5 @@
 #include "camera_system.h"
+#include "collision.h"
 #include "macros.h"
 
 using namespace Gamma;
@@ -25,14 +26,31 @@ namespace CameraSystem {
     updateThirdPersonCameraRadius(state, dt);
 
     auto& player = getPlayer();
-    auto targetCameraPosition = player.position + state.camera3p.calculatePosition();
+    auto playerToCamera = state.camera3p.calculatePosition();
+    auto targetCameraPosition = player.position + playerToCamera;
 
-    if (context->scene.frame > 0) {
-      getCamera().position = Vec3f::lerp(getCamera().position, targetCameraPosition, dt * 15.f);
-    } else {
-      getCamera().position = targetCameraPosition;
+    // Reposition the camera if necessary to avoid clipping inside walls
+    {
+      for (auto& plane : state.collisionPlanes) {
+        auto collision = getLinePlaneCollision(player.position, targetCameraPosition, plane);
+
+        if (collision.hit) {
+          auto playerToCollision = collision.point - player.position;
+
+          targetCameraPosition = player.position + playerToCollision * 0.95f;
+        }
+      }
     }
 
-    pointCameraAt(player);
+    // Update the actual view camera position/orientation
+    {
+      if (context->scene.frame > 0) {
+        getCamera().position = Vec3f::lerp(getCamera().position, targetCameraPosition, dt * 15.f);
+      } else {
+        getCamera().position = targetCameraPosition;
+      }
+
+      pointCameraAt(player);
+    }
   }
 }
