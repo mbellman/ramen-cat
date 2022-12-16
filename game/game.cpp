@@ -214,15 +214,7 @@ void updateGame(GmContext* context, GameState& state, float dt) {
     state.isPlayerMovingThisFrame = false;
   }
 
-  // Handle input
-  {
-    MovementSystem::handlePlayerMovementInput(context, state, dt);
-
-    if (state.isPlayerMovingThisFrame && state.camera3p.radius < 130.f) {
-      state.camera3p.radius += 100.f * dt;
-    }
-  }
-
+  MovementSystem::handlePlayerMovementInput(context, state, dt);
   MovementSystem::handlePlayerMovementPhysics(context, state, dt);
   CameraSystem::handleGameCamera(context, state, dt);
 
