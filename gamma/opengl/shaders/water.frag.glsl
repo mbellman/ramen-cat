@@ -43,6 +43,15 @@ vec2 createRadialWave(vec3 world_position, vec2 offset) {
   );
 }
 
+vec2 createDirectionalWave(float wx, float wz, vec2 direction, float frequency, float wavelength, float intensity) {
+  float w_input = wx * direction.x + wz * direction.y;
+
+  float x = sin(-time * frequency + w_input * wavelength) * intensity;
+  float z = cos(-time * frequency + w_input * wavelength) * intensity;
+
+  return intensity * vec2(x, z);
+}
+
 vec3 getNormal(vec3 world_position) {
   float wx = world_position.x;
   float wz = world_position.z;
@@ -50,13 +59,13 @@ vec3 getNormal(vec3 world_position) {
   vec2 n = vec2(0);
 
   // @todo make configurable
-  n.x += 0.3 * sin(t + wx * 0.05 + wz * 0.05);
-  n.x += 0.3 * sin(t + wx * 0.01 + wz * 0.015);
-
-  n.x += 0.5 * sin(t * 0.2 + wx * 0.001 + wz * 0.001);
-
-  n.y += 0.5 * sin(t * 0.5 + wz * 0.01 + wx * 0.005);
-  n.y += 0.5 * sin(t * 0.5 + wz * 0.005 + wx * 0.001);
+  n += createDirectionalWave(wx, wz, vec2(0.5, 1), 0.3, 0.01, 1);
+  n += createDirectionalWave(wx, wz, vec2(0.1, 1), 0.6, 0.012, 0.4);
+  n += createDirectionalWave(wx, wz, vec2(1, 0.3), 0.8, 0.006, 0.6);
+  n += createDirectionalWave(wx, wz, vec2(0.5, 1), 0.3, 0.016, 0.7);
+  n += createDirectionalWave(wx, wz, vec2(0, -0.3), 0.6, 0.02, 0.7);
+  n += createDirectionalWave(wx, wz, vec2(0.2, 1), 1, 0.03, 0.5);
+  n += createDirectionalWave(wx, wz, vec2(1, 0.6), 0.7, 0.06, 0.2);
 
   vec3 n_normal = normalize(fragNormal);
   vec3 n_tangent = normalize(fragTangent);
@@ -71,7 +80,7 @@ vec3 getNormal(vec3 world_position) {
   // @todo make configurable
   float flatness = 1.0;
 
-  vec3 tangent_normal = vec3(n.x, n.y, flatness);
+  vec3 tangent_normal = vec3(n.x, n.y, 1.0);
   vec3 world_normal = normalize(tbn_matrix * tangent_normal);
 
   world_normal.y += n_normal.y * 3.0;
@@ -122,7 +131,7 @@ void main() {
   }
 
   vec4 refracted_color_and_depth = texture(texColorAndDepth, refracted_color_coords);
-  vec3 water_color = refracted_color_and_depth.rgb;
+  vec3 water_color = refracted_color_and_depth.rgb * fresnel_factor;
 
   if (refracted_color_and_depth.w < gl_FragCoord.z) {
     water_color = vec3(0);
@@ -153,7 +162,7 @@ void main() {
   water_color *= fragColor;
 
   // @todo make water color configurable
-  water_color += vec3(0, 0.25, 0.5) * (1.0 - fresnel_factor);
+  water_color += vec3(0, 0.25, 0.25);
 
   out_color_and_depth = vec4(water_color, gl_FragCoord.z);
 }
