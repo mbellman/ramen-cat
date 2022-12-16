@@ -55,6 +55,7 @@ internal void initializeInputHandlers(GmContext* context, GameState& state) {
 struct Platform {
   Vec3f position;
   Vec3f scale;
+  Vec3f rotation;
   Vec3f color;
 };
 
@@ -96,6 +97,7 @@ internal void loadWorldData(GmContext* context, GameState& state) {
 
       platform.position = Vec3f(0.f);
       platform.scale = Vec3f(0.f);
+      platform.rotation = Vec3f(0.f);
       platform.color = Vec3f(0.f);
 
       continue;
@@ -115,18 +117,20 @@ internal void loadWorldData(GmContext* context, GameState& state) {
       platform.position = value;
     } else if (label == "scale") {
       platform.scale = value;
+    } else if (label == "rotation") {
+      platform.rotation = value;
     } else if (label == "color") {
       platform.color = value;
     }
   }
 
   // @temporary
-  for (auto& [ position, scale, color ] : platforms) {
+  for (auto& [ position, scale, rotation, color ] : platforms) {
     auto& platform = createObjectFrom("platform");
 
     platform.position = position;
-    platform.position.y -= 10.f;
     platform.scale = scale;
+    platform.rotation = rotation;
     platform.color = color;
 
     commit(platform);
@@ -156,7 +160,13 @@ internal void initializeGameScene(GmContext* context, GameState& state) {
   loadWorldData(context, state);
 
   Gm_WatchFile("./game/world_data.txt", [context, &state]() {
+    u64 startMicroseconds = Gm_GetMicroseconds();
+
     loadWorldData(context, state);
+
+    float totalMilliseconds = (Gm_GetMicroseconds() - startMicroseconds) / 1000.f;
+
+    Console::log("Hot-reloaded world data in", totalMilliseconds, "ms");
   });
 
   mesh("ocean")->type = MeshType::WATER;
