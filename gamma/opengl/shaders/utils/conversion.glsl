@@ -27,7 +27,7 @@ float getLinearizedDepth(float depth) {
   float clip_depth = 2.0 * depth - 1.0;
   // @todo import from a 'utils/constants.glsl' file; use uniforms
   float near_plane = 1.0;
-  float far_plane = 10000.0;
+  float far_plane = 50000.0;
 
   return 2.0 * near_plane * far_plane / (far_plane + near_plane - clip_depth * (far_plane - near_plane));
 }

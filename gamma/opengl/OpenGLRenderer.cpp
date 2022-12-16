@@ -262,7 +262,7 @@ namespace Gamma {
 
     // Camera projection/view/inverse matrices
     ctx.activeCamera = &gmContext->scene.camera;
-    ctx.matProjection = Matrix4f::glPerspective(internalResolution, ctx.activeCamera->fov, 1.0f, 10000.0f).transpose();
+    ctx.matProjection = Matrix4f::glPerspective(internalResolution, ctx.activeCamera->fov, 1.0f, 50000.0f).transpose();
     ctx.matPreviousView = ctx.matView;
 
     ctx.matView = (

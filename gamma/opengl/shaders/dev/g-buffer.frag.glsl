@@ -8,7 +8,7 @@ noperspective in vec2 fragUv;
 out vec3 out_color;
 
 const float Z_NEAR = 1.0;
-const float Z_FAR = 10000.0;
+const float Z_FAR = 50000.0;
 
 float getLinearizedDepth(float depth) {
   float clip_depth = 2.0 * depth - 1.0;

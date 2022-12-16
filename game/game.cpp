@@ -161,6 +161,7 @@ internal void initializeGameScene(GmContext* context, GameState& state) {
 
   loadWorldData(context, state);
 
+  // @temporary
   Gm_WatchFile("./game/world_data.txt", [context, &state]() {
     u64 startMicroseconds = Gm_GetMicroseconds();
 
@@ -176,7 +177,7 @@ internal void initializeGameScene(GmContext* context, GameState& state) {
   auto& ocean = createObjectFrom("ocean");
 
   ocean.position = Vec3f(0, -2000.f, 0);
-  ocean.scale = Vec3f(10000.f, 1.f, 10000.f);
+  ocean.scale = Vec3f(25000.f, 1.f, 25000.f);
 
   commit(ocean);
 

@@ -20,7 +20,7 @@ struct Reflection {
 
 // @todo pass these in as uniforms
 const float z_near = 1.0;
-const float z_far = 10000.0;
+const float z_far = 50000.0;
 const float reflection_factor = 0.5;
 const float thickness_threshold = 5.0;
 
