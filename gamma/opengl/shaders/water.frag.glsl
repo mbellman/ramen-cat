@@ -65,7 +65,7 @@ vec3 getNormal(vec3 world_position) {
   n += createDirectionalWave(wx, wz, vec2(0.5, 1), 0.3, 0.016, 0.7);
   n += createDirectionalWave(wx, wz, vec2(0, -0.3), 0.6, 0.02, 0.7);
   n += createDirectionalWave(wx, wz, vec2(0.2, 1), 1, 0.03, 0.5);
-  n += createDirectionalWave(wx, wz, vec2(1, 0.6), 0.7, 0.06, 0.2);
+  n += createDirectionalWave(wx, wz, vec2(1, 0.6), 0.7, 0.03, 0.2);
 
   vec3 n_normal = normalize(fragNormal);
   vec3 n_tangent = normalize(fragTangent);
