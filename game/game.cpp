@@ -189,7 +189,7 @@ internal void initializeGameScene(GmContext* context, GameState& state) {
   auto& light = createLight(LightType::DIRECTIONAL_SHADOWCASTER);
 
   light.direction = Vec3f(0.5f, -1.f, -1.f);
-  light.color = Vec3f(1.0f, 0.7f, 0.5f);
+  light.color = Vec3f(1.0f);
 
   state.previousPlayerPosition = player.position;
 }

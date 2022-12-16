@@ -30,11 +30,11 @@ vec2 createRadialWave(vec3 world_position, vec2 offset) {
   const float TAU = 3.141592 * 2.0;
 
   // @todo make configurable
-  const float speed = 1.0;
-  const float scale = 50.0;
+  const float speed = 0.3;
+  const float scale = 1000.0;
 
   float radius = length(world_position.xz / scale - offset);
-  float t = -time * speed;
+  float t = time * speed;
   float r = radius * TAU;
 
   return vec2(
@@ -50,16 +50,13 @@ vec3 getNormal(vec3 world_position) {
   vec2 n = vec2(0);
 
   // @todo make configurable
-  n += createRadialWave(world_position, vec2(0)) * 0.5;
-  n += createRadialWave(world_position, vec2(20.0, -6.0)) * 0.4;
-  n += createRadialWave(world_position, vec2(10.0, 5.0)) * 0.3;
+  n.x += 0.3 * sin(t + wx * 0.05 + wz * 0.05);
+  n.x += 0.3 * sin(t + wx * 0.01 + wz * 0.015);
 
-  n.x += 0.3 * sin(t + wx * 0.1 + sin(t * 3 + wz * 0.1));
-  n.y += 0.3 * sin(t + wz * 0.1 + sin(t * 3 + wx * 0.1));
+  n.x += 0.5 * sin(t * 0.2 + wx * 0.001 + wz * 0.001);
 
-  // @todo improve micro-perturbations
-  // n.x += 0.1 * sin(t + wx * 0.2 + sin(wz * 0.1) + sin(wz * 0.2));
-  // n.y += 0.1 * sin(t + wz * 0.2 + sin(wx * 0.1) + sin(wx * 0.2));
+  n.y += 0.5 * sin(t * 0.5 + wz * 0.01 + wx * 0.005);
+  n.y += 0.5 * sin(t * 0.5 + wz * 0.005 + wx * 0.001);
 
   vec3 n_normal = normalize(fragNormal);
   vec3 n_tangent = normalize(fragTangent);
@@ -131,9 +128,6 @@ void main() {
     water_color = vec3(0);
   }
 
-  // @todo make water color configurable
-  water_color += vec3(0, 0.5, 1.0) * (1.0 - fresnel_factor);
-
   // Reflection
   vec3 reflection_ray = reflect(normalized_fragment_to_camera * -1, normal);
   vec3 view_reflection_ray = glVec3(matView * glVec4(world_position + reflection_ray * 5.0));
@@ -157,6 +151,9 @@ void main() {
 
   water_color += reflection_color * (1.0 - fresnel_factor);
   water_color *= fragColor;
+
+  // @todo make water color configurable
+  water_color += vec3(0, 0.25, 0.5) * (1.0 - fresnel_factor);
 
   out_color_and_depth = vec4(water_color, gl_FragCoord.z);
 }
