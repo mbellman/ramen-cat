@@ -21,6 +21,7 @@ layout (location = 0) out vec4 out_color_and_depth;
 #include "utils/conversion.glsl";
 #include "utils/skybox.glsl";
 #include "utils/helpers.glsl";
+#include "utils/random.glsl";
 
 vec2 getPixelCoords() {
   return gl_FragCoord.xy / screenSize;
@@ -67,6 +68,10 @@ vec3 getNormal(vec3 world_position) {
   n += createDirectionalWave(wx, wz, vec2(0.2, 1), 1, 0.03, 0.5);
   n += createDirectionalWave(wx, wz, vec2(1, 0.6), 0.7, 0.03, 0.2);
 
+  n += vec2(simplex_noise(vec2(t * 0.1 - wx * 0.002, t * 0.1 - wz * 0.002))) * 0.6;
+  n += vec2(simplex_noise(vec2(t * 0.1 - wx * 0.003, t * 0.1 + wz * 0.003))) * 0.3;
+  n += vec2(simplex_noise(vec2(t * 0.1 + wx * 0.007, t * 0.1 - wz * 0.007))) * 0.3;
+
   vec3 n_normal = normalize(fragNormal);
   vec3 n_tangent = normalize(fragTangent);
   vec3 n_bitangent = normalize(fragBitangent);
@@ -80,7 +85,7 @@ vec3 getNormal(vec3 world_position) {
   // @todo make configurable
   float flatness = 1.0;
 
-  vec3 tangent_normal = vec3(n.x, n.y, 1.0);
+  vec3 tangent_normal = vec3(n.x, n.y, flatness);
   vec3 world_normal = normalize(tbn_matrix * tangent_normal);
 
   world_normal.y += n_normal.y * 3.0;
@@ -131,7 +136,9 @@ void main() {
   }
 
   vec4 refracted_color_and_depth = texture(texColorAndDepth, refracted_color_coords);
-  vec3 water_color = refracted_color_and_depth.rgb * fresnel_factor;
+  vec3 water_color = vec3(0);
+  
+  water_color += refracted_color_and_depth.rgb * fresnel_factor;
 
   if (refracted_color_and_depth.w < gl_FragCoord.z) {
     water_color = vec3(0);
