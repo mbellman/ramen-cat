@@ -251,6 +251,8 @@ namespace Gamma {
    * @todo description
    */
   void OpenGLRenderer::initializeRendererContext() {
+    auto& scene = gmContext->scene;
+
     // Accumulation buffers
     ctx.accumulationSource = &buffers.accumulation1;
     ctx.accumulationTarget = &buffers.accumulation2;
@@ -262,7 +264,7 @@ namespace Gamma {
 
     // Camera projection/view/inverse matrices
     ctx.activeCamera = &gmContext->scene.camera;
-    ctx.matProjection = Matrix4f::glPerspective(internalResolution, ctx.activeCamera->fov, 1.0f, 50000.0f).transpose();
+    ctx.matProjection = Matrix4f::glPerspective(internalResolution, ctx.activeCamera->fov, scene.zNear, scene.zFar).transpose();
     ctx.matPreviousView = ctx.matView;
 
     ctx.matView = (
@@ -1116,6 +1118,8 @@ namespace Gamma {
     shaders.reflections.setMatrix4f("matInverseView", ctx.matInverseView);
     shaders.reflections.setMatrix4f("matProjection", ctx.matProjection);
     shaders.reflections.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
+    shaders.reflections.setFloat("zNear", gmContext->scene.zNear);
+    shaders.reflections.setFloat("zFar", gmContext->scene.zFar);
 
     OpenGLScreenQuad::render();
 
@@ -1298,6 +1302,8 @@ namespace Gamma {
     shaders.gBufferDev.use();
     shaders.gBufferDev.setInt("texColorAndDepth", 0);
     shaders.gBufferDev.setInt("texNormalAndEmissivity", 1);
+    shaders.gBufferDev.setFloat("zNear", gmContext->scene.zNear);
+    shaders.gBufferDev.setFloat("zFar", gmContext->scene.zFar);
     shaders.gBufferDev.setVec4f("transform", { 0.53f, 0.82f, 0.43f, 0.11f });
 
     OpenGLScreenQuad::render();

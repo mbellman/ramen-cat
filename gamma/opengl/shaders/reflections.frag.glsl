@@ -8,6 +8,9 @@ uniform mat4 matInverseView;
 uniform mat4 matProjection;
 uniform mat4 matInverseProjection;
 
+uniform float zNear;
+uniform float zFar;
+
 noperspective in vec2 fragUv;
 
 layout (location = 0) out vec4 out_color_and_depth;
@@ -19,8 +22,6 @@ struct Reflection {
 };
 
 // @todo pass these in as uniforms
-const float z_near = 1.0;
-const float z_far = 50000.0;
 const float reflection_factor = 0.5;
 const float thickness_threshold = 5.0;
 
@@ -89,7 +90,7 @@ Reflection getRefinedReflection(
   }
 
   // Disable reflections of points at the far plane
-  float intensity = test_depth >= z_far ? 0.0 : getReflectionIntensity(refined_uv);
+  float intensity = test_depth >= zFar ? 0.0 : getReflectionIntensity(refined_uv);
 
   return Reflection(refined_color, refined_uv, intensity);
 }
@@ -118,7 +119,7 @@ Reflection getReflection(
 
     vec2 uv = getScreenCoordinates(ray, matProjection);
 
-    if (isOffScreen(uv, 0.0) || ray.z >= z_far) {
+    if (isOffScreen(uv, 0.0) || ray.z >= zFar) {
       // Bail if the ray goes offscreen or beyond the far plane
       break;
     }

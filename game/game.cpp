@@ -155,6 +155,9 @@ internal void loadWorldData(GmContext* context, GameState& state) {
 }
 
 internal void initializeGameScene(GmContext* context, GameState& state) {
+  context->scene.zNear = 1.f;
+  context->scene.zFar = 50000.f;
+
   addMesh("ocean", 1, Mesh::Plane(2));
   addMesh("platform", 1000, Mesh::Cube());
   addMesh("sphere", 1, Mesh::Sphere(18));
