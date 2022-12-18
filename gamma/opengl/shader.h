@@ -15,7 +15,9 @@ namespace Gamma {
     GLuint shader;
     GLenum shaderType;
     std::string path;
-    std::filesystem::file_time_type lastWriteTime;
+    // @todo rename lastSourceWriteTime, avoid hot-reloading initially
+    std::filesystem::file_time_type lastBuildTime;
+    std::vector<std::string> dependencyPaths;
   };
 
   class OpenGLShader : public Initable, public Destroyable {

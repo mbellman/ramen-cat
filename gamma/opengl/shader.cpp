@@ -81,13 +81,14 @@ namespace Gamma {
     }
 
     auto fsPath = std::filesystem::current_path() / path;
-    auto lastWriteTime = std::filesystem::last_write_time(fsPath);
+    auto lastBuildTime = std::filesystem::last_write_time(fsPath);
 
     return {
       shader,
       shaderType,
       path,
-      lastWriteTime
+      lastBuildTime,
+      includes
     };
   }
 
@@ -138,10 +139,32 @@ namespace Gamma {
 
     if ((SDL_GetTicks() - lastShaderFileCheckTime) > CHECK_INTERVAL) {
       for (auto& record : glShaderRecords) {
-        auto fsPath = std::filesystem::current_path() / record.path;
-        auto lastWriteTime = std::filesystem::last_write_time(fsPath);
+        bool shouldHotReload = false;
+        std::filesystem::file_time_type lastBuildTime;
 
-        if (lastWriteTime != record.lastWriteTime) {
+        // Check to see if any dependencies have updated
+        for (auto& dependencyPath : record.dependencyPaths) {
+          auto fullDependencyPath = std::filesystem::current_path() / dependencyPath;
+          auto lastDependencyWriteTime = std::filesystem::last_write_time(fullDependencyPath);
+
+          if (record.lastBuildTime < lastDependencyWriteTime) {
+            shouldHotReload = true;
+            lastBuildTime = lastDependencyWriteTime;
+
+            break;            
+          }
+        }
+
+        // Check to see if the shader was updated
+        auto fullShaderPath = std::filesystem::current_path() / record.path;
+        auto lastShaderWriteTime = std::filesystem::last_write_time(fullShaderPath);
+
+        if (record.lastBuildTime < lastShaderWriteTime) {
+          shouldHotReload = true;
+          lastBuildTime = lastShaderWriteTime;
+        }
+
+        if (shouldHotReload) {
           glDetachShader(program, record.shader);
           glDeleteShader(record.shader);
 
@@ -151,6 +174,7 @@ namespace Gamma {
           glLinkProgram(program);
 
           record = updatedRecord;
+          record.lastBuildTime = lastBuildTime;
 
           Console::log("[Gamma] Hot-reloaded shader:", record.path);
 
