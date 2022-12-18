@@ -68,9 +68,9 @@ vec3 getNormal(vec3 world_position) {
   n += createDirectionalWave(wx, wz, vec2(0.2, 1), 1, 0.03, 0.5);
   n += createDirectionalWave(wx, wz, vec2(1, 0.6), 0.7, 0.03, 0.2);
 
-  n += vec2(simplex_noise(vec2(t * 0.1 - wx * 0.002, t * 0.1 - wz * 0.002))) * 0.6;
-  n += vec2(simplex_noise(vec2(t * 0.1 - wx * 0.003, t * 0.1 + wz * 0.003))) * 0.3;
-  n += vec2(simplex_noise(vec2(t * 0.1 + wx * 0.007, t * 0.1 - wz * 0.007))) * 0.3;
+  n += vec2(simplex_noise(vec2(t * 0.1 + wx * 0.001, t * 0.1 + wz * 0.001))) * 1;
+  n += vec2(simplex_noise(vec2(t * 0.1 - wx * 0.003, t * 0.1 + wz * 0.003))) * 0.6;
+  n += vec2(simplex_noise(vec2(t * 0.1 + wx * 0.007, t * 0.1 - wz * 0.007))) * 0.4;
 
   vec3 n_normal = normalize(fragNormal);
   vec3 n_tangent = normalize(fragTangent);
@@ -169,7 +169,7 @@ void main() {
   water_color *= fragColor;
 
   // @todo make water color configurable
-  water_color += vec3(0, 0.25, 0.25);
+  water_color += vec3(0, 0.25, 0.25) * fresnel_factor;
 
   out_color_and_depth = vec4(water_color, gl_FragCoord.z);
 }
