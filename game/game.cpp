@@ -17,10 +17,17 @@ internal void initializeInputHandlers(GmContext* context, GameState& state) {
 
   input.on<MouseMoveEvent>("mousemove", [&](const MouseMoveEvent& event) {
     if (SDL_GetRelativeMouseMode()) {
-      state.camera3p.azimuth -= event.deltaX / 1000.f;
-      state.camera3p.altitude += event.deltaY / 1000.f;
+      if (state.isFreeCameraMode) {
+        camera.orientation.yaw += event.deltaX / 1000.f;
+        camera.orientation.pitch += event.deltaY / 1000.f;
 
-      state.camera3p.limitAltitude(0.99f);
+        camera.rotation = camera.orientation.toQuaternion();
+      } else {
+        state.camera3p.azimuth -= event.deltaX / 1000.f;
+        state.camera3p.altitude += event.deltaY / 1000.f;
+
+        state.camera3p.limitAltitude(0.99f);
+      }
     }
   });
 
@@ -35,6 +42,7 @@ internal void initializeInputHandlers(GmContext* context, GameState& state) {
       SDL_SetRelativeMouseMode(SDL_FALSE);
     }
 
+    // @todo use in dev mode only
     if (key == Key::V) {
       if (Gm_IsFlagEnabled(GammaFlags::VSYNC)) {
         Gm_DisableFlags(GammaFlags::VSYNC);
@@ -47,6 +55,10 @@ internal void initializeInputHandlers(GmContext* context, GameState& state) {
   input.on<Key>("keystart", [&state, context](Key key) {
     if (key == Key::SPACE) {
       state.lastJumpInputTime = getRunningTime();
+    }
+
+    if (key == Key::C) {
+      state.isFreeCameraMode = !state.isFreeCameraMode;
     }
   });
 }
@@ -216,6 +228,13 @@ void updateGame(GmContext* context, GameState& state, float dt) {
   {
     state.frameStartTime = getRunningTime();
     state.isPlayerMovingThisFrame = false;
+  }
+
+  // @todo check in dev mode only
+  if (state.isFreeCameraMode) {
+    Gm_HandleFreeCameraMode(context, 4.f, dt);
+
+    return;
   }
 
   MovementSystem::handlePlayerMovementInput(context, state, dt);
