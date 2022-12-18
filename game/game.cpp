@@ -53,10 +53,6 @@ internal void initializeInputHandlers(GmContext* context, GameState& state) {
   });
 
   input.on<Key>("keystart", [&state, context](Key key) {
-    if (key == Key::SPACE) {
-      state.lastJumpInputTime = getRunningTime();
-    }
-
     if (key == Key::C) {
       state.isFreeCameraMode = !state.isFreeCameraMode;
     }

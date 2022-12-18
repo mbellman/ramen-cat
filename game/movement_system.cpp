@@ -27,6 +27,9 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
     state.lastSolidGroundPosition = player.position;
     state.lastTimeOnSolidGround = state.frameStartTime;
   } else {
+    // If the collision plane is angled or downward-facing,
+    // treat it as a normal bounce
+
     // Adjust bounce friction based on whether we're falling,
     // or walking solid ground (e.g. running into a wall)
     Vec3f friction = state.velocity.y == 0.f ? Vec3f(0.5f) : Vec3f(0.8f, 1.f, 0.8f);
@@ -36,6 +39,7 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
 
   if (Gm_Absf(plane.nDotU) < 0.35f) {
     state.lastWallBumpTime = state.frameStartTime;
+    state.lastBumpedWallNormal = plane.normal;
   }
 }
 
@@ -52,6 +56,7 @@ internal void resolveAllCollisions(GmContext* context, GameState& state) {
     if (collision.hit) {
       resolveSingleCollision(context, state, collision);
     } else if (isFalling && plane.nDotU > 0.6f) {
+      // @todo description
       Vec3f fallCollisionLineEnd = player.position - plane.normal * (playerRadius + 5.f);
       auto fallCollision = getLinePlaneCollision(player.position, fallCollisionLineEnd, plane);
 
@@ -111,17 +116,25 @@ namespace MovementSystem {
 
     state.isPlayerMovingThisFrame = state.velocity != initialVelocity;
 
-    // Handle jump actions
+    // Handle jump/wall kick actions
     {
-      float wallKickTimeDelta = state.lastJumpInputTime - state.lastWallBumpTime;
+      if (input.isKeyHeld(Key::SPACE)) {
+        float timeSinceLastWallBump = state.frameStartTime - state.lastWallBumpTime;
+        float timeSinceLastJump = state.frameStartTime - state.lastJumpTime;
 
-      if (input.isKeyHeld(Key::SPACE) && (
-        // Allow jumping if on solid ground (@todo use state.isOnSolidGround?)
-        state.velocity.y == 0.f ||
-        // Allow wall kicks
-        wallKickTimeDelta > 0 && wallKickTimeDelta < 0.2f
-      )) {
-        state.velocity.y = 500.f;
+        if (state.velocity.y == 0.f) {
+          // Regular jump (@todo use state.isOnSolidGround?)
+          state.velocity.y = 500.f;
+          state.lastJumpTime = state.frameStartTime;
+        } else if (
+          timeSinceLastWallBump > -0.2f &&
+          timeSinceLastWallBump < 0.2f &&
+          timeSinceLastJump > 0.3f
+        ) {
+          // Wall kick
+          state.velocity += (state.lastBumpedWallNormal + Vec3f(0, 2.f, 0)).unit() * 300.f;
+          state.lastJumpTime = state.frameStartTime;
+        }
       }
     }
   }

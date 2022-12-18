@@ -14,11 +14,12 @@ struct GameState {
   Gamma::Vec3f velocity;
   Gamma::Vec3f previousPlayerPosition;
   Gamma::Vec3f lastSolidGroundPosition;
+  Gamma::Vec3f lastBumpedWallNormal;
 
   float frameStartTime = 0.f;
-  float lastWallBumpTime = 0.f;
   float lastTimeOnSolidGround = 0.f;
-  float lastJumpInputTime = 0.f;
+  float lastJumpTime = 0.f;
+  float lastWallBumpTime = 0.f;
 
   bool isOnSolidGround = false;
   bool isPlayerMovingThisFrame = false;
