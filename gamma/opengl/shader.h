@@ -10,13 +10,13 @@
 #include "system/traits.h"
 #include "system/type_aliases.h"
 
+void Gm_CheckAndHotReloadShaders();
+
 namespace Gamma {
   struct GLShaderRecord {
     GLuint shader;
     GLenum shaderType;
     std::string path;
-    // @todo rename lastSourceWriteTime, avoid hot-reloading initially
-    std::filesystem::file_time_type lastBuildTime;
     std::vector<std::string> dependencyPaths;
   };
 
@@ -25,6 +25,7 @@ namespace Gamma {
     virtual void init() override;
     virtual void destroy() override;
     void attachShader(const GLShaderRecord& record);
+    void checkAndHotReloadShaders();
     void define(const std::string& name, const std::string& value);
     void define(const std::map<std::string, std::string>& variables);
     void fragment(const char* path);
@@ -42,11 +43,9 @@ namespace Gamma {
 
   private:
     GLuint program = -1;
-    u32 lastShaderFileCheckTime = 0;
     std::vector<GLShaderRecord> glShaderRecords;
     std::map<std::string, std::string> defineVariables;
 
-    void checkAndHotReloadShaders();
     GLint getUniformLocation(const char* name) const;
     GLint getUniformLocation(std::string name) const;
   };

@@ -1,6 +1,8 @@
 #include <algorithm>
 #include <filesystem>
 #include <map>
+#include <string>
+#include <vector>
 
 #include "opengl/shader.h"
 #include "system/console.h"
@@ -10,6 +12,49 @@
 
 #include "glew.h"
 #include "SDL.h"
+
+struct FileRecord {
+  std::string path;
+  std::filesystem::file_time_type lastWriteTime;
+};
+
+static std::vector<FileRecord> shaderSourceFileRecords;
+static std::vector<std::string> changedSourceFilePaths;
+static std::vector<Gamma::OpenGLShader*> glShaderPrograms;
+
+static void Gm_SaveShaderSourceFileRecord(const char* path) {
+  for (auto& record : shaderSourceFileRecords) {
+    if (record.path.compare(path) == 0) {
+      return;
+    }
+  }
+
+  FileRecord record;
+
+  record.path = path;
+  record.lastWriteTime = std::filesystem::last_write_time(std::filesystem::current_path() / path);
+
+  shaderSourceFileRecords.push_back(record);
+}
+
+void Gm_CheckAndHotReloadShaders() {
+  for (auto& record : shaderSourceFileRecords) {
+    auto fullPath = std::filesystem::current_path() / record.path;
+    auto lastWriteTime = std::filesystem::last_write_time(fullPath);
+
+    if (lastWriteTime != record.lastWriteTime) {
+      changedSourceFilePaths.push_back(record.path);
+
+      record.lastWriteTime = lastWriteTime;
+    }
+  }
+
+  for (auto& program : glShaderPrograms) {
+    program->checkAndHotReloadShaders();
+  }
+
+  changedSourceFilePaths.clear();
+}
 
 namespace Gamma {
   const static std::string INCLUDE_START = "#include \"";
@@ -27,6 +72,8 @@ namespace Gamma {
     std::string source = Gm_LoadFileContents(path);
     std::vector<std::string> includes;
     u32 currentInclude;
+
+    Gm_SaveShaderSourceFileRecord(path);
 
     // Handle #include directives
     while ((currentInclude = source.find(INCLUDE_START)) != std::string::npos) {
@@ -47,6 +94,8 @@ namespace Gamma {
 
         source.replace(replaceStart, replaceLength, includeSource);
         includes.push_back(includePath);
+
+        Gm_SaveShaderSourceFileRecord(includePath.c_str());
       }
     }
 
@@ -81,13 +130,11 @@ namespace Gamma {
     }
 
     auto fsPath = std::filesystem::current_path() / path;
-    auto lastBuildTime = std::filesystem::last_write_time(fsPath);
 
     return {
       shader,
       shaderType,
       path,
-      lastBuildTime,
       includes
     };
   }
@@ -122,10 +169,14 @@ namespace Gamma {
    */
   void OpenGLShader::init() {
     program = glCreateProgram();
+
+    glShaderPrograms.push_back(this);
   }
 
   void OpenGLShader::destroy() {
     glDeleteProgram(program);
+    
+    // @todo remove from glShaderPrograms
   }
 
   void OpenGLShader::attachShader(const GLShaderRecord& record) {
@@ -135,54 +186,38 @@ namespace Gamma {
   }
 
   void OpenGLShader::checkAndHotReloadShaders() {
-    constexpr static u32 CHECK_INTERVAL = 1000;
+    for (auto& record : glShaderRecords) {
+      bool shouldHotReload = false;
 
-    if ((SDL_GetTicks() - lastShaderFileCheckTime) > CHECK_INTERVAL) {
-      for (auto& record : glShaderRecords) {
-        bool shouldHotReload = false;
-        std::filesystem::file_time_type lastBuildTime;
-
-        // Check to see if any dependencies have updated
-        for (auto& dependencyPath : record.dependencyPaths) {
-          auto fullDependencyPath = std::filesystem::current_path() / dependencyPath;
-          auto lastDependencyWriteTime = std::filesystem::last_write_time(fullDependencyPath);
-
-          if (record.lastBuildTime < lastDependencyWriteTime) {
-            shouldHotReload = true;
-            lastBuildTime = lastDependencyWriteTime;
-
-            break;            
-          }
-        }
-
-        // Check to see if the shader was updated
-        auto fullShaderPath = std::filesystem::current_path() / record.path;
-        auto lastShaderWriteTime = std::filesystem::last_write_time(fullShaderPath);
-
-        if (record.lastBuildTime < lastShaderWriteTime) {
+      // Check to see if any dependencies have changed
+      for (auto& dependencyPath : record.dependencyPaths) {
+        if (Gm_VectorContains(changedSourceFilePaths, dependencyPath)) {
           shouldHotReload = true;
-          lastBuildTime = lastShaderWriteTime;
-        }
-
-        if (shouldHotReload) {
-          glDetachShader(program, record.shader);
-          glDeleteShader(record.shader);
-
-          GLShaderRecord updatedRecord = Gm_CompileShader(record.shaderType, record.path.c_str(), defineVariables);
-
-          glAttachShader(program, updatedRecord.shader);
-          glLinkProgram(program);
-
-          record = updatedRecord;
-          record.lastBuildTime = lastBuildTime;
-
-          Console::log("[Gamma] Hot-reloaded shader:", record.path);
 
           break;
         }
       }
 
-      lastShaderFileCheckTime = SDL_GetTicks();
+      // Check to see if the shader entry point was changed
+      if (Gm_VectorContains(changedSourceFilePaths, record.path)) {
+        shouldHotReload = true;
+      }
+
+      if (shouldHotReload) {
+        glDetachShader(program, record.shader);
+        glDeleteShader(record.shader);
+
+        GLShaderRecord updatedRecord = Gm_CompileShader(record.shaderType, record.path.c_str(), defineVariables);
+
+        glAttachShader(program, updatedRecord.shader);
+        glLinkProgram(program);
+
+        record = updatedRecord;
+
+        Console::log("[Gamma] Hot-reloaded shader:", record.path);
+
+        break;
+      }
     }
   }
 
@@ -264,10 +299,6 @@ namespace Gamma {
   }
 
   void OpenGLShader::use() {
-    #if GAMMA_DEVELOPER_MODE
-      checkAndHotReloadShaders();
-    #endif
-
     glUseProgram(program);
   }
 

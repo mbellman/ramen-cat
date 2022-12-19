@@ -107,6 +107,7 @@ namespace Gamma {
     OpenGLShader screen;
     GLuint screenTexture = 0;
     u32 frame = 0;
+    float lastShaderHotReloadCheckTime = 0.f;
     std::vector<OpenGLMesh*> glMeshes;
     std::vector<OpenGLDirectionalShadowMap*> glDirectionalShadowMaps;
     std::vector<OpenGLPointShadowMap*> glPointShadowMaps;

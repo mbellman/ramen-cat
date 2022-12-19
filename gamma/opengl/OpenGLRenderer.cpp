@@ -139,6 +139,14 @@ namespace Gamma {
   void OpenGLRenderer::render() {
     auto& scene = gmContext->scene;
 
+    #if GAMMA_DEVELOPER_MODE
+      if (scene.runningTime - lastShaderHotReloadCheckTime > 1.f) {
+        Gm_CheckAndHotReloadShaders();
+
+        lastShaderHotReloadCheckTime = scene.runningTime;
+      }
+    #endif
+
     // @todo consider moving this out of render() and
     // initializing probes before the rendering loop
     if (
