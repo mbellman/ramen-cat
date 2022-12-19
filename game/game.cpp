@@ -5,6 +5,7 @@
 #include "game.h"
 #include "movement_system.h"
 #include "camera_system.h"
+#include "editor.h"
 
 #define internal static inline
 #define getPlayer() objects("sphere")[0]
@@ -17,7 +18,7 @@ internal void initializeInputHandlers(GmContext* context, GameState& state) {
 
   input.on<MouseMoveEvent>("mousemove", [&](const MouseMoveEvent& event) {
     if (SDL_GetRelativeMouseMode()) {
-      if (state.isFreeCameraMode) {
+      if (state.isEditorEnabled) {
         camera.orientation.yaw += event.deltaX / 1000.f;
         camera.orientation.pitch += event.deltaY / 1000.f;
 
@@ -53,8 +54,12 @@ internal void initializeInputHandlers(GmContext* context, GameState& state) {
   });
 
   input.on<Key>("keystart", [&state, context](Key key) {
-    if (key == Key::C) {
-      state.isFreeCameraMode = !state.isFreeCameraMode;
+    if (key == Key::E) {
+      if (state.isEditorEnabled) {
+        Editor::disableGameEditor(context, state);
+      } else {
+        Editor::enableGameEditor(context, state);
+      }
     }
   });
 }
@@ -227,8 +232,8 @@ void updateGame(GmContext* context, GameState& state, float dt) {
   }
 
   // @todo check in dev mode only
-  if (state.isFreeCameraMode) {
-    Gm_HandleFreeCameraMode(context, 4.f, dt);
+  if (state.isEditorEnabled) {
+    Editor::handleGameEditor(context, state, dt);
 
     return;
   }

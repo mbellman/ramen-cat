@@ -78,6 +78,7 @@ void Gm_SaveLight(GmContext* context, const std::string& lightName, Gamma::Light
 bool Gm_HasObject(GmContext* context, const std::string& objectName);
 Gamma::Object* Gm_FindObject(GmContext* context, const std::string& objectName);
 Gamma::Object& Gm_GetObject(GmContext* context, const std::string& objectName);
+Gamma::Object* Gm_GetObjectByRecord(GmContext* context, const Gamma::ObjectRecord& record);
 Gamma::Light& Gm_GetLight(GmContext* context, const std::string& lightName);
 void Gm_RemoveObject(GmContext* context, const Gamma::Object& object);
 void Gm_RemoveLight(GmContext* context, Gamma::Light* light);

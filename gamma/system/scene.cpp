@@ -224,6 +224,16 @@ Gamma::Object& Gm_GetObject(GmContext* context, const std::string& objectName) {
   return *mesh->objects.getByRecord(record);
 }
 
+Gamma::Object* Gm_GetObjectByRecord(GmContext* context, const Gamma::ObjectRecord& record) {
+  auto& meshes = context->scene.meshes;
+
+  if (record.meshIndex > meshes.size() - 1) {
+    return nullptr;
+  }
+
+  return meshes[record.meshIndex]->objects.getByRecord(record);
+}
+
 Gamma::Light& Gm_GetLight(GmContext* context, const std::string& lightName) {
   auto& lightStore = context->scene.lightStore;
   // @todo assert that the light exists

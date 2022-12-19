@@ -26,7 +26,7 @@ struct GameState {
   bool isPlayerMovingThisFrame = false;
 
   // @todo use in dev mode only
-  bool isFreeCameraMode = false;
+  bool isEditorEnabled = false;
 
   // @todo calculate nearby collision planes on each frame,
   // and only check collisions against those
