@@ -21,5 +21,7 @@ namespace Gamma {
     pVec4(u8 r, u8 g, u8 b, u8 a) : r(r), g(g), b(b), a(a) {};
     pVec4(const Vec3f& value);
     pVec4(const Vec4f& value);
+
+    Vec3f toVec3f() const;
   };
 }
