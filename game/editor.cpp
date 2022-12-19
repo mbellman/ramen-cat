@@ -3,8 +3,10 @@
 
 using namespace Gamma;
 
-static bool hasActiveObject = false;
-static Object activeObject;
+bool isObservingObject = false;
+bool isObjectSelected = false;
+Object observedObject;
+Object selectedObject;
 
 internal bool isSameObject(Object& a, Object& b) {
   return (
@@ -13,46 +15,53 @@ internal bool isSameObject(Object& a, Object& b) {
   );
 }
 
-internal void restoreActiveObject(GmContext* context) {
-  auto* originalObject = Gm_GetObjectByRecord(context, activeObject._record);
+internal void restoreObject(GmContext* context, const Object& object) {
+  auto* originalObject = Gm_GetObjectByRecord(context, object._record);
 
   if (originalObject) {
-    *originalObject = activeObject;
+    *originalObject = object;
 
     commit(*originalObject);
   }
-
-  hasActiveObject = false;
 }
 
-internal void makeActiveObject(GmContext* context, Object& object) {
-  if (!hasActiveObject || !isSameObject(object, activeObject)) {
-    if (hasActiveObject) {
-      restoreActiveObject(context);
-    }
-
-    activeObject = object;
-    hasActiveObject = true;
-  }
-}
-
-internal void highlightActiveObject(GmContext* context) {
-  if (!hasActiveObject) {
-    return;
-  }
-
-  Object* originalObject = Gm_GetObjectByRecord(context, activeObject._record);
+internal void highlightObject(GmContext* context, const Object& object, const Vec3f& highlightColor) {
+  Object* originalObject = Gm_GetObjectByRecord(context, object._record);
 
   if (originalObject == nullptr) {
     return;
   }
 
-  Vec3f originalColor = activeObject.color.toVec3f();
+  Vec3f originalColor = object.color.toVec3f();
   float alpha = 0.8f + std::sinf(getRunningTime() * 4.f) * 0.2f;
 
-  originalObject->color = Vec3f::lerp(originalColor, Vec3f(1.f), alpha);
+  originalObject->color = Vec3f::lerp(originalColor, highlightColor, alpha);
 
   commit(*originalObject);
+}
+
+internal void observeObject(GmContext* context, Object& object) {
+  if (!isObservingObject || !isSameObject(object, observedObject)) {
+    if (isObservingObject) {
+      restoreObject(context, observedObject);
+    }
+
+    observedObject = object;
+    isObservingObject = true;
+  }
+}
+
+internal void selectObservedObject(GmContext* context) {
+  if (!isObservingObject) {
+    return;
+  }
+
+  if (isObjectSelected) {
+    restoreObject(context, selectedObject);
+  }
+
+  selectedObject = observedObject;
+  isObjectSelected = true;
 }
 
 namespace Editor {
@@ -61,24 +70,32 @@ namespace Editor {
   }
 
   void disableGameEditor(GmContext* context, GameState& state) {
-    if (hasActiveObject) {
-      restoreActiveObject(context);
+    if (isObservingObject) {
+      restoreObject(context, observedObject);
     }
 
+    if (isObjectSelected) {
+      restoreObject(context, selectedObject);
+    }
+
+    isObservingObject = false;
+    isObjectSelected = false;
+
     state.isEditorEnabled = false;
-    hasActiveObject = false;
   }
 
   void handleGameEditor(GmContext* context, GameState& state, float dt) {
     Gm_HandleFreeCameraMode(context, 4.f, dt);
 
-    // Find and focus the active object
+    // Find and focus the observed object
     {
       auto& camera = getCamera();
       Vec3f cameraDirection = camera.orientation.getDirection().unit();
 
-      if (hasActiveObject) {
-        restoreActiveObject(context);
+      if (isObservingObject) {
+        restoreObject(context, observedObject);
+
+        isObservingObject = false;
       }
 
       // @temporary
@@ -87,21 +104,30 @@ namespace Editor {
         float dot = Vec3f::dot(normalizedCameraToObject, cameraDirection);
 
         if (dot > 0.95f) {
-          makeActiveObject(context, platform);
+          observeObject(context, platform);
 
           break;
         }
       }
     }
 
-    highlightActiveObject(context);
+    // Highlight the observed/selected objects
+    {
+      if (isObservingObject) {
+        highlightObject(context, observedObject, Vec3f(1.f));
+      }
+
+      if (isObjectSelected) {
+        highlightObject(context, selectedObject, Vec3f(1.f, 0, 0));
+      }
+    }
 
     // Handle inputs
     {
       auto& input = getInput();
 
       if (input.didClickMouse()) {
-        // @todo select the active object
+        selectObservedObject(context);
       }
     }
   }
