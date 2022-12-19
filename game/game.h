@@ -18,8 +18,9 @@ struct GameState {
 
   float frameStartTime = 0.f;
   float lastTimeOnSolidGround = 0.f;
-  float lastJumpTime = 0.f;
+  float lastWallKickInputTime = 0.f;
   float lastWallBumpTime = 0.f;
+  float lastWallKickTime = 0.f;
 
   bool isOnSolidGround = false;
   bool isPlayerMovingThisFrame = false;

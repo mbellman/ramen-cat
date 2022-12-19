@@ -118,23 +118,30 @@ namespace MovementSystem {
 
     // Handle jump/wall kick actions
     {
-      if (input.isKeyHeld(Key::SPACE)) {
-        float timeSinceLastWallBump = state.frameStartTime - state.lastWallBumpTime;
-        float timeSinceLastJump = state.frameStartTime - state.lastJumpTime;
-
+      if (input.didPressKey(Key::SPACE)) {
         if (state.velocity.y == 0.f) {
           // Regular jump (@todo use state.isOnSolidGround?)
           state.velocity.y = 500.f;
-          state.lastJumpTime = state.frameStartTime;
-        } else if (
-          timeSinceLastWallBump > -0.2f &&
-          timeSinceLastWallBump < 0.2f &&
-          timeSinceLastJump > 0.3f
-        ) {
-          // Wall kick
-          state.velocity += (state.lastBumpedWallNormal + Vec3f(0, 2.f, 0)).unit() * 300.f;
-          state.lastJumpTime = state.frameStartTime;
+        } else {
+          // If we press SPACE in mid-air, queue a wall kick action.
+          // We'll determine whether it's appropriate to perform
+          // a wall kick next.
+          state.lastWallKickInputTime = state.frameStartTime;
         }
+      }
+
+      float timeSinceLastWallBump = state.frameStartTime - state.lastWallBumpTime;
+      float timeSinceLastWallKickInput = state.frameStartTime - state.lastWallKickInputTime;
+      float timeSinceLastWallKick = state.frameStartTime - state.lastWallKickTime;
+
+      if (
+        timeSinceLastWallBump < 0.2f &&
+        timeSinceLastWallKickInput < 0.2f &&
+        timeSinceLastWallKick > 0.3f
+      ) {
+        // Wall kick
+        state.velocity += (state.lastBumpedWallNormal + Vec3f(0, 2.f, 0)).unit() * 300.f;
+        state.lastWallKickTime = state.frameStartTime;
       }
     }
   }

@@ -156,11 +156,9 @@ float Gm_GetDeltaTime(GmContext* context) {
   return dt;
 }
 
-void Gm_LogFrameStart(GmContext* context) {
+void Gm_HandleFrameStart(GmContext* context) {
   context->frameStartMicroseconds = Gm_GetMicroseconds();
-}
 
-void Gm_HandleEvents(GmContext* context) {
   SDL_Event event;
 
   while (SDL_PollEvent(&event)) {
@@ -205,12 +203,9 @@ void Gm_RenderScene(GmContext* context) {
   #endif
 
   context->renderer->present();
-
-  // @todo move this elsewhere
-  Gm_SavePreviousFlags();
 }
 
-void Gm_LogFrameEnd(GmContext* context) {
+void Gm_HandleFrameEnd(GmContext* context) {
   using namespace Gamma;
 
   u64 frameTimeInMicroseconds = Gm_GetMicroseconds() - context->frameStartMicroseconds;
@@ -221,6 +216,10 @@ void Gm_LogFrameEnd(GmContext* context) {
 
   context->scene.runningTime += frameTimeInMicroseconds / 1000000.0f;
   context->scene.frame++;
+
+  context->scene.input.resetPressedKeys();
+
+  Gm_SavePreviousFlags();
 }
 
 void Gm_DestroyContext(GmContext* context) {

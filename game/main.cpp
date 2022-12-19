@@ -16,8 +16,7 @@ int main(int argc, char* argv[]) {
   while (!context->window.closed) {
     float dt = Gm_GetDeltaTime(context);
 
-    Gm_LogFrameStart(context);
-    Gm_HandleEvents(context);
+    Gm_HandleFrameStart(context);
 
     // @todo handle this within the engine (?)
     if (dt > 0.1f) {
@@ -27,7 +26,7 @@ int main(int argc, char* argv[]) {
     updateGame(context, state, dt);
 
     Gm_RenderScene(context);
-    Gm_LogFrameEnd(context);
+    Gm_HandleFrameEnd(context);
   }
 
   Gm_DestroyContext(context);
