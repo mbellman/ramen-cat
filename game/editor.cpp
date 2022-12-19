@@ -95,5 +95,14 @@ namespace Editor {
     }
 
     highlightActiveObject(context);
+
+    // Handle inputs
+    {
+      auto& input = getInput();
+
+      if (input.didClickMouse()) {
+        // @todo select the active object
+      }
+    }
   }
 }

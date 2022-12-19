@@ -217,7 +217,7 @@ void Gm_HandleFrameEnd(GmContext* context) {
   context->scene.runningTime += frameTimeInMicroseconds / 1000000.0f;
   context->scene.frame++;
 
-  context->scene.input.resetPressedKeys();
+  context->scene.input.resetPerFrameState();
 
   Gm_SavePreviousFlags();
 }

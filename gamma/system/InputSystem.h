@@ -82,16 +82,18 @@ namespace Gamma {
 
   class InputSystem : public Signaler {
   public:
+    bool didClickMouse() const;
     bool didPressKey(Key key) const;
     u64 getLastKeyDown() const;
     void handleEvent(const SDL_Event& event);
     bool isKeyHeld(Key key) const;
-    void resetPressedKeys();
+    void resetPerFrameState();
 
   private:
     u64 heldKeyState = 0;
     u64 pressedKeyState = 0;
     u64 lastKeyDown = 0;
+    bool didClickMouseThisFrame = false;
 
     void handleKeyDown(const SDL_Keycode& code);
     void handleKeyUp(const SDL_Keycode& code);

@@ -59,6 +59,10 @@ namespace Gamma {
     return pressedKeyState & (u64)key;
   }
 
+  bool InputSystem::didClickMouse() const {
+    return didClickMouseThisFrame;
+  }
+
   u64 InputSystem::getLastKeyDown() const {
     return lastKeyDown;
   }
@@ -121,6 +125,8 @@ namespace Gamma {
     buttonEvent.position.y = event.y;
 
     signal("mousedown", buttonEvent);
+
+    didClickMouseThisFrame = true;
   }
 
   void InputSystem::handleMouseMotion(const SDL_MouseMotionEvent& event) {
@@ -150,7 +156,8 @@ namespace Gamma {
     return heldKeyState & (u64)key;
   }
 
-  void InputSystem::resetPressedKeys() {
+  void InputSystem::resetPerFrameState() {
     pressedKeyState = 0;
+    didClickMouseThisFrame = false;
   }
 }
