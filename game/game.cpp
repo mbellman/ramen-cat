@@ -62,6 +62,10 @@ internal void initializeInputHandlers(GmContext* context, GameState& state) {
       }
     }
   });
+
+  context->commander.on<std::string>("command", [&state, context](std::string command) {
+    // @todo
+  });
 }
 
 // @temporary
