@@ -92,10 +92,18 @@ namespace Editor {
       auto& camera = getCamera();
       Vec3f cameraDirection = camera.orientation.getDirection().unit();
 
-      if (isObservingObject) {
-        restoreObject(context, observedObject);
+      // Reset the observed/selected objects to
+      // prevent corruption of original state
+      {
+        if (isObservingObject) {
+          restoreObject(context, observedObject);
 
-        isObservingObject = false;
+          isObservingObject = false;
+        }
+
+        if (isObjectSelected) {
+          restoreObject(context, selectedObject);
+        }
       }
 
       // @temporary
