@@ -9,13 +9,7 @@ noperspective in vec2 fragUv;
 
 out vec3 out_color;
 
-float getLinearizedDepth(float depth) {
-  float clip_depth = 2.0 * depth - 1.0;
-  float near = zNear;
-  float far = zFar;
-
-  return 2.0 * near * far / (far + near - clip_depth * (far - near));
-}
+#include "utils/conversion.glsl";
 
 void main() {
   if (fragUv.x < 0.25) {
@@ -28,7 +22,7 @@ void main() {
     // Depth (adjusted for clarity)
     vec2 uv = (fragUv - vec2(0.25, 0.0)) * vec2(4.0, 1.0);
     vec4 color_and_depth = texture(texColorAndDepth, uv);
-    float adjusted_depth = pow(getLinearizedDepth(color_and_depth.w) / zFar, 1.0 / 4.0);
+    float adjusted_depth = pow(getLinearizedDepth(color_and_depth.w, zNear, zFar) / zFar, 1.0 / 4.0);
 
     out_color = vec3(adjusted_depth);
   } else if (fragUv.x < 0.75) {

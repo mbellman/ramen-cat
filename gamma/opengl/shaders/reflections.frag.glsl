@@ -77,7 +77,7 @@ Reflection getRefinedReflection(
 
     vec4 test = texture(texColorAndDepth, refined_uv);
 
-    test_depth = getLinearizedDepth(test.w);
+    test_depth = getLinearizedDepth(test.w, zNear, zFar);
     refined_color = test.rgb;
 
     // If the ray is still intersecting the geometry,
@@ -125,7 +125,7 @@ Reflection getReflection(
     }
 
     vec4 test = texture(texColorAndDepth, uv);
-    float test_depth = getLinearizedDepth(test.w);
+    float test_depth = getLinearizedDepth(test.w, zNear, zFar);
     float ray_to_geometry_distance = abs(ray.z - test_depth);
 
     // A reflection occurs when:

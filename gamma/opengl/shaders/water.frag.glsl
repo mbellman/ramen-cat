@@ -9,6 +9,9 @@ uniform mat4 matInverseView;
 uniform vec3 cameraPosition;
 uniform float time;
 
+uniform float zNear;
+uniform float zFar;
+
 flat in vec3 fragColor;
 in vec3 fragNormal;
 in vec3 fragTangent;
@@ -159,7 +162,7 @@ void main() {
     // how deep into the geometry the reflection ray went. We want a
     // gradual transition from geometry to sky reflections instead of
     // an abrupt cutoff/fallback if no geometry is reflected.
-    float depth_distance = getLinearizedDepth(reflection_color_and_depth.w) - view_reflection_ray.z;
+    float depth_distance = getLinearizedDepth(reflection_color_and_depth.w, zNear, zFar) - view_reflection_ray.z;
     float alpha = max(0.0, min(1.0, depth_distance / 20.0));
 
     reflection_color = mix(reflection_color_and_depth.rgb, sky_color, alpha);

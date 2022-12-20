@@ -61,8 +61,7 @@ struct GmScene {
   u32 frame = 0;
   float runningTime = 0.0f;
   float zNear = 1.f;
-  // @todo change back to 10K by default, fix static near/far plane values in conversion.glsl
-  float zFar = 50000.f;
+  float zFar = 10000.f;
 };
 
 const GmSceneStats Gm_GetSceneStats(GmContext* context);

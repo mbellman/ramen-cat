@@ -23,13 +23,10 @@ vec3 getWorldPosition(float depth, vec2 frag_uv, mat4 inverse_projection, mat4 i
  * Maps a nonlinear [0, 1] depth value to a linearized
  * depth between the near and far planes.
  */
-float getLinearizedDepth(float depth) {
+float getLinearizedDepth(float depth, float near, float far) {
   float clip_depth = 2.0 * depth - 1.0;
-  // @todo import from a 'utils/constants.glsl' file; use uniforms
-  float near_plane = 1.0;
-  float far_plane = 50000.0;
 
-  return 2.0 * near_plane * far_plane / (far_plane + near_plane - clip_depth * (far_plane - near_plane));
+  return 2.0 * near * far / (far + near - clip_depth * (far - near));
 }
 
 /**

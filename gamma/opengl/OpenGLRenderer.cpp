@@ -779,6 +779,8 @@ namespace Gamma {
     auto& shader = shaders.directionalShadowcaster;
 
     shader.use();
+    shader.setFloat("zNear", gmContext->scene.zNear);
+    shader.setFloat("zFar", gmContext->scene.zFar);
 
     for (u32 i = 0; i < ctx.directionalShadowcasters.size(); i++) {
       auto& glShadowMap = *glDirectionalShadowMaps[i];
@@ -960,6 +962,8 @@ namespace Gamma {
       shaders.indirectLight.setMatrix4f("matInverseView", ctx.matInverseView);
       shaders.indirectLight.setMatrix4f("matViewT1", ctx.matPreviousView);
       shaders.indirectLight.setInt("frame", gmContext->scene.frame);
+      shaders.indirectLight.setFloat("zNear", gmContext->scene.zNear);
+      shaders.indirectLight.setFloat("zFar", gmContext->scene.zFar);
 
       OpenGLScreenQuad::render();
 
@@ -986,6 +990,8 @@ namespace Gamma {
     shaders.indirectLightComposite.setInt("texColorAndDepth", 0);
     shaders.indirectLightComposite.setInt("texNormalAndEmissivity", 1);
     shaders.indirectLightComposite.setInt("texIndirectLight", 2);
+    shaders.indirectLightComposite.setFloat("zNear", gmContext->scene.zNear);
+    shaders.indirectLightComposite.setFloat("zFar", gmContext->scene.zFar);
 
     glBlendFuncSeparate(GL_ONE, GL_ONE, GL_ZERO, GL_ONE);
 
@@ -1095,6 +1101,8 @@ namespace Gamma {
       shaders.refractivePrepass.setInt("texColorAndDepth", 0);
       shaders.refractivePrepass.setMatrix4f("matProjection", ctx.matProjection);
       shaders.refractivePrepass.setMatrix4f("matView", ctx.matView);
+      shaders.refractivePrepass.setFloat("zNear", gmContext->scene.zNear);
+      shaders.refractivePrepass.setFloat("zFar", gmContext->scene.zFar);
 
       for (auto* glMesh : glMeshes) {
         if (glMesh->isMeshType(MeshType::REFRACTIVE)) {
@@ -1255,6 +1263,8 @@ namespace Gamma {
     shaders.water.setMatrix4f("matInverseView", ctx.matInverseView);
     shaders.water.setVec3f("cameraPosition", camera.position);
     shaders.water.setFloat("time", gmContext->scene.runningTime);
+    shaders.water.setFloat("zNear", gmContext->scene.zNear);
+    shaders.water.setFloat("zFar", gmContext->scene.zFar);
 
     for (auto* glMesh : glMeshes) {
       if (glMesh->isMeshType(MeshType::WATER)) {

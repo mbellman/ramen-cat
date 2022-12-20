@@ -4,6 +4,9 @@ uniform vec2 screenSize;
 uniform mat4 matProjection;
 uniform sampler2D texColorAndDepth;
 
+uniform float zNear;
+uniform float zFar;
+
 layout (location = 2) out vec4 out_color_and_depth;
 
 #include "utils/conversion.glsl";
@@ -13,7 +16,7 @@ vec2 getPixelCoords() {
 }
 
 void main() {
-  float linearized_depth = getLinearizedDepth(gl_FragCoord.z);
+  float linearized_depth = getLinearizedDepth(gl_FragCoord.z, zNear, zFar);
   vec4 base_color = texture(texColorAndDepth, getPixelCoords());
 
   out_color_and_depth = vec4(vec3(1, 0, 1) * base_color.rgb, gl_FragCoord.z);

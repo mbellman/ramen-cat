@@ -26,6 +26,9 @@ uniform mat4 matInverseView;
 uniform mat4 lightMatrices[3];
 uniform DirectionalLight light;
 
+uniform float zNear;
+uniform float zFar;
+
 noperspective in vec2 fragUv;
 
 layout (location = 0) out vec4 out_color_and_depth;
@@ -141,7 +144,7 @@ void main() {
 
   #include "inline/directional-light.glsl";
 
-  Cascade cascade = getCascadeByDepth(getLinearizedDepth(frag_color_and_depth.w));
+  Cascade cascade = getCascadeByDepth(getLinearizedDepth(frag_color_and_depth.w, zNear, zFar));
   vec4 light_space_transform = getLightSpaceTransform(lightMatrices[cascade.index], position);
   float light_intensity = getLightIntensity(cascade, light_space_transform);
 

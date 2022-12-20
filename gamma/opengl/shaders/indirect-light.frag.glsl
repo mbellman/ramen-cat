@@ -16,6 +16,9 @@ uniform mat4 matInverseProjection;
 uniform mat4 matViewT1;
 uniform int frame;
 
+uniform float zNear;
+uniform float zFar;
+
 noperspective in vec2 fragUv;
 
 layout (location = 0) out vec4 out_gi_and_ao;
@@ -65,7 +68,7 @@ float getScreenSpaceAmbientOcclusionContribution(float fragment_depth, vec3 frag
   // @todo make configurable
   const float radius = 8.0;
   vec3 contribution = vec3(0);
-  float linearized_fragment_depth = getLinearizedDepth(fragment_depth);
+  float linearized_fragment_depth = getLinearizedDepth(fragment_depth, zNear, zFar);
   float occlusion = 0.0;
 
   #if USE_DENOISING == 1
@@ -86,7 +89,7 @@ float getScreenSpaceAmbientOcclusionContribution(float fragment_depth, vec3 frag
     vec3 view_sample_position = glVec3(matView * glVec4(world_sample_position));
     vec2 screen_sample_position = getScreenCoordinates(view_sample_position, matProjection);
     float sample_depth = textureLod(texColorAndDepth, screen_sample_position, 1).w;
-    float linear_sample_depth = getLinearizedDepth(sample_depth);
+    float linear_sample_depth = getLinearizedDepth(sample_depth, zNear, zFar);
 
     if (linear_sample_depth < view_sample_position.z) {
       float occluder_distance = view_sample_position.z - linear_sample_depth;
@@ -105,7 +108,7 @@ vec3 getScreenSpaceGlobalIlluminationContribution(float fragment_depth, vec3 fra
   const float max_brightness = 100.0;
   vec3 global_illumination = vec3(0.0);
 
-  float linearized_fragment_depth = getLinearizedDepth(fragment_depth);
+  float linearized_fragment_depth = getLinearizedDepth(fragment_depth, zNear, zFar);
   float radius = max_sample_radius * saturate(1.0 / (linearized_fragment_depth * 0.01));
 
   // Bounce a ray off the surface and sample points
@@ -171,12 +174,12 @@ void main() {
     vec3 view_fragment_position_t1 = glVec3(matViewT1 * glVec4(fragment_position));
     vec2 frag_uv_t1 = getScreenCoordinates(view_fragment_position_t1.xyz, matProjection);
     vec4 sample_t1 = texture(texIndirectLightT1, frag_uv_t1);
-    float linearized_fragment_depth = getLinearizedDepth(frag_color_and_depth.w);
+    float linearized_fragment_depth = getLinearizedDepth(frag_color_and_depth.w, zNear, zFar);
     float weight = 1.0;
     float sample_sum = 0.0;
 
     float sample_depth = textureLod(texColorAndDepth, frag_uv_t1, 1).w;
-    float linear_sample_depth = getLinearizedDepth(sample_depth);
+    float linear_sample_depth = getLinearizedDepth(sample_depth, zNear, zFar);
 
     // if (distance(linearized_fr/agment_depth, linear_sample_depth) < 1.0) {
       out_gi_and_ao += sample_t1 * weight;
@@ -191,7 +194,7 @@ void main() {
         vec2 offset = vec2(x, y) * texel_size * spatial_spread_size;
         vec2 sample_uv = frag_uv_t1 + offset;
         float sample_depth = textureLod(texColorAndDepth, sample_uv, 1).w;
-        float linear_sample_depth = getLinearizedDepth(sample_depth);
+        float linear_sample_depth = getLinearizedDepth(sample_depth, zNear, zFar);
 
         // if (distance(linearized_fragment_depth, linear_sample_depth) < 2.0) {
           out_gi_and_ao += texture(texIndirectLightT1, sample_uv) * weight * spatial_spread_weight;
