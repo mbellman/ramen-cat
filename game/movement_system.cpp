@@ -27,14 +27,14 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
     state.lastSolidGroundPosition = player.position;
     state.lastTimeOnSolidGround = state.frameStartTime;
   } else {
-    // If the collision plane is angled or downward-facing,
-    // treat it as a normal bounce
-
-    // Adjust bounce friction based on whether we're falling,
-    // or walking solid ground (e.g. running into a wall)
-    Vec3f friction = state.velocity.y == 0.f ? Vec3f(0.5f) : Vec3f(0.8f, 1.f, 0.8f);
-
-    state.velocity = Vec3f::reflect(state.velocity, plane.normal) * friction;
+    // Slow velocity along walls to make the velocity vector
+    // parallel to the wall plane, allowing for wall-running
+    // and wall-kicking.
+    state.velocity *= Vec3f(
+      1.f - Gm_Absf(plane.normal.x),
+      1.f - Gm_Absf(plane.normal.y),
+      1.f - Gm_Absf(plane.normal.z)
+    );
   }
 
   if (Gm_Absf(plane.nDotU) < 0.35f) {
@@ -140,7 +140,7 @@ namespace MovementSystem {
         timeSinceLastWallKick > 0.3f
       ) {
         // Wall kick
-        state.velocity += (state.lastBumpedWallNormal + Vec3f(0, 2.f, 0)).unit() * 300.f;
+        state.velocity += (state.lastBumpedWallNormal + Vec3f(0, 3.f, 0)).unit() * 500.f;
         state.lastWallKickTime = state.frameStartTime;
       }
     }
