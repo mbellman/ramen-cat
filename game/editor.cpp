@@ -119,6 +119,15 @@ namespace Editor {
 
       if (isObjectSelected) {
         highlightObject(context, selectedObject, Vec3f(1.f, 0, 0));
+
+        // @todo clean this up
+        #define String(x) std::to_string(x)
+
+        auto& p = selectedObject.position;
+        auto value = String(p.x) + ", " + String(p.y) + ", " + String(p.z);
+
+        addDebugMessage("Active object:");
+        addDebugMessage("Position: " + value);
       }
     }
 
