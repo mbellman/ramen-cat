@@ -42,11 +42,11 @@ internal void highlightObject(GmContext* context, const Object& object, const Ve
 }
 
 internal void observeObject(GmContext* context, Object& object) {
-  if (!isObservingObject || !isSameObject(object, observedObject)) {
-    if (isObservingObject) {
-      restoreObject(context, observedObject);
-    }
+  if (isObservingObject) {
+    restoreObject(context, observedObject);
+  }
 
+  if (!isObservingObject || !isSameObject(object, observedObject)) {
     observedObject = object;
     isObservingObject = true;
   }
@@ -109,15 +109,19 @@ namespace Editor {
         }
       }
 
+      float closestDistance = Gm_INFINITY;
+
       // @temporary
       for (auto& platform : objects("platform")) {
-        Vec3f normalizedCameraToObject = (platform.position - camera.position).unit();
+        Vec3f cameraToObject = platform.position - camera.position;
+        float distance = cameraToObject.magnitude();
+        Vec3f normalizedCameraToObject = cameraToObject / distance;
         float dot = Vec3f::dot(normalizedCameraToObject, cameraDirection);
 
-        if (dot > 0.95f) {
+        if (dot > 0.95f && distance < closestDistance) {
           observeObject(context, platform);
 
-          break;
+          closestDistance = distance;
         }
       }
     }

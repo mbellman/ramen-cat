@@ -5,6 +5,7 @@
 constexpr float Gm_PI = 3.141592f;
 constexpr float Gm_TAU = Gm_PI * 2.f;
 constexpr float Gm_HALF_PI = Gm_PI / 2.f;
+constexpr float Gm_INFINITY = 3.402823466e+38F;
 
 inline float Gm_Absf(float value) {
   return value < 0.f ? -value : value;
