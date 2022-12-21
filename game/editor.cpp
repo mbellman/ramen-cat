@@ -1,4 +1,5 @@
 #include "editor.h"
+#include "world.h"
 #include "macros.h"
 
 using namespace Gamma;
@@ -82,6 +83,8 @@ namespace Editor {
     isObjectSelected = false;
 
     state.isEditorEnabled = false;
+
+    World::rebuildCollisionPlanes(context, state);
   }
 
   void handleGameEditor(GmContext* context, GameState& state, float dt) {
@@ -121,11 +124,11 @@ namespace Editor {
 
     // Handle inputs
     {
-      auto& mouseDelta = input.getMouseDelta();
-
       if (input.didClickMouse()) {
         selectObservedObject(context);
       }
+
+      auto& mouseDelta = input.getMouseDelta();
 
       if (input.isMouseHeld() && isObjectSelected) {
         float dx = (float)mouseDelta.x;
