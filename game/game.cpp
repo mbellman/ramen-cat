@@ -210,19 +210,19 @@ void initializeGame(GmContext* context, GameState& state) {
 }
 
 void updateGame(GmContext* context, GameState& state, float dt) {
+  // @todo check in dev mode only
+  if (state.isEditorEnabled) {
+    Editor::handleGameEditor(context, state, dt);
+
+    return;
+  }
+
   auto& player = getPlayer();
 
   // Track start-of-frame variables
   {
     state.frameStartTime = getRunningTime();
     state.isPlayerMovingThisFrame = false;
-  }
-
-  // @todo check in dev mode only
-  if (state.isEditorEnabled) {
-    Editor::handleGameEditor(context, state, dt);
-
-    return;
   }
 
   MovementSystem::handlePlayerMovementInput(context, state, dt);

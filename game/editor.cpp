@@ -86,6 +86,7 @@ namespace Editor {
 
   void handleGameEditor(GmContext* context, GameState& state, float dt) {
     auto& camera = getCamera();
+    auto& input = getInput();
 
     // Find and focus the observed object
     {
@@ -120,7 +121,6 @@ namespace Editor {
 
     // Handle inputs
     {
-      auto& input = getInput();
       auto& mouseDelta = input.getMouseDelta();
 
       if (input.didClickMouse()) {
@@ -166,7 +166,9 @@ namespace Editor {
       }
 
       if (isObjectSelected) {
-        highlightObject(context, selectedObject, Vec3f(1.f, 0, 0));
+        auto highlightColor = input.isMouseHeld() ? Vec3f(0.7f, 0, 0) : Vec3f(1.f, 0, 0);
+
+        highlightObject(context, selectedObject, highlightColor);
 
         // @todo clean this up
         #define String(x) std::to_string(x)
