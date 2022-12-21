@@ -85,11 +85,10 @@ namespace Editor {
   }
 
   void handleGameEditor(GmContext* context, GameState& state, float dt) {
-    Gm_HandleFreeCameraMode(context, 4.f, dt);
+    auto& camera = getCamera();
 
     // Find and focus the observed object
     {
-      auto& camera = getCamera();
       Vec3f cameraDirection = camera.orientation.getDirection().unit();
 
       // Reset the observed/selected objects to
@@ -119,6 +118,47 @@ namespace Editor {
       }
     }
 
+    // Handle inputs
+    {
+      auto& input = getInput();
+      auto& mouseDelta = input.getMouseDelta();
+
+      if (input.didClickMouse()) {
+        selectObservedObject(context);
+      }
+
+      if (input.isMouseHeld() && isObjectSelected) {
+        float dx = (float)mouseDelta.x;
+        float dy = (float)mouseDelta.y;
+        auto* originalObject = Gm_GetObjectByRecord(context, selectedObject._record);
+        Vec3f move;
+
+        if (Gm_Absf(dy) > Gm_Absf(dx)) {
+          Vec3f moveDirection = camera.orientation.getUpDirection().alignToAxis();
+
+          move = moveDirection * -dy * 20.f * dt;
+        } else {
+          Vec3f moveDirection = camera.orientation.getRightDirection().alignToAxis();
+
+          move = moveDirection * dx * 20.f * dt;
+        }
+
+        originalObject->position += move;
+        originalObject->color = selectedObject.color;
+        selectedObject = *originalObject;
+
+        commit(*originalObject);
+      } else if (SDL_GetRelativeMouseMode()) {
+        auto& camera = getCamera();
+
+        Gm_HandleFreeCameraMode(context, 4.f, dt);
+
+        camera.orientation.yaw += mouseDelta.x / 1000.f;
+        camera.orientation.pitch += mouseDelta.y / 1000.f;
+        camera.rotation = camera.orientation.toQuaternion();
+      }
+    }
+
     // Highlight the observed/selected objects
     {
       if (isObservingObject) {
@@ -136,15 +176,6 @@ namespace Editor {
 
         addDebugMessage("Active object:");
         addDebugMessage("Position: " + value);
-      }
-    }
-
-    // Handle inputs
-    {
-      auto& input = getInput();
-
-      if (input.didClickMouse()) {
-        selectObservedObject(context);
       }
     }
   }

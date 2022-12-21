@@ -14,23 +14,6 @@ using namespace Gamma;
 
 internal void initializeInputHandlers(GmContext* context, GameState& state) {
   auto& input = getInput();
-  auto& camera = getCamera();
-
-  input.on<MouseMoveEvent>("mousemove", [&](const MouseMoveEvent& event) {
-    if (SDL_GetRelativeMouseMode()) {
-      if (state.isEditorEnabled) {
-        camera.orientation.yaw += event.deltaX / 1000.f;
-        camera.orientation.pitch += event.deltaY / 1000.f;
-
-        camera.rotation = camera.orientation.toQuaternion();
-      } else {
-        state.camera3p.azimuth -= event.deltaX / 1000.f;
-        state.camera3p.altitude += event.deltaY / 1000.f;
-
-        state.camera3p.limitAltitude(0.99f);
-      }
-    }
-  });
 
   input.on<MouseButtonEvent>("mousedown", [&](const MouseButtonEvent& event) {
     if (!SDL_GetRelativeMouseMode()) {

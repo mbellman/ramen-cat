@@ -67,6 +67,10 @@ namespace Gamma {
     return lastKeyDown;
   }
 
+  const Point<int>& InputSystem::getMouseDelta() const {
+    return mouseDelta;
+  }
+
   void InputSystem::handleEvent(const SDL_Event& event) {
     switch (event.type) {
       case SDL_KEYDOWN:
@@ -80,6 +84,9 @@ namespace Gamma {
         break;
       case SDL_MOUSEBUTTONDOWN:
         handleMouseDown(event.button);
+        break;
+      case SDL_MOUSEBUTTONUP:
+        handleMouseUp(event.button);
         break;
       case SDL_MOUSEWHEEL:
         handleMouseWheel(event.wheel);
@@ -127,6 +134,18 @@ namespace Gamma {
     signal("mousedown", buttonEvent);
 
     didClickMouseThisFrame = true;
+    isMouseButtonHeldDown = true;
+  }
+
+  void InputSystem::handleMouseUp(const SDL_MouseButtonEvent& event) {
+    MouseButtonEvent buttonEvent;
+
+    buttonEvent.position.x = event.x;
+    buttonEvent.position.y = event.y;
+
+    signal("mouseup", buttonEvent);
+
+    isMouseButtonHeldDown = false;
   }
 
   void InputSystem::handleMouseMotion(const SDL_MouseMotionEvent& event) {
@@ -136,6 +155,9 @@ namespace Gamma {
     moveEvent.deltaY = event.yrel;
 
     signal("mousemove", moveEvent);
+
+    mouseDelta.x = event.xrel;
+    mouseDelta.y = event.yrel;
   }
 
   void InputSystem::handleMouseWheel(const SDL_MouseWheelEvent& event) {
@@ -156,8 +178,13 @@ namespace Gamma {
     return heldKeyState & (u64)key;
   }
 
+  bool InputSystem::isMouseHeld() const {
+    return isMouseButtonHeldDown;
+  }
+
   void InputSystem::resetPerFrameState() {
     pressedKeyState = 0;
     didClickMouseThisFrame = false;
+    mouseDelta = { 0, 0 };
   }
 }

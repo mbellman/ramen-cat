@@ -40,6 +40,7 @@ namespace Gamma {
     // if the assignment was intentional.
     void operator=(float value) = delete;
 
+    Vec3f alignToAxis() const;
     void debug() const;
     Vec3f gl() const;
     Vec3f invert() const;

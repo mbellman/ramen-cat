@@ -83,6 +83,20 @@ namespace Gamma {
     z /= divisor;
   }
 
+  Vec3f Vec3f::alignToAxis() const {
+    float ax = Gm_Absf(x);
+    float ay = Gm_Absf(y);
+    float az = Gm_Absf(z);
+
+    if (ax > ay && ax > az) {
+      return Vec3f(x, 0, 0).unit();
+    } else if (ay > ax && ay > az) {
+      return Vec3f(0, y, 0).unit();
+    } else {
+      return Vec3f(0, 0, z).unit();
+    }
+  }
+
   Vec3f Vec3f::cross(const Vec3f& v1, const Vec3f& v2) {
     return {
       v1.y * v2.z - v1.z * v2.y,

@@ -25,9 +25,23 @@ namespace CameraSystem {
   void handleGameCamera(GmContext* context, GameState& state, float dt) {
     updateThirdPersonCameraRadius(state, dt);
 
+    auto& input = getInput();
     auto& player = getPlayer();
     auto playerToCamera = state.camera3p.calculatePosition();
     auto targetCameraPosition = player.position + playerToCamera;
+
+    // Control camera using mouse movements
+    {
+      // @todo Gm_IsWindowFocused()
+      if (SDL_GetRelativeMouseMode()) {
+        auto& delta = input.getMouseDelta();
+
+        state.camera3p.azimuth -= delta.x / 1000.f;
+        state.camera3p.altitude += delta.y / 1000.f;
+
+        state.camera3p.limitAltitude(0.99f);
+      }
+    }
 
     // Reposition the camera if necessary to avoid clipping inside walls
     {
