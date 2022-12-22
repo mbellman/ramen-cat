@@ -27,14 +27,8 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
     state.lastSolidGroundPosition = player.position;
     state.lastTimeOnSolidGround = state.frameStartTime;
   } else {
-    // Slow velocity along walls to make the velocity vector
-    // parallel to the wall plane, allowing for wall-running
-    // and wall-kicking.
-    state.velocity *= Vec3f(
-      1.f - Gm_Absf(plane.normal.x),
-      1.f - Gm_Absf(plane.normal.y),
-      1.f - Gm_Absf(plane.normal.z)
-    );
+    // @todo description
+    state.velocity += plane.normal * 10.f;
   }
 
   if (Gm_Absf(plane.nDotU) < 0.35f) {
