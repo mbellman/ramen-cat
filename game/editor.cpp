@@ -1,13 +1,20 @@
+#include <vector>
+
 #include "editor.h"
 #include "world.h"
 #include "macros.h"
 
 using namespace Gamma;
 
+struct HistoryAction {
+  Object initialObject;
+};
+
 bool isObservingObject = false;
 bool isObjectSelected = false;
 Object observedObject;
 Object selectedObject;
+static std::vector<HistoryAction> history;
 
 internal bool isSameObject(Object& a, Object& b) {
   return (
@@ -52,17 +59,67 @@ internal void observeObject(GmContext* context, Object& object) {
   }
 }
 
-internal void selectObservedObject(GmContext* context) {
-  if (!isObservingObject) {
-    return;
-  }
-
+internal void selectObject(GmContext* context, Object& object) {
   if (isObjectSelected) {
     restoreObject(context, selectedObject);
   }
 
   selectedObject = observedObject;
   isObjectSelected = true;
+}
+
+internal void createObjectHistoryAction(GmContext* context, Object& object) {
+  if (history.size() > 0) {
+    auto& lastTransaction = history.back();
+    auto* lastObject = Gm_GetObjectByRecord(context, lastTransaction.initialObject._record);
+
+    if (lastObject != nullptr) {
+      // @todo consider other properties about the object
+      if ((*lastObject).position == lastTransaction.initialObject.position) {
+        // No modifications were made to the last object in the history queue,
+        // so replace the object in the last history action with this one
+        history.back().initialObject = object;
+
+        return;
+      }
+    }
+
+    if (
+      isSameObject(object, lastTransaction.initialObject) &&
+      // @todo consider other properties about the object
+      object.position == lastTransaction.initialObject.position
+    ) {
+      return;
+    }
+  }
+
+  HistoryAction action;
+
+  action.initialObject = object;
+
+  history.push_back(action);
+}
+
+internal void undoLastHistoryAction(GmContext* context) {
+  if (history.size() == 0) {
+    return;
+  }
+
+  auto& action = history.back();
+  auto* liveObject = Gm_GetObjectByRecord(context, action.initialObject._record);
+
+  if (liveObject != nullptr) {
+    *liveObject = action.initialObject;
+
+    commit(*liveObject);
+
+    Console::log("[Editor] Action reverted");
+
+    selectedObject = *liveObject;
+    isObjectSelected = true;
+  }
+
+  history.pop_back();
 }
 
 namespace Editor {
@@ -128,8 +185,13 @@ namespace Editor {
 
     // Handle inputs
     {
-      if (input.didClickMouse()) {
-        selectObservedObject(context);
+      if (input.didClickMouse() && isObservingObject) {
+        selectObject(context, observedObject);
+        createObjectHistoryAction(context, observedObject);
+      }
+
+      if (input.isKeyHeld(Key::CONTROL) && input.didPressKey(Key::Z)) {
+        undoLastHistoryAction(context);
       }
 
       auto& mouseDelta = input.getMouseDelta();
