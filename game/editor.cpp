@@ -10,11 +10,13 @@ struct HistoryAction {
   Object initialObject;
 };
 
-bool isObservingObject = false;
-bool isObjectSelected = false;
-Object observedObject;
-Object selectedObject;
-static std::vector<HistoryAction> history;
+static struct EditorState {
+  Object observedObject;
+  Object selectedObject;
+  bool isObservingObject = false;
+  bool isObjectSelected = false;
+  static std::vector<HistoryAction> history;
+} editor;
 
 internal bool isSameObject(Object& a, Object& b) {
   return (
@@ -49,28 +51,28 @@ internal void highlightObject(GmContext* context, const Object& object, const Ve
 }
 
 internal void observeObject(GmContext* context, Object& object) {
-  if (isObservingObject) {
-    restoreObject(context, observedObject);
+  if (editor.isObservingObject) {
+    restoreObject(context, editor.observedObject);
   }
 
-  if (!isObservingObject || !isSameObject(object, observedObject)) {
-    observedObject = object;
-    isObservingObject = true;
+  if (!editor.isObservingObject || !isSameObject(object, editor.observedObject)) {
+    editor.observedObject = object;
+    editor.isObservingObject = true;
   }
 }
 
 internal void selectObject(GmContext* context, Object& object) {
-  if (isObjectSelected) {
-    restoreObject(context, selectedObject);
+  if (editor.isObjectSelected) {
+    restoreObject(context, editor.selectedObject);
   }
 
-  selectedObject = observedObject;
-  isObjectSelected = true;
+  editor.selectedObject = editor.observedObject;
+  editor.isObjectSelected = true;
 }
 
 internal void createObjectHistoryAction(GmContext* context, Object& object) {
-  if (history.size() > 0) {
-    auto& lastTransaction = history.back();
+  if (editor.history.size() > 0) {
+    auto& lastTransaction = editor.history.back();
     auto* lastObject = Gm_GetObjectByRecord(context, lastTransaction.initialObject._record);
 
     if (lastObject != nullptr) {
@@ -78,7 +80,7 @@ internal void createObjectHistoryAction(GmContext* context, Object& object) {
       if ((*lastObject).position == lastTransaction.initialObject.position) {
         // No modifications were made to the last object in the history queue,
         // so replace the object in the last history action with this one
-        history.back().initialObject = object;
+        editor.history.back().initialObject = object;
 
         return;
       }
@@ -97,15 +99,15 @@ internal void createObjectHistoryAction(GmContext* context, Object& object) {
 
   action.initialObject = object;
 
-  history.push_back(action);
+  editor.history.push_back(action);
 }
 
 internal void undoLastHistoryAction(GmContext* context) {
-  if (history.size() == 0) {
+  if (editor.history.size() == 0) {
     return;
   }
 
-  auto& action = history.back();
+  auto& action = editor.history.back();
   auto* liveObject = Gm_GetObjectByRecord(context, action.initialObject._record);
 
   if (liveObject != nullptr) {
@@ -113,13 +115,13 @@ internal void undoLastHistoryAction(GmContext* context) {
 
     commit(*liveObject);
 
-    Console::log("[Editor] Action reverted");
-
-    selectedObject = *liveObject;
-    isObjectSelected = true;
+    editor.selectedObject = *liveObject;
+    editor.isObjectSelected = true;
   }
 
-  history.pop_back();
+  editor.history.pop_back();
+
+  Console::log("[Editor] Action reverted");
 }
 
 namespace Editor {
@@ -128,16 +130,16 @@ namespace Editor {
   }
 
   void disableGameEditor(GmContext* context, GameState& state) {
-    if (isObservingObject) {
-      restoreObject(context, observedObject);
+    if (editor.isObservingObject) {
+      restoreObject(context, editor.observedObject);
     }
 
-    if (isObjectSelected) {
-      restoreObject(context, selectedObject);
+    if (editor.isObjectSelected) {
+      restoreObject(context, editor.selectedObject);
     }
 
-    isObservingObject = false;
-    isObjectSelected = false;
+    editor.isObservingObject = false;
+    editor.isObjectSelected = false;
 
     state.isEditorEnabled = false;
 
@@ -151,14 +153,14 @@ namespace Editor {
     // Reset the observed/selected objects to
     // prevent corruption of original state
     {
-      if (isObservingObject) {
-        restoreObject(context, observedObject);
+      if (editor.isObservingObject) {
+        restoreObject(context, editor.observedObject);
 
-        isObservingObject = false;
+        editor.isObservingObject = false;
       }
 
-      if (isObjectSelected) {
-        restoreObject(context, selectedObject);
+      if (editor.isObjectSelected) {
+        restoreObject(context, editor.selectedObject);
       }
     }
 
@@ -184,9 +186,9 @@ namespace Editor {
 
     // Handle inputs
     {
-      if (input.didClickMouse() && isObservingObject) {
-        selectObject(context, observedObject);
-        createObjectHistoryAction(context, observedObject);
+      if (input.didClickMouse() && editor.isObservingObject) {
+        selectObject(context, editor.observedObject);
+        createObjectHistoryAction(context, editor.observedObject);
       }
 
       if (input.isKeyHeld(Key::CONTROL) && input.didPressKey(Key::Z)) {
@@ -195,10 +197,10 @@ namespace Editor {
 
       auto& mouseDelta = input.getMouseDelta();
 
-      if (input.isMouseHeld() && isObjectSelected) {
+      if (input.isMouseHeld() && editor.isObjectSelected) {
         float dx = (float)mouseDelta.x;
         float dy = (float)mouseDelta.y;
-        auto* originalObject = Gm_GetObjectByRecord(context, selectedObject._record);
+        auto* originalObject = Gm_GetObjectByRecord(context, editor.selectedObject._record);
         Vec3f move;
 
         if (Gm_Absf(dy) > Gm_Absf(dx)) {
@@ -212,8 +214,8 @@ namespace Editor {
         }
 
         originalObject->position += move;
-        originalObject->color = selectedObject.color;
-        selectedObject = *originalObject;
+        originalObject->color = editor.selectedObject.color;
+        editor.selectedObject = *originalObject;
 
         commit(*originalObject);
       } else if (SDL_GetRelativeMouseMode()) {
@@ -229,19 +231,19 @@ namespace Editor {
 
     // Highlight the observed/selected objects
     {
-      if (isObservingObject) {
-        highlightObject(context, observedObject, Vec3f(1.f));
+      if (editor.isObservingObject) {
+        highlightObject(context, editor.observedObject, Vec3f(1.f));
       }
 
-      if (isObjectSelected) {
+      if (editor.isObjectSelected) {
         auto highlightColor = input.isMouseHeld() ? Vec3f(0.7f, 0, 0) : Vec3f(1.f, 0, 0);
 
-        highlightObject(context, selectedObject, highlightColor);
+        highlightObject(context, editor.selectedObject, highlightColor);
 
         // @todo clean this up
         #define String(x) std::to_string(x)
 
-        auto& p = selectedObject.position;
+        auto& p = editor.selectedObject.position;
         auto value = String(p.x) + ", " + String(p.y) + ", " + String(p.z);
 
         addDebugMessage("Active object:");
