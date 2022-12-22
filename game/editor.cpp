@@ -148,24 +148,23 @@ namespace Editor {
     auto& camera = getCamera();
     auto& input = getInput();
 
+    // Reset the observed/selected objects to
+    // prevent corruption of original state
+    {
+      if (isObservingObject) {
+        restoreObject(context, observedObject);
+
+        isObservingObject = false;
+      }
+
+      if (isObjectSelected) {
+        restoreObject(context, selectedObject);
+      }
+    }
+
     // Find and focus the observed object
     {
       Vec3f cameraDirection = camera.orientation.getDirection().unit();
-
-      // Reset the observed/selected objects to
-      // prevent corruption of original state
-      {
-        if (isObservingObject) {
-          restoreObject(context, observedObject);
-
-          isObservingObject = false;
-        }
-
-        if (isObjectSelected) {
-          restoreObject(context, selectedObject);
-        }
-      }
-
       float closestDistance = Gm_INFINITY;
 
       // @temporary
