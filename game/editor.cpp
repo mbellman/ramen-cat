@@ -1,3 +1,4 @@
+#include <string>
 #include <vector>
 
 #include "editor.h"
@@ -6,7 +7,17 @@
 
 using namespace Gamma;
 
+enum ActionType {
+  CREATE,
+  REMOVE,
+  POSITION,
+  SCALE,
+  ROTATE,
+  COLOR
+};
+
 struct HistoryAction {
+  ActionType type;
   Object initialObject;
 };
 
@@ -15,8 +26,20 @@ static struct EditorState {
   Object selectedObject;
   bool isObservingObject = false;
   bool isObjectSelected = false;
-  static std::vector<HistoryAction> history;
+  ActionType currentActionType = ActionType::POSITION;
+  // @todo limit size?
+  std::vector<HistoryAction> history;
 } editor;
+
+inline std::string getCurrentActionTypeName() {
+  if (editor.currentActionType == ActionType::POSITION) {
+    return "POSITION";
+  } else if (editor.currentActionType == ActionType::CREATE) {
+    return "CREATE";
+  }
+
+  return "POSITION";
+}
 
 internal bool isSameObject(Object& a, Object& b) {
   return (
@@ -70,14 +93,34 @@ internal void selectObject(GmContext* context, Object& object) {
   editor.isObjectSelected = true;
 }
 
+internal void createNewObject(GmContext* context) {
+  auto& camera = getCamera();
+  Vec3f spawnPosition = camera.position + camera.orientation.getDirection() * 150.f;
+
+  auto& platform = createObjectFrom("platform");
+
+  platform.position = spawnPosition;
+  platform.scale = Vec3f(50.f, 20.f, 50.f);
+  platform.color = Vec3f(0, 0, 1.f);
+  
+  commit(platform);
+
+  HistoryAction action;
+
+  action.type = ActionType::CREATE;
+  action.initialObject = platform;
+
+  editor.history.push_back(action);
+}
+
 internal void createObjectHistoryAction(GmContext* context, Object& object) {
   if (editor.history.size() > 0) {
     auto& lastTransaction = editor.history.back();
-    auto* lastObject = Gm_GetObjectByRecord(context, lastTransaction.initialObject._record);
+    auto* liveObject = Gm_GetObjectByRecord(context, lastTransaction.initialObject._record);
 
-    if (lastObject != nullptr) {
+    if (liveObject != nullptr) {
       // @todo consider other properties about the object
-      if ((*lastObject).position == lastTransaction.initialObject.position) {
+      if ((*liveObject).position == lastTransaction.initialObject.position) {
         // No modifications were made to the last object in the history queue,
         // so replace the object in the last history action with this one
         editor.history.back().initialObject = object;
@@ -97,6 +140,7 @@ internal void createObjectHistoryAction(GmContext* context, Object& object) {
 
   HistoryAction action;
 
+  action.type = editor.currentActionType;
   action.initialObject = object;
 
   editor.history.push_back(action);
@@ -108,16 +152,28 @@ internal void undoLastHistoryAction(GmContext* context) {
   }
 
   auto& action = editor.history.back();
-  auto* liveObject = Gm_GetObjectByRecord(context, action.initialObject._record);
 
-  if (liveObject != nullptr) {
-    *liveObject = action.initialObject;
+  switch (action.type) {
+    case ActionType::CREATE:
+      removeObject(action.initialObject);
+      break;
+    case ActionType::REMOVE:
+      break;
+    default: {
+      auto* liveObject = Gm_GetObjectByRecord(context, action.initialObject._record);
 
-    commit(*liveObject);
+      if (liveObject != nullptr) {
+        *liveObject = action.initialObject;
 
-    editor.selectedObject = *liveObject;
-    editor.isObjectSelected = true;
+        commit(*liveObject);
+
+        editor.selectedObject = *liveObject;
+        editor.isObjectSelected = true;
+      }
+    }
   }
+
+  editor.currentActionType = action.type;
 
   editor.history.pop_back();
 
@@ -166,33 +222,54 @@ namespace Editor {
 
     // Find and focus the observed object
     {
-      Vec3f cameraDirection = camera.orientation.getDirection().unit();
-      float closestDistance = Gm_INFINITY;
+      if (editor.currentActionType != ActionType::CREATE) {
+        Vec3f cameraDirection = camera.orientation.getDirection().unit();
+        float closestDistance = Gm_INFINITY;
 
-      // @temporary
-      for (auto& platform : objects("platform")) {
-        Vec3f cameraToObject = platform.position - camera.position;
-        float distance = cameraToObject.magnitude();
-        Vec3f normalizedCameraToObject = cameraToObject / distance;
-        float dot = Vec3f::dot(normalizedCameraToObject, cameraDirection);
+        // @temporary
+        for (auto& platform : objects("platform")) {
+          Vec3f cameraToObject = platform.position - camera.position;
+          float distance = cameraToObject.magnitude();
+          Vec3f normalizedCameraToObject = cameraToObject / distance;
+          float dot = Vec3f::dot(normalizedCameraToObject, cameraDirection);
 
-        if (dot > 0.95f && distance < closestDistance) {
-          observeObject(context, platform);
+          if (dot > 0.95f && distance < closestDistance) {
+            observeObject(context, platform);
 
-          closestDistance = distance;
+            closestDistance = distance;
+          }
         }
       }
     }
 
     // Handle inputs
     {
-      if (input.didClickMouse() && editor.isObservingObject) {
-        selectObject(context, editor.observedObject);
-        createObjectHistoryAction(context, editor.observedObject);
+      if (input.didClickMouse()) {
+        if (editor.isObservingObject) {
+          selectObject(context, editor.observedObject);
+          createObjectHistoryAction(context, editor.observedObject);
+        } else if (editor.currentActionType == ActionType::CREATE) {
+          // @todo use object placement preview
+          createNewObject(context);
+        }
       }
 
       if (input.isKeyHeld(Key::CONTROL) && input.didPressKey(Key::Z)) {
         undoLastHistoryAction(context);
+      }
+
+      if (input.didPressKey(Key::P)) {
+        editor.currentActionType = ActionType::POSITION;
+      }
+
+      if (input.didPressKey(Key::C)) {
+        if (editor.isObjectSelected) {
+          restoreObject(context, editor.selectedObject);
+
+          editor.isObjectSelected = false;
+        }
+
+        editor.currentActionType = ActionType::CREATE;
       }
 
       auto& mouseDelta = input.getMouseDelta();
@@ -239,7 +316,14 @@ namespace Editor {
         auto highlightColor = input.isMouseHeld() ? Vec3f(0.7f, 0, 0) : Vec3f(1.f, 0, 0);
 
         highlightObject(context, editor.selectedObject, highlightColor);
+      }
+    }
 
+    // Display status messages
+    {
+      addDebugMessage("Action: " + getCurrentActionTypeName());
+
+      if (editor.isObjectSelected) {
         // @todo clean this up
         #define String(x) std::to_string(x)
 
