@@ -2,9 +2,12 @@
 #include "collision.h"
 #include "macros.h"
 
+constexpr float FORCE_GRAVITY = 750.f;
+constexpr float FORCE_BOUNCE = 1000.f;
+
 using namespace Gamma;
 
-internal void resolveSingleCollision(GmContext* context, GameState& state, const Collision& collision) {
+internal void resolveSingleCollision(GmContext* context, GameState& state, const Collision& collision, float dt) {
   auto& player = getPlayer();
   auto& plane = collision.plane;
 
@@ -28,7 +31,7 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
     state.lastTimeOnSolidGround = state.frameStartTime;
   } else {
     // @todo description
-    state.velocity += plane.normal * 10.f;
+    state.velocity += plane.normal * FORCE_BOUNCE * dt;
   }
 
   if (Gm_Absf(plane.nDotU) < 0.35f) {
@@ -37,7 +40,7 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
   }
 }
 
-internal void resolveAllCollisions(GmContext* context, GameState& state) {
+internal void resolveAllCollisions(GmContext* context, GameState& state, float dt) {
   auto& player = getPlayer();
   float playerRadius = player.scale.x;
   bool isFalling = state.previousPlayerPosition.y - player.position.y > 0.f;
@@ -48,7 +51,7 @@ internal void resolveAllCollisions(GmContext* context, GameState& state) {
     auto collision = getLinePlaneCollision(lineStart, lineEnd, plane);
 
     if (collision.hit) {
-      resolveSingleCollision(context, state, collision);
+      resolveSingleCollision(context, state, collision, dt);
     } else if (isFalling && plane.nDotU > 0.6f) {
       // @todo description
       Vec3f fallCollisionLineEnd = player.position - plane.normal * (playerRadius + 5.f);
@@ -142,13 +145,13 @@ namespace MovementSystem {
 
   void handlePlayerMovementPhysics(GmContext* context, GameState& state, float dt) {
     auto& player = getPlayer();
-    const float gravity = 750.f * dt;
+    const float gravity = FORCE_GRAVITY * dt;
 
     // Handle gravity/velocity
     state.velocity.y -= gravity;
     player.position += state.velocity * dt;
 
-    resolveAllCollisions(context, state);
+    resolveAllCollisions(context, state, dt);
 
     if (state.velocity.y == 0.f && !state.isPlayerMovingThisFrame) {
       const float slowdown = 5.f;
