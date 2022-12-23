@@ -131,10 +131,10 @@ namespace Gamma {
     };
   }
 
-  Matrix4f Matrix4f::transformation(const Vec3f& translation, const Vec3f& scale, const Vec3f& rotation) {
+  Matrix4f Matrix4f::transformation(const Vec3f& translation, const Vec3f& scale, const Quaternion& rotation) {
     Matrix4f m_transform;
     Matrix4f m_scale = Matrix4f::scale(scale);
-    Matrix4f m_rotation = Matrix4f::rotation(rotation);
+    Matrix4f m_rotation = rotation.toMatrix4f();
 
     // Declares a small float buffer which helps reduce the number
     // of cache misses in the scale * rotation loop. Scale terms

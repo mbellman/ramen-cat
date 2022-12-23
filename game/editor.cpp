@@ -171,9 +171,9 @@ internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mo
       multiplier = 0.2f;
 
       if (isVerticalMotion) {
-        direction = camera.orientation.getRightDirection().alignToAxis();
+        direction = camera.orientation.getRightDirection();
       } else {
-        direction = camera.orientation.getUpDirection().alignToAxis().invert();
+        direction = camera.orientation.getUpDirection().invert();
       }
 
       break;
@@ -353,8 +353,14 @@ namespace Editor {
         } else if (editor.currentActionType == ActionType::SCALE) {
           originalObject->scale += actionDelta;
         } else if (editor.currentActionType == ActionType::ROTATE) {
-          // @todo rotate along view space axes rather than world space axes
-          originalObject->rotation += actionDelta;
+          float angle = actionDelta.magnitude();
+
+          if (angle > 0.f) {
+            Vec3f axis = actionDelta.unit();
+            Quaternion r = Quaternion::fromAxisAngle(angle, axis.x, axis.y, axis.z);
+
+            originalObject->rotation = r * originalObject->rotation;
+          }
         }
 
         originalObject->color = editor.selectedObject.color;

@@ -7,6 +7,7 @@
 #include "math/geometry.h"
 #include "math/matrix.h"
 #include "math/vector.h"
+#include "math/Quaternion.h"
 #include "system/ObjectPool.h"
 #include "system/ObjLoader.h"
 #include "system/packed_data.h"
@@ -71,13 +72,13 @@ namespace Gamma {
    * instances of a Mesh distributed throughout a scene,
    * each with its own transformations.
    *
-   * @size 48 bytes
+   * @size 52 bytes
    */
   struct Object {
     ObjectRecord _record;
     Vec3f position;
     Vec3f scale;
-    Vec3f rotation;
+    Quaternion rotation;
     pVec4 color;
   };
 

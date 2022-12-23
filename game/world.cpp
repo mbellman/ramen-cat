@@ -83,7 +83,7 @@ internal void loadGameWorldData(GmContext* context, GameState& state) {
 
     platform.position = position;
     platform.scale = scale;
-    platform.rotation = rotation;
+    platform.rotation = Quaternion::fromEulerAngles(rotation.x, rotation.y, rotation.z);
     platform.color = color;
 
     commit(platform);
@@ -153,7 +153,7 @@ void World::rebuildCollisionPlanes(GmContext* context, GameState& state) {
 
   // @temporary
   for (auto& platform : objects("platform")) {
-    auto rotation = Matrix4f::rotation(platform.rotation);
+    auto rotation = platform.rotation.toMatrix4f();
 
     for (auto& points : platformPlanePoints) {
       Plane plane;

@@ -2,6 +2,7 @@
 
 #include "math/orientation.h"
 #include "math/plane.h"
+#include "math/Quaternion.h"
 #include "math/vector.h"
 #include "system/type_aliases.h"
 
@@ -16,7 +17,7 @@ namespace Gamma {
     static Matrix4f rotation(const Vec3f& rotation);
     static Matrix4f rotation(const Orientation& orientation);
     static Matrix4f scale(const Vec3f& scale);
-    static Matrix4f transformation(const Vec3f& translation, const Vec3f& scale, const Vec3f& rotation);
+    static Matrix4f transformation(const Vec3f& translation, const Vec3f& scale, const Quaternion& rotation);
     static Matrix4f translation(const Vec3f& translation);
 
     Matrix4f operator*(const Matrix4f& matrix) const;

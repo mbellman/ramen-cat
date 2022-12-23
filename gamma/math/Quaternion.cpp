@@ -19,6 +19,14 @@ namespace Gamma {
     };
   }
 
+  Quaternion Quaternion::fromEulerAngles(float x, float y, float z) {
+    Quaternion pitch = Quaternion::fromAxisAngle(x, 1.0f, 0.0f, 0.0f);
+    Quaternion yaw = Quaternion::fromAxisAngle(y, 0.0f, 1.0f, 0.0f);
+    Quaternion roll = Quaternion::fromAxisAngle(z, 0.0f, 0.0f, 1.0f);
+
+    return roll * pitch * yaw;
+  }
+
   /**
    * @source: https://wrf.ecse.rpi.edu/wiki/ComputerGraphicsFall2013/guha/Code/quaternionAnimation.cpp
    */
@@ -66,6 +74,15 @@ namespace Gamma {
     r.z = z3;
 
     return r.unit();
+  }
+
+  bool Quaternion::operator==(const Quaternion& q2) const {
+    return (
+      q2.w == w &&
+      q2.x == x &&
+      q2.y == y &&
+      q2.z == z
+    );
   }
 
   Quaternion Quaternion::operator*(const Quaternion& q2) const {

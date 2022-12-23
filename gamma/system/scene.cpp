@@ -153,7 +153,7 @@ Gamma::Object& Gm_CreateObjectFrom(GmContext* context, const std::string& meshNa
   object._record.meshId = mesh.id;
   object._record.meshIndex = mesh.index;
   object.position = Vec3f(0.0f);
-  object.rotation = Vec3f(0.0f);
+  object.rotation = Quaternion(0.f);
   object.scale = Vec3f(1.0f);
 
   if (mesh.lods.size() > 0) {
