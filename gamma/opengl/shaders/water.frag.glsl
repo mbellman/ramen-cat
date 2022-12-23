@@ -63,17 +63,17 @@ vec3 getNormal(vec3 world_position) {
   vec2 n = vec2(0);
 
   // @todo make configurable
-  n += createDirectionalWave(wx, wz, vec2(0.5, 1), 0.3, 0.01, 1);
+  n += createDirectionalWave(wx, wz, vec2(0.5, 1), 1, 0.01, 1);
   n += createDirectionalWave(wx, wz, vec2(0.1, 1), 0.6, 0.012, 0.4);
-  n += createDirectionalWave(wx, wz, vec2(1, 0.3), 0.8, 0.006, 0.6);
+  n += createDirectionalWave(wx, wz, vec2(1, 0.3), 0.5, 0.006, 0.6);
   n += createDirectionalWave(wx, wz, vec2(0.5, 1), 0.3, 0.016, 0.7);
-  n += createDirectionalWave(wx, wz, vec2(0, -0.3), 0.6, 0.02, 0.7);
+  n += createDirectionalWave(wx, wz, vec2(0, -0.3), 0.6, 0.01, 0.7);
   n += createDirectionalWave(wx, wz, vec2(0.2, 1), 1, 0.03, 0.5);
   n += createDirectionalWave(wx, wz, vec2(1, 0.6), 0.7, 0.03, 0.2);
 
-  n += vec2(simplex_noise(vec2(t * 0.1 + wx * 0.001, t * 0.1 + wz * 0.001))) * 1;
-  n += vec2(simplex_noise(vec2(t * 0.1 - wx * 0.003, t * 0.1 + wz * 0.003))) * 0.6;
-  n += vec2(simplex_noise(vec2(t * 0.1 + wx * 0.007, t * 0.1 - wz * 0.007))) * 0.4;
+  n += vec2(simplex_noise(vec2(t * 0.1 + wx * 0.001, t * 0.1 + wz * 0.001))) * 0.6;
+  n += vec2(simplex_noise(vec2(t * 0.1 - wx * 0.003, t * 0.1 + wz * 0.003))) * 0.4;
+  n += vec2(simplex_noise(vec2(t * 0.1 + wx * 0.007, t * 0.1 - wz * 0.007))) * 0.3;
 
   vec3 n_normal = normalize(fragNormal);
   vec3 n_tangent = normalize(fragTangent);
