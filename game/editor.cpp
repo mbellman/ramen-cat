@@ -31,11 +31,18 @@ static struct EditorState {
   std::vector<HistoryAction> history;
 } editor;
 
-inline std::string getCurrentActionTypeName() {
-  if (editor.currentActionType == ActionType::POSITION) {
-    return "POSITION";
-  } else if (editor.currentActionType == ActionType::CREATE) {
-    return "CREATE";
+inline std::string getActionTypeName(ActionType type) {
+  switch (type) {
+    case ActionType::CREATE:
+      return "POSITION";
+    case ActionType::POSITION:
+      return "POSITION";
+    case ActionType::ROTATE:
+      return "POSITION";
+    case ActionType::SCALE:
+      return "POSITION";
+    case ActionType::COLOR:
+      return "COLOR";
   }
 
   return "POSITION";
@@ -177,7 +184,7 @@ internal void undoLastHistoryAction(GmContext* context) {
 
   editor.history.pop_back();
 
-  Console::log("[Editor] Action reverted");
+  Console::log("[Editor] " + getActionTypeName(editor.currentActionType) + " action reverted");
 }
 
 namespace Editor {
@@ -249,20 +256,20 @@ namespace Editor {
           selectObject(context, editor.observedObject);
           createObjectHistoryAction(context, editor.observedObject);
         } else if (editor.currentActionType == ActionType::CREATE) {
-          // @todo use object placement preview
+          // @todo show an object placement preview
           createNewObject(context);
         }
       }
 
       if (input.isKeyHeld(Key::CONTROL) && input.didPressKey(Key::Z)) {
         undoLastHistoryAction(context);
-      }
-
-      if (input.didPressKey(Key::P)) {
+      } else if (input.didPressKey(Key::P)) {
         editor.currentActionType = ActionType::POSITION;
-      }
-
-      if (input.didPressKey(Key::C)) {
+      } else if (input.didPressKey(Key::S)) {
+        editor.currentActionType = ActionType::SCALE;
+      } else if (input.didPressKey(Key::R)) {
+        editor.currentActionType = ActionType::ROTATE;
+      } else if (input.didPressKey(Key::C)) {
         if (editor.isObjectSelected) {
           restoreObject(context, editor.selectedObject);
 
@@ -321,7 +328,7 @@ namespace Editor {
 
     // Display status messages
     {
-      addDebugMessage("Action: " + getCurrentActionTypeName());
+      addDebugMessage("Action: " + getActionTypeName(editor.currentActionType));
 
       if (editor.isObjectSelected) {
         // @todo clean this up
