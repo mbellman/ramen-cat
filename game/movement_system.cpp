@@ -34,7 +34,7 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
     state.velocity += plane.normal * FORCE_BOUNCE * dt;
   }
 
-  if (Gm_Absf(plane.nDotU) < 0.35f) {
+  if (Gm_Absf(plane.nDotU) <= 0.7f) {
     state.lastWallBumpTime = state.frameStartTime;
     state.lastBumpedWallNormal = plane.normal;
   }
