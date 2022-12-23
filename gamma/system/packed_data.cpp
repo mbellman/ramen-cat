@@ -22,6 +22,15 @@ namespace Gamma {
     a = u8(CLAMP(value.w) * 255.f);
   }
 
+  bool pVec4::operator==(const pVec4& color) const {
+    return (
+      color.r == r &&
+      color.b == b &&
+      color.g == g &&
+      color.a == a
+    );
+  }
+
   Vec3f pVec4::toVec3f() const {
     return Vec3f(
       r / 255.f,

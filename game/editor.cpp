@@ -34,13 +34,13 @@ static struct EditorState {
 inline std::string getActionTypeName(ActionType type) {
   switch (type) {
     case ActionType::CREATE:
-      return "POSITION";
+      return "CREATE";
     case ActionType::POSITION:
       return "POSITION";
     case ActionType::ROTATE:
-      return "POSITION";
+      return "ROTATE";
     case ActionType::SCALE:
-      return "POSITION";
+      return "SCALE";
     case ActionType::COLOR:
       return "COLOR";
   }
@@ -52,6 +52,15 @@ internal bool isSameObject(Object& a, Object& b) {
   return (
     a._record.meshIndex == b._record.meshIndex &&
     a._record.id == b._record.id
+  );
+}
+
+internal bool objectPropertiesAreIdentical(Object& a, Object& b) {
+  return (
+    a.position == b.position &&
+    a.rotation == b.rotation &&
+    a.scale == b.scale &&
+    a.color == b.color
   );
 }
 
@@ -125,21 +134,20 @@ internal void createObjectHistoryAction(GmContext* context, Object& object) {
     auto& lastTransaction = editor.history.back();
     auto* liveObject = Gm_GetObjectByRecord(context, lastTransaction.initialObject._record);
 
-    if (liveObject != nullptr) {
-      // @todo consider other properties about the object
-      if ((*liveObject).position == lastTransaction.initialObject.position) {
-        // No modifications were made to the last object in the history queue,
-        // so replace the object in the last history action with this one
-        editor.history.back().initialObject = object;
+    if (
+      liveObject != nullptr &&
+      objectPropertiesAreIdentical(*liveObject, lastTransaction.initialObject)
+    ) {
+      // No modifications were made to the last object in the history queue,
+      // so replace the object in the last history action with this one
+      editor.history.back().initialObject = object;
 
-        return;
-      }
+      return;
     }
 
     if (
       isSameObject(object, lastTransaction.initialObject) &&
-      // @todo consider other properties about the object
-      object.position == lastTransaction.initialObject.position
+      objectPropertiesAreIdentical(object, lastTransaction.initialObject)
     ) {
       return;
     }
@@ -148,7 +156,7 @@ internal void createObjectHistoryAction(GmContext* context, Object& object) {
   HistoryAction action;
 
   action.type = editor.currentActionType;
-  action.initialObject = object;
+  action.initialObject = object; 
 
   editor.history.push_back(action);
 }
@@ -263,13 +271,13 @@ namespace Editor {
 
       if (input.isKeyHeld(Key::CONTROL) && input.didPressKey(Key::Z)) {
         undoLastHistoryAction(context);
-      } else if (input.didPressKey(Key::P)) {
+      } else if (input.isKeyHeld(Key::CONTROL) && input.didPressKey(Key::P)) {
         editor.currentActionType = ActionType::POSITION;
-      } else if (input.didPressKey(Key::S)) {
+      } else if (input.isKeyHeld(Key::CONTROL) && input.didPressKey(Key::S)) {
         editor.currentActionType = ActionType::SCALE;
-      } else if (input.didPressKey(Key::R)) {
+      } else if (input.isKeyHeld(Key::CONTROL) && input.didPressKey(Key::R)) {
         editor.currentActionType = ActionType::ROTATE;
-      } else if (input.didPressKey(Key::C)) {
+      } else if (input.isKeyHeld(Key::CONTROL) && input.didPressKey(Key::C)) {
         if (editor.isObjectSelected) {
           restoreObject(context, editor.selectedObject);
 
@@ -297,7 +305,12 @@ namespace Editor {
           move = moveDirection * dx * 20.f * dt;
         }
 
-        originalObject->position += move;
+        if (editor.currentActionType == ActionType::POSITION) {
+          originalObject->position += move;
+        } else if (editor.currentActionType == ActionType::ROTATE) {
+          originalObject->rotation += move * 0.025f;
+        }
+
         originalObject->color = editor.selectedObject.color;
         editor.selectedObject = *originalObject;
 

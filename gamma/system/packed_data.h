@@ -22,6 +22,8 @@ namespace Gamma {
     pVec4(const Vec3f& value);
     pVec4(const Vec4f& value);
 
+    bool operator==(const pVec4& color) const;
+
     Vec3f toVec3f() const;
   };
 }
