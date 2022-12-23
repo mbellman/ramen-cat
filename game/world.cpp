@@ -98,6 +98,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   context->scene.zFar = 50000.f;
 
   addMesh("ocean", 1, Mesh::Plane(2));
+  addMesh("ocean-floor", 1, Mesh::Plane(2));
   addMesh("platform", 1000, Mesh::Cube());
   addMesh("sphere", 1, Mesh::Sphere(18));
 
@@ -115,6 +116,8 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   });
 
   mesh("ocean")->type = MeshType::WATER;
+  mesh("ocean")->canCastShadows = false;
+  mesh("ocean-floor")->canCastShadows = false;
 
   auto& ocean = createObjectFrom("ocean");
 
@@ -122,6 +125,14 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   ocean.scale = Vec3f(25000.f, 1.f, 25000.f);
 
   commit(ocean);
+
+  auto& floor = createObjectFrom("ocean-floor");
+
+  floor.position = Vec3f(0, -2500.f, 0);
+  floor.scale = Vec3f(25000.f, 1.f, 25000.f);
+  floor.color = Vec3f(0.5f, 0.7f, 0.9f);
+
+  commit(floor);
 
   auto& player = createObjectFrom("sphere");
 
@@ -133,7 +144,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
 
   auto& light = createLight(LightType::DIRECTIONAL_SHADOWCASTER);
 
-  light.direction = Vec3f(0.5f, -1.f, -1.f);
+  light.direction = Vec3f(-0.2f, -1.f, -1.f);
   light.color = Vec3f(1.0f);
 }
 
