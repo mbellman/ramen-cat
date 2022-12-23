@@ -110,6 +110,24 @@ internal void selectObject(GmContext* context, Object& object) {
   editor.isObjectSelected = true;
 }
 
+internal void cycleCurrentActionType() {
+  // @todo define a list of current action types, find the
+  // current one, select the next one, looping back to 0
+  if (editor.currentActionType == ActionType::POSITION) {
+    editor.currentActionType = ActionType::SCALE;
+  } else if (editor.currentActionType == ActionType::SCALE) {
+    editor.currentActionType = ActionType::ROTATE;
+  } else if (editor.currentActionType == ActionType::ROTATE) {
+    editor.currentActionType = ActionType::COLOR;
+  } else if (editor.currentActionType == ActionType::COLOR) {
+    editor.currentActionType = ActionType::CREATE;
+  } else if (editor.currentActionType == ActionType::CREATE) {
+    editor.currentActionType = ActionType::POSITION;
+  } else {
+    editor.currentActionType = ActionType::POSITION;
+  }
+}
+
 internal void createNewObject(GmContext* context) {
   auto& camera = getCamera();
   Vec3f spawnPosition = camera.position + camera.orientation.getDirection() * 150.f;
@@ -309,20 +327,17 @@ namespace Editor {
 
       if (input.isKeyHeld(Key::CONTROL) && input.didPressKey(Key::Z)) {
         undoLastHistoryAction(context);
-      } else if (input.isKeyHeld(Key::CONTROL) && input.didPressKey(Key::P)) {
-        editor.currentActionType = ActionType::POSITION;
-      } else if (input.isKeyHeld(Key::CONTROL) && input.didPressKey(Key::S)) {
-        editor.currentActionType = ActionType::SCALE;
-      } else if (input.isKeyHeld(Key::CONTROL) && input.didPressKey(Key::R)) {
-        editor.currentActionType = ActionType::ROTATE;
-      } else if (input.isKeyHeld(Key::CONTROL) && input.didPressKey(Key::C)) {
-        if (editor.isObjectSelected) {
+      } else if (input.didPressKey(Key::SPACE)) {
+        cycleCurrentActionType();
+
+        if (
+          editor.currentActionType == ActionType::CREATE &&
+          editor.isObjectSelected
+        ) {
           restoreObject(context, editor.selectedObject);
 
           editor.isObjectSelected = false;
         }
-
-        editor.currentActionType = ActionType::CREATE;
       }
 
       auto& mouseDelta = input.getMouseDelta();
