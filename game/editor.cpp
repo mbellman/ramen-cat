@@ -51,11 +51,12 @@ inline std::string getActionTypeName(ActionType type) {
 internal bool isSameObject(Object& a, Object& b) {
   return (
     a._record.meshIndex == b._record.meshIndex &&
+    // @todo this does not consider object generations/recycling
     a._record.id == b._record.id
   );
 }
 
-internal bool objectPropertiesAreIdentical(Object& a, Object& b) {
+internal bool areObjectPropertiesIdentical(Object& a, Object& b) {
   return (
     a.position == b.position &&
     a.rotation == b.rotation &&
@@ -129,6 +130,45 @@ internal void createNewObject(GmContext* context) {
   editor.history.push_back(action);
 }
 
+internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mouseDy, float dt) {
+  auto& camera = getCamera();
+  bool isVerticalMotion = Gm_Absf(mouseDy) > Gm_Absf(mouseDx);
+  Vec3f direction;
+  float multiplier = 1.f;
+
+  switch (editor.currentActionType) {
+    case ActionType::POSITION: {
+      multiplier = 20.f;
+
+      if (isVerticalMotion) {
+        direction = camera.orientation.getUpDirection().alignToAxis();
+      } else {
+        direction = camera.orientation.getRightDirection().alignToAxis();
+      }
+
+      break;
+    }
+    case ActionType::ROTATE: {
+      multiplier = 0.2f;
+
+      if (isVerticalMotion) {
+        direction = camera.orientation.getRightDirection().alignToAxis();
+      } else {
+        direction = camera.orientation.getUpDirection().alignToAxis().invert();
+      }
+
+      break;
+    }
+    case ActionType::SCALE:
+      // @todo
+      return Vec3f(0.f);
+  }
+
+  return isVerticalMotion
+    ? direction * -mouseDy * multiplier * dt 
+    : direction * mouseDx * multiplier * dt;
+}
+
 internal void createObjectHistoryAction(GmContext* context, Object& object) {
   if (editor.history.size() > 0) {
     auto& lastTransaction = editor.history.back();
@@ -136,7 +176,7 @@ internal void createObjectHistoryAction(GmContext* context, Object& object) {
 
     if (
       liveObject != nullptr &&
-      objectPropertiesAreIdentical(*liveObject, lastTransaction.initialObject)
+      areObjectPropertiesIdentical(*liveObject, lastTransaction.initialObject)
     ) {
       // No modifications were made to the last object in the history queue,
       // so replace the object in the last history action with this one
@@ -147,7 +187,7 @@ internal void createObjectHistoryAction(GmContext* context, Object& object) {
 
     if (
       isSameObject(object, lastTransaction.initialObject) &&
-      objectPropertiesAreIdentical(object, lastTransaction.initialObject)
+      areObjectPropertiesIdentical(object, lastTransaction.initialObject)
     ) {
       return;
     }
@@ -293,22 +333,12 @@ namespace Editor {
         float dx = (float)mouseDelta.x;
         float dy = (float)mouseDelta.y;
         auto* originalObject = Gm_GetObjectByRecord(context, editor.selectedObject._record);
-        Vec3f move;
-
-        if (Gm_Absf(dy) > Gm_Absf(dx)) {
-          Vec3f moveDirection = camera.orientation.getUpDirection().alignToAxis();
-
-          move = moveDirection * -dy * 20.f * dt;
-        } else {
-          Vec3f moveDirection = camera.orientation.getRightDirection().alignToAxis();
-
-          move = moveDirection * dx * 20.f * dt;
-        }
+        auto actionDelta = getCurrentActionDelta(context, dx, dy, dt);
 
         if (editor.currentActionType == ActionType::POSITION) {
-          originalObject->position += move;
+          originalObject->position += actionDelta;
         } else if (editor.currentActionType == ActionType::ROTATE) {
-          originalObject->rotation += move * 0.025f;
+          originalObject->rotation += actionDelta;
         }
 
         originalObject->color = editor.selectedObject.color;
