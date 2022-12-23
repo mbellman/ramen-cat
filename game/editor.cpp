@@ -307,8 +307,8 @@ namespace Editor {
 
         Gm_HandleFreeCameraMode(context, 4.f, dt);
 
-        camera.orientation.yaw += mouseDelta.x / 1000.f;
-        camera.orientation.pitch += mouseDelta.y / 1000.f;
+        camera.orientation.yaw += mouseDelta.x * dt * 0.08f;
+        camera.orientation.pitch += mouseDelta.y * dt * 0.08f;
         camera.rotation = camera.orientation.toQuaternion();
       }
     }
