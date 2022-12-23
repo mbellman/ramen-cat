@@ -37,10 +37,10 @@ inline std::string getActionTypeName(ActionType type) {
       return "CREATE";
     case ActionType::POSITION:
       return "POSITION";
-    case ActionType::ROTATE:
-      return "ROTATE";
     case ActionType::SCALE:
       return "SCALE";
+    case ActionType::ROTATE:
+      return "ROTATE";
     case ActionType::COLOR:
       return "COLOR";
   }
@@ -137,6 +137,7 @@ internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mo
   float multiplier = 1.f;
 
   switch (editor.currentActionType) {
+    case ActionType::SCALE:
     case ActionType::POSITION: {
       multiplier = 20.f;
 
@@ -159,9 +160,6 @@ internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mo
 
       break;
     }
-    case ActionType::SCALE:
-      // @todo
-      return Vec3f(0.f);
   }
 
   return isVerticalMotion
@@ -337,7 +335,10 @@ namespace Editor {
 
         if (editor.currentActionType == ActionType::POSITION) {
           originalObject->position += actionDelta;
+        } else if (editor.currentActionType == ActionType::SCALE) {
+          originalObject->scale += actionDelta;
         } else if (editor.currentActionType == ActionType::ROTATE) {
+          // @todo rotate along view space axes rather than world space axes
           originalObject->rotation += actionDelta;
         }
 
