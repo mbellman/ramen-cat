@@ -187,12 +187,12 @@ internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mo
 
 internal void createObjectHistoryAction(GmContext* context, Object& object) {
   if (editor.history.size() > 0) {
-    auto& lastTransaction = editor.history.back();
-    auto* liveObject = Gm_GetObjectByRecord(context, lastTransaction.initialObject._record);
+    auto& lastAction = editor.history.back();
+    auto* liveLastActionObject = Gm_GetObjectByRecord(context, lastAction.initialObject._record);
 
     if (
-      liveObject != nullptr &&
-      areObjectPropertiesIdentical(*liveObject, lastTransaction.initialObject)
+      liveLastActionObject != nullptr &&
+      areObjectPropertiesIdentical(*liveLastActionObject, lastAction.initialObject)
     ) {
       // No modifications were made to the last object in the history queue,
       // so replace the object in the last history action with this one
@@ -202,8 +202,8 @@ internal void createObjectHistoryAction(GmContext* context, Object& object) {
     }
 
     if (
-      isSameObject(object, lastTransaction.initialObject) &&
-      areObjectPropertiesIdentical(object, lastTransaction.initialObject)
+      isSameObject(object, lastAction.initialObject) &&
+      areObjectPropertiesIdentical(object, lastAction.initialObject)
     ) {
       return;
     }
@@ -231,14 +231,14 @@ internal void undoLastHistoryAction(GmContext* context) {
     case ActionType::REMOVE:
       break;
     default: {
-      auto* liveObject = Gm_GetObjectByRecord(context, action.initialObject._record);
+      auto* liveLastActionObject = Gm_GetObjectByRecord(context, action.initialObject._record);
 
-      if (liveObject != nullptr) {
-        *liveObject = action.initialObject;
+      if (liveLastActionObject != nullptr) {
+        *liveLastActionObject = action.initialObject;
 
-        commit(*liveObject);
+        commit(*liveLastActionObject);
 
-        editor.selectedObject = *liveObject;
+        editor.selectedObject = *liveLastActionObject;
         editor.isObjectSelected = true;
       }
     }
