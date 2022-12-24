@@ -357,9 +357,8 @@ namespace Editor {
 
           if (angle > 0.f) {
             Vec3f axis = actionDelta.unit();
-            Quaternion r = Quaternion::fromAxisAngle(angle, axis.x, axis.y, axis.z);
 
-            originalObject->rotation = r * originalObject->rotation;
+            originalObject->rotation *= Quaternion::fromAxisAngle(axis, angle);
           }
         }
 

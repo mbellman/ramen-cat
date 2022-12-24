@@ -20,6 +20,7 @@ namespace Gamma {
     Quaternion(float w, float x, float y, float z): w(w), x(x), y(y), z(z) {};
 
     static Quaternion fromAxisAngle(float angle, float x, float y, float z);
+    static Quaternion fromAxisAngle(const Vec3f& axis, float angle);
     static Quaternion fromEulerAngles(float x, float y, float z);
     static Quaternion slerp(const Quaternion& q1, const Quaternion& q2, float alpha);
 
@@ -31,7 +32,6 @@ namespace Gamma {
     Vec3f getDirection() const;
     Vec3f getLeftDirection() const;
     Vec3f getUpDirection() const;
-    void rotateAboutAxis(const Vec3f& axis, float angle);
     Matrix4f toMatrix4f() const;
     Quaternion unit() const;
   };

@@ -19,6 +19,17 @@ namespace Gamma {
     };
   }
 
+  Quaternion Quaternion::fromAxisAngle(const Vec3f& axis, float angle) {
+    float sa = sinf(angle / 2.0f);
+
+    return {
+      cosf(angle / 2.0f),
+      axis.x * sa,
+      axis.y * sa,
+      axis.z * sa
+    };
+  }
+
   Quaternion Quaternion::fromEulerAngles(float x, float y, float z) {
     Quaternion pitch = Quaternion::fromAxisAngle(x, 1.0f, 0.0f, 0.0f);
     Quaternion yaw = Quaternion::fromAxisAngle(y, 0.0f, 1.0f, 0.0f);
@@ -95,7 +106,7 @@ namespace Gamma {
   }
 
   void Quaternion::operator*=(const Quaternion& q2) {
-    *this = *this * q2;
+    *this = q2 * *this;
   }
 
   void Quaternion::debug() const {
@@ -118,12 +129,6 @@ namespace Gamma {
     const static Vec3f left = Vec3f(-1.f, 0, 0);
 
     return (toMatrix4f() * left).toVec3f();
-  }
-
-  void Quaternion::rotateAboutAxis(const Vec3f& axis, float angle) {
-    Quaternion rotation = Quaternion::fromAxisAngle(angle, axis.x, axis.y, axis.z);
-
-    *this *= rotation;
   }
 
   Matrix4f Quaternion::toMatrix4f() const {
