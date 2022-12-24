@@ -399,10 +399,17 @@ namespace Editor {
         #define String(x) std::to_string(x)
 
         auto& p = editor.selectedObject.position;
-        auto value = String(p.x) + ", " + String(p.y) + ", " + String(p.z);
+        auto& s = editor.selectedObject.scale;
+        auto& r = editor.selectedObject.rotation;
+        // @todo Gm_ToString(const Vec3f&), Gm_ToString(const Quaternion&)
+        auto position = String(p.x) + ", " + String(p.y) + ", " + String(p.z);
+        auto scale = String(s.x) + ", " + String(s.y) + ", " + String(s.z);
+        auto rotation = String(r.w) + ", " + String(r.x) + ", " + String(r.y) + ", " + String(r.z);
 
         addDebugMessage("Active object:");
-        addDebugMessage("Position: " + value);
+        addDebugMessage("Position: " + position);
+        addDebugMessage("Scale: " + scale);
+        addDebugMessage("Rotation: " + rotation);
       }
     }
   }
