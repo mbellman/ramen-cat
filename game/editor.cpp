@@ -156,7 +156,21 @@ internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mo
   float multiplier = 1.f;
 
   switch (editor.currentActionType) {
-    case ActionType::SCALE:
+    case ActionType::SCALE: {
+      multiplier = 20.f;
+
+      if (isVerticalMotion) {
+        direction = camera.orientation.getUpDirection().alignToAxis();
+      } else {
+        direction = camera.orientation.getRightDirection().alignToAxis();
+      }
+
+      if (direction.x < 0 || direction.y < 0 || direction.z < 0) {
+        direction *= -1.f;
+      }
+
+      break;
+    }
     case ActionType::POSITION: {
       multiplier = 20.f;
 
@@ -172,9 +186,9 @@ internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mo
       multiplier = 0.2f;
 
       if (isVerticalMotion) {
-        direction = camera.orientation.getRightDirection();
+        direction = camera.orientation.getRightDirection().alignToAxis();
       } else {
-        direction = camera.orientation.getUpDirection().invert();
+        direction = camera.orientation.getUpDirection().alignToAxis().invert();
       }
 
       break;
