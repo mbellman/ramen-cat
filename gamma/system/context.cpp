@@ -35,60 +35,79 @@ static void Gm_DisplayDevtools(GmContext* context) {
   u32 frameTimeBudget = u32(100.0f * (float)averageFrameTime / 16667.0f);
 
   // Render system-defined debug messages
-  auto fpsLabel = "FPS: "
-    + String(fpsAverager.average())
-    + ", low "
-    + String(fpsAverager.low())
-    + " (V-Sync " + (renderStats.isVSynced ? "ON" : "OFF") + ")";
+  {
+    auto fpsLabel = "FPS: "
+      + String(fpsAverager.average())
+      + ", low "
+      + String(fpsAverager.low())
+      + " (V-Sync " + (renderStats.isVSynced ? "ON" : "OFF") + ")";
 
-  auto frameTimeLabel = "Frame time: "
-    + String(averageFrameTime)
-    + "us, high "
-    + String(frameTimeAverager.high())
-    + " ("
-    + String(frameTimeBudget)
-    + "%)";
+    auto frameTimeLabel = "Frame time: "
+      + String(averageFrameTime)
+      + "us, high "
+      + String(frameTimeAverager.high())
+      + " ("
+      + String(frameTimeBudget)
+      + "%)";
 
-  auto resolutionLabel = "Resolution: " + String(resolution.width) + " x " + String(resolution.height);
-  auto vertsLabel = "Verts: " + String(sceneStats.verts);
-  auto trisLabel = "Tris: " + String(sceneStats.tris);
-  auto memoryLabel = "GPU Memory: " + String(renderStats.gpuMemoryUsed) + "MB / " + String(renderStats.gpuMemoryTotal) + "MB";
+    auto resolutionLabel = "Resolution: " + String(resolution.width) + " x " + String(resolution.height);
+    auto vertsLabel = "Verts: " + String(sceneStats.verts);
+    auto trisLabel = "Tris: " + String(sceneStats.tris);
+    auto memoryLabel = "GPU Memory: " + String(renderStats.gpuMemoryUsed) + "MB / " + String(renderStats.gpuMemoryTotal) + "MB";
 
-  renderer.renderText(font_sm, fpsLabel.c_str(), 25, 25);
-  renderer.renderText(font_sm, frameTimeLabel.c_str(), 25, 50);
-  renderer.renderText(font_sm, resolutionLabel.c_str(), 25, 75);
-  renderer.renderText(font_sm, vertsLabel.c_str(), 25, 100);
-  renderer.renderText(font_sm, trisLabel.c_str(), 25, 125);
-  renderer.renderText(font_sm, memoryLabel.c_str(), 25, 150);
-
-  // Render user-defined debug messages
-  u8 index = 0;
-
-  for (auto& message : context->debugMessages) {
-    renderer.renderText(font_sm, message.c_str(), 25, 200 + index++ * 25, Vec3f(1.f), Vec4f(0.f, 0.f, 0.f, 0.8f));
+    renderer.renderText(font_sm, fpsLabel.c_str(), 25, 25);
+    renderer.renderText(font_sm, frameTimeLabel.c_str(), 25, 50);
+    renderer.renderText(font_sm, resolutionLabel.c_str(), 25, 75);
+    renderer.renderText(font_sm, vertsLabel.c_str(), 25, 100);
+    renderer.renderText(font_sm, trisLabel.c_str(), 25, 125);
+    renderer.renderText(font_sm, memoryLabel.c_str(), 25, 150);
   }
 
-  context->debugMessages.clear();
+  // Render user-defined debug messages
+  {
+    u8 index = 0;
+
+    for (auto& message : context->debugMessages) {
+      renderer.renderText(font_sm, message.c_str(), 25, 200 + index++ * 25, Vec3f(1.f), Vec4f(0.f, 0.f, 0.f, 0.8f));
+    }
+
+    context->debugMessages.clear();
+  }
 
   // Display command line
-  if (commander.isOpen()) {
-    std::string caret = SDL_GetTicks() % 1000 < 500 ? "_" : "  ";
-    std::string command = "> " + commander.getCommand() + caret;
-    const Vec3f fgColor = Vec3f(0.0f, 1.0f, 0.0f);
-    const Vec4f bgColor = Vec4f(0.0f, 0.0f, 0.0f, 0.8f);
+  {
+    if (commander.isOpen()) {
+      std::string caret = SDL_GetTicks() % 1000 < 500 ? "_" : "  ";
+      std::string command = "> " + commander.getCommand() + caret;
+      const Vec3f fgColor = Vec3f(0.0f, 1.0f, 0.0f);
+      const Vec4f bgColor = Vec4f(0.0f, 0.0f, 0.0f, 0.8f);
 
-    renderer.renderText(font_lg, command.c_str(), 25, window.size.height - 200, fgColor, bgColor);
+      renderer.renderText(font_lg, command.c_str(), 25, window.size.height - 200, fgColor, bgColor);
+    }
   }
 
   // Display console messages
-  auto* message = Console::getFirstMessage();
-  u8 messageIndex = 0;
+  {
+    auto* message = Console::getFirstMessage();
+    u8 messageIndex = 0;
 
-  // @todo clear messages after a set duration
-  while (message != nullptr) {
-    renderer.renderText(font_sm, message->text.c_str(), 25, window.size.height - 150 + (messageIndex++) * 25);
+    // @todo clear messages after a set duration
+    while (message != nullptr) {
+      renderer.renderText(font_sm, message->text.c_str(), 25, window.size.height - 150 + (messageIndex++) * 25);
 
-    message = message->next;
+      message = message->next;
+    }
+  }
+
+  // Display dev buffer labels
+  {
+    const auto FG_COLOR = Vec3f(1.f);
+    const auto BG_COLOR = Vec4f(0.25f, 0, 0, 1.f);
+
+    renderer.renderText(font_sm, "Color", window.size.width * 0.55f, window.size.height * 0.035f, FG_COLOR, BG_COLOR);
+    renderer.renderText(font_sm, "Depth", window.size.width * 0.657f, window.size.height * 0.035f, FG_COLOR, BG_COLOR);
+    renderer.renderText(font_sm, "Normals", window.size.width * 0.765f, window.size.height * 0.035f, FG_COLOR, BG_COLOR);
+    renderer.renderText(font_sm, "Emissivity", window.size.width * 0.872f, window.size.height * 0.035f, FG_COLOR, BG_COLOR);
   }
 }
 
