@@ -318,6 +318,8 @@ namespace Editor {
 
     // Handle inputs
     {
+      auto& mouseDelta = input.getMouseDelta();
+
       if (input.didClickMouse()) {
         if (editor.isObservingObject) {
           selectObject(context, editor.observedObject);
@@ -342,8 +344,6 @@ namespace Editor {
           editor.isObjectSelected = false;
         }
       }
-
-      auto& mouseDelta = input.getMouseDelta();
 
       if (input.isMouseHeld() && editor.isObjectSelected) {
         float dx = (float)mouseDelta.x;
@@ -372,11 +372,13 @@ namespace Editor {
       } else if (SDL_GetRelativeMouseMode()) {
         auto& camera = getCamera();
 
-        Gm_HandleFreeCameraMode(context, 4.f, dt);
-
         camera.orientation.yaw += mouseDelta.x * dt * 0.08f;
         camera.orientation.pitch += mouseDelta.y * dt * 0.08f;
-        camera.rotation = camera.orientation.toQuaternion();
+        camera.rotation = camera.orientation.toQuaternion();        
+      }
+
+      if (SDL_GetRelativeMouseMode()) {
+        Gm_HandleFreeCameraMode(context, 4.f, dt);
       }
     }
 

@@ -102,7 +102,7 @@ static void Gm_DisplayDevtools(GmContext* context) {
   // Display dev buffer labels
   {
     const auto FG_COLOR = Vec3f(1.f);
-    const auto BG_COLOR = Vec4f(0.25f, 0, 0, 1.f);
+    const auto BG_COLOR = Vec4f(0, 0, 0, 0.75f);
 
     renderer.renderText(font_sm, "Color", window.size.width * 0.55f, window.size.height * 0.035f, FG_COLOR, BG_COLOR);
     renderer.renderText(font_sm, "Depth", window.size.width * 0.657f, window.size.height * 0.035f, FG_COLOR, BG_COLOR);
