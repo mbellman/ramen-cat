@@ -136,6 +136,7 @@ internal void createNewObject(GmContext* context) {
 
   platform.position = spawnPosition;
   platform.scale = Vec3f(50.f, 20.f, 50.f);
+  platform.rotation = Quaternion(1.f, 0, 0, 0);
   platform.color = Vec3f(0, 0, 1.f);
   
   commit(platform);
@@ -227,6 +228,8 @@ internal void undoLastHistoryAction(GmContext* context) {
   switch (action.type) {
     case ActionType::CREATE:
       removeObject(action.initialObject);
+
+      editor.isObjectSelected = false;
       break;
     case ActionType::REMOVE:
       break;
