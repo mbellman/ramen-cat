@@ -186,7 +186,28 @@ internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mo
       multiplier = 0.2f;
 
       if (isVerticalMotion) {
-        direction = camera.orientation.getRightDirection().alignToAxis();
+        // @todo description
+        auto& object = editor.history.back().initialObject;
+        Vec3f cameraRight = camera.orientation.getRightDirection();
+        Vec3f objectRight = object.rotation.getLeftDirection().invert();
+        Vec3f objectForward = object.rotation.getDirection();
+
+        float cDotR = Vec3f::dot(cameraRight, objectRight);
+        float cDotF = Vec3f::dot(cameraRight, objectForward);
+
+        if (Gm_Absf(cDotR) > Gm_Absf(cDotF)) {
+          direction = objectRight;
+
+          if (cDotR < 0) {
+            direction *= -1.f;
+          }
+        } else {
+          direction = objectForward;
+
+          if (cDotF < 0) {
+            direction *= -1.f;
+          }
+        }
       } else {
         direction = camera.orientation.getUpDirection().alignToAxis().invert();
       }
