@@ -186,7 +186,10 @@ internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mo
       multiplier = 0.2f;
 
       if (isVerticalMotion) {
-        // @todo description
+        // When moving the mouse vertically, we want to rotate the object
+        // along its own x or z axis, depending on which side we're facing
+        // the object from. We determine which axis to use by comparing the
+        // camera's right direction vector to the object space x and z axes.
         auto& object = editor.history.back().initialObject;
         Vec3f cameraRight = camera.orientation.getRightDirection();
         Vec3f objectRight = object.rotation.getLeftDirection().invert();
@@ -196,15 +199,21 @@ internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mo
         float cDotF = Vec3f::dot(cameraRight, objectForward);
 
         if (Gm_Absf(cDotR) > Gm_Absf(cDotF)) {
+          // The camera's right direction is similar to the object's,
+          // so rotate about the object space x axis.
           direction = objectRight;
 
           if (cDotR < 0) {
+            // Preserve rotational direction when looking toward -Z
             direction *= -1.f;
           }
         } else {
+          // The camera's right direction is similar to the object's
+          // forward direction, so rotate about the object space z axis.
           direction = objectForward;
 
           if (cDotF < 0) {
+            // Preserve rotational direction when looking toward -X
             direction *= -1.f;
           }
         }
