@@ -36,8 +36,8 @@ namespace CameraSystem {
       if (SDL_GetRelativeMouseMode()) {
         auto& delta = input.getMouseDelta();
 
-        state.camera3p.azimuth -= delta.x * dt * 0.2f;
-        state.camera3p.altitude += delta.y * dt * 0.2f;
+        state.camera3p.azimuth -= delta.x / 1000.f;
+        state.camera3p.altitude += delta.y / 1000.f;
 
         state.camera3p.limitAltitude(0.99f);
       }

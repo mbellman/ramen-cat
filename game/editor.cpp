@@ -433,8 +433,8 @@ namespace Editor {
       } else if (SDL_GetRelativeMouseMode()) {
         auto& camera = getCamera();
 
-        camera.orientation.yaw += mouseDelta.x * dt * 0.08f;
-        camera.orientation.pitch += mouseDelta.y * dt * 0.08f;
+        camera.orientation.yaw += mouseDelta.x / 1500.f;
+        camera.orientation.pitch += mouseDelta.y / 1500.f;
         camera.rotation = camera.orientation.toQuaternion();        
       }
 
