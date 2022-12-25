@@ -90,7 +90,7 @@ namespace MovementSystem {
     if (state.velocity.y != 0.f) {
       // Reduce movement rate in midair
       rate *= 0.05f;
-    } else if (state.velocity.xz().magnitude() > 500.f) {
+    } else if (state.velocity.xz().magnitude() > 600.f) {
       // Limit top xz speed
       rate = 0.f;
     }
