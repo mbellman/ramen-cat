@@ -35,6 +35,8 @@ internal void setupCollisionPlane(Plane& plane) {
 internal void loadGameWorldData(GmContext* context, GameState& state) {
   using namespace std;
 
+  u64 start = Gm_GetMicroseconds();
+
   auto worldData = Gm_LoadFileContents("./game/world_data.txt");
   auto lines = Gm_SplitString(worldData, "\n");
 
@@ -73,6 +75,12 @@ internal void loadGameWorldData(GmContext* context, GameState& state) {
 
   // @temporary
   World::rebuildCollisionPlanes(context, state);
+
+  // @temporary
+  u64 time = Gm_GetMicroseconds() - start;
+  float ms = time / 1000.f;
+
+  Console::log("Loaded game world data in " + std::to_string(ms) + " ms");
 }
 
 void World::initializeGameWorld(GmContext* context, GameState& state) {
@@ -83,8 +91,6 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   addMesh("ocean-floor", 1, Mesh::Plane(2));
   addMesh("platform", 1000, Mesh::Cube());
   addMesh("sphere", 1, Mesh::Sphere(18));
-
-  loadGameWorldData(context, state);
 
   mesh("ocean")->type = MeshType::WATER;
   mesh("ocean")->canCastShadows = false;
@@ -117,6 +123,8 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
 
   light.direction = Vec3f(-0.2f, -1.f, -1.f);
   light.color = Vec3f(1.0f);
+
+  loadGameWorldData(context, state);
 }
 
 void World::rebuildCollisionPlanes(GmContext* context, GameState& state) {
