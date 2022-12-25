@@ -298,6 +298,21 @@ internal void undoLastHistoryAction(GmContext* context) {
   Console::log("[Editor] " + getActionTypeName(editor.currentActionType) + " action reverted");
 }
 
+internal void saveGameWorldData(GmContext* context, GameState& state) {
+  std::string data;
+
+  data += "@platform\n";
+
+  for (auto& platform : objects("platform")) {
+    data += Gm_ToString(platform.position) + ",";
+    data += Gm_ToString(platform.scale) + ",";
+    data += Gm_ToString(platform.rotation) + ",";
+    data += Gm_ToString(platform.color) + "\n";
+  }
+
+  Gm_WriteFileContents("./game/world_data.txt", data);
+}
+
 namespace Editor {
   void enableGameEditor(GmContext* context, GameState& state) {
     state.isEditorEnabled = true;
@@ -316,6 +331,8 @@ namespace Editor {
     editor.isObjectSelected = false;
 
     state.isEditorEnabled = false;
+
+    saveGameWorldData(context, state);
 
     World::rebuildCollisionPlanes(context, state);
   }

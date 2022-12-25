@@ -33,6 +33,8 @@ internal void setupCollisionPlane(Plane& plane) {
 }
 
 internal void loadGameWorldData(GmContext* context, GameState& state) {
+  using namespace std;
+
   auto worldData = Gm_LoadFileContents("./game/world_data.txt");
   auto lines = Gm_SplitString(worldData, "\n");
 
@@ -44,49 +46,29 @@ internal void loadGameWorldData(GmContext* context, GameState& state) {
   Platform platform;
 
   // @temporary
-  for (auto& line : lines) {
-    if (line.size() == 0 || line[0] == '\n') {
-      platforms.push_back(platform);
+  u32 i = 0;
 
-      platform.position = Vec3f(0.f);
-      platform.scale = Vec3f(0.f);
-      platform.rotation = Vec3f(0.f);
-      platform.color = Vec3f(0.f);
+  while (i < lines.size() - 1) {
+    auto& line = lines[i];
 
-      continue;
+    if (line[0] == '@') {
+      // @todo check object name
+    } else {
+      auto parts = Gm_SplitString(line, ",");
+      auto& platform = createObjectFrom("platform");
+
+      #define df(i) stof(parts[i])
+      #define di(i) stoi(parts[i])
+
+      platform.position = Vec3f(df(0), df(1), df(2));
+      platform.scale = Vec3f(df(3), df(4), df(5));
+      platform.rotation = Quaternion(df(6), df(7), df(8), df(9));
+      platform.color = pVec4(di(10), di(11), di(12));
+
+      commit(platform);
     }
 
-    auto parts = Gm_SplitString(line, ":");
-    auto label = parts[0];
-    auto values = Gm_SplitString(parts[1], ",");
-
-    Vec3f value = {
-      std::stof(values[0]),
-      std::stof(values[1]),
-      std::stof(values[2])
-    };
-
-    if (label == "position") {
-      platform.position = value;
-    } else if (label == "scale") {
-      platform.scale = value;
-    } else if (label == "rotation") {
-      platform.rotation = value;
-    } else if (label == "color") {
-      platform.color = value;
-    }
-  }
-
-  // @temporary
-  for (auto& [ position, scale, rotation, color ] : platforms) {
-    auto& platform = createObjectFrom("platform");
-
-    platform.position = position;
-    platform.scale = scale;
-    platform.rotation = Quaternion::fromEulerAngles(rotation.x, rotation.y, rotation.z);
-    platform.color = color;
-
-    commit(platform);
+    i++;
   }
 
   // @temporary
@@ -103,17 +85,6 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   addMesh("sphere", 1, Mesh::Sphere(18));
 
   loadGameWorldData(context, state);
-
-  // @temporary
-  Gm_WatchFile("./game/world_data.txt", [context, &state]() {
-    u64 startMicroseconds = Gm_GetMicroseconds();
-
-    loadGameWorldData(context, state);
-
-    float totalMilliseconds = (Gm_GetMicroseconds() - startMicroseconds) / 1000.f;
-
-    Console::log("Hot-reloaded world data in", totalMilliseconds, "ms");
-  });
 
   mesh("ocean")->type = MeshType::WATER;
   mesh("ocean")->canCastShadows = false;
