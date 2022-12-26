@@ -75,6 +75,8 @@ vec3 getNormal(vec3 world_position) {
   n += vec2(simplex_noise(vec2(t * 0.1 - wx * 0.003, t * 0.1 + wz * 0.003))) * 0.4;
   n += vec2(simplex_noise(vec2(t * 0.1 + wx * 0.007, t * 0.1 - wz * 0.007))) * 0.3;
 
+  n *= 0.15;
+
   vec3 n_normal = normalize(fragNormal);
   vec3 n_tangent = normalize(fragTangent);
   vec3 n_bitangent = normalize(fragBitangent);
@@ -89,11 +91,8 @@ vec3 getNormal(vec3 world_position) {
   float flatness = 1.0;
 
   vec3 tangent_normal = vec3(n.x, n.y, flatness);
-  vec3 world_normal = normalize(tbn_matrix * tangent_normal);
 
-  world_normal.y += n_normal.y * 3.0;
-
-  return normalize(world_normal);
+  return normalize(tbn_matrix * tangent_normal);
 }
 
 void main() {
@@ -141,7 +140,7 @@ void main() {
   vec4 refracted_color_and_depth = texture(texColorAndDepth, refracted_color_coords);
   vec3 water_color = vec3(0);
   
-  water_color += refracted_color_and_depth.rgb * fresnel_factor;
+  water_color += refracted_color_and_depth.rgb * (1.0 - fresnel_factor);
 
   if (refracted_color_and_depth.w < gl_FragCoord.z) {
     water_color = vec3(0);
@@ -168,11 +167,12 @@ void main() {
     reflection_color = mix(reflection_color_and_depth.rgb, sky_color, alpha);
   }
 
-  water_color += reflection_color * (1.0 - fresnel_factor);
+  water_color += reflection_color * fresnel_factor;
   water_color *= fragColor;
 
   // @todo make water color configurable
-  water_color += vec3(0, 0.25, 0.25) * fresnel_factor;
+  water_color += vec3(0, 0.25, 0.5) * fresnel_factor;
+  water_color += vec3(0, 1, 1) * pow(1.0 - dot(normalize(fragNormal), normalized_fragment_to_camera), 10);
 
   out_color_and_depth = vec4(water_color, gl_FragCoord.z);
 }

@@ -84,7 +84,7 @@ internal void loadGameWorldData(GmContext* context, GameState& state) {
 }
 
 void World::initializeGameWorld(GmContext* context, GameState& state) {
-  context->scene.zNear = 1.f;
+  context->scene.zNear = 5.f;
   context->scene.zFar = 50000.f;
 
   addMesh("ocean", 1, Mesh::Plane(2));
