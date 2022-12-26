@@ -6,6 +6,7 @@
 #include "world.h"
 #include "movement_system.h"
 #include "camera_system.h"
+#include "effects_system.h"
 #include "editor.h"
 #include "macros.h"
 
@@ -60,6 +61,7 @@ void initializeGame(GmContext* context, GameState& state) {
 
   World::initializeGameWorld(context, state);
   CameraSystem::initializeGameCamera(context, state);
+  EffectsSystem::initializeGameEffects(context, state);
 
   state.previousPlayerPosition = getPlayer().position;
 }
@@ -85,6 +87,7 @@ void updateGame(GmContext* context, GameState& state, float dt) {
   MovementSystem::handlePlayerMovementInput(context, state, dt);
   MovementSystem::handlePlayerMovementPhysics(context, state, dt);
   CameraSystem::handleGameCamera(context, state, dt);
+  EffectsSystem::handleGameEffects(context, state, dt);
 
   // Reset the player position after falling longer than 2 seconds
   {

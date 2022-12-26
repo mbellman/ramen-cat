@@ -135,6 +135,9 @@
     <ClCompile Include="game\world.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="game\effects_system.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="external\glew\include\eglew.h">
@@ -555,6 +558,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="game\world.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\effects_system.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

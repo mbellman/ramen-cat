@@ -21,6 +21,7 @@ struct GameState {
   float lastWallKickInputTime = 0.f;
   float lastWallBumpTime = 0.f;
   float lastWallKickTime = 0.f;
+  float lastParticleSpawnTime = 0.f;
 
   bool isOnSolidGround = false;
   bool isPlayerMovingThisFrame = false;
