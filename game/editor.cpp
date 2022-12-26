@@ -149,24 +149,58 @@ internal void createNewObject(GmContext* context) {
   editor.history.push_back(action);
 }
 
+internal Vec3f getObjectAlignedActionAxis(GmContext* context, Object& object) {
+  auto& camera = getCamera();
+
+  Vec3f cameraRight = camera.orientation.getRightDirection();
+  Vec3f objectRight = object.rotation.getLeftDirection().invert();
+  Vec3f objectForward = object.rotation.getDirection();
+  Vec3f direction;
+
+  float cDotR = Vec3f::dot(cameraRight, objectRight);
+  float cDotF = Vec3f::dot(cameraRight, objectForward);
+
+  if (Gm_Absf(cDotR) > Gm_Absf(cDotF)) {
+    // The camera's right direction is similar to the object's,
+    // so use the object space x axis.
+    direction = objectRight;
+
+    if (cDotR < 0) {
+      // Preserve axis direction when looking toward -Z
+      direction *= -1.f;
+    }
+  } else {
+    // The camera's right direction is similar to the object's
+    // forward direction, so use the object space z axis.
+    direction = objectForward;
+
+    if (cDotF < 0) {
+      // Preserve axis direction when looking toward -X
+      direction *= -1.f;
+    }
+  }
+
+  return direction;
+}
+
 internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mouseDy, float dt) {
   auto& camera = getCamera();
   bool isVerticalMotion = Gm_Absf(mouseDy) > Gm_Absf(mouseDx);
-  Vec3f direction;
   float multiplier = 1.f;
+  Vec3f axis;
 
   switch (editor.currentActionType) {
     case ActionType::SCALE: {
       multiplier = 20.f;
 
       if (isVerticalMotion) {
-        direction = camera.orientation.getUpDirection().alignToAxis();
+        axis = camera.orientation.getUpDirection().alignToAxis();
       } else {
-        direction = camera.orientation.getRightDirection().alignToAxis();
+        axis = camera.orientation.getRightDirection().alignToAxis();
       }
 
-      if (direction.x < 0 || direction.y < 0 || direction.z < 0) {
-        direction *= -1.f;
+      if (axis.x < 0 || axis.y < 0 || axis.z < 0) {
+        axis *= -1.f;
       }
 
       break;
@@ -175,9 +209,11 @@ internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mo
       multiplier = 20.f;
 
       if (isVerticalMotion) {
-        direction = camera.orientation.getUpDirection().alignToAxis();
+        axis = camera.orientation.getUpDirection().alignToAxis();
       } else {
-        direction = camera.orientation.getRightDirection().alignToAxis();
+        auto& object = editor.history.back().initialObject;
+
+        axis = getObjectAlignedActionAxis(context, object);
       }
 
       break;
@@ -186,39 +222,11 @@ internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mo
       multiplier = 0.2f;
 
       if (isVerticalMotion) {
-        // When moving the mouse vertically, we want to rotate the object
-        // along its own x or z axis, depending on which side we're facing
-        // the object from. We determine which axis to use by comparing the
-        // camera's right direction vector to the object space x and z axes.
         auto& object = editor.history.back().initialObject;
-        Vec3f cameraRight = camera.orientation.getRightDirection();
-        Vec3f objectRight = object.rotation.getLeftDirection().invert();
-        Vec3f objectForward = object.rotation.getDirection();
 
-        float cDotR = Vec3f::dot(cameraRight, objectRight);
-        float cDotF = Vec3f::dot(cameraRight, objectForward);
-
-        if (Gm_Absf(cDotR) > Gm_Absf(cDotF)) {
-          // The camera's right direction is similar to the object's,
-          // so rotate about the object space x axis.
-          direction = objectRight;
-
-          if (cDotR < 0) {
-            // Preserve rotational direction when looking toward -Z
-            direction *= -1.f;
-          }
-        } else {
-          // The camera's right direction is similar to the object's
-          // forward direction, so rotate about the object space z axis.
-          direction = objectForward;
-
-          if (cDotF < 0) {
-            // Preserve rotational direction when looking toward -X
-            direction *= -1.f;
-          }
-        }
+        axis = getObjectAlignedActionAxis(context, object);
       } else {
-        direction = camera.orientation.getUpDirection().alignToAxis().invert();
+        axis = camera.orientation.getUpDirection().alignToAxis().invert();
       }
 
       break;
@@ -226,8 +234,8 @@ internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mo
   }
 
   return isVerticalMotion
-    ? direction * -mouseDy * multiplier * dt 
-    : direction * mouseDx * multiplier * dt;
+    ? axis * -mouseDy * multiplier * dt 
+    : axis * mouseDx * multiplier * dt;
 }
 
 internal void createObjectHistoryAction(GmContext* context, Object& object) {
