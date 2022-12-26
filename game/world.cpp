@@ -20,7 +20,9 @@ internal std::vector<std::vector<Vec3f>> platformPlanePoints = {
   // Right
   { Vec3f(1.f, -1.f, -1.f), Vec3f(1.f, 1.f, -1.f), Vec3f(1.f, 1.f, 1.f), Vec3f(1.f, -1.f, 1.f) },
   // Front
-  { Vec3f(-1.f, -1.f, -1.f), Vec3f(-1.f, 1.f, -1.f), Vec3f(1.f, 1.f, -1.f), Vec3f(1.f, -1.f, -1.f) }
+  { Vec3f(-1.f, -1.f, -1.f), Vec3f(-1.f, 1.f, -1.f), Vec3f(1.f, 1.f, -1.f), Vec3f(1.f, -1.f, -1.f) },
+  // Back
+  { Vec3f(1.f, -1.f, 1.f), Vec3f(1.f, 1.f, 1.f), Vec3f(-1.f, 1.f, 1.f), Vec3f(-1.f, -1.f, 1.f) }
 };
 
 internal void setupCollisionPlane(Plane& plane) {
