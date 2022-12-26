@@ -41,6 +41,8 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
 }
 
 internal void resolveAllCollisions(GmContext* context, GameState& state, float dt) {
+  START_TIMING("Collisions");
+
   auto& player = getPlayer();
   float playerRadius = player.scale.x;
   bool isFalling = state.previousPlayerPosition.y - player.position.y > 0.f;
@@ -74,6 +76,8 @@ internal void resolveAllCollisions(GmContext* context, GameState& state, float d
     // reset behavior, causing the player to get stuck.
     state.isOnSolidGround = true;
   }
+
+  LOG_TIME();
 }
 
 namespace MovementSystem {
