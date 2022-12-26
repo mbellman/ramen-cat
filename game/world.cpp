@@ -107,7 +107,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
 
   floor.position = Vec3f(0, -2500.f, 0);
   floor.scale = Vec3f(25000.f, 1.f, 25000.f);
-  floor.color = Vec3f(0.5f, 0.7f, 0.9f);
+  floor.color = Vec3f(0.3f, 0.7f, 0.9f);
 
   commit(floor);
 

@@ -140,10 +140,8 @@ void main() {
   vec4 refracted_color_and_depth = texture(texColorAndDepth, refracted_color_coords);
   vec3 water_color = vec3(0);
   
-  water_color += refracted_color_and_depth.rgb * (1.0 - fresnel_factor);
-
   if (refracted_color_and_depth.w < gl_FragCoord.z) {
-    water_color = vec3(0);
+    refracted_color_and_depth.rgb = vec3(0);
   }
 
   // Reflection
@@ -167,12 +165,19 @@ void main() {
     reflection_color = mix(reflection_color_and_depth.rgb, sky_color, alpha);
   }
 
-  water_color += reflection_color * fresnel_factor;
+  // @todo make configurable
+  const vec3 BASE_WATER_COLOR = vec3(0, 0.25, 0.5);
+
+  water_color = mix(reflection_color, refracted_color_and_depth.rgb, fresnel_factor);
   water_color *= fragColor;
 
   // @todo make water color configurable
-  water_color += vec3(0, 0.25, 0.5) * fresnel_factor;
-  water_color += vec3(0, 1, 1) * pow(1.0 - dot(normalize(fragNormal), normalized_fragment_to_camera), 10);
+  float plane_fresnel = dot(normalize(fragNormal), normalized_fragment_to_camera);
+
+  // @hack Add in the base water color, proportional to fresnel
+  water_color += BASE_WATER_COLOR * fresnel_factor;
+  // @hack Fade to white at grazing angles
+  water_color += vec3(1) * pow(1.0 - plane_fresnel, 15);
 
   out_color_and_depth = vec4(water_color, gl_FragCoord.z);
 }
