@@ -284,6 +284,7 @@ internal void undoLastHistoryAction(GmContext* context) {
       editor.isObjectSelected = false;
       break;
     case ActionType::REMOVE:
+      // @todo
       break;
     default: {
       auto* liveLastActionObject = Gm_GetObjectByRecord(context, action.initialObject._record);
@@ -343,6 +344,32 @@ namespace Editor {
     saveGameWorldData(context, state);
 
     World::rebuildCollisionPlanes(context, state);
+  }
+
+  void initializeGameEditor(GmContext* context, GameState& state) {
+    auto& commander = context->commander;
+
+    context->commander.on<std::string>("command", [&state, context](std::string command) {
+      if (state.isEditorEnabled) {
+        if (Gm_StringStartsWith(command, "color ")) {
+          // @todo allow color edits to be undone
+          using namespace std;
+
+          auto colorString = Gm_SplitString(command, " ")[1];
+          auto parts = Gm_SplitString(colorString, ",");
+          auto color = Vec3f(stof(parts[0]), stof(parts[1]), stof(parts[2]));
+
+          if (editor.isObjectSelected) {
+            auto* liveSelectedObject = Gm_GetObjectByRecord(context, editor.selectedObject._record);
+
+            liveSelectedObject->color = color;
+            editor.selectedObject = *liveSelectedObject;
+
+            commit(*liveSelectedObject);
+          }
+        }
+      }
+    });
   }
 
   void handleGameEditor(GmContext* context, GameState& state, float dt) {

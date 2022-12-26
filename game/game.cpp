@@ -48,10 +48,6 @@ internal void initializeInputHandlers(GmContext* context, GameState& state) {
       }
     }
   });
-
-  context->commander.on<std::string>("command", [&state, context](std::string command) {
-    // @todo
-  });
 }
 
 void initializeGame(GmContext* context, GameState& state) {
@@ -62,6 +58,7 @@ void initializeGame(GmContext* context, GameState& state) {
   World::initializeGameWorld(context, state);
   CameraSystem::initializeGameCamera(context, state);
   EffectsSystem::initializeGameEffects(context, state);
+  Editor::initializeGameEditor(context, state);
 
   state.previousPlayerPosition = getPlayer().position;
 }
