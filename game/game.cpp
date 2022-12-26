@@ -7,6 +7,7 @@
 #include "movement_system.h"
 #include "camera_system.h"
 #include "editor.h"
+#include "macros.h"
 
 #define internal static inline
 #define getPlayer() objects("sphere")[0]
@@ -64,6 +65,8 @@ void initializeGame(GmContext* context, GameState& state) {
 }
 
 void updateGame(GmContext* context, GameState& state, float dt) {
+  START_TIMING("updateGame");
+
   // @todo check in dev mode only
   if (state.isEditorEnabled) {
     Editor::handleGameEditor(context, state, dt);
@@ -106,4 +109,6 @@ void updateGame(GmContext* context, GameState& state, float dt) {
 
     state.previousPlayerPosition = player.position;
   }
+
+  LOG_TIME();
 }

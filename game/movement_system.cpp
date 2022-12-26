@@ -41,7 +41,7 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
 }
 
 internal void resolveAllCollisions(GmContext* context, GameState& state, float dt) {
-  START_TIMING("Collisions");
+  START_TIMING("resolveAllCollisions");
 
   auto& player = getPlayer();
   float playerRadius = player.scale.x;
