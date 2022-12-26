@@ -17,6 +17,8 @@ internal std::vector<std::vector<Vec3f>> platformPlanePoints = {
   { Vec3f(-1.f, 1.f, -1.f ), Vec3f(-1.f, 1.f, 1.f), Vec3f(1.f, 1.f, 1.f), Vec3f(1.f, 1.f, -1.f) },
   // Left
   { Vec3f(-1.f, -1.f, -1.f), Vec3f(-1.f, -1.f, 1.f), Vec3f(-1.f, 1.f, 1.f), Vec3f(-1.f, 1.f, -1.f) },
+  // Right
+  { Vec3f(1.f, -1.f, -1.f), Vec3f(1.f, 1.f, -1.f), Vec3f(1.f, 1.f, 1.f), Vec3f(1.f, -1.f, 1.f) },
   // Front
   { Vec3f(-1.f, -1.f, -1.f), Vec3f(-1.f, 1.f, -1.f), Vec3f(1.f, 1.f, -1.f), Vec3f(1.f, -1.f, -1.f) }
 };
