@@ -149,6 +149,17 @@ internal void createNewObject(GmContext* context) {
   editor.history.push_back(action);
 }
 
+internal void respawnPlayer(GmContext* context, GameState& state) {
+  auto& player = getPlayer();
+  auto& camera = getCamera();
+
+  player.position = camera.position + camera.orientation.getDirection() * 300.f;
+
+  state.velocity = Vec3f(0.f);
+
+  commit(player);
+}
+
 internal Vec3f getObjectAlignedActionAxis(GmContext* context, Object& object) {
   auto& camera = getCamera();
 
@@ -439,6 +450,8 @@ namespace Editor {
 
           editor.isObjectSelected = false;
         }
+      } else if (input.didPressKey(Key::R)) {
+        respawnPlayer(context, state);
       }
 
       if (input.isMouseHeld() && editor.isObjectSelected) {
