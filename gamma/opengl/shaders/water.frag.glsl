@@ -168,6 +168,9 @@ void main() {
   // @todo make configurable
   const vec3 BASE_WATER_COLOR = vec3(0, 0.25, 0.5);
 
+  // @todo replace mix factor with sky brightness
+  reflection_color = mix(BASE_WATER_COLOR, reflection_color, 0.3);
+
   water_color = mix(reflection_color, refracted_color_and_depth.rgb, fresnel_factor);
   water_color *= fragColor;
 
