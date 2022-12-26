@@ -17,5 +17,5 @@ void main() {
   vec3 position = getWorldPosition(1.0, fragUv, matInverseProjection, matInverseView) - cameraPosition;
   vec3 direction = normalize(position);
 
-  out_colorAndDepth = vec4(getSkyColor(direction), 1.0);
+  out_colorAndDepth = vec4(getSkyColor(direction).rgb, 1.0);
 }

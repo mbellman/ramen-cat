@@ -149,7 +149,9 @@ void main() {
   vec3 view_reflection_ray = glVec3(matView * glVec4(world_position + reflection_ray * 5.0));
   vec2 reflected_color_coords = getScreenCoordinates(view_reflection_ray, matProjection);
   vec4 reflection_color_and_depth = texture(texColorAndDepth, reflected_color_coords);
-  vec3 sky_color = getSkyColor(reflection_ray);
+  vec4 sky = getSkyColor(reflection_ray);
+  vec3 sky_color = sky.rgb;
+  float sky_intensity = sky.w;
   vec3 reflection_color = vec3(0);
 
   if (isOffScreen(reflected_color_coords, 0)) {
@@ -166,10 +168,9 @@ void main() {
   }
 
   // @todo make configurable
-  const vec3 BASE_WATER_COLOR = vec3(0, 0.25, 0.5);
+  const vec3 BASE_WATER_COLOR = vec3(0, 0.3, 0.5);
 
-  // @todo replace mix factor with sky brightness
-  reflection_color = mix(BASE_WATER_COLOR, reflection_color, 0.3);
+  reflection_color = mix(BASE_WATER_COLOR, reflection_color, sky_intensity);
 
   water_color = mix(reflection_color, refracted_color_and_depth.rgb, fresnel_factor);
   water_color *= fragColor;

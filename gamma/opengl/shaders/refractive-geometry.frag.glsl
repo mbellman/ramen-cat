@@ -62,7 +62,7 @@ void main() {
     // Skybox
     vec3 direction = normalize(world_refraction_ray - cameraPosition);
 
-    refracted_color_and_depth.rgb = getSkyColor(direction);
+    refracted_color_and_depth.rgb = getSkyColor(direction).rgb;
   }
 
   // Slightly darken fragments facing the camera more directly
