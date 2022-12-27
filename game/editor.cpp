@@ -130,7 +130,7 @@ internal void cycleCurrentActionType() {
 
 internal void createNewObject(GmContext* context) {
   auto& camera = getCamera();
-  Vec3f spawnPosition = camera.position + camera.orientation.getDirection() * 150.f;
+  Vec3f spawnPosition = camera.position + camera.orientation.getDirection() * 300.f;
 
   auto& platform = createObjectFrom("platform");
 

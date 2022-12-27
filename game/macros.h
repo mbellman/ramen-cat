@@ -9,5 +9,5 @@
 
 #define LOG_TIME() \
     u64 __time = Gm_GetMicroseconds() - __start;\
-    u32 __ms = __time / 1000.f;\
+    u32 __ms = u32(__time / 1000.f);\
     addDebugMessage(__label + ": " + std::to_string(__time) + " us");

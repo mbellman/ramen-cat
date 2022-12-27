@@ -8,7 +8,7 @@ vec4 getSkyColor(vec3 direction) {
   float y = direction.y + altitude;
   float z = direction.z;
 
-  float base_r = pow(0.5 + 0.5 * cos(y) * 0.8, 6);
+  float base_r = 0.8 * pow(0.5 + 0.5 * cos(y) * 0.8, 6);
   float base_g = 0.3 * pow(0.5 + 0.5 * cos(y) * 0.9, 7);
   float base_b = pow(0.5 + 0.5 * cos(y), 5);
 
@@ -22,6 +22,6 @@ vec4 getSkyColor(vec3 direction) {
     max(base_r + atmosphere.r, 0),
     max(base_g + atmosphere.g, 0),
     max(base_b + atmosphere.b, 0),
-    (0.3 + pow(max(0.0, sun_dot), 50)) / 2.0
+    (0.3 + pow(max(0.0, sun_dot), 50)) / 1.3
   );
 }
