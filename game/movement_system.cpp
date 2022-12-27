@@ -141,7 +141,10 @@ namespace MovementSystem {
         timeSinceLastWallKick > 0.3f
       ) {
         // Wall kick
-        state.velocity += (state.lastBumpedWallNormal + Vec3f(0, 3.f, 0)).unit() * 500.f;
+        Vec3f wallPlaneVelocity = state.velocity.alignToPlane(state.lastBumpedWallNormal);
+        Vec3f kickDirection = (state.lastBumpedWallNormal + Vec3f(0, 3.f, 0)).unit();
+
+        state.velocity = wallPlaneVelocity + kickDirection * state.velocity.magnitude();
         state.lastWallKickTime = state.frameStartTime;
       }
     }

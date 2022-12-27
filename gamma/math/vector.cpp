@@ -97,6 +97,14 @@ namespace Gamma {
     }
   }
 
+  Vec3f Vec3f::alignToPlane(const Vec3f& normal) const {
+    return *this * Vec3f(
+      1.f - Gm_Absf(normal.x),
+      1.f - Gm_Absf(normal.y),
+      1.f - Gm_Absf(normal.z)
+    );
+  }
+
   Vec3f Vec3f::cross(const Vec3f& v1, const Vec3f& v2) {
     return {
       v1.y * v2.z - v1.z * v2.y,

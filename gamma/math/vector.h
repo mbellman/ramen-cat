@@ -35,12 +35,12 @@ namespace Gamma {
     Vec3f operator/(float divisor) const;
     void operator/=(float divisor);
 
-    // Prevent inadvertent assignment of a vector to a float,
-    // instead preferring an explicit = Vec3f(...) assignment
-    // if the assignment was intentional.
+    // Prevent inadvertent assignment/comparisons between a vector and a float
     void operator=(float value) = delete;
+    void operator==(float value) = delete;
 
     Vec3f alignToAxis() const;
+    Vec3f alignToPlane(const Vec3f& normal) const;
     void debug() const;
     Vec3f gl() const;
     Vec3f invert() const;
