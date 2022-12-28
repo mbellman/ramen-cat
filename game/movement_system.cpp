@@ -51,6 +51,9 @@ internal void resolveAllCollisions(GmContext* context, GameState& state, float d
   float playerRadius = player.scale.x;
   bool isFalling = state.previousPlayerPosition.y - player.position.y > 0.f;
 
+  // @optimize precalculate collision plane min/max y, check against
+  // player y and skip collision detection if out of range
+  // @todo implement world chunks + only consider collision planes local to the player
   for (auto& plane : state.collisionPlanes) {
     Vec3f lineStart = player.position + plane.normal * playerRadius;
     Vec3f lineEnd = player.position - plane.normal * playerRadius;
