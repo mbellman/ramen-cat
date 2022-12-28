@@ -70,6 +70,8 @@ void UISystem::initializeUI(GmContext* context, GameState& state) {
 }
 
 void UISystem::handleUI(GmContext* context, GameState& state, float dt) {
+  START_TIMING("handleUI");
+
   // Render active dialogue
   {
     auto timeSinceDialogueStart = get_running_time() - dialogue.startTime;
@@ -94,6 +96,8 @@ void UISystem::handleUI(GmContext* context, GameState& state, float dt) {
       }
     }
   }
+
+  LOG_TIME();
 }
 
 void UISystem::showDialogue(GmContext* context, GameState& state, const std::string& text, float duration) {

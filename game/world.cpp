@@ -39,11 +39,10 @@ internal void setupCollisionPlane(Plane& plane) {
 }
 
 internal void loadGameWorldData(GmContext* context, GameState& state) {
-  using namespace std;
-
   u64 start = Gm_GetMicroseconds();
 
-  auto worldData = Gm_LoadFileContents("./game/world_data.txt");
+  // @todo eventually store as binary data
+  auto worldData = Gm_LoadFileContents("./game/data_world.txt");
   auto lines = Gm_SplitString(worldData, "\n");
 
   // @temporary
@@ -89,6 +88,12 @@ internal void loadGameWorldData(GmContext* context, GameState& state) {
   Console::log("Loaded game world data in " + std::to_string(ms) + " ms");
 }
 
+internal void loadNonPlayerCharacterData(GmContext* context, GameState& state) {
+  // @todo eventually store as binary data
+  auto npcsData = Gm_LoadFileContents("./game/data_npcs.txt");
+  auto lines = Gm_SplitString(npcsData, "\n");
+}
+
 void World::initializeGameWorld(GmContext* context, GameState& state) {
   context->scene.zNear = 5.f;
   context->scene.zFar = 50000.f;
@@ -131,6 +136,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   light.color = Vec3f(1.0f);
 
   loadGameWorldData(context, state);
+  loadNonPlayerCharacterData(context, state);
 }
 
 void World::rebuildCollisionPlanes(GmContext* context, GameState& state) {

@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+#include <vector>
+
 #include "Gamma.h"
 
 struct Plane {
@@ -7,6 +10,11 @@ struct Plane {
   Gamma::Vec3f t1, t2, t3, t4;
   Gamma::Vec3f normal;
   float nDotU = 0.f;
+};
+
+struct NonPlayerCharacter {
+  Gamma::Vec3f position;
+  std::vector<std::string> dialogue;
 };
 
 struct GameState {
@@ -32,6 +40,8 @@ struct GameState {
   // @todo calculate nearby collision planes on each frame,
   // and only check collisions against those
   std::vector<Plane> collisionPlanes;
+
+  std::vector<NonPlayerCharacter> npcs;
 };
 
 void initializeGame(GmContext* context, GameState& state);
