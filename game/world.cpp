@@ -15,6 +15,8 @@ struct Platform {
 internal std::vector<std::vector<Vec3f>> platformPlanePoints = {
   // Top
   { Vec3f(-1.f, 1.f, -1.f ), Vec3f(-1.f, 1.f, 1.f), Vec3f(1.f, 1.f, 1.f), Vec3f(1.f, 1.f, -1.f) },
+  // Bottom
+  { Vec3f(-1.f, -1.f, 1.f), Vec3f(-1.f, -1.f, -1.f), Vec3f(1.f, -1.f, -1.f), Vec3f(1.f, -1.f, 1.f) },
   // Left
   { Vec3f(-1.f, -1.f, -1.f), Vec3f(-1.f, -1.f, 1.f), Vec3f(-1.f, 1.f, 1.f), Vec3f(-1.f, 1.f, -1.f) },
   // Right

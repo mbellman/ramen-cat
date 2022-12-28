@@ -75,5 +75,9 @@ void EffectsSystem::initializeGameEffects(GmContext* context, GameState& state) 
 }
 
 void EffectsSystem::handleGameEffects(GmContext* context, GameState& state, float dt) {
+  START_TIMING("handleGameEffects");
+
   updatePlayerParticles(context, state, dt);
+
+  LOG_TIME();
 }

@@ -23,6 +23,8 @@ namespace CameraSystem {
   }
 
   void handleGameCamera(GmContext* context, GameState& state, float dt) {
+    START_TIMING("handleGameCamera");
+  
     updateThirdPersonCameraRadius(state, dt);
 
     auto& input = getInput();
@@ -66,5 +68,7 @@ namespace CameraSystem {
 
       pointCameraAt(player);
     }
+
+    LOG_TIME();
   }
 }

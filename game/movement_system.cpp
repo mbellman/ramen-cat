@@ -82,6 +82,8 @@ internal void resolveAllCollisions(GmContext* context, GameState& state, float d
 
 namespace MovementSystem {
   void handlePlayerMovementInput(GmContext* context, GameState& state, float dt) {
+    START_TIMING("handlePlayerMovementInput");
+
     auto& input = getInput();
     auto& player = getPlayer();
 
@@ -148,6 +150,8 @@ namespace MovementSystem {
         state.lastWallKickTime = state.frameStartTime;
       }
     }
+
+    LOG_TIME();
   }
 
   void handlePlayerMovementPhysics(GmContext* context, GameState& state, float dt) {
