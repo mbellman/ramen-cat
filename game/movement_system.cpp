@@ -3,7 +3,7 @@
 #include "macros.h"
 
 constexpr float FORCE_GRAVITY = 750.f;
-constexpr float FORCE_BOUNCE = 1000.f;
+constexpr float FORCE_WALL = 1000.f;
 
 using namespace Gamma;
 
@@ -29,9 +29,13 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
     state.velocity.y = 0.f;
     state.lastSolidGroundPosition = player.position;
     state.lastTimeOnSolidGround = state.frameStartTime;
+  } else if (plane.nDotU < -0.7f && state.velocity.y > 0.f) {
+    // When hitting a downward-facing plane from the underside,
+    // immediately negate any upward velocity.
+    state.velocity.y = 0.f;
   } else {
-    // @todo description
-    state.velocity += plane.normal * FORCE_BOUNCE * dt;
+    // Allow wall planes to exert a constant outward force
+    state.velocity += plane.normal * FORCE_WALL * dt;
   }
 
   if (Gm_Absf(plane.nDotU) <= 0.7f) {
