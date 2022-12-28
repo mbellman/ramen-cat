@@ -66,8 +66,6 @@ void initializeGame(GmContext* context, GameState& state) {
 }
 
 void updateGame(GmContext* context, GameState& state, float dt) {
-  START_TIMING("updateGame");
-
   // @todo check in dev mode only
   if (state.isEditorEnabled) {
     Editor::handleGameEditor(context, state, dt);
@@ -76,6 +74,14 @@ void updateGame(GmContext* context, GameState& state, float dt) {
   }
 
   auto& player = getPlayer();
+
+  // Show debug info
+  {
+    add_debug_message("Position: " + Gm_ToString(player.position));
+    add_debug_message("Velocity: " + Gm_ToString(state.velocity));
+  }
+
+  START_TIMING("updateGame");
 
   // Track start-of-frame variables
   {
