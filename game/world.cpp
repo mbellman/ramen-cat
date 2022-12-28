@@ -63,7 +63,7 @@ internal void loadGameWorldData(GmContext* context, GameState& state) {
       // @todo check object name
     } else {
       auto parts = Gm_SplitString(line, ",");
-      auto& platform = createObjectFrom("platform");
+      auto& platform = create_object_from("platform");
 
       #define df(i) stof(parts[i])
       #define di(i) stoi(parts[i])
@@ -93,23 +93,23 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   context->scene.zNear = 5.f;
   context->scene.zFar = 50000.f;
 
-  addMesh("ocean", 1, Mesh::Plane(2));
-  addMesh("ocean-floor", 1, Mesh::Plane(2));
-  addMesh("platform", 1000, Mesh::Cube());
-  addMesh("sphere", 1, Mesh::Sphere(18));
+  add_mesh("ocean", 1, Mesh::Plane(2));
+  add_mesh("ocean-floor", 1, Mesh::Plane(2));
+  add_mesh("platform", 1000, Mesh::Cube());
+  add_mesh("sphere", 1, Mesh::Sphere(18));
 
   mesh("ocean")->type = MeshType::WATER;
   mesh("ocean")->canCastShadows = false;
   mesh("ocean-floor")->canCastShadows = false;
 
-  auto& ocean = createObjectFrom("ocean");
+  auto& ocean = create_object_from("ocean");
 
   ocean.position = Vec3f(0, -2000.f, 0);
   ocean.scale = Vec3f(25000.f, 1.f, 25000.f);
 
   commit(ocean);
 
-  auto& floor = createObjectFrom("ocean-floor");
+  auto& floor = create_object_from("ocean-floor");
 
   floor.position = Vec3f(0, -2500.f, 0);
   floor.scale = Vec3f(25000.f, 1.f, 25000.f);
@@ -117,7 +117,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
 
   commit(floor);
 
-  auto& player = createObjectFrom("sphere");
+  auto& player = create_object_from("sphere");
 
   player.scale = Vec3f(20.0f);
   player.position.y = 200.0f;
@@ -125,7 +125,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
 
   commit(player);
 
-  auto& light = createLight(LightType::DIRECTIONAL_SHADOWCASTER);
+  auto& light = create_light(LightType::DIRECTIONAL_SHADOWCASTER);
 
   light.direction = Vec3f(-0.2f, -1.f, -1.f);
   light.color = Vec3f(1.0f);

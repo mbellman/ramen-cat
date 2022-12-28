@@ -17,7 +17,7 @@
 using namespace Gamma;
 
 internal void initializeInputHandlers(GmContext* context, GameState& state) {
-  auto& input = getInput();
+  auto& input = get_input();
 
   input.on<MouseButtonEvent>("mousedown", [&](const MouseButtonEvent& event) {
     if (!SDL_GetRelativeMouseMode()) {
@@ -79,7 +79,7 @@ void updateGame(GmContext* context, GameState& state, float dt) {
 
   // Track start-of-frame variables
   {
-    state.frameStartTime = getRunningTime();
+    state.frameStartTime = get_running_time();
     state.isPlayerMovingThisFrame = false;
   }
 

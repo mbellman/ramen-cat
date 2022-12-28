@@ -8,7 +8,7 @@ constexpr float FORCE_WALL = 1000.f;
 using namespace Gamma;
 
 internal void resolveSingleCollision(GmContext* context, GameState& state, const Collision& collision, float dt) {
-  auto& player = getPlayer();
+  auto& player = get_player();
   auto& plane = collision.plane;
 
   player.position = collision.point + plane.normal * player.scale.x;
@@ -47,7 +47,7 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
 internal void resolveAllCollisions(GmContext* context, GameState& state, float dt) {
   START_TIMING("resolveAllCollisions");
 
-  auto& player = getPlayer();
+  auto& player = get_player();
   float playerRadius = player.scale.x;
   bool isFalling = state.previousPlayerPosition.y - player.position.y > 0.f;
 
@@ -88,14 +88,15 @@ namespace MovementSystem {
   void handlePlayerMovementInput(GmContext* context, GameState& state, float dt) {
     START_TIMING("handlePlayerMovementInput");
 
-    auto& input = getInput();
-    auto& player = getPlayer();
+    auto& input = get_input();
+    auto& player = get_player();
+    auto& camera = get_camera();
 
     auto rate = 5000.f * dt;
     auto initialVelocity = state.velocity;
 
-    Vec3f forward = getCamera().orientation.getDirection().xz().unit();
-    Vec3f left = getCamera().orientation.getLeftDirection().xz().unit();
+    Vec3f forward = camera.orientation.getDirection().xz().unit();
+    Vec3f left = camera.orientation.getLeftDirection().xz().unit();
 
     if (state.velocity.y != 0.f) {
       // Reduce movement rate in midair
@@ -159,7 +160,7 @@ namespace MovementSystem {
   }
 
   void handlePlayerMovementPhysics(GmContext* context, GameState& state, float dt) {
-    auto& player = getPlayer();
+    auto& player = get_player();
     const float gravity = FORCE_GRAVITY * dt;
 
     // Handle gravity/velocity

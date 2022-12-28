@@ -14,33 +14,33 @@
 #include "system/traits.h"
 #include "system/type_aliases.h"
 
-#define addMesh(meshName, maxInstances, mesh) Gm_AddMesh(context, meshName, maxInstances, mesh)
-#define addProbe(probeName, position) Gm_AddProbe(context, probeName, position)
-#define createLight(type) Gm_CreateLight(context, type)
-#define createObjectFrom(meshName) Gm_CreateObjectFrom(context, meshName)
+#define add_mesh(meshName, maxInstances, mesh) Gm_AddMesh(context, meshName, maxInstances, mesh)
+#define add_probe(probeName, position) Gm_AddProbe(context, probeName, position)
+#define create_light(type) Gm_CreateLight(context, type)
+#define create_object_from(meshName) Gm_CreateObjectFrom(context, meshName)
 #define commit(object) Gm_Commit(context, object)
-#define saveObject(objectName, object) Gm_SaveObject(context, objectName, object)
-#define saveLight(lightName, light) Gm_SaveLight(context, lightName, light)
-#define hasObject(objectName) Gm_HasObject(context, objectName)
-#define findObject(objectName) Gm_FindObject(context, objectName)
+#define save_object(objectName, object) Gm_SaveObject(context, objectName, object)
+#define save_light(lightName, light) Gm_SaveLight(context, lightName, light)
+#define has_object(objectName) Gm_HasObject(context, objectName)
+#define find_object(objectName) Gm_FindObject(context, objectName)
 #define object(objectName) Gm_GetObject(context, objectName)
 #define light(lightName) Gm_GetLight(context, lightName)
-#define removeObject(object) Gm_RemoveObject(context, object)
-#define removeLight(light) Gm_RemoveLight(context, light)
+#define remove_object(object) Gm_RemoveObject(context, object)
+#define remove_light(light) Gm_RemoveLight(context, light)
 #define mesh(meshName) context->scene.meshMap.at(meshName)
 #define objects(meshName) Gm_GetObjects(context, meshName)
-#define pointCameraAt(...) Gm_PointCameraAt(context, __VA_ARGS__)
-#define useFrustumCulling(...) Gm_UseFrustumCulling(context, __VA_ARGS__)
-#define useLodByDistance(distance, ...) Gm_UseLodByDistance(context, distance, __VA_ARGS__)
+#define point_camera_at(...) Gm_PointCameraAt(context, __VA_ARGS__)
+#define use_frustum_culling(...) Gm_UseFrustumCulling(context, __VA_ARGS__)
+#define use_lod_by_distance(distance, ...) Gm_UseLodByDistance(context, distance, __VA_ARGS__)
 
 #define render_image(image, x, y, w, h) Gm_RenderImage(context, image, x, y, w, h)
 #define render_text(font, text, x, y) Gm_RenderText(context, font, text, x, y)
 
-#define getInput() context->scene.input
-#define getCamera() context->scene.camera
-#define getRunningTime() context->scene.runningTime
+#define get_input() context->scene.input
+#define get_camera() context->scene.camera
+#define get_running_time() context->scene.runningTime
 
-#define addDebugMessage(message) context->debugMessages.push_back(message)
+#define add_debug_message(message) context->debugMessages.push_back(message)
 
 struct GmContext;
 

@@ -19,7 +19,7 @@ namespace CameraSystem {
 
     updateThirdPersonCameraRadius(state, 0.f);
 
-    getCamera().position = getPlayer().position + state.camera3p.calculatePosition();
+    get_camera().position = get_player().position + state.camera3p.calculatePosition();
   }
 
   void handleGameCamera(GmContext* context, GameState& state, float dt) {
@@ -27,8 +27,8 @@ namespace CameraSystem {
   
     updateThirdPersonCameraRadius(state, dt);
 
-    auto& input = getInput();
-    auto& player = getPlayer();
+    auto& input = get_input();
+    auto& player = get_player();
     auto playerToCamera = state.camera3p.calculatePosition();
     auto targetCameraPosition = player.position + playerToCamera;
 
@@ -60,13 +60,15 @@ namespace CameraSystem {
 
     // Update the actual view camera position/orientation
     {
+      auto& camera = get_camera();
+
       if (context->scene.frame > 0) {
-        getCamera().position = Vec3f::lerp(getCamera().position, targetCameraPosition, dt * 15.f);
+        camera.position = Vec3f::lerp(camera.position, targetCameraPosition, dt * 15.f);
       } else {
-        getCamera().position = targetCameraPosition;
+        camera.position = targetCameraPosition;
       }
 
-      pointCameraAt(player);
+      point_camera_at(player);
     }
 
     LOG_TIME();

@@ -83,7 +83,7 @@ internal void highlightObject(GmContext* context, const Object& object, const Ve
   }
 
   Vec3f originalColor = object.color.toVec3f();
-  float alpha = 0.8f + std::sinf(getRunningTime() * 4.f) * 0.2f;
+  float alpha = 0.8f + std::sinf(get_running_time() * 4.f) * 0.2f;
 
   originalObject->color = Vec3f::lerp(originalColor, highlightColor, alpha);
 
@@ -129,10 +129,10 @@ internal void cycleCurrentActionType() {
 }
 
 internal void createNewObject(GmContext* context) {
-  auto& camera = getCamera();
+  auto& camera = get_camera();
   Vec3f spawnPosition = camera.position + camera.orientation.getDirection() * 300.f;
 
-  auto& platform = createObjectFrom("platform");
+  auto& platform = create_object_from("platform");
 
   platform.position = spawnPosition;
   platform.scale = Vec3f(50.f, 20.f, 50.f);
@@ -150,8 +150,8 @@ internal void createNewObject(GmContext* context) {
 }
 
 internal void respawnPlayer(GmContext* context, GameState& state) {
-  auto& player = getPlayer();
-  auto& camera = getCamera();
+  auto& player = get_player();
+  auto& camera = get_camera();
 
   player.position = camera.position + camera.orientation.getDirection() * 300.f;
 
@@ -161,7 +161,7 @@ internal void respawnPlayer(GmContext* context, GameState& state) {
 }
 
 internal Vec3f getObjectAlignedActionAxis(GmContext* context, Object& object) {
-  auto& camera = getCamera();
+  auto& camera = get_camera();
 
   Vec3f cameraRight = camera.orientation.getRightDirection();
   Vec3f objectRight = object.rotation.getLeftDirection().invert();
@@ -195,7 +195,7 @@ internal Vec3f getObjectAlignedActionAxis(GmContext* context, Object& object) {
 }
 
 internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mouseDy, float dt) {
-  auto& camera = getCamera();
+  auto& camera = get_camera();
   bool isVerticalMotion = Gm_Absf(mouseDy) > Gm_Absf(mouseDx);
   float multiplier = 1.f;
   Vec3f axis;
@@ -290,7 +290,7 @@ internal void undoLastHistoryAction(GmContext* context) {
 
   switch (action.type) {
     case ActionType::CREATE:
-      removeObject(action.initialObject);
+      remove_object(action.initialObject);
 
       editor.isObjectSelected = false;
       break;
@@ -384,8 +384,8 @@ namespace Editor {
   }
 
   void handleGameEditor(GmContext* context, GameState& state, float dt) {
-    auto& camera = getCamera();
-    auto& input = getInput();
+    auto& camera = get_camera();
+    auto& input = get_input();
 
     // Reset the observed/selected objects to
     // prevent corruption of original state
@@ -479,7 +479,7 @@ namespace Editor {
 
         commit(*originalObject);
       } else if (SDL_GetRelativeMouseMode()) {
-        auto& camera = getCamera();
+        auto& camera = get_camera();
 
         camera.orientation.yaw += mouseDelta.x / 1500.f;
         camera.orientation.pitch += mouseDelta.y / 1500.f;
@@ -506,7 +506,7 @@ namespace Editor {
 
     // Display status messages
     {
-      addDebugMessage("Action: " + getActionTypeName(editor.currentActionType));
+      add_debug_message("Action: " + getActionTypeName(editor.currentActionType));
 
       if (editor.isObjectSelected) {
         // @todo clean this up
@@ -520,10 +520,10 @@ namespace Editor {
         auto scale = String(s.x) + ", " + String(s.y) + ", " + String(s.z);
         auto rotation = String(r.w) + ", " + String(r.x) + ", " + String(r.y) + ", " + String(r.z);
 
-        addDebugMessage("Active object:");
-        addDebugMessage("Position: " + position);
-        addDebugMessage("Scale: " + scale);
-        addDebugMessage("Rotation: " + rotation);
+        add_debug_message("Active object:");
+        add_debug_message("Position: " + position);
+        add_debug_message("Scale: " + scale);
+        add_debug_message("Rotation: " + rotation);
       }
     }
   }
