@@ -1526,8 +1526,9 @@ namespace Gamma {
   }
 
   void OpenGLRenderer::renderText(TTF_Font* font, const char* message, u32 x, u32 y, const Vec3f& color, const Vec4f& background) {
-    SDL_Surface* text = TTF_RenderText_Blended(font, message, { 255, 255, 255 });
+    SDL_Surface* text = TTF_RenderText_Blended_Wrapped(font, message, { 255, 255, 255 }, gmContext->window.size.width);
 
+    // @todo support scaling
     renderSurface(text, x, y, text->w, text->h, color, background);
 
     SDL_FreeSurface(text);

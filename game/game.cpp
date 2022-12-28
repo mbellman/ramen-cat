@@ -99,6 +99,8 @@ void updateGame(GmContext* context, GameState& state, float dt) {
       state.lastTimeOnSolidGround = state.frameStartTime;
 
       player.position = state.lastSolidGroundPosition;
+
+      UISystem::showDialogue(context, state, "You fell down.\nPlease be careful next time.", 3.f);
     }
   }
 

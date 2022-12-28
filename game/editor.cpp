@@ -405,7 +405,7 @@ namespace Editor {
     {
       if (editor.currentActionType != ActionType::CREATE) {
         Vec3f cameraDirection = camera.orientation.getDirection().unit();
-        float closestDistance = Gm_INFINITY;
+        float closestDistance = Gm_FLOAT_MAX;
 
         // @temporary
         for (auto& platform : objects("platform")) {
