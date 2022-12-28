@@ -4,6 +4,7 @@
 
 #include "SDL.h"
 #include "SDL_ttf.h"
+#include "SDL_image.h"
 #include "glew.h"
 #include "SDL_opengl.h"
 
@@ -1499,12 +1500,12 @@ namespace Gamma {
     }
   }
 
-  void OpenGLRenderer::renderSurfaceToScreen(SDL_Surface* surface, u32 x, u32 y, const Vec3f& color, const Vec4f& background) {
+  void OpenGLRenderer::renderSurface(SDL_Surface* surface, u32 x, u32 y, u32 w, u32 h, const Vec3f& color, const Vec4f& background) {
     auto& window = gmContext->window;
-    float offsetX = -1.0f + (2 * x + surface->w) / (float)window.size.width;
-    float offsetY = 1.0f - (2 * y + surface->h) / (float)window.size.height;
-    float scaleX = surface->w / (float)window.size.width;
-    float scaleY = -1.0f * surface->h / (float)window.size.height;
+    float offsetX = -1.0f + (2 * x + w) / (float)window.size.width;
+    float offsetY = 1.0f - (2 * y + h) / (float)window.size.height;
+    float scaleX = w / (float)window.size.width;
+    float scaleY = -1.0f * h / (float)window.size.height;
     int format = surface->format->BytesPerPixel == 4 ? GL_RGBA : GL_RGB;
 
     glActiveTexture(GL_TEXTURE0);
@@ -1527,7 +1528,7 @@ namespace Gamma {
   void OpenGLRenderer::renderText(TTF_Font* font, const char* message, u32 x, u32 y, const Vec3f& color, const Vec4f& background) {
     SDL_Surface* text = TTF_RenderText_Blended(font, message, { 255, 255, 255 });
 
-    renderSurfaceToScreen(text, x, y, color, background);
+    renderSurface(text, x, y, text->w, text->h, color, background);
 
     SDL_FreeSurface(text);
   }

@@ -4,6 +4,7 @@
 #include "system/type_aliases.h"
 
 struct GmContext;
+struct SDL_Surface;
 
 namespace Gamma {
   struct Mesh;
@@ -44,6 +45,7 @@ namespace Gamma {
 
     virtual const RenderStats& getRenderStats() = 0;
     virtual void present() {};
+    virtual void renderSurface(SDL_Surface* surface, u32 x, u32 y, u32 w, u32 h, const Vec3f& color, const Vec4f& background) {};
     virtual void renderText(TTF_Font* font, const char* message, u32 x, u32 y, const Vec3f& color = Vec3f(1.0f), const Vec4f& background = Vec4f(0.0f)) {};
     virtual void resetShadowMaps() {};
 

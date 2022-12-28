@@ -33,6 +33,9 @@
 #define useFrustumCulling(...) Gm_UseFrustumCulling(context, __VA_ARGS__)
 #define useLodByDistance(distance, ...) Gm_UseLodByDistance(context, distance, __VA_ARGS__)
 
+#define render_image(image, x, y, w, h) Gm_RenderImage(context, image, x, y, w, h)
+#define render_text(font, text, x, y) Gm_RenderText(context, font, text, x, y)
+
 #define getInput() context->scene.input
 #define getCamera() context->scene.camera
 #define getRunningTime() context->scene.runningTime
@@ -44,6 +47,26 @@ struct GmContext;
 struct GmSceneStats {
   u32 verts = 0;
   u32 tris = 0;
+};
+
+struct RenderSurface {
+  SDL_Surface* image = nullptr;
+  u32 x;
+  u32 y;
+  u32 w;
+  u32 h;
+};
+
+struct RenderText {
+  TTF_Font* font = nullptr;
+  std::string text;
+  u32 x;
+  u32 y;
+};
+
+struct GmUI {
+  std::vector<RenderSurface> surfaces;
+  std::vector<RenderText> texts;
 };
 
 struct GmScene {
@@ -62,6 +85,11 @@ struct GmScene {
   float runningTime = 0.0f;
   float zNear = 1.f;
   float zFar = 10000.f;
+
+  struct GmUI {
+    std::vector<RenderSurface> surfaces;
+    std::vector<RenderText> texts;
+  } ui;
 };
 
 const GmSceneStats Gm_GetSceneStats(GmContext* context);
@@ -86,3 +114,6 @@ void Gm_PointCameraAt(GmContext* context, const Gamma::Vec3f& position, bool ups
 void Gm_HandleFreeCameraMode(GmContext* context, float speedFactor, float dt);
 void Gm_UseFrustumCulling(GmContext* context, const std::initializer_list<std::string>& meshNames);
 void Gm_UseLodByDistance(GmContext* context, float distance, const std::initializer_list<std::string>& meshNames);
+
+void Gm_RenderImage(GmContext* context, SDL_Surface* image, u32 x, u32 y, u32 w, u32 h);
+void Gm_RenderText(GmContext* context, TTF_Font* font, std::string text, u32 x, u32 y);

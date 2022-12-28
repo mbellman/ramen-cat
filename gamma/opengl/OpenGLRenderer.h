@@ -95,6 +95,7 @@ namespace Gamma {
     virtual void destroyShadowMap(const Light* light) override;
     virtual const RenderStats& getRenderStats() override;
     virtual void present() override;
+    virtual void renderSurface(SDL_Surface* surface, u32 x, u32 y, u32 w, u32 h, const Vec3f& color, const Vec4f& background) override;
     virtual void renderText(TTF_Font* font, const char* message, u32 x, u32 y, const Vec3f& color, const Vec4f& background) override;
     virtual void resetShadowMaps() override;
 
@@ -145,7 +146,6 @@ namespace Gamma {
     void handleSettingsChanges();
     void initializeRendererContext();
     void initializeLightArrays();
-    void renderSurfaceToScreen(SDL_Surface* surface, u32 x, u32 y, const Vec3f& color, const Vec4f& background);
     void renderToAccumulationBuffer();
     void swapAccumulationBuffers();
   };

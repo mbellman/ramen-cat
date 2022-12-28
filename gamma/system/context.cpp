@@ -104,10 +104,10 @@ static void Gm_DisplayDevtools(GmContext* context) {
     const auto FG_COLOR = Vec3f(1.f);
     const auto BG_COLOR = Vec4f(0, 0, 0, 0.75f);
 
-    renderer.renderText(font_sm, "Color", window.size.width * 0.55f, window.size.height * 0.035f, FG_COLOR, BG_COLOR);
-    renderer.renderText(font_sm, "Depth", window.size.width * 0.657f, window.size.height * 0.035f, FG_COLOR, BG_COLOR);
-    renderer.renderText(font_sm, "Normals", window.size.width * 0.765f, window.size.height * 0.035f, FG_COLOR, BG_COLOR);
-    renderer.renderText(font_sm, "Emissivity", window.size.width * 0.872f, window.size.height * 0.035f, FG_COLOR, BG_COLOR);
+    renderer.renderText(font_sm, "Color", u32(window.size.width * 0.55f), u32(window.size.height * 0.035f), FG_COLOR, BG_COLOR);
+    renderer.renderText(font_sm, "Depth", u32(window.size.width * 0.657f), u32(window.size.height * 0.035f), FG_COLOR, BG_COLOR);
+    renderer.renderText(font_sm, "Normals", u32(window.size.width * 0.765f), u32(window.size.height * 0.035f), FG_COLOR, BG_COLOR);
+    renderer.renderText(font_sm, "Emissivity", u32(window.size.width * 0.872f), u32(window.size.height * 0.035f), FG_COLOR, BG_COLOR);
   }
 }
 
@@ -215,13 +215,23 @@ void Gm_HandleFrameStart(GmContext* context) {
 }
 
 void Gm_RenderScene(GmContext* context) {
-  context->renderer->render();
+  auto& renderer = *context->renderer;
+
+  renderer.render();
+
+  for (auto& [ image, x, y, w, h ] : context->scene.ui.surfaces) {
+    renderer.renderSurface(image, x, y, w, h, Vec3f(1.f), Vec4f(0.f));
+  }
+
+  for (auto& [ font, text, x, y ] : context->scene.ui.texts) {
+    renderer.renderText(font, text.c_str(), x, y, Vec3f(1.f), Vec4f(0.f));
+  }
 
   #if GAMMA_DEVELOPER_MODE
     Gm_DisplayDevtools(context);
   #endif
 
-  context->renderer->present();
+  renderer.present();
 }
 
 void Gm_HandleFrameEnd(GmContext* context) {
@@ -237,6 +247,9 @@ void Gm_HandleFrameEnd(GmContext* context) {
   context->scene.frame++;
 
   context->scene.input.resetPerFrameState();
+
+  context->scene.ui.surfaces.clear();
+  context->scene.ui.texts.clear();
 
   Gm_SavePreviousFlags();
 }

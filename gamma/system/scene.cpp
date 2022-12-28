@@ -346,3 +346,11 @@ void Gm_UseLodByDistance(GmContext* context, float distance, const std::initiali
     }
   }
 }
+
+void Gm_RenderImage(GmContext* context, SDL_Surface* image, u32 x, u32 y, u32 w, u32 h) {
+  context->scene.ui.surfaces.push_back({ image, x, y, w, h });
+}
+
+void Gm_RenderText(GmContext* context, TTF_Font* font, std::string text, u32 x, u32 y) {
+  context->scene.ui.texts.push_back({ font, text, x, y });
+}
