@@ -65,10 +65,11 @@ internal void loadNonPlayerCharacterData(GmContext* context, GameState& state) {
 internal void interactWithNPC(GmContext* context, GameState& state, NonPlayerCharacter& npc) {
   state.activeNPC = &npc;
   state.npcDialogueStep = 0;
+  state.suppressMovementInputsThisFrame = true;
 
-  state.tweenLookAtStartTime = state.frameStartTime;
-  state.tweenLookAtStart = get_player().position;
-  state.tweenLookAtTarget = &npc.position;
+  state.lookAtTransition.source = CameraSystem::getLookAtTargetPosition(context, state);
+  state.lookAtTransition.startTime = state.frameStartTime;
+  state.lookAtTransition.target = &npc.position;
 
   UISystem::showDialogue(context, state, npc.dialogue[state.npcDialogueStep], 3.f);
 }
@@ -85,14 +86,16 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   {
     if (input.didPressKey(Key::SPACE)) {
       if (state.activeNPC != nullptr) {
+        state.suppressMovementInputsThisFrame = true;
+
         if (state.npcDialogueStep < state.activeNPC->dialogue.size() - 1) {
           state.npcDialogueStep++;
 
           UISystem::showDialogue(context, state, state.activeNPC->dialogue[state.npcDialogueStep], 3.f);
         } else {
-          state.tweenLookAtStartTime = state.frameStartTime;
-          state.tweenLookAtStart = state.activeNPC->position;
-          state.tweenLookAtTarget = nullptr;
+          state.lookAtTransition.source = CameraSystem::getLookAtTargetPosition(context, state);
+          state.lookAtTransition.target = nullptr;
+          state.lookAtTransition.startTime = state.frameStartTime;
 
           state.activeNPC = nullptr;
         }
@@ -108,5 +111,9 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
         }
       }
     }
+  }
+
+  if (state.activeNPC != nullptr) {
+    state.suppressMovementInputsThisFrame = true;
   }
 }
