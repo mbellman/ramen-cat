@@ -6,16 +6,15 @@
 #include "world.h"
 #include "movement_system.h"
 #include "camera_system.h"
+#include "entity_system.h"
 #include "effects_system.h"
 #include "ui_system.h"
 #include "editor.h"
 #include "macros.h"
 
-#define internal static inline
-#define getPlayer() objects("sphere")[0]
-
 using namespace Gamma;
 
+// @todo move this elsewhere
 internal void initializeInputHandlers(GmContext* context, GameState& state) {
   auto& input = get_input();
 
@@ -58,11 +57,12 @@ void initializeGame(GmContext* context, GameState& state) {
 
   World::initializeGameWorld(context, state);
   CameraSystem::initializeGameCamera(context, state);
+  EntitySystem::initializeGameEntities(context, state);
   EffectsSystem::initializeGameEffects(context, state);
   UISystem::initializeUI(context, state);
   Editor::initializeGameEditor(context, state);
 
-  state.previousPlayerPosition = getPlayer().position;
+  state.previousPlayerPosition = get_player().position;
 }
 
 void updateGame(GmContext* context, GameState& state, float dt) {
@@ -73,7 +73,7 @@ void updateGame(GmContext* context, GameState& state, float dt) {
     return;
   }
 
-  auto& player = getPlayer();
+  auto& player = get_player();
 
   // Show debug info
   {
@@ -92,6 +92,7 @@ void updateGame(GmContext* context, GameState& state, float dt) {
   MovementSystem::handlePlayerMovementInput(context, state, dt);
   MovementSystem::handlePlayerMovementPhysics(context, state, dt);
   CameraSystem::handleGameCamera(context, state, dt);
+  EntitySystem::handleGameEntities(context, state, dt);
   EffectsSystem::handleGameEffects(context, state, dt);
   UISystem::handleUI(context, state, dt);
 

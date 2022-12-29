@@ -114,11 +114,11 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="game\action_system.cpp" />
     <ClCompile Include="game\camera_system.cpp" />
     <ClCompile Include="game\collision.cpp" />
     <ClCompile Include="game\editor.cpp" />
     <ClCompile Include="game\effects_system.cpp" />
+    <ClCompile Include="game\entity_system.cpp" />
     <ClCompile Include="game\game.cpp" />
     <ClCompile Include="game\main.cpp" />
     <ClCompile Include="game\movement_system.cpp" />
@@ -159,11 +159,11 @@
     <ClCompile Include="gamma\system\yaml_parser.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="game\action_system.h" />
     <ClInclude Include="game\camera_system.h" />
     <ClInclude Include="game\collision.h" />
     <ClInclude Include="game\editor.h" />
     <ClInclude Include="game\effects_system.h" />
+    <ClInclude Include="game\entity_system.h" />
     <ClInclude Include="game\game.h" />
     <ClInclude Include="game\gamma_flags.h" />
     <ClInclude Include="external\glew\include\eglew.h" />
