@@ -330,7 +330,7 @@ internal void saveGameWorldData(GmContext* context, GameState& state) {
     data += Gm_ToString(platform.color) + "\n";
   }
 
-  Gm_WriteFileContents("./game/world_data.txt", data);
+  Gm_WriteFileContents("./game/data_world.txt", data);
 }
 
 namespace Editor {

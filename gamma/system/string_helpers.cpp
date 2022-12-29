@@ -92,3 +92,9 @@ std::string Gm_ToString(const Quaternion& q) {
 std::string Gm_ToString(const pVec4& p) {
   return std::to_string(p.r) + "," + std::to_string(p.g) + "," + std::to_string(p.b) + "," + std::to_string(p.a);
 }
+
+Gamma::Vec3f Gm_ParseVec3f(const std::string& str) {
+  auto parts = Gm_SplitString(str, ",");
+
+  return Vec3f(stof(parts[0]), stof(parts[1]), stof(parts[2]));
+}

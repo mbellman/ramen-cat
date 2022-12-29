@@ -55,6 +55,7 @@ internal void loadGameWorldData(GmContext* context, GameState& state) {
   // @temporary
   u32 i = 0;
 
+  // @temporary
   while (i < lines.size() - 1) {
     auto& line = lines[i];
 
@@ -92,6 +93,57 @@ internal void loadNonPlayerCharacterData(GmContext* context, GameState& state) {
   // @todo eventually store as binary data
   auto npcsData = Gm_LoadFileContents("./game/data_npcs.txt");
   auto lines = Gm_SplitString(npcsData, "\n");
+
+  // @temporary
+  u32 i = 0;
+
+  // @temporary
+  while (i < lines.size()) {
+    if (lines[i][0] == '@') {
+      NonPlayerCharacter npc;
+
+      // @todo parse NPC @type
+
+      i++;
+
+      npc.position = Gm_ParseVec3f(lines[i]);
+
+      i++;
+  
+      std::string dialogueLine;
+
+      while (lines[i][0] != '@' && i < lines.size()) {
+        auto line = lines[i++];
+
+        if (line[0] == '-') {
+          npc.dialogue.push_back(dialogueLine);
+
+          dialogueLine = "";
+
+          continue;
+        }
+
+        if (dialogueLine.size() > 0) {
+          dialogueLine += '\n';
+        }
+
+        dialogueLine += line;
+      }
+
+      state.npcs.push_back(npc);
+    }
+  }
+
+  // @temporary
+  for (auto& npc : state.npcs) {
+    auto& object = create_object_from("npc");
+
+    object.position = npc.position;
+    object.color = Vec3f(1.f, 0, 1.f);
+    object.scale = Vec3f(20.f, 70.f, 20.f);
+
+    commit(object);
+  }
 }
 
 void World::initializeGameWorld(GmContext* context, GameState& state) {
@@ -101,6 +153,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   add_mesh("ocean", 1, Mesh::Plane(2));
   add_mesh("ocean-floor", 1, Mesh::Plane(2));
   add_mesh("platform", 1000, Mesh::Cube());
+  add_mesh("npc", 100, Mesh::Cube());
   add_mesh("sphere", 1, Mesh::Sphere(18));
 
   mesh("ocean")->type = MeshType::WATER;
@@ -142,10 +195,10 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
 void World::rebuildCollisionPlanes(GmContext* context, GameState& state) {
   state.collisionPlanes.clear();
 
-  // @temporary
   for (auto& platform : objects("platform")) {
     auto rotation = platform.rotation.toMatrix4f();
 
+    // @optimize allow platforms to be floor-only, ceiling-only, walls-only, or all
     for (auto& points : platformPlanePoints) {
       Plane plane;
 
