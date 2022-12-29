@@ -94,6 +94,21 @@ void UISystem::handleUI(GmContext* context, GameState& state, float dt) {
         render_image(dialoguePane, x, y, w, h);
         render_text(dialogueFont, runningDialogue, x + 20, y + 20);
       }
+    } else {
+      dialogue.active = false;
+    }
+  }
+
+  // Handle inputs
+  {
+    auto& input = get_input();
+
+    if (
+      input.didPressKey(Key::SPACE) &&
+      dialogue.active &&
+      dialogue.startTime != state.frameStartTime
+    ) {
+      dialogue.startTime = get_running_time() - dialogue.text.size() * DIALOGUE_CHARACTER_DURATION;
     }
   }
 
@@ -103,10 +118,14 @@ void UISystem::handleUI(GmContext* context, GameState& state, float dt) {
 void UISystem::showDialogue(GmContext* context, GameState& state, const std::string& text, float duration) {
   dialogue.active = true;
   dialogue.text = text;
-  dialogue.startTime = dialogue.lastCharacterTime = get_running_time();
+  dialogue.startTime = dialogue.lastCharacterTime = state.frameStartTime;
   dialogue.duration = duration;
 }
 
 void UISystem::dismissDialogue() {
   dialogue.active = false;
+}
+
+bool UISystem::isDialogueStillPrinting(GmContext* context) {
+  return dialogue.active && (get_running_time() - dialogue.lastCharacterTime < DIALOGUE_CHARACTER_DURATION * 2.f);
 }

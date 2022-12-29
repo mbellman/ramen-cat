@@ -1,4 +1,5 @@
 #include "movement_system.h"
+#include "ui_system.h"
 #include "collision.h"
 #include "macros.h"
 
@@ -129,7 +130,7 @@ namespace MovementSystem {
 
     // Handle jump/wall kick actions
     {
-      if (input.didPressKey(Key::SPACE)) {
+      if (input.didPressKey(Key::SPACE) && state.canJumpThisFrame) {
         if (state.velocity.y == 0.f) {
           // Regular jump (@todo use state.isOnSolidGround?)
           state.velocity.y = 500.f;

@@ -83,16 +83,17 @@ void updateGame(GmContext* context, GameState& state, float dt) {
 
   START_TIMING("updateGame");
 
-  // Track start-of-frame variables
+  // Set start-of-frame variables
   {
     state.frameStartTime = get_running_time();
     state.isPlayerMovingThisFrame = false;
+    state.canJumpThisFrame = true;
   }
 
+  EntitySystem::handleGameEntities(context, state, dt);
   MovementSystem::handlePlayerMovementInput(context, state, dt);
   MovementSystem::handlePlayerMovementPhysics(context, state, dt);
   CameraSystem::handleGameCamera(context, state, dt);
-  EntitySystem::handleGameEntities(context, state, dt);
   EffectsSystem::handleGameEffects(context, state, dt);
   UISystem::handleUI(context, state, dt);
 

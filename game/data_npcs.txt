@@ -1,10 +1,10 @@
 @man
 1429.0,366.0,-853.0
 Let me tell you something!
--
 You can wall-kick to that platform
 on the other side of this gap.
 -
 @man
 1154.0,243.0,2130.0
 Hey, what is your favorite kind of pizza?
+-

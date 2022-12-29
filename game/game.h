@@ -33,6 +33,7 @@ struct GameState {
 
   bool isOnSolidGround = false;
   bool isPlayerMovingThisFrame = false;
+  bool canJumpThisFrame = false;
 
   // @todo use in dev mode only
   bool isEditorEnabled = false;

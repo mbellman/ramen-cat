@@ -9,4 +9,5 @@ namespace UISystem {
   void handleUI(GmContext* context, GameState& state, float dt);
   void showDialogue(GmContext* context, GameState& state, const std::string& text, float duration = Gm_FLOAT_MAX);
   void dismissDialogue();
+  bool isDialogueStillPrinting(GmContext* context);
 }
