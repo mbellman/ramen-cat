@@ -114,6 +114,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="game\action_system.cpp" />
     <ClCompile Include="game\camera_system.cpp" />
     <ClCompile Include="game\collision.cpp" />
     <ClCompile Include="game\editor.cpp" />
@@ -158,6 +159,7 @@
     <ClCompile Include="gamma\system\yaml_parser.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="game\action_system.h" />
     <ClInclude Include="game\camera_system.h" />
     <ClInclude Include="game\collision.h" />
     <ClInclude Include="game\editor.h" />
