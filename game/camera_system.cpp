@@ -12,6 +12,21 @@ internal void updateThirdPersonCameraRadius(GameState& state, float dt) {
   }
 }
 
+internal Vec3f getLookAtPosition(GmContext* context, GameState& state) {
+  if (state.tweenLookAtStartTime == 0.f) {
+    return get_player().position;
+  }
+
+  float t = get_running_time() - state.tweenLookAtStartTime;
+  Vec3f tweenLookAtEnd = state.tweenLookAtTarget != nullptr ? *state.tweenLookAtTarget : get_player().position;
+
+  if (t > 1.f) {
+    t = 1.f;
+  }
+
+  return Vec3f::lerp(state.tweenLookAtStart, tweenLookAtEnd, t);
+}
+
 namespace CameraSystem {
   void initializeGameCamera(GmContext* context, GameState& state) {
     state.camera3p.azimuth = Gm_PI + Gm_HALF_PI;
@@ -23,18 +38,14 @@ namespace CameraSystem {
   }
 
   void handleGameCamera(GmContext* context, GameState& state, float dt) {
-    if (state.activeNPC != nullptr) {
-      return;
-    }
-
     START_TIMING("handleGameCamera");
   
     updateThirdPersonCameraRadius(state, dt);
 
     auto& input = get_input();
     auto& player = get_player();
-    auto playerToCamera = state.camera3p.calculatePosition();
-    auto targetCameraPosition = player.position + playerToCamera;
+    auto lookAtPosition = getLookAtPosition(context, state);
+    auto targetCameraPosition = lookAtPosition + state.camera3p.calculatePosition();
 
     // Control camera using mouse movements
     {
@@ -52,12 +63,12 @@ namespace CameraSystem {
     // Reposition the camera if necessary to avoid clipping inside walls
     {
       for (auto& plane : state.collisionPlanes) {
-        auto collision = getLinePlaneCollision(player.position, targetCameraPosition, plane);
+        auto collision = getLinePlaneCollision(lookAtPosition, targetCameraPosition, plane);
 
         if (collision.hit) {
-          auto playerToCollision = collision.point - player.position;
+          auto playerToCollision = collision.point - lookAtPosition;
 
-          targetCameraPosition = player.position + playerToCollision * 0.95f;
+          targetCameraPosition = lookAtPosition + playerToCollision * 0.95f;
         }
       }
     }
@@ -72,7 +83,7 @@ namespace CameraSystem {
         camera.position = targetCameraPosition;
       }
 
-      point_camera_at(player);
+      point_camera_at(lookAtPosition);
     }
 
     LOG_TIME();

@@ -34,8 +34,14 @@ struct GameState {
   bool isOnSolidGround = false;
   bool isPlayerMovingThisFrame = false;
 
+  // NPC handling
   NonPlayerCharacter* activeNPC = nullptr;
   u8 npcDialogueStep = 0;
+
+  // Secondary look-at target/camera handling
+  Gamma::Vec3f tweenLookAtStart;
+  Gamma::Vec3f* tweenLookAtTarget = nullptr;
+  float tweenLookAtStartTime = 0.f;
 
   // @todo use in dev mode only
   bool isEditorEnabled = false;

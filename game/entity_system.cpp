@@ -1,4 +1,5 @@
 #include "entity_system.h"
+#include "camera_system.h"
 #include "ui_system.h"
 #include "macros.h"
 
@@ -65,7 +66,9 @@ internal void interactWithNPC(GmContext* context, GameState& state, NonPlayerCha
   state.activeNPC = &npc;
   state.npcDialogueStep = 0;
 
-  point_camera_at(npc.position);
+  state.tweenLookAtStartTime = state.frameStartTime;
+  state.tweenLookAtStart = get_player().position;
+  state.tweenLookAtTarget = &npc.position;
 
   UISystem::showDialogue(context, state, npc.dialogue[state.npcDialogueStep], 3.f);
 }
@@ -87,6 +90,10 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
 
           UISystem::showDialogue(context, state, state.activeNPC->dialogue[state.npcDialogueStep], 3.f);
         } else {
+          state.tweenLookAtStartTime = state.frameStartTime;
+          state.tweenLookAtStart = state.activeNPC->position;
+          state.tweenLookAtTarget = nullptr;
+
           state.activeNPC = nullptr;
         }
       } else {
