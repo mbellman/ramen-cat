@@ -61,6 +61,15 @@ internal void loadNonPlayerCharacterData(GmContext* context, GameState& state) {
   }
 }
 
+internal void interactWithNPC(GmContext* context, GameState& state, NonPlayerCharacter& npc) {
+  state.activeNPC = &npc;
+  state.npcDialogueStep = 0;
+
+  point_camera_at(npc.position);
+
+  UISystem::showDialogue(context, state, npc.dialogue[state.npcDialogueStep], 3.f);
+}
+
 void EntitySystem::initializeGameEntities(GmContext* context, GameState& state) {
   loadNonPlayerCharacterData(context, state);
 }
@@ -72,18 +81,23 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   // Handle interactions
   {
     if (input.didPressKey(Key::SPACE)) {
-      for (auto& npc : state.npcs) {
-        auto distance = (npc.position - player.position).xz().magnitude();
+      if (state.activeNPC != nullptr) {
+        if (state.npcDialogueStep < state.activeNPC->dialogue.size() - 1) {
+          state.npcDialogueStep++;
 
-        if (distance < 100.f) {
-          // Suppress jumps when interacting with NPCs
-          state.canJumpThisFrame = false;
+          UISystem::showDialogue(context, state, state.activeNPC->dialogue[state.npcDialogueStep], 3.f);
+        } else {
+          state.activeNPC = nullptr;
+        }
+      } else {
+        for (auto& npc : state.npcs) {
+          auto distance = (npc.position - player.position).xz().magnitude();
 
-          if (!UISystem::isDialogueStillPrinting(context)) {
-            UISystem::showDialogue(context, state, npc.dialogue[0], 5.f);
+          if (distance < 100.f) {
+            interactWithNPC(context, state, npc);
+
+            break;
           }
-
-          break;
         }
       }
     }

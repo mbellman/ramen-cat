@@ -1,6 +1,7 @@
 @man
 1429.0,366.0,-853.0
 Let me tell you something!
+-
 You can wall-kick to that platform
 on the other side of this gap.
 -

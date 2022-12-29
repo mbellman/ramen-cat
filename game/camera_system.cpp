@@ -23,6 +23,10 @@ namespace CameraSystem {
   }
 
   void handleGameCamera(GmContext* context, GameState& state, float dt) {
+    if (state.activeNPC != nullptr) {
+      return;
+    }
+
     START_TIMING("handleGameCamera");
   
     updateThirdPersonCameraRadius(state, dt);

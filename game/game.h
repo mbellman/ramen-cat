@@ -33,7 +33,9 @@ struct GameState {
 
   bool isOnSolidGround = false;
   bool isPlayerMovingThisFrame = false;
-  bool canJumpThisFrame = false;
+
+  NonPlayerCharacter* activeNPC = nullptr;
+  u8 npcDialogueStep = 0;
 
   // @todo use in dev mode only
   bool isEditorEnabled = false;

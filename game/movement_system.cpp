@@ -90,6 +90,10 @@ internal void resolveAllCollisions(GmContext* context, GameState& state, float d
 
 namespace MovementSystem {
   void handlePlayerMovementInput(GmContext* context, GameState& state, float dt) {
+    if (state.activeNPC != nullptr) {
+      return;
+    }
+
     START_TIMING("handlePlayerMovementInput");
 
     auto& input = get_input();
@@ -130,7 +134,7 @@ namespace MovementSystem {
 
     // Handle jump/wall kick actions
     {
-      if (input.didPressKey(Key::SPACE) && state.canJumpThisFrame) {
+      if (input.didPressKey(Key::SPACE)) {
         if (state.velocity.y == 0.f) {
           // Regular jump (@todo use state.isOnSolidGround?)
           state.velocity.y = 500.f;
