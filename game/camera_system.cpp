@@ -78,11 +78,13 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
 
   // Reposition the camera if necessary to avoid clipping inside walls
   {
+    auto& camera = get_camera();
+
     for (auto& plane : state.collisionPlanes) {
       auto collision = getLinePlaneCollision(lookAtPosition, targetCameraPosition, plane);
+      auto cDotN = Vec3f::dot(targetCameraPosition - collision.point, plane.normal);
 
-      // @todo if dot(camera - hit, plane.normal) > 0, don't do this
-      if (collision.hit) {
+      if (collision.hit && cDotN < 0.f) {
         auto playerToCollision = collision.point - lookAtPosition;
 
         targetCameraPosition = lookAtPosition + playerToCollision * 0.95f;
