@@ -83,10 +83,19 @@ internal void handleDialogue(GmContext* context, GameState& state) {
   bool hasStartedPrintingDialogue = false;
   bool hasPrintedFullDialogue = false;
 
-  // Render active dialogue
+  // Render active dialogue box
   {
     auto timeSinceDialogueStart = get_running_time() - dialogue.startTime;
     auto timeSinceLastCharacter = get_running_time() - dialogue.lastCharacterTime;
+
+    Region<u32> pane = {
+      .x = u32(context->window.size.width / 4.f),
+      .y = u32(context->window.size.height - 200),
+      .width = u32(context->window.size.width / 2.f),
+      .height = 150
+    };
+
+    render_image(dialoguePane, pane.x, pane.y, pane.width, pane.height);
 
     if (timeSinceLastCharacter >= dialogue.duration) {
       dialogue.done = true;
@@ -114,13 +123,7 @@ internal void handleDialogue(GmContext* context, GameState& state) {
           dialogue.lastCharacterTime = get_running_time();
         }
 
-        u32 x = u32(context->window.size.width / 4.f);
-        u32 y = u32(context->window.size.height - 200);
-        u32 w = u32(context->window.size.width / 2.f);
-        u32 h = 150;
-
-        render_image(dialoguePane, x, y, w, h);
-        render_text(dialogueFont, runningText, x + 20, y + 20);
+        render_text(dialogueFont, runningText, pane.x + 20, pane.y + 20);
       }
     }
   }
