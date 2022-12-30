@@ -28,7 +28,7 @@ internal void loadNonPlayerCharacterData(GmContext* context, GameState& state) {
   
       std::string dialogueLine;
 
-      while (lines[i][0] != '@' && i < lines.size()) {
+      while (i < lines.size() && lines[i][0] != '@') {
         auto line = lines[i++];
 
         if (line[0] == '-') {
