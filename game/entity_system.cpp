@@ -77,7 +77,7 @@ internal void interactWithNPC(GmContext* context, GameState& state, NonPlayerCha
   state.targetCameraState.camera3p.altitude = 0.f;
   state.targetCameraState.camera3p.radius = 150.f;
 
-  state.targetCameraState.lookAtTarget = npc.position;
+  state.targetCameraState.lookAtTarget = npc.position + Vec3f(0, 30.f, 0);
 
   state.useCameraOverride = true;
   state.cameraOverrideStartTime = state.frameStartTime;
@@ -117,6 +117,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
         }
       } else {
         for (auto& npc : state.npcs) {
+          // @todo consider y distance as well
           auto distance = (npc.position - player.position).xz().magnitude();
 
           if (distance < 100.f) {

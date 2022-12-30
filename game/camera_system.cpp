@@ -4,6 +4,10 @@
 
 using namespace Gamma;
 
+internal float easeOut(float t) {
+  return 1.f - powf(1.f - t, 5);
+}
+
 internal void updateThirdPersonCameraRadius(GameState& state, float dt) {
   state.camera3p.radius = 300.f + 200.f * state.camera3p.altitude / Gm_HALF_PI;
 
@@ -13,7 +17,7 @@ internal void updateThirdPersonCameraRadius(GameState& state, float dt) {
 }
 
 internal void handleThirdPersonCameraOverrides(GmContext* context, GameState& state) {
-  float t = get_running_time() - state.cameraOverrideStartTime;
+  float t = (get_running_time() - state.cameraOverrideStartTime) / state.cameraOverrideDuration;
 
   if (state.cameraOverrideStartTime == 0.f) {
     // If we haven't started a camera transition yet,
@@ -32,9 +36,9 @@ internal void handleThirdPersonCameraOverrides(GmContext* context, GameState& st
   auto tweenStart = state.sourceCameraState.camera3p;
   auto tweenEnd = state.targetCameraState.camera3p;
 
-  state.camera3p.azimuth = Gm_LerpCircularf(tweenStart.azimuth, tweenEnd.azimuth, t, Gm_PI);
-  state.camera3p.altitude = Gm_Lerpf(tweenStart.altitude, tweenEnd.altitude, t);
-  state.camera3p.radius = Gm_Lerpf(tweenStart.radius, tweenEnd.radius, t);
+  state.camera3p.azimuth = Gm_LerpCircularf(tweenStart.azimuth, tweenEnd.azimuth, easeOut(t), Gm_PI);
+  state.camera3p.altitude = Gm_Lerpf(tweenStart.altitude, tweenEnd.altitude, easeOut(t));
+  state.camera3p.radius = Gm_Lerpf(tweenStart.radius, tweenEnd.radius, easeOut(t));
 }
 
 void CameraSystem::initializeGameCamera(GmContext* context, GameState& state) {
@@ -75,6 +79,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
     for (auto& plane : state.collisionPlanes) {
       auto collision = getLinePlaneCollision(lookAtPosition, targetCameraPosition, plane);
 
+      // @todo if dot(camera - hit, plane.normal) > 0, don't do this
       if (collision.hit) {
         auto playerToCollision = collision.point - lookAtPosition;
 
@@ -110,11 +115,11 @@ Vec3f CameraSystem::getLookAtTargetPosition(GmContext* context, GameState& state
 
   Vec3f tweenStart = state.sourceCameraState.lookAtTarget;
   Vec3f tweenEnd = state.useCameraOverride ? state.targetCameraState.lookAtTarget : player.position;
-  float t = get_running_time() - state.cameraOverrideStartTime;
+  float t = (get_running_time() - state.cameraOverrideStartTime) / state.cameraOverrideDuration;
 
   if (t > 1.f) {
     t = 1.f;
   }
 
-  return Vec3f::lerp(tweenStart, tweenEnd, t);
+  return Vec3f::lerp(tweenStart, tweenEnd, easeOut(t));
 }

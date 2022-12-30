@@ -49,6 +49,7 @@ struct GameState {
   CameraState sourceCameraState;
   CameraState targetCameraState;
   float cameraOverrideStartTime = 0.f;
+  float cameraOverrideDuration = 0.5f;
   bool useCameraOverride = false;
 
   // @todo use in dev mode only
