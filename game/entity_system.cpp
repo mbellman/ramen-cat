@@ -63,6 +63,22 @@ internal void loadNonPlayerCharacterData(GmContext* context, GameState& state) {
 }
 
 internal void interactWithNPC(GmContext* context, GameState& state, NonPlayerCharacter& npc) {
+  auto& player = get_player();
+  Vec3f npcFacePosition = npc.position + Vec3f(0, 30.f, 0);
+  Vec3f npcToPlayer = (player.position - npc.position);
+
+  Vec3f targetLookAtPosition = Vec3f(
+    (npcFacePosition.x + player.position.x) / 2.f,
+    npcFacePosition.y,
+    (npcFacePosition.z + player.position.z) / 2.f
+  );
+
+  ThirdPersonCamera targetCamera3p = {
+    .azimuth = atan2f(npcToPlayer.z, npcToPlayer.x) - Gm_TAU / 8.f,
+    .altitude = 0.f,
+    .radius = 150.f
+  };
+
   state.activeNPC = &npc;
   state.npcDialogueStep = 0;
   state.suppressMovementInputsThisFrame = true;
@@ -73,11 +89,8 @@ internal void interactWithNPC(GmContext* context, GameState& state, NonPlayerCha
 
   state.sourceCameraState = state.originalCameraState;
 
-  state.targetCameraState.camera3p.azimuth = state.camera3p.azimuth;
-  state.targetCameraState.camera3p.altitude = 0.f;
-  state.targetCameraState.camera3p.radius = 150.f;
-
-  state.targetCameraState.lookAtTarget = npc.position + Vec3f(0, 30.f, 0);
+  state.targetCameraState.lookAtTarget = targetLookAtPosition;
+  state.targetCameraState.camera3p = targetCamera3p;
 
   state.useCameraOverride = true;
   state.cameraOverrideStartTime = state.frameStartTime;

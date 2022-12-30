@@ -72,6 +72,8 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
 
       state.camera3p.limitAltitude(0.99f);
     }
+
+    state.camera3p.azimuth = Gm_Modf(state.camera3p.azimuth, Gm_TAU);
   }
 
   // Reposition the camera if necessary to avoid clipping inside walls

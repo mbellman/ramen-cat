@@ -19,6 +19,10 @@ inline float Gm_Lerpf(float a, float b, float alpha) {
   return a + (b - a) * alpha;
 }
 
+inline float Gm_Modf(float value, float m) {
+  return value - m * floorf(value / m);
+}
+
 /**
  * @todo description
  */
