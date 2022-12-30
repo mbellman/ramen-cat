@@ -149,6 +149,10 @@ void World::rebuildCollisionPlanes(GmContext* context, GameState& state) {
       plane.p3 = platform.position + (rotation * (platform.scale * points[2])).toVec3f();
       plane.p4 = platform.position + (rotation * (platform.scale * points[3])).toVec3f();
 
+      #if GAMMA_DEVELOPER_MODE
+        plane.sourceObjectRecord = platform._record;
+      #endif
+
       setupCollisionPlane(plane);
 
       state.collisionPlanes.push_back(plane);

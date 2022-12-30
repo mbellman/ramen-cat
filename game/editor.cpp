@@ -3,6 +3,7 @@
 
 #include "editor.h"
 #include "world.h"
+#include "collision.h"
 #include "macros.h"
 
 using namespace Gamma;
@@ -384,6 +385,8 @@ namespace Editor {
   }
 
   void handleGameEditor(GmContext* context, GameState& state, float dt) {
+    START_TIMING("handleGameEditor");
+
     auto& camera = get_camera();
     auto& input = get_input();
 
@@ -405,19 +408,31 @@ namespace Editor {
     {
       if (editor.currentActionType != ActionType::CREATE) {
         Vec3f cameraDirection = camera.orientation.getDirection().unit();
+        Vec3f lineOfSightEnd = camera.position + cameraDirection * 2000.f;
+        Vec3f inverseCameraDirection = cameraDirection.invert();
         float closestDistance = Gm_FLOAT_MAX;
 
-        // @temporary
-        for (auto& platform : objects("platform")) {
-          Vec3f cameraToObject = platform.position - camera.position;
-          float distance = cameraToObject.magnitude();
-          Vec3f normalizedCameraToObject = cameraToObject / distance;
-          float dot = Vec3f::dot(normalizedCameraToObject, cameraDirection);
+        for (auto& plane : state.collisionPlanes) {
+          float nDotC = Vec3f::dot(plane.normal, inverseCameraDirection);
 
-          if (dot > 0.95f && distance < closestDistance) {
-            observeObject(context, platform);
+          if (nDotC > 0.f) {
+            auto collision = getLinePlaneCollision(camera.position, lineOfSightEnd, plane);
+            auto distance = (camera.position - collision.point).magnitude();
 
-            closestDistance = distance;
+            if (collision.hit && distance < closestDistance) {
+              // @todo none of the editor features should be enabled when not in developer mode anyway
+              #if GAMMA_DEVELOPER_MODE
+                auto* object = Gm_GetObjectByRecord(context, plane.sourceObjectRecord);
+              #else
+                auto* object = nullptr;
+              #endif
+
+              if (object != nullptr) {
+                observeObject(context, *object);
+
+                closestDistance = distance;
+              }
+            }
           }
         }
       }
@@ -526,5 +541,7 @@ namespace Editor {
         add_debug_message("Rotation: " + rotation);
       }
     }
+
+    LOG_TIME();
   }
 }

@@ -56,6 +56,7 @@ internal void resolveAllCollisions(GmContext* context, GameState& state, float d
   // player y and skip collision detection if out of range
   // @todo implement world chunks + only consider collision planes local to the player
   for (auto& plane : state.collisionPlanes) {
+    // @bug the player can clip through floors/walls given sufficiently large frame deltas
     Vec3f lineStart = player.position + plane.normal * playerRadius;
     Vec3f lineEnd = player.position - plane.normal * playerRadius;
     auto collision = getLinePlaneCollision(lineStart, lineEnd, plane);
