@@ -69,10 +69,24 @@ internal bool areObjectPropertiesIdentical(Object& a, Object& b) {
 internal void restoreObject(GmContext* context, const Object& object) {
   auto* originalObject = Gm_GetObjectByRecord(context, object._record);
 
-  if (originalObject) {
+  if (originalObject != nullptr) {
     *originalObject = object;
 
     commit(*originalObject);
+  }
+}
+
+internal void deleteObject(GmContext* context, GameState& state, const Object& object) {
+  auto* originalObject = Gm_GetObjectByRecord(context, object._record);
+
+  if (originalObject != nullptr) {
+    remove_object(*originalObject);
+
+    editor.isObjectSelected = false;
+
+    // @todo save a history action representing the deletion
+
+    World::rebuildCollisionPlanes(context, state);
   }
 }
 
@@ -129,7 +143,7 @@ internal void cycleCurrentActionType() {
   }
 }
 
-internal void createNewObject(GmContext* context) {
+internal void createNewObject(GmContext* context, GameState& state) {
   auto& camera = get_camera();
   Vec3f spawnPosition = camera.position + camera.orientation.getDirection() * 300.f;
 
@@ -148,6 +162,8 @@ internal void createNewObject(GmContext* context) {
   action.initialObject = platform;
 
   editor.history.push_back(action);
+
+  World::rebuildCollisionPlanes(context, state);
 }
 
 internal void respawnPlayer(GmContext* context, GameState& state) {
@@ -448,7 +464,7 @@ namespace Editor {
           createObjectHistoryAction(context, editor.observedObject);
         } else if (editor.currentActionType == ActionType::CREATE) {
           // @todo show an object placement preview
-          createNewObject(context);
+          createNewObject(context, state);
         }
       }
 
@@ -467,6 +483,8 @@ namespace Editor {
         }
       } else if (input.didPressKey(Key::R)) {
         respawnPlayer(context, state);
+      } else if (input.didPressKey(Key::BACKSPACE) && editor.isObjectSelected) {
+        deleteObject(context, state, editor.selectedObject);
       }
 
       if (input.isMouseHeld() && editor.isObjectSelected) {
