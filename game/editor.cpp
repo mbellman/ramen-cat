@@ -130,7 +130,7 @@ internal void cycleCurrentActionType(GmContext* context, s8 delta) {
       cycleIndex = i + delta;
 
       if (cycleIndex < 0) {
-        cycleIndex = actionOrder.size() - 1;
+        cycleIndex = totalActionTypes - 1;
       } else if (cycleIndex > totalActionTypes - 1) {
         cycleIndex = 0;
       }
