@@ -107,7 +107,10 @@ void updateGame(GmContext* context, GameState& state, float dt) {
 
       player.position = state.lastSolidGroundPosition;
 
-      UISystem::showDialogue(context, state, "You fell down.\nPlease be careful next time.", 3.f);
+      UISystem::showDialogue(context, state, "You fell down.\nPlease be careful next time.", {
+        .duration = 3.f,
+        .blocking = false
+      });
     }
   }
 

@@ -64,14 +64,14 @@ internal std::string substringWithCharacterCount(const std::string& value, u32 c
   return substring;
 }
 
-internal void showNextQueuedDialogue(GmContext* context, GameState& state, float duration = Gm_FLOAT_MAX) {
+internal void showNextQueuedDialogue(GmContext* context, GameState& state) {
   dialogue.active = true;
   dialogue.done = false;
-  dialogue.blocking = true; // @todo make configurable
+  dialogue.blocking = true;
 
   dialogue.startTime = state.frameStartTime;
   dialogue.lastCharacterTime = state.frameStartTime;
-  dialogue.duration = duration;
+  dialogue.duration = Gm_FLOAT_MAX;
 }
 
 internal void handleDialogue(GmContext* context, GameState& state) {
@@ -165,14 +165,14 @@ void UISystem::handleUI(GmContext* context, GameState& state, float dt) {
   LOG_TIME();
 }
 
-void UISystem::showDialogue(GmContext* context, GameState& state, const std::string& text, float duration) {
+void UISystem::showDialogue(GmContext* context, GameState& state, const std::string& text, const DialogueOptions& options) {
   dialogue.active = true;
   dialogue.done = false;
-  dialogue.blocking = true;
+  dialogue.blocking = options.blocking;
   dialogue.queue = { text };
   dialogue.startTime = state.frameStartTime;
   dialogue.lastCharacterTime = state.frameStartTime;
-  dialogue.duration = duration;
+  dialogue.duration = options.duration;
 }
 
 void UISystem::queueDialogue(GmContext* context, GameState& state, const std::vector<std::string>& queue) {
