@@ -80,8 +80,6 @@ internal void interactWithNPC(GmContext* context, GameState& state, NonPlayerCha
   };
 
   state.activeNPC = &npc;
-  state.npcDialogueStep = 0;
-  state.suppressMovementInputsThisFrame = true;
 
   // @todo move to CameraSystem
   state.originalCameraState.camera3p = state.camera3p;
@@ -95,40 +93,17 @@ internal void interactWithNPC(GmContext* context, GameState& state, NonPlayerCha
   state.useCameraOverride = true;
   state.cameraOverrideStartTime = state.frameStartTime;
 
-  UISystem::showDialogue(context, state, npc.dialogue[state.npcDialogueStep], 3.f);
+  UISystem::queueDialogue(context, state, npc.dialogue);
 }
 
-void EntitySystem::initializeGameEntities(GmContext* context, GameState& state) {
-  loadNonPlayerCharacterData(context, state);
-}
-
-void EntitySystem::handleGameEntities(GmContext* context, GameState& state, float dt) {
+internal void handleNPCs(GmContext* context, GameState& state) {
   auto& input = get_input();
   auto& player = get_player();
 
   // Handle interactions
   {
     if (input.didPressKey(Key::SPACE)) {
-      if (state.activeNPC != nullptr) {
-        state.suppressMovementInputsThisFrame = true;
-
-        if (state.npcDialogueStep < state.activeNPC->dialogue.size() - 1) {
-          state.npcDialogueStep++;
-
-          UISystem::showDialogue(context, state, state.activeNPC->dialogue[state.npcDialogueStep], 3.f);
-        } else {
-          state.activeNPC = nullptr;
-
-          // @todo move to CameraSystem
-          state.sourceCameraState.camera3p = state.camera3p;
-          state.sourceCameraState.lookAtTarget = CameraSystem::getLookAtTargetPosition(context, state);
-          
-          state.targetCameraState = state.originalCameraState;
-
-          state.cameraOverrideStartTime = state.frameStartTime;
-          state.useCameraOverride = false;
-        }
-      } else {
+      if (state.activeNPC == nullptr) {
         for (auto& npc : state.npcs) {
           // @todo consider y distance as well
           auto distance = (npc.position - player.position).xz().magnitude();
@@ -143,7 +118,31 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
     }
   }
 
-  if (state.activeNPC != nullptr) {
-    state.suppressMovementInputsThisFrame = true;
+  // Handle ending conversions with NPCs
+  {
+    if (state.activeNPC != nullptr && UISystem::isDialogueQueueEmpty()) {
+      state.activeNPC = nullptr;
+
+      // @todo move to CameraSystem
+      state.sourceCameraState.camera3p = state.camera3p;
+      state.sourceCameraState.lookAtTarget = CameraSystem::getLookAtTargetPosition(context, state);
+      
+      state.targetCameraState = state.originalCameraState;
+
+      state.cameraOverrideStartTime = state.frameStartTime;
+      state.useCameraOverride = false;
+    }
   }
+}
+
+void EntitySystem::initializeGameEntities(GmContext* context, GameState& state) {
+  loadNonPlayerCharacterData(context, state);
+}
+
+void EntitySystem::handleGameEntities(GmContext* context, GameState& state, float dt) {
+  START_TIMING("handleGameEntities");
+
+  handleNPCs(context, state);
+
+  LOG_TIME();
 }

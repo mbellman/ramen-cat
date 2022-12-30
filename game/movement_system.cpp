@@ -90,7 +90,7 @@ internal void resolveAllCollisions(GmContext* context, GameState& state, float d
 
 namespace MovementSystem {
   void handlePlayerMovementInput(GmContext* context, GameState& state, float dt) {
-    if (state.suppressMovementInputsThisFrame) {
+    if (UISystem::hasBlockingDialogue()) {
       return;
     }
 

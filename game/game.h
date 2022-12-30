@@ -38,11 +38,9 @@ struct GameState {
 
   bool isOnSolidGround = false;
   bool isPlayerMovingThisFrame = false;
-  bool suppressMovementInputsThisFrame = false;
 
   // NPC handling
   NonPlayerCharacter* activeNPC = nullptr;
-  u8 npcDialogueStep = 0;
 
   // Camera override handling
   CameraState originalCameraState;
