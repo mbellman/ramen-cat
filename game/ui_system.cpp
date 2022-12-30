@@ -22,7 +22,7 @@ struct Dialogue {
   float lastCharacterTime = 0.f;
   float duration = 0.f;
   bool active = false;
-  bool finished = false;
+  bool done = false;
   bool blocking = true;
 } dialogue;
 
@@ -66,7 +66,7 @@ internal std::string substringWithCharacterCount(const std::string& value, u32 c
 
 internal void showNextQueuedDialogue(GmContext* context, GameState& state, float duration = Gm_FLOAT_MAX) {
   dialogue.active = true;
-  dialogue.finished = false;
+  dialogue.done = false;
   dialogue.blocking = true; // @todo make configurable
 
   dialogue.startTime = state.frameStartTime;
@@ -79,26 +79,24 @@ internal void handleDialogue(GmContext* context, GameState& state) {
     return;
   }
 
+  auto dialogueText = dialogue.queue[0];
   bool hasStartedPrintingDialogue = false;
-  bool isStillPrintingDialogue = false;
+  bool hasPrintedFullDialogue = false;
 
   // Render active dialogue
   {
-    auto dialogueText = dialogue.queue[0];
     auto timeSinceDialogueStart = get_running_time() - dialogue.startTime;
     auto timeSinceLastCharacter = get_running_time() - dialogue.lastCharacterTime;
 
     if (timeSinceLastCharacter >= dialogue.duration) {
-      dialogue.finished = true;
+      dialogue.done = true;
     }
 
-    if (dialogue.finished) {
+    if (dialogue.done) {
       dialogue.queue.erase(dialogue.queue.begin());
 
       if (dialogue.queue.size() > 0) {
         showNextQueuedDialogue(context, state);
-
-        isStillPrintingDialogue = true;
       } else {
         dialogue.active = false;
         dialogue.blocking = false;
@@ -107,13 +105,13 @@ internal void handleDialogue(GmContext* context, GameState& state) {
       auto runningTextLength = u32(timeSinceDialogueStart / DIALOGUE_CHARACTER_DURATION);
 
       if (runningTextLength > 0) {
-        hasStartedPrintingDialogue = true;
-
         auto runningText = substringWithCharacterCount(dialogueText, runningTextLength);
 
-        if (runningText != dialogueText) {
+        hasStartedPrintingDialogue = true;
+        hasPrintedFullDialogue = runningText == dialogueText;
+
+        if (!hasPrintedFullDialogue) {
           dialogue.lastCharacterTime = get_running_time();
-          isStillPrintingDialogue = true;
         }
 
         u32 x = u32(context->window.size.width / 4.f);
@@ -123,8 +121,6 @@ internal void handleDialogue(GmContext* context, GameState& state) {
 
         render_image(dialoguePane, x, y, w, h);
         render_text(dialogueFont, runningText, x + 20, y + 20);
-      } else {
-        isStillPrintingDialogue = true;
       }
     }
   }
@@ -138,12 +134,13 @@ internal void handleDialogue(GmContext* context, GameState& state) {
       dialogue.blocking &&
       hasStartedPrintingDialogue
     ) {
-      if (isStillPrintingDialogue) {
-        // @todo description
-        dialogue.startTime = get_running_time() - dialogue.queue[0].size() * DIALOGUE_CHARACTER_DURATION;
+      if (hasPrintedFullDialogue) {
+        // Dismiss the dialogue
+        dialogue.done = true;
       } else {
-        // @todo description
-        dialogue.finished = true;
+        // Fudge the dialogue start time to cause the
+        // full text to print on the next frame
+        dialogue.startTime = get_running_time() - dialogueText.size() * DIALOGUE_CHARACTER_DURATION;
       }
     }
   }
@@ -167,7 +164,7 @@ void UISystem::handleUI(GmContext* context, GameState& state, float dt) {
 
 void UISystem::showDialogue(GmContext* context, GameState& state, const std::string& text, float duration) {
   dialogue.active = true;
-  dialogue.finished = false;
+  dialogue.done = false;
   dialogue.blocking = true;
   dialogue.queue = { text };
   dialogue.startTime = state.frameStartTime;
@@ -179,10 +176,6 @@ void UISystem::queueDialogue(GmContext* context, GameState& state, const std::ve
   dialogue.queue = queue;
 
   showNextQueuedDialogue(context, state);
-}
-
-void UISystem::dismissDialogue() {
-  dialogue.finished = true;
 }
 
 bool UISystem::isDialogueQueueEmpty() {
