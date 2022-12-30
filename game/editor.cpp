@@ -227,12 +227,12 @@ internal void createObjectHistoryAction(GmContext* context, ActionType type, Obj
 
     if (
       liveLastActionObject != nullptr &&
-      areObjectPropertiesIdentical(*liveLastActionObject, lastAction.initialObject)
+      areObjectPropertiesIdentical(*liveLastActionObject, lastAction.initialObject) &&
+      lastAction.type != ActionType::CREATE &&
+      lastAction.type != ActionType::DELETE
     ) {
       // No modifications were made to the last object in the history queue,
       // so replace the object in the last history action with this one
-      auto& lastAction = editor.history.back();
-
       lastAction.type = type;
       lastAction.initialObject = object;
 
@@ -241,8 +241,13 @@ internal void createObjectHistoryAction(GmContext* context, ActionType type, Obj
 
     if (
       isSameObject(object, lastAction.initialObject) &&
-      areObjectPropertiesIdentical(object, lastAction.initialObject)
+      areObjectPropertiesIdentical(object, lastAction.initialObject) &&
+      lastAction.type != ActionType::CREATE &&
+      lastAction.type != ActionType::DELETE
     ) {
+      // Don't create a new history action when reselecting the same object,
+      // unless the last action was a CREATE/DELETE, which we want to preserve
+      // as separate records in the editor history
       return;
     }
   }
@@ -451,7 +456,7 @@ namespace Editor {
     {
       if (editor.currentActionType != ActionType::CREATE) {
         Vec3f cameraDirection = camera.orientation.getDirection().unit();
-        Vec3f lineOfSightEnd = camera.position + cameraDirection * 2000.f;
+        Vec3f lineOfSightEnd = camera.position + cameraDirection * 4000.f;
         Vec3f inverseCameraDirection = cameraDirection.invert();
         float closestDistance = Gm_FLOAT_MAX;
 
@@ -548,6 +553,10 @@ namespace Editor {
 
       if (SDL_GetRelativeMouseMode()) {
         Gm_HandleFreeCameraMode(context, 4.f, dt);
+      }
+
+      if (input.didReleaseMouse() && editor.isObjectSelected) {
+        World::rebuildCollisionPlanes(context, state);
       }
     }
 

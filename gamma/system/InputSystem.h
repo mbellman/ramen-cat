@@ -84,6 +84,7 @@ namespace Gamma {
   public:
     bool didClickMouse() const;
     bool didPressKey(Key key) const;
+    bool didReleaseMouse() const;
     u64 getLastKeyDown() const;
     const Point<int>& getMouseDelta() const;
     void handleEvent(const SDL_Event& event);
@@ -96,6 +97,7 @@ namespace Gamma {
     u64 pressedKeyState = 0;
     u64 lastKeyDown = 0;
     bool didClickMouseThisFrame = false;
+    bool didReleaseMouseThisFrame = false;
     // @todo distinguish between left/right clicks
     bool isMouseButtonHeldDown = false;
     Point<int> mouseDelta = { 0, 0 };

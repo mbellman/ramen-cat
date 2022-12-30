@@ -82,11 +82,7 @@ internal void loadGameWorldData(GmContext* context, GameState& state) {
   // @temporary
   World::rebuildCollisionPlanes(context, state);
 
-  // @temporary
-  u64 time = Gm_GetMicroseconds() - start;
-  float ms = time / 1000.f;
-
-  Console::log("Loaded game world data in " + std::to_string(ms) + " ms");
+  Console::log("Loaded game world data in", Gm_GetMicroseconds() - start, "us");
 }
 
 void World::initializeGameWorld(GmContext* context, GameState& state) {
@@ -135,6 +131,8 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
 }
 
 void World::rebuildCollisionPlanes(GmContext* context, GameState& state) {
+  auto start = Gm_GetMicroseconds();
+
   state.collisionPlanes.clear();
 
   for (auto& platform : objects("platform")) {
@@ -158,4 +156,6 @@ void World::rebuildCollisionPlanes(GmContext* context, GameState& state) {
       state.collisionPlanes.push_back(plane);
     }
   }
+
+  Console::log("Rebuilt collision planes in", Gm_GetMicroseconds() - start, "us");
 }

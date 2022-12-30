@@ -55,12 +55,16 @@ namespace Gamma {
     { SDLK_TAB, Key::TAB }
   };
 
+  bool InputSystem::didClickMouse() const {
+    return didClickMouseThisFrame;
+  }
+
   bool InputSystem::didPressKey(Key key) const {
     return pressedKeyState & (u64)key;
   }
 
-  bool InputSystem::didClickMouse() const {
-    return didClickMouseThisFrame;
+  bool InputSystem::didReleaseMouse() const {
+    return didReleaseMouseThisFrame;
   }
 
   u64 InputSystem::getLastKeyDown() const {
@@ -145,6 +149,7 @@ namespace Gamma {
 
     signal("mouseup", buttonEvent);
 
+    didReleaseMouseThisFrame = true;
     isMouseButtonHeldDown = false;
   }
 
@@ -185,6 +190,7 @@ namespace Gamma {
   void InputSystem::resetPerFrameState() {
     pressedKeyState = 0;
     didClickMouseThisFrame = false;
+    didReleaseMouseThisFrame = false;
     mouseDelta = { 0, 0 };
   }
 }
