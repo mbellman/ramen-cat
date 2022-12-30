@@ -67,9 +67,20 @@ internal void interactWithNPC(GmContext* context, GameState& state, NonPlayerCha
   state.npcDialogueStep = 0;
   state.suppressMovementInputsThisFrame = true;
 
-  state.lookAtTransition.source = CameraSystem::getLookAtTargetPosition(context, state);
-  state.lookAtTransition.startTime = state.frameStartTime;
-  state.lookAtTransition.target = &npc.position;
+  // @todo move to CameraSystem
+  state.useCameraOverride = true;
+  state.cameraOverrideStartTime = state.frameStartTime;
+
+  state.originalCameraState.camera3p = state.camera3p;
+  state.originalCameraState.lookAtTarget = get_player().position;
+
+  state.sourceCameraState = state.originalCameraState;
+
+  state.targetCameraState.camera3p.azimuth = state.camera3p.azimuth;
+  state.targetCameraState.camera3p.altitude = -0.2f;
+  state.targetCameraState.camera3p.radius = 150.f;
+
+  state.targetCameraState.lookAtTarget = npc.position;
 
   UISystem::showDialogue(context, state, npc.dialogue[state.npcDialogueStep], 3.f);
 }
@@ -93,11 +104,16 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
 
           UISystem::showDialogue(context, state, state.activeNPC->dialogue[state.npcDialogueStep], 3.f);
         } else {
-          state.lookAtTransition.source = CameraSystem::getLookAtTargetPosition(context, state);
-          state.lookAtTransition.target = nullptr;
-          state.lookAtTransition.startTime = state.frameStartTime;
-
           state.activeNPC = nullptr;
+
+          // @todo move to CameraSystem
+          state.sourceCameraState.camera3p = state.camera3p;
+          state.sourceCameraState.lookAtTarget = CameraSystem::getLookAtTargetPosition(context, state);
+          
+          state.targetCameraState = state.originalCameraState;
+
+          state.cameraOverrideStartTime = state.frameStartTime;
+          state.useCameraOverride = false;
         }
       } else {
         for (auto& npc : state.npcs) {

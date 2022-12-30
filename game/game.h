@@ -17,11 +17,9 @@ struct NonPlayerCharacter {
   std::vector<std::string> dialogue;
 };
 
-struct LookAtTransition {
-  Gamma::Vec3f source;
-  Gamma::Vec3f* target;
-  float startTime = 0.f;
-  float duration = 0.f;
+struct CameraState {
+  Gamma::ThirdPersonCamera camera3p;
+  Gamma::Vec3f lookAtTarget;
 };
 
 struct GameState {
@@ -46,8 +44,12 @@ struct GameState {
   NonPlayerCharacter* activeNPC = nullptr;
   u8 npcDialogueStep = 0;
 
-  // Secondary look-at target/camera handling
-  LookAtTransition lookAtTransition;
+  // Camera override handling
+  CameraState originalCameraState;
+  CameraState sourceCameraState;
+  CameraState targetCameraState;
+  float cameraOverrideStartTime = 0.f;
+  bool useCameraOverride = false;
 
   // @todo use in dev mode only
   bool isEditorEnabled = false;

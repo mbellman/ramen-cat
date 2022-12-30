@@ -76,15 +76,15 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
 Vec3f CameraSystem::getLookAtTargetPosition(GmContext* context, GameState& state) {
   auto& player = get_player();
 
-  if (state.lookAtTransition.startTime == 0.f) {
-    // If we haven't started a look-at transition yet,
+  if (state.cameraOverrideStartTime == 0.f) {
+    // If we haven't started a camera transition yet,
     // always use the player position.
     return player.position;
   }
 
-  Vec3f tweenStart = state.lookAtTransition.source;
-  Vec3f tweenEnd = state.lookAtTransition.target != nullptr ? *state.lookAtTransition.target : player.position;
-  float t = get_running_time() - state.lookAtTransition.startTime;
+  Vec3f tweenStart = state.sourceCameraState.lookAtTarget;
+  Vec3f tweenEnd = state.useCameraOverride ? state.targetCameraState.lookAtTarget : player.position;
+  float t = get_running_time() - state.cameraOverrideStartTime;
 
   if (t > 1.f) {
     t = 1.f;
