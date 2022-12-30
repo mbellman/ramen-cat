@@ -10,7 +10,7 @@ using namespace Gamma;
 
 enum ActionType {
   CREATE,
-  REMOVE,
+  DELETE,
   POSITION,
   SCALE,
   ROTATE,
@@ -36,6 +36,8 @@ inline std::string getActionTypeName(ActionType type) {
   switch (type) {
     case ActionType::CREATE:
       return "CREATE";
+    case ActionType::DELETE:
+      return "DELETE";
     case ActionType::POSITION:
       return "POSITION";
     case ActionType::SCALE:
@@ -73,20 +75,6 @@ internal void restoreObject(GmContext* context, const Object& object) {
     *originalObject = object;
 
     commit(*originalObject);
-  }
-}
-
-internal void deleteObject(GmContext* context, GameState& state, const Object& object) {
-  auto* originalObject = Gm_GetObjectByRecord(context, object._record);
-
-  if (originalObject != nullptr) {
-    remove_object(*originalObject);
-
-    editor.isObjectSelected = false;
-
-    // @todo save a history action representing the deletion
-
-    World::rebuildCollisionPlanes(context, state);
   }
 }
 
@@ -141,40 +129,6 @@ internal void cycleCurrentActionType() {
   } else {
     editor.currentActionType = ActionType::POSITION;
   }
-}
-
-internal void createNewObject(GmContext* context, GameState& state) {
-  auto& camera = get_camera();
-  Vec3f spawnPosition = camera.position + camera.orientation.getDirection() * 300.f;
-
-  auto& platform = create_object_from("platform");
-
-  platform.position = spawnPosition;
-  platform.scale = Vec3f(50.f, 20.f, 50.f);
-  platform.rotation = Quaternion(1.f, 0, 0, 0);
-  platform.color = Vec3f(0, 0, 1.f);
-  
-  commit(platform);
-
-  HistoryAction action;
-
-  action.type = ActionType::CREATE;
-  action.initialObject = platform;
-
-  editor.history.push_back(action);
-
-  World::rebuildCollisionPlanes(context, state);
-}
-
-internal void respawnPlayer(GmContext* context, GameState& state) {
-  auto& player = get_player();
-  auto& camera = get_camera();
-
-  player.position = camera.position + camera.orientation.getDirection() * 300.f;
-
-  state.velocity = Vec3f(0.f);
-
-  commit(player);
 }
 
 internal Vec3f getObjectAlignedActionAxis(GmContext* context, Object& object) {
@@ -266,7 +220,7 @@ internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mo
     : axis * mouseDx * multiplier * dt;
 }
 
-internal void createObjectHistoryAction(GmContext* context, Object& object) {
+internal void createObjectHistoryAction(GmContext* context, ActionType type, Object& object) {
   if (editor.history.size() > 0) {
     auto& lastAction = editor.history.back();
     auto* liveLastActionObject = Gm_GetObjectByRecord(context, lastAction.initialObject._record);
@@ -277,7 +231,10 @@ internal void createObjectHistoryAction(GmContext* context, Object& object) {
     ) {
       // No modifications were made to the last object in the history queue,
       // so replace the object in the last history action with this one
-      editor.history.back().initialObject = object;
+      auto& lastAction = editor.history.back();
+
+      lastAction.type = type;
+      lastAction.initialObject = object;
 
       return;
     }
@@ -292,13 +249,13 @@ internal void createObjectHistoryAction(GmContext* context, Object& object) {
 
   HistoryAction action;
 
-  action.type = editor.currentActionType;
+  action.type = type;
   action.initialObject = object; 
 
   editor.history.push_back(action);
 }
 
-internal void undoLastHistoryAction(GmContext* context) {
+internal void undoLastHistoryAction(GmContext* context, GameState& state) {
   if (editor.history.size() == 0) {
     return;
   }
@@ -310,10 +267,26 @@ internal void undoLastHistoryAction(GmContext* context) {
       remove_object(action.initialObject);
 
       editor.isObjectSelected = false;
+
+      World::rebuildCollisionPlanes(context, state);
+
       break;
-    case ActionType::REMOVE:
-      // @todo
+    case ActionType::DELETE: {
+      auto& object = action.initialObject;
+      // @todo retrieve mesh name from history action
+      auto& platform = create_object_from("platform");
+
+      platform.position = object.position;
+      platform.scale = object.scale;
+      platform.rotation = object.rotation;
+      platform.color = object.color;
+
+      commit(platform);
+
+      World::rebuildCollisionPlanes(context, state);
+
       break;
+    }
     default: {
       auto* liveLastActionObject = Gm_GetObjectByRecord(context, action.initialObject._record);
 
@@ -328,11 +301,65 @@ internal void undoLastHistoryAction(GmContext* context) {
     }
   }
 
-  editor.currentActionType = action.type;
+  if (action.type == ActionType::DELETE) {
+    // Don't allow the DELETE action type to be explicitly set;
+    // default to POSITION when undoing deletion actions
+    editor.currentActionType = ActionType::POSITION;
+  } else {
+    editor.currentActionType = action.type;
+  }
 
   editor.history.pop_back();
 
-  Console::log("[Editor] " + getActionTypeName(editor.currentActionType) + " action reverted");
+  Console::log("[Editor] " + getActionTypeName(action.type) + " action reverted");
+}
+
+internal void createNewObject(GmContext* context, GameState& state) {
+  auto& camera = get_camera();
+  Vec3f spawnPosition = camera.position + camera.orientation.getDirection() * 300.f;
+
+  auto& platform = create_object_from("platform");
+
+  platform.position = spawnPosition;
+  platform.scale = Vec3f(50.f, 20.f, 50.f);
+  platform.rotation = Quaternion(1.f, 0, 0, 0);
+  platform.color = Vec3f(0, 0, 1.f);
+  
+  commit(platform);
+
+  HistoryAction action;
+
+  action.type = ActionType::CREATE;
+  action.initialObject = platform;
+
+  editor.history.push_back(action);
+
+  World::rebuildCollisionPlanes(context, state);
+}
+
+internal void deleteObject(GmContext* context, GameState& state, Object& object) {
+  auto* originalObject = Gm_GetObjectByRecord(context, object._record);
+
+  if (originalObject != nullptr) {
+    createObjectHistoryAction(context, ActionType::DELETE, object);
+
+    remove_object(*originalObject);
+
+    World::rebuildCollisionPlanes(context, state);
+
+    editor.isObjectSelected = false;
+  }
+}
+
+internal void respawnPlayer(GmContext* context, GameState& state) {
+  auto& player = get_player();
+  auto& camera = get_camera();
+
+  player.position = camera.position + camera.orientation.getDirection() * 300.f;
+
+  state.velocity = Vec3f(0.f);
+
+  commit(player);
 }
 
 internal void saveGameWorldData(GmContext* context, GameState& state) {
@@ -461,7 +488,7 @@ namespace Editor {
       if (input.didClickMouse()) {
         if (editor.isObservingObject) {
           selectObject(context, editor.observedObject);
-          createObjectHistoryAction(context, editor.observedObject);
+          createObjectHistoryAction(context, editor.currentActionType, editor.observedObject);
         } else if (editor.currentActionType == ActionType::CREATE) {
           // @todo show an object placement preview
           createNewObject(context, state);
@@ -469,7 +496,7 @@ namespace Editor {
       }
 
       if (input.isKeyHeld(Key::CONTROL) && input.didPressKey(Key::Z)) {
-        undoLastHistoryAction(context);
+        undoLastHistoryAction(context, state);
       } else if (input.didPressKey(Key::SPACE)) {
         cycleCurrentActionType();
 
