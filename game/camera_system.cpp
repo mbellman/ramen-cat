@@ -16,6 +16,26 @@ internal void updateThirdPersonCameraRadius(GameState& state, float dt) {
   }
 }
 
+internal Vec3f getLookAtTargetPosition(GmContext* context, GameState& state) {
+  auto& player = get_player();
+
+  if (state.cameraOverrideStartTime == 0.f) {
+    // If we haven't started a camera transition yet,
+    // always use the player position.
+    return player.position;
+  }
+
+  Vec3f tweenStart = state.sourceCameraState.lookAtTarget;
+  Vec3f tweenEnd = state.useCameraOverride ? state.targetCameraState.lookAtTarget : player.position;
+  float t = (get_running_time() - state.cameraOverrideStartTime) / state.cameraOverrideDuration;
+
+  if (t > 1.f) {
+    t = 1.f;
+  }
+
+  return Vec3f::lerp(tweenStart, tweenEnd, easeOut(t));
+}
+
 internal void handleThirdPersonCameraOverrides(GmContext* context, GameState& state) {
   float t = (get_running_time() - state.cameraOverrideStartTime) / state.cameraOverrideDuration;
 
@@ -58,7 +78,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
 
   auto& input = get_input();
   auto& player = get_player();
-  auto lookAtPosition = CameraSystem::getLookAtTargetPosition(context, state);
+  auto lookAtPosition = getLookAtTargetPosition(context, state);
   auto targetCameraPosition = lookAtPosition + state.camera3p.calculatePosition();
 
   // Control camera using mouse movements
@@ -108,22 +128,23 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
   LOG_TIME();
 }
 
-Vec3f CameraSystem::getLookAtTargetPosition(GmContext* context, GameState& state) {
-  auto& player = get_player();
+void CameraSystem::setCameraStateOverride(GmContext* context, GameState& state, const CameraState& cameraState) {
+  state.originalCameraState.camera3p = state.camera3p;
+  state.originalCameraState.lookAtTarget = getLookAtTargetPosition(context, state);
 
-  if (state.cameraOverrideStartTime == 0.f) {
-    // If we haven't started a camera transition yet,
-    // always use the player position.
-    return player.position;
-  }
+  state.sourceCameraState = state.originalCameraState;
+  state.targetCameraState = cameraState;
 
-  Vec3f tweenStart = state.sourceCameraState.lookAtTarget;
-  Vec3f tweenEnd = state.useCameraOverride ? state.targetCameraState.lookAtTarget : player.position;
-  float t = (get_running_time() - state.cameraOverrideStartTime) / state.cameraOverrideDuration;
+  state.useCameraOverride = true;
+  state.cameraOverrideStartTime = state.frameStartTime;
+}
 
-  if (t > 1.f) {
-    t = 1.f;
-  }
+void CameraSystem::restoreOriginalCameraState(GmContext* context, GameState& state) {
+  state.sourceCameraState.camera3p = state.camera3p;
+  state.sourceCameraState.lookAtTarget = getLookAtTargetPosition(context, state);
+  
+  state.targetCameraState = state.originalCameraState;
 
-  return Vec3f::lerp(tweenStart, tweenEnd, easeOut(t));
+  state.cameraOverrideStartTime = state.frameStartTime;
+  state.useCameraOverride = false;
 }

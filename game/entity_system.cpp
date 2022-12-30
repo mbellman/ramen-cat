@@ -81,17 +81,10 @@ internal void interactWithNPC(GmContext* context, GameState& state, NonPlayerCha
 
   state.activeNPC = &npc;
 
-  // @todo move to CameraSystem
-  state.originalCameraState.camera3p = state.camera3p;
-  state.originalCameraState.lookAtTarget = CameraSystem::getLookAtTargetPosition(context, state);
-
-  state.sourceCameraState = state.originalCameraState;
-
-  state.targetCameraState.lookAtTarget = targetLookAtPosition;
-  state.targetCameraState.camera3p = targetCamera3p;
-
-  state.useCameraOverride = true;
-  state.cameraOverrideStartTime = state.frameStartTime;
+  CameraSystem::setCameraStateOverride(context, state, {
+    .camera3p = targetCamera3p,
+    .lookAtTarget = targetLookAtPosition
+  });
 
   UISystem::queueDialogue(context, state, npc.dialogue);
 }
@@ -123,14 +116,7 @@ internal void handleNPCs(GmContext* context, GameState& state) {
     if (state.activeNPC != nullptr && UISystem::isDialogueQueueEmpty()) {
       state.activeNPC = nullptr;
 
-      // @todo move to CameraSystem
-      state.sourceCameraState.camera3p = state.camera3p;
-      state.sourceCameraState.lookAtTarget = CameraSystem::getLookAtTargetPosition(context, state);
-      
-      state.targetCameraState = state.originalCameraState;
-
-      state.cameraOverrideStartTime = state.frameStartTime;
-      state.useCameraOverride = false;
+      CameraSystem::restoreOriginalCameraState(context, state);
     }
   }
 }
