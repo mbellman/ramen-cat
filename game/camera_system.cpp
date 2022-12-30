@@ -12,6 +12,31 @@ internal void updateThirdPersonCameraRadius(GameState& state, float dt) {
   }
 }
 
+internal void handleThirdPersonCameraOverrides(GmContext* context, GameState& state) {
+  float t = get_running_time() - state.cameraOverrideStartTime;
+
+  if (state.cameraOverrideStartTime == 0.f) {
+    // If we haven't started a camera transition yet,
+    // don't do anything.
+    return;
+  }
+
+  if (t > 1.f) {
+    if (!state.useCameraOverride) {
+      return;
+    }
+
+    t = 1.f;
+  }
+
+  auto tweenStart = state.sourceCameraState.camera3p;
+  auto tweenEnd = state.targetCameraState.camera3p;
+
+  state.camera3p.azimuth = Gm_LerpCircularf(tweenStart.azimuth, tweenEnd.azimuth, t, Gm_PI);
+  state.camera3p.altitude = Gm_Lerpf(tweenStart.altitude, tweenEnd.altitude, t);
+  state.camera3p.radius = Gm_Lerpf(tweenStart.radius, tweenEnd.radius, t);
+}
+
 void CameraSystem::initializeGameCamera(GmContext* context, GameState& state) {
   state.camera3p.azimuth = Gm_PI + Gm_HALF_PI;
   state.camera3p.altitude = 0.f;
@@ -25,6 +50,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
   START_TIMING("handleGameCamera");
 
   updateThirdPersonCameraRadius(state, dt);
+  handleThirdPersonCameraOverrides(context, state);
 
   auto& input = get_input();
   auto& player = get_player();
@@ -34,7 +60,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
   // Control camera using mouse movements
   {
     // @todo Gm_IsWindowFocused()
-    if (SDL_GetRelativeMouseMode()) {
+    if (SDL_GetRelativeMouseMode() && !state.useCameraOverride) {
       auto& delta = input.getMouseDelta();
 
       state.camera3p.azimuth -= delta.x / 1000.f;

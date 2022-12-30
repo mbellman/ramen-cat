@@ -68,19 +68,19 @@ internal void interactWithNPC(GmContext* context, GameState& state, NonPlayerCha
   state.suppressMovementInputsThisFrame = true;
 
   // @todo move to CameraSystem
-  state.useCameraOverride = true;
-  state.cameraOverrideStartTime = state.frameStartTime;
-
   state.originalCameraState.camera3p = state.camera3p;
-  state.originalCameraState.lookAtTarget = get_player().position;
+  state.originalCameraState.lookAtTarget = CameraSystem::getLookAtTargetPosition(context, state);
 
   state.sourceCameraState = state.originalCameraState;
 
   state.targetCameraState.camera3p.azimuth = state.camera3p.azimuth;
-  state.targetCameraState.camera3p.altitude = -0.2f;
+  state.targetCameraState.camera3p.altitude = 0.f;
   state.targetCameraState.camera3p.radius = 150.f;
 
   state.targetCameraState.lookAtTarget = npc.position;
+
+  state.useCameraOverride = true;
+  state.cameraOverrideStartTime = state.frameStartTime;
 
   UISystem::showDialogue(context, state, npc.dialogue[state.npcDialogueStep], 3.f);
 }
