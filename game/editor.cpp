@@ -113,21 +113,41 @@ internal void selectObject(GmContext* context, Object& object) {
   editor.isObjectSelected = true;
 }
 
-internal void cycleCurrentActionType() {
-  // @todo define a list of current action types, find the
-  // current one, select the next one, looping back to 0
-  if (editor.currentActionType == ActionType::POSITION) {
-    editor.currentActionType = ActionType::SCALE;
-  } else if (editor.currentActionType == ActionType::SCALE) {
-    editor.currentActionType = ActionType::ROTATE;
-  } else if (editor.currentActionType == ActionType::ROTATE) {
-    editor.currentActionType = ActionType::COLOR;
-  } else if (editor.currentActionType == ActionType::COLOR) {
-    editor.currentActionType = ActionType::CREATE;
-  } else if (editor.currentActionType == ActionType::CREATE) {
-    editor.currentActionType = ActionType::POSITION;
-  } else {
-    editor.currentActionType = ActionType::POSITION;
+internal void cycleCurrentActionType(GmContext* context, s8 delta) {
+  const std::initializer_list<ActionType> actionOrder = {
+    ActionType::POSITION,
+    ActionType::SCALE,
+    ActionType::ROTATE,
+    ActionType::COLOR,
+    ActionType::CREATE
+  };
+
+  s8 totalActionTypes = (s8)actionOrder.size();
+  s8 cycleIndex = 0;
+
+  for (u8 i = 0; i < totalActionTypes; i++) {
+    if (*(actionOrder.begin() + i) == editor.currentActionType) {
+      cycleIndex = i + delta;
+
+      if (cycleIndex < 0) {
+        cycleIndex = actionOrder.size() - 1;
+      } else if (cycleIndex > totalActionTypes - 1) {
+        cycleIndex = 0;
+      }
+
+      break;
+    }
+  }
+
+  editor.currentActionType = *(actionOrder.begin() + cycleIndex);
+
+  if (
+    editor.currentActionType == ActionType::CREATE &&
+    editor.isObjectSelected
+  ) {
+    restoreObject(context, editor.selectedObject);
+
+    editor.isObjectSelected = false;
   }
 }
 
@@ -407,7 +427,16 @@ namespace Editor {
   }
 
   void initializeGameEditor(GmContext* context, GameState& state) {
+    auto& input = get_input();
     auto& commander = context->commander;
+
+    input.on<MouseWheelEvent>("mousewheel", [context, &state](const MouseWheelEvent& event) {
+      if (event.direction == MouseWheelEvent::Direction::UP) {
+        cycleCurrentActionType(context, -1);
+      } else {
+        cycleCurrentActionType(context, +1);
+      }
+    });
 
     context->commander.on<std::string>("command", [&state, context](std::string command) {
       if (state.isEditorEnabled) {
@@ -502,17 +531,6 @@ namespace Editor {
 
       if (input.isKeyHeld(Key::CONTROL) && input.didPressKey(Key::Z)) {
         undoLastHistoryAction(context, state);
-      } else if (input.didPressKey(Key::SPACE)) {
-        cycleCurrentActionType();
-
-        if (
-          editor.currentActionType == ActionType::CREATE &&
-          editor.isObjectSelected
-        ) {
-          restoreObject(context, editor.selectedObject);
-
-          editor.isObjectSelected = false;
-        }
       } else if (input.didPressKey(Key::R)) {
         respawnPlayer(context, state);
       } else if (input.didPressKey(Key::BACKSPACE) && editor.isObjectSelected) {
