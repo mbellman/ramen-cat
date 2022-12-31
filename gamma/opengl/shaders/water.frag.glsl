@@ -9,6 +9,9 @@ uniform mat4 matInverseView;
 uniform vec3 cameraPosition;
 uniform float time;
 
+// @temporary
+uniform sampler2D texClouds;
+
 uniform float zNear;
 uniform float zFar;
 
@@ -154,8 +157,21 @@ void main() {
   float sky_intensity = sky.w;
   vec3 reflection_color = vec3(0);
 
+  #define PI 3.141592
+  #define TAU PI * 2.0
+
+  // @todo refactor
+  vec2 cloudsUv = vec2(
+    -(atan(reflection_ray.z, reflection_ray.x) + PI) / TAU,
+    -reflection_ray.y - 0.5
+  );
+
+  // @todo refactor
+  vec4 clouds = texture(texClouds, cloudsUv);
+  vec3 clouds_color = mix(clouds.rgb, sky_color, 0.3) * clouds.a;
+
   if (isOffScreen(reflected_color_coords, 0)) {
-    reflection_color = sky_color;
+    reflection_color = sky_color + clouds_color;
   } else {
     // Fade from geometry reflections to sky reflections depending on
     // how deep into the geometry the reflection ray went. We want a
@@ -164,7 +180,7 @@ void main() {
     float depth_distance = getLinearizedDepth(reflection_color_and_depth.w, zNear, zFar) - view_reflection_ray.z;
     float alpha = max(0.0, min(1.0, depth_distance / 20.0));
 
-    reflection_color = mix(reflection_color_and_depth.rgb, sky_color, alpha);
+    reflection_color = mix(reflection_color_and_depth.rgb, sky_color + clouds_color, alpha);
   }
 
   // @todo make configurable

@@ -9,6 +9,7 @@
 #include "opengl/framebuffer.h"
 #include "opengl/OpenGLLightDisc.h"
 #include "opengl/OpenGLMesh.h"
+#include "opengl/OpenGLTexture.h"
 #include "opengl/shader.h"
 #include "opengl/shadowmaps.h"
 #include "system/AbstractRenderer.h"
@@ -100,6 +101,9 @@ namespace Gamma {
     virtual void resetShadowMaps() override;
 
   private:
+    // @temporary
+    OpenGLTexture* clouds = nullptr;
+
     SDL_GLContext glContext;
     RendererBuffers buffers;
     RendererShaders shaders;

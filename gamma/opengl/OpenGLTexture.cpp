@@ -7,7 +7,8 @@
 #include "SDL_image.h"
 
 namespace Gamma {
-  OpenGLTexture::OpenGLTexture(const std::string& path, GLenum unit) {
+  // @todo add hot-reloading in dev mode
+  OpenGLTexture::OpenGLTexture(const std::string& path, GLenum unit, bool enableMipmaps) {
     this->unit = unit;
     this->path = path;
 
@@ -22,9 +23,15 @@ namespace Gamma {
     bind();
 
     glTexImage2D(GL_TEXTURE_2D, 0, format, surface->w, surface->h, 0, format, GL_UNSIGNED_BYTE, surface->pixels);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glGenerateMipmap(GL_TEXTURE_2D);
+
+    if (enableMipmaps) {
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+      glGenerateMipmap(GL_TEXTURE_2D);
+    } else {
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    }
 
     SDL_FreeSurface(surface);
   }

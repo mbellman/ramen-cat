@@ -124,6 +124,9 @@ namespace Gamma {
 
       // @todo set sampler2D texture units
     #endif
+
+    // @temporary
+    clouds = new OpenGLTexture("./game/assets/clouds.png", GL_TEXTURE3, false);
   }
 
   void OpenGLRenderer::destroy() {
@@ -1009,11 +1012,15 @@ namespace Gamma {
   void OpenGLRenderer::renderSkybox() {
     glStencilFunc(GL_EQUAL, MeshType::SKYBOX, 0xFF);
 
+    clouds->bind();
+
     shaders.skybox.use();
     shaders.skybox.setVec4f("transform", FULL_SCREEN_TRANSFORM);
     shaders.skybox.setVec3f("cameraPosition", ctx.activeCamera->position);
     shaders.skybox.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
     shaders.skybox.setMatrix4f("matInverseView", ctx.matInverseView);
+    // @temporary
+    shaders.skybox.setInt("texClouds", 3);
 
     // @todo allow for custom configuration
 
@@ -1257,6 +1264,9 @@ namespace Gamma {
       shaders.water.setVec2f("screenSize", screenSize);
     #endif
 
+    // @temporary
+    clouds->bind();
+
     shaders.water.setInt("texColorAndDepth", 0);
     shaders.water.setMatrix4f("matProjection", ctx.matProjection);
     shaders.water.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
@@ -1266,6 +1276,8 @@ namespace Gamma {
     shaders.water.setFloat("time", gmContext->scene.runningTime);
     shaders.water.setFloat("zNear", gmContext->scene.zNear);
     shaders.water.setFloat("zFar", gmContext->scene.zFar);
+    // @temporary
+    shaders.water.setInt("texClouds", 3);
 
     for (auto* glMesh : glMeshes) {
       if (glMesh->isMeshType(MeshType::WATER)) {

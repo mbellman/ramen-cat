@@ -7,7 +7,7 @@
 namespace Gamma {
   class OpenGLTexture {
   public:
-    OpenGLTexture(const std::string& path, GLenum unit);
+    OpenGLTexture(const std::string& path, GLenum unit, bool enableMipmaps = true);
     ~OpenGLTexture();
 
     void bind();
