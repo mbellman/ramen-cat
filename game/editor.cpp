@@ -109,7 +109,7 @@ internal void selectObject(GmContext* context, Object& object) {
     restoreObject(context, editor.selectedObject);
   }
 
-  editor.selectedObject = editor.observedObject;
+  editor.selectedObject = object;
   editor.isObjectSelected = true;
 }
 
@@ -352,6 +352,7 @@ internal void createNewObject(GmContext* context, GameState& state) {
   
   commit(platform);
 
+  // @todo use createObjectHistoryAction
   HistoryAction action;
 
   action.type = ActionType::CREATE;
@@ -360,6 +361,24 @@ internal void createNewObject(GmContext* context, GameState& state) {
   editor.history.push_back(action);
 
   World::rebuildCollisionPlanes(context, state);
+}
+
+internal void cloneSelectedObject(GmContext* context) {
+  auto& camera = get_camera();
+  auto cameraDirection = camera.orientation.getDirection();
+
+  // @todo use selected object mesh
+  auto& object = create_object_from("platform");
+
+  object.position = camera.position + cameraDirection * 500.f;
+  object.scale = editor.selectedObject.scale;
+  object.rotation = editor.selectedObject.rotation;
+  object.color = editor.selectedObject.color;
+
+  commit(object);
+
+  selectObject(context, object);
+  createObjectHistoryAction(context, ActionType::CREATE, object);
 }
 
 internal void deleteObject(GmContext* context, GameState& state, Object& object) {
@@ -529,8 +548,13 @@ namespace Editor {
         }
       }
 
-      if (input.isKeyHeld(Key::CONTROL) && input.didPressKey(Key::Z)) {
+      #define CTRL_Z input.isKeyHeld(Key::CONTROL) && input.didPressKey(Key::Z)
+      #define CTRL_V input.isKeyHeld(Key::CONTROL) && input.didPressKey(Key::V)
+
+      if (CTRL_Z) {
         undoLastHistoryAction(context, state);
+      } else if (CTRL_V && editor.isObjectSelected) {
+        cloneSelectedObject(context);
       } else if (input.didPressKey(Key::R)) {
         respawnPlayer(context, state);
       } else if (input.didPressKey(Key::BACKSPACE) && editor.isObjectSelected) {
