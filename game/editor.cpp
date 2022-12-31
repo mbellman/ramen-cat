@@ -8,6 +8,12 @@
 
 using namespace Gamma;
 
+enum ModeType {
+  COLLISION_PLANES,
+  OBJECTS,
+  LIGHTS
+};
+
 enum ActionType {
   CREATE,
   DELETE,
@@ -27,12 +33,26 @@ static struct EditorState {
   Object selectedObject;
   bool isObservingObject = false;
   bool isObjectSelected = false;
+  ModeType mode = ModeType::COLLISION_PLANES;
   ActionType currentActionType = ActionType::POSITION;
   // @todo limit size?
   std::vector<HistoryAction> history;
 } editor;
 
-inline std::string getActionTypeName(ActionType type) {
+internal std::string getModeTypeName(ModeType mode) {
+  switch (mode) {
+    case ModeType::COLLISION_PLANES:
+      return "COLLISION PLANES";
+    case ModeType::OBJECTS:
+      return "OBJECTS";
+    case ModeType::LIGHTS:
+      return "LIGHTS";
+  }
+
+  return "COLLISION PLANES";
+}
+
+internal std::string getActionTypeName(ActionType type) {
   switch (type) {
     case ActionType::CREATE:
       return "CREATE";
@@ -111,6 +131,33 @@ internal void selectObject(GmContext* context, Object& object) {
 
   editor.selectedObject = object;
   editor.isObjectSelected = true;
+}
+
+internal void cycleCurrentMode(GmContext* context, s8 delta) {
+  const std::initializer_list<ModeType> modeOrder = {
+    ModeType::COLLISION_PLANES,
+    ModeType::OBJECTS,
+    ModeType::LIGHTS
+  };
+
+  s8 totalModes = (s8)modeOrder.size();
+  s8 cycleIndex = 0;
+
+  for (u8 i = 0; i < totalModes; i++) {
+    if (*(modeOrder.begin() + i) == editor.mode) {
+      cycleIndex = i + delta;
+
+      if (cycleIndex < 0) {
+        cycleIndex = totalModes - 1;
+      } else if (cycleIndex > totalModes - 1) {
+        cycleIndex = 0;
+      }
+
+      break;
+    }
+  }
+
+  editor.mode = *(modeOrder.begin() + cycleIndex);
 }
 
 internal void cycleCurrentActionType(GmContext* context, s8 delta) {
@@ -559,6 +606,10 @@ namespace Editor {
         respawnPlayer(context, state);
       } else if (input.didPressKey(Key::BACKSPACE) && editor.isObjectSelected) {
         deleteObject(context, state, editor.selectedObject);
+      } else if (input.didPressKey(Key::ARROW_RIGHT)) {
+        cycleCurrentMode(context, +1);
+      } else if (input.didPressKey(Key::ARROW_LEFT)) {
+        cycleCurrentMode(context, -1);
       }
 
       if (input.isMouseHeld() && editor.isObjectSelected) {
@@ -617,6 +668,7 @@ namespace Editor {
 
     // Display status messages
     {
+      add_debug_message("Mode: " + getModeTypeName(editor.mode));
       add_debug_message("Action: " + getActionTypeName(editor.currentActionType));
 
       if (editor.isObjectSelected) {
