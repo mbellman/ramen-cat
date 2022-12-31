@@ -102,14 +102,14 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   auto& ocean = create_object_from("ocean");
 
   ocean.position = Vec3f(0, -2000.f, 0);
-  ocean.scale = Vec3f(25000.f, 1.f, 25000.f);
+  ocean.scale = Vec3f(50000.f, 1.f, 50000.f);
 
   commit(ocean);
 
   auto& floor = create_object_from("ocean-floor");
 
   floor.position = Vec3f(0, -2500.f, 0);
-  floor.scale = Vec3f(25000.f, 1.f, 25000.f);
+  floor.scale = Vec3f(50000.f, 1.f, 50000.f);
   floor.color = Vec3f(0.3f, 0.7f, 0.9f);
 
   commit(floor);
