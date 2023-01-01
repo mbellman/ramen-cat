@@ -45,8 +45,8 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
   }
 }
 
-internal void resolveAllCollisions(GmContext* context, GameState& state, float dt) {
-  START_TIMING("resolveAllCollisions");
+internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, float dt) {
+  START_TIMING("resolveAllPlaneCollisions");
 
   auto& player = get_player();
   float playerRadius = player.scale.x;
@@ -84,6 +84,33 @@ internal void resolveAllCollisions(GmContext* context, GameState& state, float d
     // subsequent ground collisions to trigger previous-position
     // reset behavior, causing the player to get stuck.
     state.isOnSolidGround = true;
+  }
+
+  LOG_TIME();
+}
+
+internal void resolveAllNpcCollisions(GmContext* context, GameState& state) {
+  START_TIMING("resolveAllNpcCollisions");
+
+  auto& player = get_player();
+
+  // @todo define a constant for NPC hit cylinder radius
+  const float distanceThreshold = 20.f + player.scale.x + 5.f;
+
+  // @todo skip npcs when not within their y range
+  for (auto& npc : state.npcs) {
+    Vec3f xzNpcToPlayer = (player.position - npc.position).xz();
+    float xzDistance = xzNpcToPlayer.magnitude();
+
+    if (xzDistance < distanceThreshold) {
+      Vec3f xzNpcPosition = Vec3f(npc.position.x, player.position.y, npc.position.z);
+
+      player.position = xzNpcPosition + xzNpcToPlayer.unit() * distanceThreshold;
+
+      commit(player);
+
+      break;
+    }
   }
 
   LOG_TIME();
@@ -176,7 +203,8 @@ namespace MovementSystem {
     state.velocity.y -= gravity;
     player.position += state.velocity * dt;
 
-    resolveAllCollisions(context, state, dt);
+    resolveAllPlaneCollisions(context, state, dt);
+    resolveAllNpcCollisions(context, state);
 
     if (state.velocity.y == 0.f && !state.isPlayerMovingThisFrame) {
       const float slowdown = 5.f;

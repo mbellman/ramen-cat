@@ -44,7 +44,7 @@ struct GameState {
   bool isPlayerMovingThisFrame = false;
 
   // NPC handling
-  NonPlayerCharacter* activeNPC = nullptr;
+  NonPlayerCharacter* activeNpc = nullptr;
 
   // Camera override handling
   CameraState originalCameraState;

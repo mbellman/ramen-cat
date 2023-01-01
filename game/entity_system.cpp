@@ -5,10 +5,10 @@
 
 using namespace Gamma;
 
-internal void loadNonPlayerCharacterData(GmContext* context, GameState& state) {
+internal void loadNpcData(GmContext* context, GameState& state) {
   // @todo eventually store as binary data
-  auto npcsData = Gm_LoadFileContents("./game/data_npcs.txt");
-  auto lines = Gm_SplitString(npcsData, "\n");
+  auto npcDataContents = Gm_LoadFileContents("./game/data_npcs.txt");
+  auto lines = Gm_SplitString(npcDataContents, "\n");
 
   // @temporary
   u32 i = 0;
@@ -62,7 +62,7 @@ internal void loadNonPlayerCharacterData(GmContext* context, GameState& state) {
   }
 }
 
-internal void interactWithNPC(GmContext* context, GameState& state, NonPlayerCharacter& npc) {
+internal void interactWithNpc(GmContext* context, GameState& state, NonPlayerCharacter& npc) {
   auto& player = get_player();
   Vec3f npcFacePosition = npc.position + Vec3f(0, 30.f, 0);
   Vec3f npcToPlayer = (player.position - npc.position);
@@ -79,7 +79,7 @@ internal void interactWithNPC(GmContext* context, GameState& state, NonPlayerCha
     .radius = 150.f
   };
 
-  state.activeNPC = &npc;
+  state.activeNpc = &npc;
 
   CameraSystem::setCameraStateOverride(context, state, {
     .camera3p = targetCamera3p,
@@ -89,20 +89,20 @@ internal void interactWithNPC(GmContext* context, GameState& state, NonPlayerCha
   UISystem::queueDialogue(context, state, npc.dialogue);
 }
 
-internal void handleNPCs(GmContext* context, GameState& state) {
+internal void handleNpcs(GmContext* context, GameState& state) {
   auto& input = get_input();
   auto& player = get_player();
 
   // Handle interactions
   {
     if (input.didPressKey(Key::SPACE)) {
-      if (state.activeNPC == nullptr) {
+      if (state.activeNpc == nullptr) {
         for (auto& npc : state.npcs) {
           // @todo consider y distance as well
-          auto distance = (npc.position - player.position).xz().magnitude();
+          auto xzDistance = (npc.position - player.position).xz().magnitude();
 
-          if (distance < 100.f) {
-            interactWithNPC(context, state, npc);
+          if (xzDistance < 100.f) {
+            interactWithNpc(context, state, npc);
 
             break;
           }
@@ -113,8 +113,8 @@ internal void handleNPCs(GmContext* context, GameState& state) {
 
   // Handle ending conversions with NPCs
   {
-    if (state.activeNPC != nullptr && UISystem::isDialogueQueueEmpty()) {
-      state.activeNPC = nullptr;
+    if (state.activeNpc != nullptr && UISystem::isDialogueQueueEmpty()) {
+      state.activeNpc = nullptr;
 
       CameraSystem::restoreOriginalCameraState(context, state);
     }
@@ -122,13 +122,13 @@ internal void handleNPCs(GmContext* context, GameState& state) {
 }
 
 void EntitySystem::initializeGameEntities(GmContext* context, GameState& state) {
-  loadNonPlayerCharacterData(context, state);
+  loadNpcData(context, state);
 }
 
 void EntitySystem::handleGameEntities(GmContext* context, GameState& state, float dt) {
   START_TIMING("handleGameEntities");
 
-  handleNPCs(context, state);
+  handleNpcs(context, state);
 
   LOG_TIME();
 }
