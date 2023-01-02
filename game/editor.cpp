@@ -322,7 +322,7 @@ internal void createObjectHistoryAction(GmContext* context, ActionType type, Obj
   HistoryAction action;
 
   action.type = type;
-  action.initialObject = object; 
+  action.initialObject = object;
 
   editor.history.push_back(action);
 }
@@ -586,10 +586,17 @@ namespace Editor {
     {
       auto& mouseDelta = input.getMouseDelta();
 
-      if (input.didClickMouse()) {
-        if (editor.isObservingObject) {
-          selectObject(context, editor.observedObject);
-          createObjectHistoryAction(context, editor.currentActionType, editor.observedObject);
+      if (input.didPressMouse()) {
+        if (editor.isObservingObject || editor.isObjectSelected) {
+          // Check to ensure that we're observing an object before
+          // we select it. If we don't, we're liable to select a
+          // stale version of editor.observedObject, which can produce
+          // a corrupted editor history.
+          if (editor.isObservingObject) {
+            selectObject(context, editor.observedObject);
+          }
+
+          createObjectHistoryAction(context, editor.currentActionType, editor.selectedObject);
         } else if (editor.currentActionType == ActionType::CREATE) {
           // @todo show an object placement preview
           createNewObject(context, state);

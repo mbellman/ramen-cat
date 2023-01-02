@@ -82,7 +82,7 @@ namespace Gamma {
 
   class InputSystem : public Signaler {
   public:
-    bool didClickMouse() const;
+    bool didPressMouse() const;
     bool didPressKey(Key key) const;
     bool didReleaseMouse() const;
     u64 getLastKeyDown() const;
@@ -96,7 +96,7 @@ namespace Gamma {
     u64 heldKeyState = 0;
     u64 pressedKeyState = 0;
     u64 lastKeyDown = 0;
-    bool didClickMouseThisFrame = false;
+    bool didPressMouseThisFrame = false;
     bool didReleaseMouseThisFrame = false;
     // @todo distinguish between left/right clicks
     bool isMouseButtonHeldDown = false;

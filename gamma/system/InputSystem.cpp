@@ -55,8 +55,8 @@ namespace Gamma {
     { SDLK_TAB, Key::TAB }
   };
 
-  bool InputSystem::didClickMouse() const {
-    return didClickMouseThisFrame;
+  bool InputSystem::didPressMouse() const {
+    return didPressMouseThisFrame;
   }
 
   bool InputSystem::didPressKey(Key key) const {
@@ -137,7 +137,7 @@ namespace Gamma {
 
     signal("mousedown", buttonEvent);
 
-    didClickMouseThisFrame = true;
+    didPressMouseThisFrame = true;
     isMouseButtonHeldDown = true;
   }
 
@@ -189,7 +189,7 @@ namespace Gamma {
 
   void InputSystem::resetPerFrameState() {
     pressedKeyState = 0;
-    didClickMouseThisFrame = false;
+    didPressMouseThisFrame = false;
     didReleaseMouseThisFrame = false;
     mouseDelta = { 0, 0 };
   }
