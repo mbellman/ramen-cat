@@ -1,4 +1,5 @@
 #include "world.h"
+#include "collisions.h"
 #include "macros.h"
 
 using namespace Gamma;
@@ -10,33 +11,6 @@ struct Platform {
   Vec3f rotation;
   Vec3f color;
 };
-
-// @temporary
-internal std::vector<std::vector<Vec3f>> platformPlanePoints = {
-  // Top
-  { Vec3f(-1.f, 1.f, -1.f ), Vec3f(-1.f, 1.f, 1.f), Vec3f(1.f, 1.f, 1.f), Vec3f(1.f, 1.f, -1.f) },
-  // Bottom
-  { Vec3f(-1.f, -1.f, 1.f), Vec3f(-1.f, -1.f, -1.f), Vec3f(1.f, -1.f, -1.f), Vec3f(1.f, -1.f, 1.f) },
-  // Left
-  { Vec3f(-1.f, -1.f, -1.f), Vec3f(-1.f, -1.f, 1.f), Vec3f(-1.f, 1.f, 1.f), Vec3f(-1.f, 1.f, -1.f) },
-  // Right
-  { Vec3f(1.f, -1.f, -1.f), Vec3f(1.f, 1.f, -1.f), Vec3f(1.f, 1.f, 1.f), Vec3f(1.f, -1.f, 1.f) },
-  // Front
-  { Vec3f(-1.f, -1.f, -1.f), Vec3f(-1.f, 1.f, -1.f), Vec3f(1.f, 1.f, -1.f), Vec3f(1.f, -1.f, -1.f) },
-  // Back
-  { Vec3f(1.f, -1.f, 1.f), Vec3f(1.f, 1.f, 1.f), Vec3f(-1.f, 1.f, 1.f), Vec3f(-1.f, -1.f, 1.f) }
-};
-
-internal void setupCollisionPlane(Plane& plane) {
-  plane.normal = Vec3f::cross(plane.p2 - plane.p1, plane.p3 - plane.p2).unit();
-
-  plane.t1 = Vec3f::cross(plane.normal, plane.p2 - plane.p1);
-  plane.t2 = Vec3f::cross(plane.normal, plane.p3 - plane.p2);
-  plane.t3 = Vec3f::cross(plane.normal, plane.p4 - plane.p3);
-  plane.t4 = Vec3f::cross(plane.normal, plane.p1 - plane.p4);
-
-  plane.nDotU = Vec3f::dot(plane.normal, Vec3f(0, 1.f, 0));
-}
 
 internal void loadGameWorldData(GmContext* context, GameState& state) {
   u64 start = Gm_GetMicroseconds();
@@ -79,8 +53,7 @@ internal void loadGameWorldData(GmContext* context, GameState& state) {
     i++;
   }
 
-  // @temporary
-  World::rebuildCollisionPlanes(context, state);
+  Collisions::rebuildCollisionPlanes(objects("platform"), state.collisionPlanes);
 
   Console::log("Loaded game world data in", Gm_GetMicroseconds() - start, "us");
 }
@@ -128,34 +101,4 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   light.color = Vec3f(1.0f);
 
   loadGameWorldData(context, state);
-}
-
-void World::rebuildCollisionPlanes(GmContext* context, GameState& state) {
-  auto start = Gm_GetMicroseconds();
-
-  state.collisionPlanes.clear();
-
-  for (auto& platform : objects("platform")) {
-    auto rotation = platform.rotation.toMatrix4f();
-
-    // @optimize allow platforms to be floor-only, ceiling-only, walls-only, or all
-    for (auto& points : platformPlanePoints) {
-      Plane plane;
-
-      plane.p1 = platform.position + (rotation * (platform.scale * points[0])).toVec3f();
-      plane.p2 = platform.position + (rotation * (platform.scale * points[1])).toVec3f();
-      plane.p3 = platform.position + (rotation * (platform.scale * points[2])).toVec3f();
-      plane.p4 = platform.position + (rotation * (platform.scale * points[3])).toVec3f();
-
-      #if GAMMA_DEVELOPER_MODE
-        plane.sourceObjectRecord = platform._record;
-      #endif
-
-      setupCollisionPlane(plane);
-
-      state.collisionPlanes.push_back(plane);
-    }
-  }
-
-  Console::log("Rebuilt collision planes in", Gm_GetMicroseconds() - start, "us");
 }

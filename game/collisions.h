@@ -12,5 +12,6 @@ struct Collision {
 };
 
 namespace Collisions {
+  void rebuildCollisionPlanes(const Gamma::ObjectPool& objects, std::vector<Plane>& planes);
   Collision getLinePlaneCollision(const Gamma::Vec3f& lineStart, const Gamma::Vec3f& lineEnd, const Plane& plane);
 }

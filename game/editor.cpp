@@ -147,7 +147,9 @@ internal void selectObject(GmContext* context, Object& object) {
   editor.isObjectSelected = true;
 }
 
-internal void rebuildEditorObjectCollisionPlanes(GmContext* context) {
+internal void updateCollisionPlanes(GmContext* context, GameState& state) {
+  Collisions::rebuildCollisionPlanes(objects("platform"), state.collisionPlanes);
+
   editor.objectCollisionPlanes.clear();
 
   for (auto& asset : meshAssets) {
@@ -364,8 +366,7 @@ internal void undoLastHistoryAction(GmContext* context, GameState& state) {
 
       editor.isObjectSelected = false;
 
-      World::rebuildCollisionPlanes(context, state);
-      rebuildEditorObjectCollisionPlanes(context);
+      updateCollisionPlanes(context, state);
 
       break;
     case ActionType::DELETE: {
@@ -380,8 +381,7 @@ internal void undoLastHistoryAction(GmContext* context, GameState& state) {
 
       commit(platform);
 
-      World::rebuildCollisionPlanes(context, state);
-      rebuildEditorObjectCollisionPlanes(context);
+      updateCollisionPlanes(context, state);
 
       break;
     }
@@ -442,8 +442,7 @@ internal void createNewObject(GmContext* context, GameState& state) {
     createObjectHistoryAction(context, ActionType::CREATE, object);
   }
 
-  World::rebuildCollisionPlanes(context, state);
-  rebuildEditorObjectCollisionPlanes(context);
+  updateCollisionPlanes(context, state);
 }
 
 internal void cloneSelectedObject(GmContext* context) {
@@ -472,8 +471,7 @@ internal void deleteObject(GmContext* context, GameState& state, Object& object)
 
     remove_object(*originalObject);
 
-    World::rebuildCollisionPlanes(context, state);
-    rebuildEditorObjectCollisionPlanes(context);
+    updateCollisionPlanes(context, state);
 
     editor.isObjectSelected = false;
   }
@@ -526,9 +524,7 @@ namespace Editor {
     state.isEditorEnabled = false;
 
     saveGameWorldData(context, state);
-
-    World::rebuildCollisionPlanes(context, state);
-    rebuildEditorObjectCollisionPlanes(context);
+    updateCollisionPlanes(context, state);
   }
 
   void initializeGameEditor(GmContext* context, GameState& state) {
@@ -710,8 +706,7 @@ namespace Editor {
       }
 
       if (input.didReleaseMouse() && editor.isObjectSelected) {
-        World::rebuildCollisionPlanes(context, state);
-        rebuildEditorObjectCollisionPlanes(context);
+        updateCollisionPlanes(context, state);
       }
     }
 
