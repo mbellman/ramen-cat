@@ -448,9 +448,10 @@ internal void respawnPlayer(GmContext* context, GameState& state) {
 
   player.position = camera.position + camera.orientation.getDirection() * 300.f;
 
-  state.velocity = Vec3f(0.f);
-
   commit(player);
+
+  state.velocity = Vec3f(0.f);
+  state.previousPlayerPosition = player.position;
 }
 
 internal void saveGameWorldData(GmContext* context, GameState& state) {
