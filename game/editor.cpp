@@ -148,15 +148,22 @@ internal void selectObject(GmContext* context, Object& object) {
 }
 
 internal void updateCollisionPlanes(GmContext* context, GameState& state) {
-  Collisions::rebuildCollisionPlanes(objects("platform"), state.collisionPlanes);
+  u64 start = Gm_GetMicroseconds();
 
+  state.collisionPlanes.clear();
   editor.objectCollisionPlanes.clear();
+
+  for (auto& platform : objects("platform")) {
+    Collisions::addObjectCollisionPlanes(platform, state.collisionPlanes);
+  }
 
   for (auto& asset : meshAssets) {
     for (auto& object : mesh(asset.name)->objects) {
-      // @todo
+      Collisions::addObjectCollisionPlanes(object, editor.objectCollisionPlanes);
     }
   }
+
+  Console::log("Rebuilt collision planes in", (Gm_GetMicroseconds() - start), " us");
 }
 
 internal void cycleCurrentMode(GmContext* context, s8 delta) {
@@ -435,7 +442,7 @@ internal void createNewObject(GmContext* context, GameState& state) {
     object.position = spawnPosition;
     object.scale = Vec3f(20.f);
     object.rotation = Quaternion(1.f, 0, 0, 0);
-    object.color = Vec3f(1.f);
+    object.color = Vec3f(0.5f, 0.5f, 1.f);
 
     commit(object);
 

@@ -53,7 +53,14 @@ internal void loadGameWorldData(GmContext* context, GameState& state) {
     i++;
   }
 
-  Collisions::rebuildCollisionPlanes(objects("platform"), state.collisionPlanes);
+  // Set up collision planes
+  {
+    state.collisionPlanes.clear();
+
+    for (auto& platform : objects("platform")) {
+      Collisions::addObjectCollisionPlanes(platform, state.collisionPlanes);
+    }
+  }
 
   Console::log("Loaded game world data in", Gm_GetMicroseconds() - start, "us");
 }

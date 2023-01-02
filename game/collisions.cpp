@@ -6,8 +6,7 @@
 
 using namespace Gamma;
 
-// @temporary
-internal std::vector<std::vector<Vec3f>> platformPlanePoints = {
+internal std::vector<std::vector<Vec3f>> facePlanePoints = {
   // Top
   { Vec3f(-1.f, 1.f, -1.f ), Vec3f(-1.f, 1.f, 1.f), Vec3f(1.f, 1.f, 1.f), Vec3f(1.f, 1.f, -1.f) },
   // Bottom
@@ -37,29 +36,38 @@ internal void setupCollisionPlane(Plane& plane) {
   plane.nDotU = Vec3f::dot(plane.normal, Vec3f(0, 1.f, 0));
 }
 
-void Collisions::rebuildCollisionPlanes(const Gamma::ObjectPool& objects, std::vector<Plane>& planes) {
-  planes.clear();
+void Collisions::addObjectCollisionPlanes(const Object& object, std::vector<Plane>& planes) {
+  Matrix4f rotation = object.rotation.toMatrix4f();
 
-  for (auto& object : objects) {
-    Matrix4f rotation = object.rotation.toMatrix4f();
+  // @todo support side masking
+  for (auto& points : facePlanePoints) {
+    Plane plane;
 
-    // @optimize allow platforms to be floor-only, ceiling-only, walls-only, or all
-    for (auto& points : platformPlanePoints) {
-      Plane plane;
+    #if GAMMA_DEVELOPER_MODE
+      plane.sourceObjectRecord = object._record;
+    #endif
 
+    // Determine the four points of the plane
+    {
       plane.p1 = object.position + (rotation * (object.scale * points[0])).toVec3f();
       plane.p2 = object.position + (rotation * (object.scale * points[1])).toVec3f();
       plane.p3 = object.position + (rotation * (object.scale * points[2])).toVec3f();
       plane.p4 = object.position + (rotation * (object.scale * points[3])).toVec3f();
-
-      #if GAMMA_DEVELOPER_MODE
-        plane.sourceObjectRecord = object._record;
-      #endif
-
-      setupCollisionPlane(plane);
-
-      planes.push_back(plane);
     }
+
+    // Precalculate the plane normal/tangents/up factor
+    {
+      plane.normal = Vec3f::cross(plane.p2 - plane.p1, plane.p3 - plane.p2).unit();
+
+      plane.t1 = Vec3f::cross(plane.normal, plane.p2 - plane.p1);
+      plane.t2 = Vec3f::cross(plane.normal, plane.p3 - plane.p2);
+      plane.t3 = Vec3f::cross(plane.normal, plane.p4 - plane.p3);
+      plane.t4 = Vec3f::cross(plane.normal, plane.p1 - plane.p4);
+
+      plane.nDotU = Vec3f::dot(plane.normal, Vec3f(0, 1.f, 0));
+    }
+
+    planes.push_back(plane);
   }
 }
 
