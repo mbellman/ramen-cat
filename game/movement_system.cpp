@@ -94,15 +94,36 @@ internal void resolveAllNpcCollisions(GmContext* context, GameState& state) {
 
   auto& player = get_player();
 
-  // @todo define a constant for NPC hit cylinder radius
-  const float distanceThreshold = 20.f + player.scale.x + 5.f;
+  // @todo define these constants elsewhere and use them in player/NPC generation
+  const float NPC_RADIUS = 20.f;
+  const float NPC_HEIGHT = 70.f;
+  const float PLAYER_RADIUS = player.scale.x;
 
-  // @todo skip npcs when not within their y range
+  const float distanceThreshold = NPC_RADIUS + PLAYER_RADIUS + 10.f;
+
+  // @todo refactor cylinder collision behavior
   for (auto& npc : state.npcs) {
+    Vec3f npcTop = npc.position + Vec3f(0, NPC_HEIGHT, 0);
+    Vec3f npcBottom = npc.position - Vec3f(0, NPC_HEIGHT, 0);
     Vec3f xzNpcToPlayer = (player.position - npc.position).xz();
+    Vec3f npcTopToPlayer = player.position - npcTop;
     float xzDistance = xzNpcToPlayer.magnitude();
+    float topDistance = npcTopToPlayer.magnitude();
 
-    if (xzDistance < distanceThreshold) {
+    if (
+      player.position.y > npcTop.y &&
+      topDistance < distanceThreshold
+    ) {
+      player.position = npcTop + npcTopToPlayer.unit() * distanceThreshold;
+
+      commit(player);
+
+      break;
+    } else if (
+      xzDistance < distanceThreshold &&
+      player.position.y < npcTop.y &&
+      player.position.y > npcBottom.y
+    ) {
       Vec3f xzNpcPosition = Vec3f(npc.position.x, player.position.y, npc.position.z);
 
       player.position = xzNpcPosition + xzNpcToPlayer.unit() * distanceThreshold;

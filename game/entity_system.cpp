@@ -67,23 +67,19 @@ internal void interactWithNpc(GmContext* context, GameState& state, NonPlayerCha
   Vec3f npcFacePosition = npc.position + Vec3f(0, 30.f, 0);
   Vec3f npcToPlayer = (player.position - npc.position);
 
-  Vec3f targetLookAtPosition = Vec3f(
-    (npcFacePosition.x + player.position.x) / 2.f,
-    npcFacePosition.y,
-    (npcFacePosition.z + player.position.z) / 2.f
-  );
-
-  ThirdPersonCamera targetCamera3p = {
-    .azimuth = atan2f(npcToPlayer.z, npcToPlayer.x) - Gm_TAU / 8.f,
-    .altitude = 0.f,
-    .radius = 150.f
-  };
-
   state.activeNpc = &npc;
 
   CameraSystem::setCameraStateOverride(context, state, {
-    .camera3p = targetCamera3p,
-    .lookAtTarget = targetLookAtPosition
+    .camera3p = {
+      .azimuth = atan2f(npcToPlayer.z, npcToPlayer.x) - Gm_TAU / 8.f,
+      .altitude = 0.f,
+      .radius = 150.f
+    },
+    .lookAtTarget = {
+      (npcFacePosition.x + player.position.x) / 2.f,
+      npcFacePosition.y,
+      (npcFacePosition.z + player.position.z) / 2.f
+    }
   });
 
   UISystem::queueDialogue(context, state, npc.dialogue);
@@ -95,13 +91,20 @@ internal void handleNpcs(GmContext* context, GameState& state) {
 
   // Handle interactions
   {
+    // @todo define these constants elsewhere and use them in player/NPC generation
+    const float NPC_RADIUS = 20.f;
+    const float NPC_HEIGHT = 70.f;
+
     if (input.didPressKey(Key::SPACE)) {
       if (state.activeNpc == nullptr) {
         for (auto& npc : state.npcs) {
-          // @todo consider y distance as well
-          auto xzDistance = (npc.position - player.position).xz().magnitude();
+          float xzDistance = (npc.position - player.position).xz().magnitude();
 
-          if (xzDistance < 100.f) {
+          if (
+            xzDistance < 100.f &&
+            player.position.y < npc.position.y + NPC_HEIGHT &&
+            player.position.y > npc.position.y - NPC_HEIGHT
+          ) {
             interactWithNpc(context, state, npc);
 
             break;
