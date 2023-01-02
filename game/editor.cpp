@@ -608,6 +608,7 @@ namespace Editor {
         for (auto& plane : collisionPlanes) {
           float nDotC = Vec3f::dot(plane.normal, inverseCameraDirection);
 
+          // Only consider planes facing the camera
           if (nDotC > 0.f) {
             auto collision = Collisions::getLinePlaneCollision(camera.position, lineOfSightEnd, plane);
             auto distance = (camera.position - collision.point).magnitude();
@@ -720,7 +721,7 @@ namespace Editor {
     // Highlight the observed/selected objects
     {
       if (editor.isObservingObject) {
-        highlightObject(context, editor.observedObject, Vec3f(1.f));
+        highlightObject(context, editor.observedObject, Vec3f(0.f));
       }
 
       if (editor.isObjectSelected) {
