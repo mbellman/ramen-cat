@@ -378,8 +378,7 @@ internal void undoLastHistoryAction(GmContext* context, GameState& state) {
       break;
     case ActionType::DELETE: {
       auto& object = action.initialObject;
-      // @todo retrieve mesh name from history action
-      auto& platform = create_object_from("platform");
+      auto& platform = create_object_from(object._record.meshIndex);
 
       platform.position = object.position;
       platform.scale = object.scale;

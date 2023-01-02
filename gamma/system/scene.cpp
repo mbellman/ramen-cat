@@ -40,7 +40,6 @@ void Gm_AddMesh(GmContext* context, const std::string& meshName, u16 maxInstance
   assert(meshMap.find(meshName) == meshMap.end(), "Mesh '" + meshName + "' already exists!");
 
   mesh->index = (u16)meshes.size();
-  mesh->id = scene.runningMeshId++;
   mesh->objects.reserve(maxInstances);
 
   meshMap.emplace(meshName, mesh);
@@ -142,6 +141,7 @@ void Gm_UseSceneFile(GmContext* context, const std::string& filename) {
   Gm_FreeYamlObject(&scene);
 }
 
+// @todo refactor with Gm_CreateObjectFrom(GmContext*, u16)
 Gamma::Object& Gm_CreateObjectFrom(GmContext* context, const std::string& meshName) {
   auto& meshMap = context->scene.meshMap;
 
@@ -150,10 +150,32 @@ Gamma::Object& Gm_CreateObjectFrom(GmContext* context, const std::string& meshNa
   auto& mesh = *meshMap.at(meshName);
   auto& object = mesh.objects.createObject();
 
-  object._record.meshId = mesh.id;
   object._record.meshIndex = mesh.index;
   object.position = Vec3f(0.0f);
-  object.rotation = Quaternion(0.f);
+  object.rotation = Quaternion(1.f, 0, 0, 0);
+  object.scale = Vec3f(1.0f);
+
+  if (mesh.lods.size() > 0) {
+    // Increment the base LoD instance count by default,
+    // which we use for vert/tri counts in scene stats.
+    // Gm_UseLodByDistance can control the per-LoD
+    // instance counts during the update loop.
+    mesh.lods[0].instanceCount++;
+  }
+
+  return object;
+}
+
+// @todo refactor with Gm_CreateObjectFrom(GmContext*, const std::string&)
+Gamma::Object& Gm_CreateObjectFrom(GmContext* context, u16 meshIndex) {
+  assert(context->scene.meshes.size() > meshIndex, "Mesh '" + std::to_string(meshIndex) + "' not found");
+
+  auto& mesh = *context->scene.meshes[meshIndex];
+  auto& object = mesh.objects.createObject();
+
+  object._record.meshIndex = meshIndex;
+  object.position = Vec3f(0.0f);
+  object.rotation = Quaternion(1.f, 0, 0, 0);
   object.scale = Vec3f(1.0f);
 
   if (mesh.lods.size() > 0) {

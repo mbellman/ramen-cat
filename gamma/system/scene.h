@@ -80,7 +80,6 @@ struct GmScene {
   // @todo when recycling a light, its lightStore entry should be removed
   std::map<std::string, Gamma::Light*> lightStore;
   Gamma::Vec3f freeCameraVelocity = Gamma::Vec3f(0.0f);
-  u16 runningMeshId = 0;
   u32 frame = 0;
   float runningTime = 0.0f;
   float zNear = 1.f;
@@ -98,6 +97,7 @@ void Gm_AddProbe(GmContext* context, const std::string& probeName, const Gamma::
 Gamma::Light& Gm_CreateLight(GmContext* context, Gamma::LightType type);
 void Gm_UseSceneFile(GmContext* context, const std::string& filename);
 Gamma::Object& Gm_CreateObjectFrom(GmContext* context, const std::string& meshName);
+Gamma::Object& Gm_CreateObjectFrom(GmContext* context, u16 meshIndex);
 void Gm_Commit(GmContext* context, const Gamma::Object& object);
 Gamma::ObjectPool& Gm_GetObjects(GmContext* context, const std::string& meshName);
 void Gm_SaveObject(GmContext* context, const std::string& objectName, const Gamma::Object& object);

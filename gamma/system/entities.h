@@ -52,12 +52,10 @@ namespace Gamma {
    * corresponding index, with ID checks for referential
    * integrity.
    *
-   * @size 8 bytes
+   * @size 6 bytes
    */
   struct ObjectRecord {
     u16 meshIndex = 0;
-    // @todo remove this and allow meshes to be 'deactivated' when freed
-    u16 meshId = 0;
     // @todo u32 id with 24 bits for id and 8 for generation,
     // allowing up to ~16.77 million objects per pool
     u16 id = 0;
