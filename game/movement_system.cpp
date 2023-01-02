@@ -1,6 +1,6 @@
 #include "movement_system.h"
 #include "ui_system.h"
-#include "collision.h"
+#include "collisions.h"
 #include "macros.h"
 
 constexpr float FORCE_GRAVITY = 750.f;
@@ -58,14 +58,14 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
   for (auto& plane : state.collisionPlanes) {
     Vec3f lineStart = state.previousPlayerPosition;
     Vec3f lineEnd = player.position - plane.normal * playerRadius;
-    auto collision = getLinePlaneCollision(lineStart, lineEnd, plane);
+    auto collision = Collisions::getLinePlaneCollision(lineStart, lineEnd, plane);
 
     if (collision.hit) {
       resolveSingleCollision(context, state, collision, dt);
     } else if (isFalling && plane.nDotU > 0.6f) {
       // @todo description
       Vec3f fallCollisionLineEnd = player.position - plane.normal * (playerRadius + 5.f);
-      auto fallCollision = getLinePlaneCollision(player.position, fallCollisionLineEnd, plane);
+      auto fallCollision = Collisions::getLinePlaneCollision(player.position, fallCollisionLineEnd, plane);
 
       if (fallCollision.hit) {
         player.position = fallCollision.point + plane.normal * playerRadius;

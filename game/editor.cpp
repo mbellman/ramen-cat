@@ -3,7 +3,7 @@
 
 #include "editor.h"
 #include "world.h"
-#include "collision.h"
+#include "collisions.h"
 #include "macros.h"
 
 using namespace Gamma;
@@ -48,6 +48,9 @@ static struct EditorState {
   u8 currentSelectedMeshIndex = 0;
   // @todo limit size?
   std::vector<HistoryAction> history;
+
+  // @todo see if we end up having to use a more optimized lookup structure/world chunks/etc.
+  std::vector<Plane> objectCollisionPlanes;
 } editor;
 
 internal std::string getModeTypeName(ModeType mode) {
@@ -142,6 +145,16 @@ internal void selectObject(GmContext* context, Object& object) {
 
   editor.selectedObject = object;
   editor.isObjectSelected = true;
+}
+
+internal void rebuildEditorObjectCollisionPlanes(GmContext* context) {
+  editor.objectCollisionPlanes.clear();
+
+  for (auto& asset : meshAssets) {
+    for (auto& object : mesh(asset.name)->objects) {
+      // @todo
+    }
+  }
 }
 
 internal void cycleCurrentMode(GmContext* context, s8 delta) {
@@ -352,6 +365,7 @@ internal void undoLastHistoryAction(GmContext* context, GameState& state) {
       editor.isObjectSelected = false;
 
       World::rebuildCollisionPlanes(context, state);
+      rebuildEditorObjectCollisionPlanes(context);
 
       break;
     case ActionType::DELETE: {
@@ -367,6 +381,7 @@ internal void undoLastHistoryAction(GmContext* context, GameState& state) {
       commit(platform);
 
       World::rebuildCollisionPlanes(context, state);
+      rebuildEditorObjectCollisionPlanes(context);
 
       break;
     }
@@ -428,6 +443,7 @@ internal void createNewObject(GmContext* context, GameState& state) {
   }
 
   World::rebuildCollisionPlanes(context, state);
+  rebuildEditorObjectCollisionPlanes(context);
 }
 
 internal void cloneSelectedObject(GmContext* context) {
@@ -457,6 +473,7 @@ internal void deleteObject(GmContext* context, GameState& state, Object& object)
     remove_object(*originalObject);
 
     World::rebuildCollisionPlanes(context, state);
+    rebuildEditorObjectCollisionPlanes(context);
 
     editor.isObjectSelected = false;
   }
@@ -511,6 +528,7 @@ namespace Editor {
     saveGameWorldData(context, state);
 
     World::rebuildCollisionPlanes(context, state);
+    rebuildEditorObjectCollisionPlanes(context);
   }
 
   void initializeGameEditor(GmContext* context, GameState& state) {
@@ -580,11 +598,15 @@ namespace Editor {
         Vec3f inverseCameraDirection = cameraDirection.invert();
         float closestDistance = Gm_FLOAT_MAX;
 
-        for (auto& plane : state.collisionPlanes) {
+        auto collisionPlanes = editor.mode == ModeType::OBJECTS
+          ? editor.objectCollisionPlanes
+          : state.collisionPlanes;
+
+        for (auto& plane : collisionPlanes) {
           float nDotC = Vec3f::dot(plane.normal, inverseCameraDirection);
 
           if (nDotC > 0.f) {
-            auto collision = getLinePlaneCollision(camera.position, lineOfSightEnd, plane);
+            auto collision = Collisions::getLinePlaneCollision(camera.position, lineOfSightEnd, plane);
             auto distance = (camera.position - collision.point).magnitude();
 
             if (collision.hit && distance < closestDistance) {
@@ -689,6 +711,7 @@ namespace Editor {
 
       if (input.didReleaseMouse() && editor.isObjectSelected) {
         World::rebuildCollisionPlanes(context, state);
+        rebuildEditorObjectCollisionPlanes(context);
       }
     }
 

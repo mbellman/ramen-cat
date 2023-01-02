@@ -1,5 +1,5 @@
 #include "camera_system.h"
-#include "collision.h"
+#include "collisions.h"
 #include "macros.h"
 
 using namespace Gamma;
@@ -101,7 +101,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
     auto& camera = get_camera();
 
     for (auto& plane : state.collisionPlanes) {
-      auto collision = getLinePlaneCollision(lookAtPosition, targetCameraPosition, plane);
+      auto collision = Collisions::getLinePlaneCollision(lookAtPosition, targetCameraPosition, plane);
       auto cDotN = Vec3f::dot(targetCameraPosition - collision.point, plane.normal);
 
       if (collision.hit && cDotN < 0.f) {

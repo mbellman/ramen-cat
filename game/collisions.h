@@ -11,4 +11,6 @@ struct Collision {
   bool hit = false;
 };
 
-Collision getLinePlaneCollision(const Gamma::Vec3f& lineStart, const Gamma::Vec3f& lineEnd, const Plane& plane);
+namespace Collisions {
+  Collision getLinePlaneCollision(const Gamma::Vec3f& lineStart, const Gamma::Vec3f& lineEnd, const Plane& plane);
+}

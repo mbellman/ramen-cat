@@ -1,4 +1,4 @@
-#include "collision.h"
+#include "collisions.h"
 #include "macros.h"
 
 #define min(a, b) (a > b ? b : a)
@@ -10,7 +10,7 @@ internal bool isInBetween(float n, float a, float b) {
   return n >= min(a, b) && n <= max(a, b);
 }
 
-Collision getLinePlaneCollision(const Vec3f& lineStart, const Vec3f& lineEnd, const Plane& plane) {
+Collision Collisions::getLinePlaneCollision(const Vec3f& lineStart, const Vec3f& lineEnd, const Plane& plane) {
   Collision collision;
   Vec3f line = lineEnd - lineStart;
 

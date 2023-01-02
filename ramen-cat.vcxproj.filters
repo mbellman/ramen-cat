@@ -126,9 +126,6 @@
     <ClCompile Include="game\camera_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="game\collision.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="game\editor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -142,6 +139,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="game\entity_system.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="game\collisions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -557,9 +557,6 @@
     <ClInclude Include="game\camera_system.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="game\collision.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="game\editor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -573,6 +570,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="game\entity_system.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\collisions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
