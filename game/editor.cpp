@@ -8,6 +8,16 @@
 
 using namespace Gamma;
 
+struct MeshAsset {
+  std::string name;
+  std::string objFilePath;
+};
+
+static std::vector<MeshAsset> meshAssets = {
+  { "lamp", "./game/assets/lamp.obj" },
+  { "da-vinci", "./game/assets/da-vinci.obj" }
+};
+
 enum ModeType {
   COLLISION_PLANES,
   OBJECTS,
@@ -35,6 +45,7 @@ static struct EditorState {
   bool isObjectSelected = false;
   ModeType mode = ModeType::COLLISION_PLANES;
   ActionType currentActionType = ActionType::POSITION;
+  u8 currentSelectedMeshIndex = 0;
   // @todo limit size?
   std::vector<HistoryAction> history;
 } editor;
@@ -390,22 +401,31 @@ internal void createNewObject(GmContext* context, GameState& state) {
   auto& camera = get_camera();
   Vec3f spawnPosition = camera.position + camera.orientation.getDirection() * 300.f;
 
-  auto& platform = create_object_from("platform");
+  // @todo use a common path for collision planes/objects
+  if (editor.mode == ModeType::COLLISION_PLANES) {
+    auto& platform = create_object_from("platform");
 
-  platform.position = spawnPosition;
-  platform.scale = Vec3f(50.f, 20.f, 50.f);
-  platform.rotation = Quaternion(1.f, 0, 0, 0);
-  platform.color = Vec3f(0, 0, 1.f);
-  
-  commit(platform);
+    platform.position = spawnPosition;
+    platform.scale = Vec3f(50.f, 20.f, 50.f);
+    platform.rotation = Quaternion(1.f, 0, 0, 0);
+    platform.color = Vec3f(0, 0, 1.f);
 
-  // @todo use createObjectHistoryAction
-  HistoryAction action;
+    commit(platform);
 
-  action.type = ActionType::CREATE;
-  action.initialObject = platform;
+    createObjectHistoryAction(context, ActionType::CREATE, platform);
+  } else if (editor.mode == ModeType::OBJECTS) {
+    auto& meshName = meshAssets[editor.currentSelectedMeshIndex].name;
+    auto& object = create_object_from(meshName);
 
-  editor.history.push_back(action);
+    object.position = spawnPosition;
+    object.scale = Vec3f(20.f);
+    object.rotation = Quaternion(1.f, 0, 0, 0);
+    object.color = Vec3f(1.f);
+
+    commit(object);
+
+    createObjectHistoryAction(context, ActionType::CREATE, object);
+  }
 
   World::rebuildCollisionPlanes(context, state);
 }
@@ -496,6 +516,10 @@ namespace Editor {
   void initializeGameEditor(GmContext* context, GameState& state) {
     auto& input = get_input();
     auto& commander = context->commander;
+
+    for (auto& asset : meshAssets) {
+      add_mesh(asset.name, 100, Mesh::Model(asset.objFilePath.c_str()));
+    }
 
     input.on<MouseWheelEvent>("mousewheel", [context, &state](const MouseWheelEvent& event) {
       if (event.direction == MouseWheelEvent::Direction::UP) {
@@ -618,6 +642,13 @@ namespace Editor {
         cycleCurrentMode(context, +1);
       } else if (input.didPressKey(Key::ARROW_LEFT)) {
         cycleCurrentMode(context, -1);
+      } else if (input.didPressKey(Key::ARROW_UP)) {
+        // @todo cycleCurrentObject
+        editor.currentSelectedMeshIndex++;
+
+        if (editor.currentSelectedMeshIndex > meshAssets.size() - 1) {
+          editor.currentSelectedMeshIndex = 0;
+        }
       }
 
       if (input.isMouseHeld() && editor.isObjectSelected) {
@@ -678,6 +709,10 @@ namespace Editor {
     {
       add_debug_message("Mode: " + getModeTypeName(editor.mode));
       add_debug_message("Action: " + getActionTypeName(editor.currentActionType));
+
+      if (editor.mode == ModeType::OBJECTS) {
+        add_debug_message("Mesh: " + meshAssets[editor.currentSelectedMeshIndex].name);
+      }
 
       if (editor.isObjectSelected) {
         // @todo clean this up
