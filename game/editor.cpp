@@ -377,17 +377,28 @@ internal void undoLastHistoryAction(GmContext* context, GameState& state) {
 
       break;
     case ActionType::DELETE: {
-      auto& object = action.initialObject;
-      auto& platform = create_object_from(object._record.meshIndex);
+      auto& deletedObject = action.initialObject;
+      auto& restoredObject = create_object_from(deletedObject._record.meshIndex);
 
-      platform.position = object.position;
-      platform.scale = object.scale;
-      platform.rotation = object.rotation;
-      platform.color = object.color;
+      restoredObject.position = deletedObject.position;
+      restoredObject.scale = deletedObject.scale;
+      restoredObject.rotation = deletedObject.rotation;
+      restoredObject.color = deletedObject.color;
 
-      commit(platform);
+      commit(restoredObject);
 
       updateCollisionPlanes(context, state);
+
+      // When restoring deleted objects using undo, we need to update
+      // older references to that object in the history as referring
+      // to the restored object, which may use a different ID/generation
+      // than the original. This preserves the integrity of objects across
+      // CREATE -> DELETE -> undo -> undo sequences.
+      for (auto& action : editor.history) {
+        if (isSameObject(action.initialObject, deletedObject)) {
+          action.initialObject._record = restoredObject._record;
+        }
+      }
 
       break;
     }
