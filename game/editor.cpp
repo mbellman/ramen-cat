@@ -11,14 +11,17 @@ using namespace Gamma;
 struct MeshAsset {
   std::string name;
   std::string file;
-  std::string texture;
+  MeshAttributes attributes;
 };
 
 static std::vector<MeshAsset> meshAssets = {
   {
     .name = "lamp",
     .file = "./game/assets/lamp.obj",
-    .texture = "./game/assets/lamp.png"
+    .attributes = {
+      .texture = "./game/assets/lamp.png",
+      .emissivity = 3.f
+    }
   },
   {
     .name = "da-vinci",
@@ -202,19 +205,18 @@ internal void cycleEditorMode(GmContext* context, s8 delta) {
 }
 
 internal void cycleActionType(GmContext* context, s8 delta) {
-  const std::initializer_list<ActionType> actionOrder = {
+  const std::initializer_list<ActionType> actionTypeOrder = {
     ActionType::POSITION,
     ActionType::SCALE,
     ActionType::ROTATE,
-    ActionType::COLOR,
     ActionType::CREATE
   };
 
-  s8 totalActionTypes = (s8)actionOrder.size();
+  s8 totalActionTypes = (s8)actionTypeOrder.size();
   s8 cycleIndex = 0;
 
   for (u8 i = 0; i < totalActionTypes; i++) {
-    if (*(actionOrder.begin() + i) == editor.currentActionType) {
+    if (*(actionTypeOrder.begin() + i) == editor.currentActionType) {
       cycleIndex = i + delta;
 
       if (cycleIndex < 0) {
@@ -227,7 +229,7 @@ internal void cycleActionType(GmContext* context, s8 delta) {
     }
   }
 
-  editor.currentActionType = *(actionOrder.begin() + cycleIndex);
+  editor.currentActionType = *(actionTypeOrder.begin() + cycleIndex);
 
   if (
     editor.currentActionType == ActionType::CREATE &&
@@ -559,7 +561,8 @@ namespace Editor {
     for (auto& asset : meshAssets) {
       add_mesh(asset.name, 100, Mesh::Model(asset.file.c_str()));
 
-      mesh(asset.name)->texture = asset.texture;
+      mesh(asset.name)->texture = asset.attributes.texture;
+      mesh(asset.name)->emissivity = asset.attributes.emissivity;
     }
 
     input.on<MouseWheelEvent>("mousewheel", [context, &state](const MouseWheelEvent& event) {

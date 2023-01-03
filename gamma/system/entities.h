@@ -206,6 +206,64 @@ namespace Gamma {
   };
 
   /**
+   * MeshAttributes
+   * --------------
+   *
+   * @todo description
+   */
+  struct MeshAttributes {
+    /**
+     * An optional albedo texture for the mesh.
+     */
+    std::string texture = "";
+    /**
+     * An optional normal map texture for the mesh.
+     */
+    std::string normalMap = "";
+    /**
+     * An optional specularity map texture for the mesh.
+     *
+     * @todo This doesn't actually control specularity yet
+     */
+    std::string specularityMap = "";
+    /**
+     * The probe name to use for probe reflectors.
+     */
+    std::string probe = "";
+    /**
+     * Defines the mesh type.
+     *
+     * @see MeshType
+     */
+    u8 type = MeshType::DEFAULT;
+    /**
+     * Controls the maximum directional cascaded shadow
+     * map that the mesh objects should be rendered to.
+     */
+    u8 maxCascade = 3;
+    /**
+     * Controls whether the mesh's instances are rendered
+     * to shadow maps, enabling them to cast shadows.
+     */
+    bool canCastShadows = true;
+    /**
+     * Configuration for particle system meshes.
+     */
+    ParticleSystem particleSystem;
+    /**
+     * Configuration for foliage meshes.
+     */
+    Foliage foliage;
+    /**
+     * Controls how intensely mesh objects render in their
+     * natural color, without a light source contribution.
+     *
+     * @todo material parameters?
+     */
+    float emissivity = 0.f;
+  };
+
+  /**
    * Mesh
    * ----
    *
@@ -214,7 +272,7 @@ namespace Gamma {
    * only contain transformation properties and other
    * instance-specific attributes.
    */
-  struct Mesh {
+  struct Mesh : MeshAttributes {
     /**
      * The index of the mesh in a scene's Mesh array,
      * used for efficient mesh lookups.
@@ -256,59 +314,10 @@ namespace Gamma {
      */
     ObjectPool objects;
     /**
-     * An optional albedo texture for the mesh.
-     */
-    std::string texture = "";
-    /**
-     * An optional normal map texture for the mesh.
-     */
-    std::string normalMap = "";
-    /**
-     * An optional specularity map texture for the mesh.
-     *
-     * @todo This doesn't actually control specularity yet
-     */
-    std::string specularityMap = "";
-    /**
-     * The probe name to use for probe reflectors.
-     */
-    std::string probe = "";
-    /**
-     * Defines the mesh type.
-     *
-     * @see MeshType
-     */
-    u8 type = MeshType::DEFAULT;
-    /**
-     * Controls the maximum directional cascaded shadow
-     * map that the mesh objects should be rendered to.
-     */
-    u8 maxCascade = 3;
-    /**
-     * Controls whether the mesh's instances are rendered
-     * to shadow maps, enabling them to cast shadows.
-     */
-    bool canCastShadows = true;
-    /**
      * Controls whether the mesh and its instances are
      * ignored in all rendering passes.
      */
     bool disabled = false;
-    /**
-     * Configuration for particle system meshes.
-     */
-    ParticleSystem particleSystem;
-    /**
-     * Configuration for foliage meshes.
-     */
-    Foliage foliage;
-    /**
-     * Controls how intensely mesh objects render in their
-     * natural color, without a light source contribution.
-     *
-     * @todo material parameters?
-     */
-    float emissivity = 0.f;
 
     static Mesh* Cube();
     static Mesh* Sphere(u8 divisions = 5);
