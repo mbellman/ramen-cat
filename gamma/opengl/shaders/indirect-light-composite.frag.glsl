@@ -35,7 +35,7 @@ void main() {
     ambient_occlusion = indirect_light.w;
   #endif
 
-  vec3 composite_color = fragment_albedo * emissivity + global_illumination;
+  vec3 composite_color = global_illumination;
 
   // @bug this tints occluded regions correctly, but
   // produces excessive darkening in certain areas

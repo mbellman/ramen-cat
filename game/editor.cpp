@@ -20,7 +20,7 @@ static std::vector<MeshAsset> meshAssets = {
     .file = "./game/assets/lamp.obj",
     .attributes = {
       .texture = "./game/assets/lamp.png",
-      .emissivity = 3.f
+      .emissivity = 5.f
     }
   },
   {

@@ -43,18 +43,23 @@ vec3 getIndirectSkyLightContribution(vec3 fragment_normal) {
 
 void main() {
   vec4 frag_color_and_depth = texture(texColorAndDepth, fragUv);
-  vec3 fragment_normal = texture(texNormalAndEmissivity, fragUv).xyz;
+  vec4 frag_normal_and_emissivity = texture(texNormalAndEmissivity, fragUv);
+  vec3 frag_color = frag_color_and_depth.rgb;
+  float frag_depth = frag_color_and_depth.w;
+  vec3 frag_normal = frag_normal_and_emissivity.xyz;
+  float frag_emissivity = frag_normal_and_emissivity.w;
   vec3 out_color = vec3(0.0);
 
   #if USE_INDIRECT_SKY_LIGHT == 1
-    out_color += frag_color_and_depth.rgb * getIndirectSkyLightContribution(fragment_normal);
+    out_color += frag_color * getIndirectSkyLightContribution(frag_normal);
   #endif
 
-  vec3 fragment_position = getWorldPosition(frag_color_and_depth.w, fragUv, matInverseProjection, matInverseView);
+  vec3 fragment_position = getWorldPosition(frag_depth, fragUv, matInverseProjection, matInverseView);
   vec3 fragment_to_camera = normalize(cameraPosition - fragment_position);
-  float fresnel_factor = pow(1.0 - max(dot(fragment_normal, fragment_to_camera), 0.0), 5);
+  float fresnel_factor = pow(1.0 - max(dot(frag_normal, fragment_to_camera), 0.0), 5);
 
+  out_color += frag_color * frag_emissivity;
   out_color += vec3(1) * fresnel_factor * 0.1;
 
-  out_color_and_depth = vec4(out_color, frag_color_and_depth.w);
+  out_color_and_depth = vec4(out_color, frag_depth);
 }
