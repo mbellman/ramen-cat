@@ -19,6 +19,7 @@ struct MeshAsset {
   MeshAttributes attributes;
 };
 
+// @todo move to World
 static std::vector<MeshAsset> meshAssets = {
   {
     .name = "lamp",
@@ -48,10 +49,14 @@ static std::vector<MeshAsset> meshAssets = {
   }
 };
 
-// @todo create these
+// @todo move to World
 static std::vector<MeshAsset> dynamicMeshPieces = {
   {
-    .name = "stair-step"
+    .name = "stair-step",
+    .defaultColor = Vec3f(0.f),
+    .create = []() {
+      return Mesh::Cube();
+    }
   }
 };
 
@@ -204,19 +209,110 @@ internal void updateCollisionPlanes(GmContext* context, GameState& state) {
 }
 
 internal void showDynamicMeshPlaceholders(GmContext* context) {
+  // Show placeholders
   for (auto& asset : meshAssets) {
     if (asset.dynamic) {
       mesh(asset.name)->disabled = false;
     }
   }
+
+  // Hide pieces
+  for (auto& asset : dynamicMeshPieces) {
+    mesh(asset.name)->disabled = true;
+  }
+}
+
+// @todo move to World
+internal void rebuildDynamicStaircases(GmContext* context) {
+  objects("stair-step").reset();
+
+  const auto sidePoints = {
+    Vec3f(1.f, 0, 0),
+    Vec3f(-1.f, 0, 0),
+    Vec3f(0, 1.f, 0),
+    Vec3f(0, -1.f, 0),
+    Vec3f(0, 0, 1.f),
+    Vec3f(0, 0, -1.f)
+  };
+
+  std::vector<Vec3f> t_points;
+
+  for (auto& staircase : objects("staircase")) {
+    auto& scale = staircase.scale;
+    auto rotation = staircase.rotation.toMatrix4f();
+    Vec3f rotationDirectionXz = staircase.rotation.getDirection().xz();
+    float yRotation = -1.f * atan2f(rotationDirectionXz.z, rotationDirectionXz.x);
+
+    t_points.clear();
+
+    // Determine the transformed staircase bounds
+    {
+      for (auto& point : sidePoints) {
+        t_points.push_back(staircase.position + (rotation * (scale * point)).toVec3f());
+      }
+    }
+
+    Vec3f start;
+    Vec3f end;
+
+    // Establish the start and end of the staircase
+    {
+      float furthest = 0.f;
+
+      for (auto& t_point : t_points) {
+        for (auto& t_point2 : t_points) {
+          float distance = (t_point2 - t_point).magnitude();
+
+          if (distance > furthest) {
+            start = t_point;
+            end = t_point2;
+
+            furthest = distance;
+          }
+        }
+      }
+    }
+
+    // Build the staircase steps
+    {
+      // @todo number of steps should depend on the distance from start to end
+      for (u8 i = 0; i < 5; i++) {
+        // @temporary
+        float r = i / 5.f;
+
+        auto& step = create_object_from("stair-step");
+
+        step.position = Vec3f::lerp(start, end, r);
+        step.color = Vec3f(0.f);
+        step.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), yRotation);
+
+        // Scale the steps to the width of the staircase platform
+        if (staircase.scale.x > staircase.scale.z) {
+          step.scale = Vec3f(staircase.scale.z, 3.f, 15.f);
+        } else {
+          step.scale = Vec3f(15.f, 3.f, staircase.scale.x);
+        }
+
+        commit(step);
+      }
+    }
+  }
 }
 
 internal void rebuildDynamicMeshes(GmContext* context) {
+  // Hide dynamic mesh placeholders
   for (auto& asset : meshAssets) {
     if (asset.dynamic) {
       mesh(asset.name)->disabled = true;
     }
   }
+
+  // Show dynamic mesh pieces
+  for (auto& asset : dynamicMeshPieces) {
+    mesh(asset.name)->disabled = false;
+  }
+
+  rebuildDynamicStaircases(context);
 }
 
 internal void cycleEditorMode(GmContext* context, s8 delta) {
@@ -606,12 +702,20 @@ namespace Editor {
     auto& input = get_input();
     auto& commander = context->commander;
 
-    for (auto& asset : meshAssets) {
-      add_mesh(asset.name, 100, asset.create());
+    // Create meshes
+    // @todo create these outside of the context of the editor itself
+    {
+      for (auto& asset : meshAssets) {
+        add_mesh(asset.name, 100, asset.create());
 
-      // @todo handle additional mesh attributes
-      mesh(asset.name)->texture = asset.attributes.texture;
-      mesh(asset.name)->emissivity = asset.attributes.emissivity;
+        // @todo handle additional mesh attributes
+        mesh(asset.name)->texture = asset.attributes.texture;
+        mesh(asset.name)->emissivity = asset.attributes.emissivity;
+      }
+
+      for (auto& asset : dynamicMeshPieces) {
+        add_mesh(asset.name, 100, asset.create());
+      }
     }
 
     input.on<MouseWheelEvent>("mousewheel", [context, &state](const MouseWheelEvent& event) {
