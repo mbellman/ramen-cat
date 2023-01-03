@@ -30,7 +30,7 @@ internal void initializeInputHandlers(GmContext* context, GameState& state) {
     }
 
     // @todo use in dev mode only
-    if (key == Key::V) {
+    if (key == Key::V && !input.isKeyHeld(Key::CONTROL)) {
       if (Gm_IsFlagEnabled(GammaFlags::VSYNC)) {
         Gm_DisableFlags(GammaFlags::VSYNC);
       } else {
