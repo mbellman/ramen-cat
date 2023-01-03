@@ -275,14 +275,12 @@ internal void rebuildDynamicStaircases(GmContext* context) {
 
     // Build the staircase steps
     {
-      // @todo number of steps should depend on the distance from start to end
-      for (u8 i = 0; i < 5; i++) {
-        // @temporary
-        float r = i / 5.f;
+      u32 totalSteps = u32((start - end).magnitude() / 30.f);
 
+      for (u32 i = 0; i < totalSteps; i++) {
         auto& step = create_object_from("stair-step");
 
-        step.position = Vec3f::lerp(start, end, r);
+        step.position = Vec3f::lerp(start, end, i / float(totalSteps));
         step.color = Vec3f(0.f);
         step.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), yRotation);
 
