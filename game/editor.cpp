@@ -10,15 +10,23 @@ using namespace Gamma;
 
 struct MeshAsset {
   std::string name;
-  std::string objFilePath;
+  std::string file;
+  std::string texture;
 };
 
 static std::vector<MeshAsset> meshAssets = {
-  { "lamp", "./game/assets/lamp.obj" },
-  { "da-vinci", "./game/assets/da-vinci.obj" }
+  {
+    .name = "lamp",
+    .file = "./game/assets/lamp.obj",
+    .texture = "./game/assets/lamp.png"
+  },
+  {
+    .name = "da-vinci",
+    .file = "./game/assets/da-vinci.obj"
+  }
 };
 
-enum ModeType {
+enum EditorMode {
   COLLISION_PLANES,
   OBJECTS,
   LIGHTS
@@ -43,7 +51,7 @@ static struct EditorState {
   Object selectedObject;
   bool isObservingObject = false;
   bool isObjectSelected = false;
-  ModeType mode = ModeType::COLLISION_PLANES;
+  EditorMode mode = EditorMode::COLLISION_PLANES;
   ActionType currentActionType = ActionType::POSITION;
   u8 currentSelectedMeshIndex = 0;
   // @todo limit size?
@@ -53,13 +61,13 @@ static struct EditorState {
   std::vector<Plane> objectCollisionPlanes;
 } editor;
 
-internal std::string getModeTypeName(ModeType mode) {
+internal std::string getEditorModeName(EditorMode mode) {
   switch (mode) {
-    case ModeType::COLLISION_PLANES:
+    case EditorMode::COLLISION_PLANES:
       return "COLLISION PLANES";
-    case ModeType::OBJECTS:
+    case EditorMode::OBJECTS:
       return "OBJECTS";
-    case ModeType::LIGHTS:
+    case EditorMode::LIGHTS:
       return "LIGHTS";
   }
 
@@ -166,11 +174,11 @@ internal void updateCollisionPlanes(GmContext* context, GameState& state) {
   Console::log("Rebuilt collision planes in", (Gm_GetMicroseconds() - start), " us");
 }
 
-internal void cycleCurrentMode(GmContext* context, s8 delta) {
-  const std::initializer_list<ModeType> modeOrder = {
-    ModeType::COLLISION_PLANES,
-    ModeType::OBJECTS,
-    ModeType::LIGHTS
+internal void cycleEditorMode(GmContext* context, s8 delta) {
+  const std::initializer_list<EditorMode> modeOrder = {
+    EditorMode::COLLISION_PLANES,
+    EditorMode::OBJECTS,
+    EditorMode::LIGHTS
   };
 
   s8 totalModes = (s8)modeOrder.size();
@@ -193,7 +201,7 @@ internal void cycleCurrentMode(GmContext* context, s8 delta) {
   editor.mode = *(modeOrder.begin() + cycleIndex);
 }
 
-internal void cycleCurrentActionType(GmContext* context, s8 delta) {
+internal void cycleActionType(GmContext* context, s8 delta) {
   const std::initializer_list<ActionType> actionOrder = {
     ActionType::POSITION,
     ActionType::SCALE,
@@ -434,7 +442,7 @@ internal void createNewObject(GmContext* context, GameState& state) {
   Vec3f spawnPosition = camera.position + camera.orientation.getDirection() * 300.f;
 
   // @todo use a common path for collision planes/objects
-  if (editor.mode == ModeType::COLLISION_PLANES) {
+  if (editor.mode == EditorMode::COLLISION_PLANES) {
     auto& platform = create_object_from("platform");
 
     platform.position = spawnPosition;
@@ -445,7 +453,7 @@ internal void createNewObject(GmContext* context, GameState& state) {
     commit(platform);
 
     createObjectHistoryAction(context, ActionType::CREATE, platform);
-  } else if (editor.mode == ModeType::OBJECTS) {
+  } else if (editor.mode == EditorMode::OBJECTS) {
     auto& meshName = meshAssets[editor.currentSelectedMeshIndex].name;
     auto& object = create_object_from(meshName);
 
@@ -549,14 +557,16 @@ namespace Editor {
     auto& commander = context->commander;
 
     for (auto& asset : meshAssets) {
-      add_mesh(asset.name, 100, Mesh::Model(asset.objFilePath.c_str()));
+      add_mesh(asset.name, 100, Mesh::Model(asset.file.c_str()));
+
+      mesh(asset.name)->texture = asset.texture;
     }
 
     input.on<MouseWheelEvent>("mousewheel", [context, &state](const MouseWheelEvent& event) {
       if (event.direction == MouseWheelEvent::Direction::UP) {
-        cycleCurrentActionType(context, -1);
+        cycleActionType(context, -1);
       } else {
-        cycleCurrentActionType(context, +1);
+        cycleActionType(context, +1);
       }
     });
 
@@ -611,7 +621,7 @@ namespace Editor {
         Vec3f inverseCameraDirection = cameraDirection.invert();
         float closestDistance = Gm_FLOAT_MAX;
 
-        auto collisionPlanes = editor.mode == ModeType::OBJECTS
+        auto collisionPlanes = editor.mode == EditorMode::OBJECTS
           ? editor.objectCollisionPlanes
           : state.collisionPlanes;
 
@@ -675,9 +685,9 @@ namespace Editor {
       } else if (input.didPressKey(Key::BACKSPACE) && editor.isObjectSelected) {
         deleteObject(context, state, editor.selectedObject);
       } else if (input.didPressKey(Key::ARROW_RIGHT)) {
-        cycleCurrentMode(context, +1);
+        cycleEditorMode(context, +1);
       } else if (input.didPressKey(Key::ARROW_LEFT)) {
-        cycleCurrentMode(context, -1);
+        cycleEditorMode(context, -1);
       } else if (input.didPressKey(Key::ARROW_UP)) {
         // @todo cycleCurrentObject
         editor.currentSelectedMeshIndex++;
@@ -743,10 +753,10 @@ namespace Editor {
 
     // Display status messages
     {
-      add_debug_message("Mode: " + getModeTypeName(editor.mode));
+      add_debug_message("Mode: " + getEditorModeName(editor.mode));
       add_debug_message("Action: " + getActionTypeName(editor.currentActionType));
 
-      if (editor.mode == ModeType::OBJECTS) {
+      if (editor.mode == EditorMode::OBJECTS) {
         add_debug_message("Mesh: " + meshAssets[editor.currentSelectedMeshIndex].name);
       }
 
