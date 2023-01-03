@@ -42,5 +42,5 @@ void main() {
     accumulatedColor += illuminated_color;
   }
 
-  out_colorAndDepth = vec4(accumulatedColor * (1.0 - emissivity), frag_color_and_depth.w);
+  out_colorAndDepth = vec4(accumulatedColor * (1.0 - min(1.0, emissivity)), frag_color_and_depth.w);
 }

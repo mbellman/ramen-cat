@@ -29,4 +29,4 @@ vec3 diffuse_term = color * radiant_flux * incidence * attenuation * hack_diffus
 vec3 specular_term = 5.0 * radiant_flux * specularity * attenuation * hack_specular_radial_influence;
 
 float emissivity = frag_normal_and_emissivity.w;
-vec3 illuminated_color = (diffuse_term + specular_term) * (1.0 - emissivity);
+vec3 illuminated_color = (diffuse_term + specular_term) * (1.0 - min(1.0, emissivity));
