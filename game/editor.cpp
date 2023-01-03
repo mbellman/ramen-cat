@@ -1,3 +1,4 @@
+#include <functional>
 #include <string>
 #include <vector>
 
@@ -8,16 +9,23 @@
 
 using namespace Gamma;
 
+typedef std::function<Mesh*()> MeshCreator;
+
 struct MeshAsset {
   std::string name;
-  std::string file;
+  bool dynamic = false;
+  Vec3f defaultColor = Vec3f(0, 0, 1.f);
+  MeshCreator create = nullptr;
   MeshAttributes attributes;
 };
 
 static std::vector<MeshAsset> meshAssets = {
   {
     .name = "lamp",
-    .file = "./game/assets/lamp.obj",
+    .defaultColor = Vec3f(1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/lamp.obj");
+    },
     .attributes = {
       .texture = "./game/assets/lamp.png",
       .emissivity = 5.f
@@ -25,7 +33,25 @@ static std::vector<MeshAsset> meshAssets = {
   },
   {
     .name = "da-vinci",
-    .file = "./game/assets/da-vinci.obj"
+    .defaultColor = Vec3f(1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/da-vinci.obj");
+    }
+  },
+  {
+    .name = "staircase",
+    .dynamic = true,
+    .defaultColor = Vec3f(0, 1.f, 0),
+    .create = []() {
+      return Mesh::Cube();
+    }
+  }
+};
+
+// @todo create these
+static std::vector<MeshAsset> dynamicMeshPieces = {
+  {
+    .name = "stair-step"
   }
 };
 
@@ -175,6 +201,22 @@ internal void updateCollisionPlanes(GmContext* context, GameState& state) {
   }
 
   Console::log("Rebuilt collision planes in", (Gm_GetMicroseconds() - start), " us");
+}
+
+internal void showDynamicMeshPlaceholders(GmContext* context) {
+  for (auto& asset : meshAssets) {
+    if (asset.dynamic) {
+      mesh(asset.name)->disabled = false;
+    }
+  }
+}
+
+internal void rebuildDynamicMeshes(GmContext* context) {
+  for (auto& asset : meshAssets) {
+    if (asset.dynamic) {
+      mesh(asset.name)->disabled = true;
+    }
+  }
 }
 
 internal void cycleEditorMode(GmContext* context, s8 delta) {
@@ -456,13 +498,13 @@ internal void createNewObject(GmContext* context, GameState& state) {
 
     createObjectHistoryAction(context, ActionType::CREATE, platform);
   } else if (editor.mode == EditorMode::OBJECTS) {
-    auto& meshName = meshAssets[editor.currentSelectedMeshIndex].name;
-    auto& object = create_object_from(meshName);
+    auto& asset = meshAssets[editor.currentSelectedMeshIndex];
+    auto& object = create_object_from(asset.name);
 
     object.position = spawnPosition;
     object.scale = Vec3f(20.f);
     object.rotation = Quaternion(1.f, 0, 0, 0);
-    object.color = Vec3f(0.5f, 0.5f, 1.f);
+    object.color = asset.defaultColor;
 
     commit(object);
 
@@ -519,7 +561,7 @@ internal void respawnPlayer(GmContext* context, GameState& state) {
   state.previousPlayerPosition = player.position;
 }
 
-internal void saveGameWorldData(GmContext* context, GameState& state) {
+internal void saveGameWorldData(GmContext* context) {
   std::string data;
 
   data += "@platform\n";
@@ -537,6 +579,8 @@ internal void saveGameWorldData(GmContext* context, GameState& state) {
 namespace Editor {
   void enableGameEditor(GmContext* context, GameState& state) {
     state.isEditorEnabled = true;
+
+    showDynamicMeshPlaceholders(context);
   }
 
   void disableGameEditor(GmContext* context, GameState& state) {
@@ -553,8 +597,9 @@ namespace Editor {
 
     state.isEditorEnabled = false;
 
-    saveGameWorldData(context, state);
+    saveGameWorldData(context);
     updateCollisionPlanes(context, state);
+    rebuildDynamicMeshes(context);
   }
 
   void initializeGameEditor(GmContext* context, GameState& state) {
@@ -562,8 +607,9 @@ namespace Editor {
     auto& commander = context->commander;
 
     for (auto& asset : meshAssets) {
-      add_mesh(asset.name, 100, Mesh::Model(asset.file.c_str()));
+      add_mesh(asset.name, 100, asset.create());
 
+      // @todo handle additional mesh attributes
       mesh(asset.name)->texture = asset.attributes.texture;
       mesh(asset.name)->emissivity = asset.attributes.emissivity;
     }
