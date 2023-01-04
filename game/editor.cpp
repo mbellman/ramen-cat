@@ -326,14 +326,13 @@ internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mo
       }
 
       if (axis.x < 0 || axis.y < 0 || axis.z < 0) {
+        // @todo description
         axis *= -1.f;
       }
 
-      if (
-        editor.mode == EditorMode::OBJECTS &&
-        World::meshAssets[editor.currentSelectedMeshIndex].flat
-      ) {
-        axis.y = 0.f;
+      if (editor.mode == EditorMode::OBJECTS) {
+        // @todo description
+        axis *= World::meshAssets[editor.currentSelectedMeshIndex].scalingFactor;
       }
 
       break;

@@ -29,8 +29,7 @@ std::vector<MeshAsset> World::meshAssets = {
   },
   {
     .name = "wall-1",
-    // @todo use a scaling factor instead
-    .flat = true,
+    .scalingFactor = Vec3f(1.f, 0, 1.f),
     .create = []() {
       return Mesh::Plane(2);
     },
