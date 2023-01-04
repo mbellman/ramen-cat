@@ -271,6 +271,7 @@ internal Vec3f getObjectAlignedActionAxis(GmContext* context, Object& object) {
 
 internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mouseDy, float dt) {
   auto& camera = get_camera();
+  auto& object = editor.history.back().initialObject;
   bool isVerticalMotion = Gm_Absf(mouseDy) > Gm_Absf(mouseDx);
   float multiplier = 1.f;
   Vec3f axis;
@@ -282,7 +283,10 @@ internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mo
       if (isVerticalMotion) {
         axis = camera.orientation.getUpDirection().alignToAxis();
       } else {
-        axis = camera.orientation.getRightDirection().alignToAxis();
+        Vec3f axisAlignedRight = camera.orientation.getRightDirection().alignToAxis();
+        Vec3f objectRight = (object.rotation.toMatrix4f() * axisAlignedRight).toVec3f();
+
+        axis = objectRight.alignToAxis();
       }
 
       if (axis.x < 0 || axis.y < 0 || axis.z < 0) {
@@ -297,8 +301,6 @@ internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mo
       if (isVerticalMotion) {
         axis = camera.orientation.getUpDirection().alignToAxis();
       } else {
-        auto& object = editor.history.back().initialObject;
-
         axis = getObjectAlignedActionAxis(context, object);
       }
 
@@ -308,8 +310,6 @@ internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mo
       multiplier = 0.2f;
 
       if (isVerticalMotion) {
-        auto& object = editor.history.back().initialObject;
-
         axis = getObjectAlignedActionAxis(context, object);
       } else {
         axis = camera.orientation.getUpDirection().alignToAxis().invert();
