@@ -287,6 +287,10 @@ namespace Gamma {
      */
     u16 id = 0;
     /**
+     * The name of the mesh.
+     */
+    std::string name = "";
+    /**
      * Static mesh vertices in model space.
      */
     std::vector<Vertex> vertices;
@@ -325,6 +329,7 @@ namespace Gamma {
     static Mesh* Model(const std::vector<std::string>& paths);
     static Mesh* Particles();
     static Mesh* Plane(u32 size, bool useLoopingTexture = false);
+    // @todo Disc(u32 divisions)
     // @todo Cylinder(u32 divisions)
 
     // @todo remove?

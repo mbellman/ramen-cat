@@ -136,6 +136,22 @@ internal void selectObject(GmContext* context, Object& object) {
 
   editor.selectedObject = object;
   editor.isObjectSelected = true;
+
+  // Change the current selected mesh index to that of the object
+  {
+    if (editor.mode == EditorMode::OBJECTS) {
+      u16 meshIndex = editor.selectedObject._record.meshIndex;
+      auto& mesh = *context->scene.meshes[meshIndex];
+
+      for (u8 i = 0; i < World::meshAssets.size(); i++) {
+        if (mesh.name == World::meshAssets[i].name) {
+          editor.currentSelectedMeshIndex = i;
+
+          break;
+        }
+      }
+    }
+  }
 }
 
 internal void updateCollisionPlanes(GmContext* context, GameState& state) {
@@ -235,38 +251,61 @@ internal void cycleActionType(GmContext* context, s8 delta) {
   }
 }
 
-internal Vec3f getObjectAlignedActionAxis(GmContext* context, Object& object) {
-  auto& camera = get_camera();
+// @todo description
+internal Vec3f getMostSimilarAxis(
+  const Vec3f& sourceAxis,
+  const Vec3f& comparedForward, const Vec3f& comparedRight, const Vec3f& comparedUp,
+  const Vec3f& resultForward, const Vec3f& resultRight, const Vec3f& resultUp
+) {
+  Vec3f similarAxis;
 
-  Vec3f cameraRight = camera.orientation.getRightDirection();
-  Vec3f objectRight = object.rotation.getLeftDirection().invert();
-  Vec3f objectForward = object.rotation.getDirection();
-  Vec3f direction;
+  float aDotF = Vec3f::dot(sourceAxis, comparedForward);
+  float aDotR = Vec3f::dot(sourceAxis, comparedRight);
+  float aDotU = Vec3f::dot(sourceAxis, comparedUp);
 
-  float cDotR = Vec3f::dot(cameraRight, objectRight);
-  float cDotF = Vec3f::dot(cameraRight, objectForward);
+  float dF = Gm_Absf(aDotF);
+  float dR = Gm_Absf(aDotR);
+  float dU = Gm_Absf(aDotU);
 
-  if (Gm_Absf(cDotR) > Gm_Absf(cDotF)) {
-    // The camera's right direction is similar to the object's,
-    // so use the object space x axis.
-    direction = objectRight;
+  if (dF > dR && dF > dU) {
+    similarAxis = resultForward;
 
-    if (cDotR < 0) {
-      // Preserve axis direction when looking toward -Z
-      direction *= -1.f;
+    if (aDotF < 0.f) {
+      similarAxis *= -1.f;
+    }
+  } else if (dR > dF && dR > dU) {
+    similarAxis = resultRight;
+
+    if (aDotR < 0.f) {
+      similarAxis *= -1.f;
     }
   } else {
-    // The camera's right direction is similar to the object's
-    // forward direction, so use the object space z axis.
-    direction = objectForward;
+    similarAxis = resultUp;
 
-    if (cDotF < 0) {
-      // Preserve axis direction when looking toward -X
-      direction *= -1.f;
+    if (aDotU < 0.f) {
+      similarAxis *= -1.f;
     }
   }
 
-  return direction;
+  return similarAxis;
+}
+
+// @todo description
+internal Vec3f getMostSimilarObjectAxis(const Vec3f& sourceAxis, Object& object) {
+  Vec3f objectForward = object.rotation.getDirection();
+  Vec3f objectRight = object.rotation.getLeftDirection().invert();
+  Vec3f objectUp = object.rotation.getUpDirection();  
+
+  return getMostSimilarAxis(sourceAxis, objectForward, objectRight, objectUp, objectForward, objectRight, objectUp);
+}
+
+// @todo description
+internal Vec3f getMostSimilarScalingAxis(const Vec3f& sourceAxis, Object& object) {
+  Vec3f objectForward = object.rotation.getDirection();
+  Vec3f objectRight = object.rotation.getLeftDirection().invert();
+  Vec3f objectUp = object.rotation.getUpDirection();
+
+  return getMostSimilarAxis(sourceAxis, objectForward, objectRight, objectUp, Vec3f(0, 0, 1.f), Vec3f(1.f, 0, 0), Vec3f(0, 1.f, 0));
 }
 
 internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mouseDy, float dt) {
@@ -281,16 +320,20 @@ internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mo
       multiplier = 20.f;
 
       if (isVerticalMotion) {
-        axis = camera.orientation.getUpDirection().alignToAxis();
+        axis = getMostSimilarScalingAxis(camera.orientation.getUpDirection(), object);
       } else {
-        Vec3f axisAlignedRight = camera.orientation.getRightDirection().alignToAxis();
-        Vec3f objectRight = (object.rotation.toMatrix4f() * axisAlignedRight).toVec3f();
-
-        axis = objectRight.alignToAxis();
+        axis = getMostSimilarScalingAxis(camera.orientation.getRightDirection(), object);
       }
 
       if (axis.x < 0 || axis.y < 0 || axis.z < 0) {
         axis *= -1.f;
+      }
+
+      if (
+        editor.mode == EditorMode::OBJECTS &&
+        World::meshAssets[editor.currentSelectedMeshIndex].flat
+      ) {
+        axis.y = 0.f;
       }
 
       break;
@@ -301,7 +344,7 @@ internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mo
       if (isVerticalMotion) {
         axis = camera.orientation.getUpDirection().alignToAxis();
       } else {
-        axis = getObjectAlignedActionAxis(context, object);
+        axis = getMostSimilarObjectAxis(camera.orientation.getRightDirection(), object);
       }
 
       break;
@@ -310,9 +353,9 @@ internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mo
       multiplier = 0.2f;
 
       if (isVerticalMotion) {
-        axis = getObjectAlignedActionAxis(context, object);
+        axis = getMostSimilarObjectAxis(camera.orientation.getRightDirection(), object);
       } else {
-        axis = camera.orientation.getUpDirection().alignToAxis().invert();
+        axis = getMostSimilarObjectAxis(camera.orientation.getUpDirection(), object).invert();
       }
 
       break;

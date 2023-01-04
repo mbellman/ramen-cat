@@ -11,8 +11,10 @@ typedef std::function<Gamma::Mesh*()> MeshCreator;
 
 struct MeshAsset {
   std::string name;
+  bool flat = false;
   bool dynamic = false;
   Gamma::Vec3f defaultColor = Gamma::Vec3f(0, 0, 1.f);
+  Gamma::Quaternion defaultRotation = Gamma::Quaternion(1.f, 0, 0, 0);
   MeshCreator create = nullptr;
   Gamma::MeshAttributes attributes;
 };

@@ -40,6 +40,7 @@ void Gm_AddMesh(GmContext* context, const std::string& meshName, u16 maxInstance
   assert(meshMap.find(meshName) == meshMap.end(), "Mesh '" + meshName + "' already exists!");
 
   mesh->index = (u16)meshes.size();
+  mesh->name = meshName;
   mesh->objects.reserve(maxInstances);
 
   meshMap.emplace(meshName, mesh);
