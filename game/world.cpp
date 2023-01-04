@@ -21,6 +21,20 @@ std::vector<MeshAsset> World::meshAssets = {
     .defaultColor = Vec3f(0.5f),
     .create = []() {
       return Mesh::Cube();
+    },
+    .attributes = {
+      .texture = "./game/assets/concrete.png",
+      .normalMap = "./game/assets/concrete-normals.png"
+    }
+  },
+  {
+    .name = "wall-1",
+    .create = []() {
+      return Mesh::Plane(2);
+    },
+    .attributes = {
+      .texture = "./game/assets/wall-1.png",
+      .normalMap = "./game/assets/wall-1-normals.png"
     }
   },
   {
@@ -89,7 +103,7 @@ internal void loadCollisionPlanesData(GmContext* context, GameState& state) {
     Collisions::addObjectCollisionPlanes(platform, state.collisionPlanes);
   }
 
-  Console::log("Loaded collision planes data in", Gm_GetMicroseconds() - start, "us");
+  Console::log("Loaded collision planes in", Gm_GetMicroseconds() - start, "us");
 }
 
 internal void loadWorldObjectsData(GmContext* context) {
@@ -126,7 +140,7 @@ internal void loadWorldObjectsData(GmContext* context) {
     }
   }
 
-  Console::log("Loaded world objects data in", Gm_GetMicroseconds() - start, "us");
+  Console::log("Loaded world objects in", Gm_GetMicroseconds() - start, "us");
 }
 
 internal void rebuildDynamicStaircases(GmContext* context) {
@@ -192,9 +206,9 @@ internal void rebuildDynamicStaircases(GmContext* context) {
 
         // Scale the steps to the width of the staircase platform
         if (staircase.scale.x > staircase.scale.z) {
-          step.scale = Vec3f(staircase.scale.z, 3.f, 15.f);
+          step.scale = Vec3f(staircase.scale.z, 3.f, 10.f);
         } else {
-          step.scale = Vec3f(15.f, 3.f, staircase.scale.x);
+          step.scale = Vec3f(10.f, 3.f, staircase.scale.x);
         }
 
         commit(step);
@@ -250,15 +264,16 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
     for (auto& asset : World::meshAssets) {
       add_mesh(asset.name, 100, asset.create());
 
-      // @todo handle additional mesh attributes
+      // @todo handle all mesh attributes
       mesh(asset.name)->texture = asset.attributes.texture;
+      mesh(asset.name)->normalMap = asset.attributes.normalMap;
       mesh(asset.name)->emissivity = asset.attributes.emissivity;
     }
 
     for (auto& asset : World::dynamicMeshPieces) {
       add_mesh(asset.name, 100, asset.create());
 
-      // @todo handle additional mesh attributes
+      // @todo handle all mesh attributes
     }
   }
 

@@ -470,11 +470,9 @@ internal void cloneSelectedObject(GmContext* context) {
   auto& camera = get_camera();
   auto cameraDirection = camera.orientation.getDirection();
 
-  auto meshName = editor.mode == EditorMode::COLLISION_PLANES
-    ? "platform"
-    : World::meshAssets[editor.currentSelectedMeshIndex].name;
-
-  auto& object = create_object_from(meshName);
+  auto& object = editor.mode == EditorMode::COLLISION_PLANES
+    ? create_object_from("platform")
+    : create_object_from(editor.selectedObject._record.meshIndex);
 
   object.position = camera.position + cameraDirection * 500.f;
   object.scale = editor.selectedObject.scale;
