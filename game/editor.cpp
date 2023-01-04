@@ -9,57 +9,6 @@
 
 using namespace Gamma;
 
-typedef std::function<Mesh*()> MeshCreator;
-
-struct MeshAsset {
-  std::string name;
-  bool dynamic = false;
-  Vec3f defaultColor = Vec3f(0, 0, 1.f);
-  MeshCreator create = nullptr;
-  MeshAttributes attributes;
-};
-
-// @todo move to World
-static std::vector<MeshAsset> meshAssets = {
-  {
-    .name = "lamp",
-    .defaultColor = Vec3f(1.f),
-    .create = []() {
-      return Mesh::Model("./game/assets/lamp.obj");
-    },
-    .attributes = {
-      .texture = "./game/assets/lamp.png",
-      .emissivity = 5.f
-    }
-  },
-  {
-    .name = "da-vinci",
-    .defaultColor = Vec3f(1.f),
-    .create = []() {
-      return Mesh::Model("./game/assets/da-vinci.obj");
-    }
-  },
-  {
-    .name = "staircase",
-    .dynamic = true,
-    .defaultColor = Vec3f(0, 1.f, 0),
-    .create = []() {
-      return Mesh::Cube();
-    }
-  }
-};
-
-// @todo move to World
-static std::vector<MeshAsset> dynamicMeshPieces = {
-  {
-    .name = "stair-step",
-    .defaultColor = Vec3f(0.f),
-    .create = []() {
-      return Mesh::Cube();
-    }
-  }
-};
-
 enum EditorMode {
   COLLISION_PLANES,
   OBJECTS,
@@ -199,7 +148,7 @@ internal void updateCollisionPlanes(GmContext* context, GameState& state) {
     Collisions::addObjectCollisionPlanes(platform, state.collisionPlanes);
   }
 
-  for (auto& asset : meshAssets) {
+  for (auto& asset : World::meshAssets) {
     for (auto& object : mesh(asset.name)->objects) {
       Collisions::addObjectCollisionPlanes(object, editor.objectCollisionPlanes);
     }
@@ -210,14 +159,14 @@ internal void updateCollisionPlanes(GmContext* context, GameState& state) {
 
 internal void showDynamicMeshPlaceholders(GmContext* context) {
   // Show placeholders
-  for (auto& asset : meshAssets) {
+  for (auto& asset : World::meshAssets) {
     if (asset.dynamic) {
       mesh(asset.name)->disabled = false;
     }
   }
 
   // Hide pieces
-  for (auto& asset : dynamicMeshPieces) {
+  for (auto& asset : World::dynamicMeshPieces) {
     mesh(asset.name)->disabled = true;
   }
 }
@@ -299,14 +248,14 @@ internal void rebuildDynamicStaircases(GmContext* context) {
 
 internal void rebuildDynamicMeshes(GmContext* context) {
   // Hide dynamic mesh placeholders
-  for (auto& asset : meshAssets) {
+  for (auto& asset : World::meshAssets) {
     if (asset.dynamic) {
       mesh(asset.name)->disabled = true;
     }
   }
 
   // Show dynamic mesh pieces
-  for (auto& asset : dynamicMeshPieces) {
+  for (auto& asset : World::dynamicMeshPieces) {
     mesh(asset.name)->disabled = false;
   }
 
@@ -592,7 +541,7 @@ internal void createNewObject(GmContext* context, GameState& state) {
 
     createObjectHistoryAction(context, ActionType::CREATE, platform);
   } else if (editor.mode == EditorMode::OBJECTS) {
-    auto& asset = meshAssets[editor.currentSelectedMeshIndex];
+    auto& asset = World::meshAssets[editor.currentSelectedMeshIndex];
     auto& object = create_object_from(asset.name);
 
     object.position = spawnPosition;
@@ -614,7 +563,7 @@ internal void cloneSelectedObject(GmContext* context) {
 
   auto meshName = editor.mode == EditorMode::COLLISION_PLANES
     ? "platform"
-    : meshAssets[editor.currentSelectedMeshIndex].name;
+    : World::meshAssets[editor.currentSelectedMeshIndex].name;
 
   auto& object = create_object_from(meshName);
 
@@ -703,7 +652,7 @@ namespace Editor {
     // Create meshes
     // @todo create these outside of the context of the editor itself
     {
-      for (auto& asset : meshAssets) {
+      for (auto& asset : World::meshAssets) {
         add_mesh(asset.name, 100, asset.create());
 
         // @todo handle additional mesh attributes
@@ -711,7 +660,7 @@ namespace Editor {
         mesh(asset.name)->emissivity = asset.attributes.emissivity;
       }
 
-      for (auto& asset : dynamicMeshPieces) {
+      for (auto& asset : World::dynamicMeshPieces) {
         add_mesh(asset.name, 100, asset.create());
       }
     }
@@ -846,7 +795,7 @@ namespace Editor {
         // @todo cycleCurrentObject
         editor.currentSelectedMeshIndex++;
 
-        if (editor.currentSelectedMeshIndex > meshAssets.size() - 1) {
+        if (editor.currentSelectedMeshIndex > World::meshAssets.size() - 1) {
           editor.currentSelectedMeshIndex = 0;
         }
       }
@@ -911,7 +860,7 @@ namespace Editor {
       add_debug_message("Action: " + getActionTypeName(editor.currentActionType));
 
       if (editor.mode == EditorMode::OBJECTS) {
-        add_debug_message("Mesh: " + meshAssets[editor.currentSelectedMeshIndex].name);
+        add_debug_message("Mesh: " + World::meshAssets[editor.currentSelectedMeshIndex].name);
       }
 
       if (editor.isObjectSelected) {

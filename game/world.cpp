@@ -4,6 +4,45 @@
 
 using namespace Gamma;
 
+std::vector<MeshAsset> World::meshAssets = {
+  {
+    .name = "lamp",
+    .defaultColor = Vec3f(1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/lamp.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/lamp.png",
+      .emissivity = 5.f
+    }
+  },
+  {
+    .name = "da-vinci",
+    .defaultColor = Vec3f(1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/da-vinci.obj");
+    }
+  },
+  {
+    .name = "staircase",
+    .dynamic = true,
+    .defaultColor = Vec3f(0, 1.f, 0),
+    .create = []() {
+      return Mesh::Cube();
+    }
+  }
+};
+
+std::vector<MeshAsset> World::dynamicMeshPieces = {
+  {
+    .name = "stair-step",
+    .defaultColor = Vec3f(0.f),
+    .create = []() {
+      return Mesh::Cube();
+    }
+  }
+};
+
 // @temporary
 struct Platform {
   Vec3f position;
