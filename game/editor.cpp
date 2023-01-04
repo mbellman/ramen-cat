@@ -567,6 +567,12 @@ namespace Editor {
       }
     });
 
+    input.on<Key>("keyup", [context](Key key) {
+      if (key == Key::C) {
+        mesh("platform")->disabled = !mesh("platform")->disabled;
+      }
+    });
+
     context->commander.on<std::string>("command", [&state, context](std::string command) {
       if (state.isEditorEnabled) {
         if (Gm_StringStartsWith(command, "color ")) {
