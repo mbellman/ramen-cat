@@ -527,7 +527,20 @@ internal void saveCollisionPlanesData(GmContext* context) {
 }
 
 internal void saveWorldObjectsData(GmContext* context) {
-  // @todo
+  std::string data;
+
+  for (auto& asset : World::meshAssets) {
+    data += "@" + asset.name + "\n";
+
+    for (auto& object : objects(asset.name)) {
+      data += Gm_ToString(object.position) + ",";
+      data += Gm_ToString(object.scale) + ",";
+      data += Gm_ToString(object.rotation) + ",";
+      data += Gm_ToString(object.color) + "\n";
+    }
+  }
+
+  Gm_WriteFileContents("./game/data_world_objects.txt", data);
 }
 
 namespace Editor {
@@ -597,6 +610,12 @@ namespace Editor {
         }
       }
     });
+
+    for (auto& asset : World::meshAssets) {
+      for (auto& object : objects(asset.name)) {
+        Collisions::addObjectCollisionPlanes(object, editor.objectCollisionPlanes);
+      }
+    }
   }
 
   void handleGameEditor(GmContext* context, GameState& state, float dt) {

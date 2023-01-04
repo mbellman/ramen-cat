@@ -58,7 +58,7 @@ struct Platform {
   Vec3f color;
 };
 
-internal void loadGameWorldData(GmContext* context, GameState& state) {
+internal void loadCollisionPlanesData(GmContext* context, GameState& state) {
   u64 start = Gm_GetMicroseconds();
 
   // @todo eventually store as binary data
@@ -89,7 +89,44 @@ internal void loadGameWorldData(GmContext* context, GameState& state) {
     Collisions::addObjectCollisionPlanes(platform, state.collisionPlanes);
   }
 
-  Console::log("Loaded game world data in", Gm_GetMicroseconds() - start, "us");
+  Console::log("Loaded collision planes data in", Gm_GetMicroseconds() - start, "us");
+}
+
+internal void loadWorldObjectsData(GmContext* context) {
+  u64 start = Gm_GetMicroseconds();
+
+  // @todo eventually store as binary data
+  auto worldData = Gm_LoadFileContents("./game/data_world_objects.txt");
+  auto lines = Gm_SplitString(worldData, "\n");
+
+  std::string meshName;
+
+  for (u32 i = 0; i < lines.size(); i++) {
+    auto& line = lines[i];
+
+    if (line.size() == 0) {
+      continue;
+    }
+
+    if (line[0] == '@') {
+      meshName = line.substr(1);
+    } else {
+      auto parts = Gm_SplitString(line, ",");
+      auto& object = create_object_from(meshName);
+
+      #define df(n) stof(parts[n])
+      #define di(n) stoi(parts[n])
+
+      object.position = Vec3f(df(0), df(1), df(2));
+      object.scale = Vec3f(df(3), df(4), df(5));
+      object.rotation = Quaternion(df(6), df(7), df(8), df(9));
+      object.color = pVec4(di(10), di(11), di(12));
+
+      commit(object);
+    }
+  }
+
+  Console::log("Loaded world objects data in", Gm_GetMicroseconds() - start, "us");
 }
 
 internal void rebuildDynamicStaircases(GmContext* context) {
@@ -208,8 +245,6 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   light.direction = Vec3f(-0.2f, -1.f, -1.f);
   light.color = Vec3f(1.0f);
 
-  loadGameWorldData(context, state);
-
   // Create meshes
   {
     for (auto& asset : World::meshAssets) {
@@ -225,6 +260,14 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
 
       // @todo handle additional mesh attributes
     }
+  }
+
+  // Load world data
+  {
+    loadCollisionPlanesData(context, state);
+    loadWorldObjectsData(context);
+
+    World::rebuildDynamicMeshes(context);
   }
 }
 
