@@ -22,4 +22,5 @@ namespace World {
   extern std::vector<MeshAsset> dynamicMeshPieces;
 
   void initializeGameWorld(GmContext* context, GameState& state);
+  void rebuildDynamicMeshes(GmContext* context);
 }

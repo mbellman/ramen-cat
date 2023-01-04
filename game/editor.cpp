@@ -171,97 +171,6 @@ internal void showDynamicMeshPlaceholders(GmContext* context) {
   }
 }
 
-// @todo move to World
-internal void rebuildDynamicStaircases(GmContext* context) {
-  objects("stair-step").reset();
-
-  const auto sidePoints = {
-    Vec3f(1.f, 0, 0),
-    Vec3f(-1.f, 0, 0),
-    Vec3f(0, 1.f, 0),
-    Vec3f(0, -1.f, 0),
-    Vec3f(0, 0, 1.f),
-    Vec3f(0, 0, -1.f)
-  };
-
-  std::vector<Vec3f> t_points;
-
-  for (auto& staircase : objects("staircase")) {
-    auto& scale = staircase.scale;
-    auto rotation = staircase.rotation.toMatrix4f();
-    Vec3f rotationDirectionXz = staircase.rotation.getDirection().xz();
-    float yRotation = -1.f * atan2f(rotationDirectionXz.z, rotationDirectionXz.x);
-
-    t_points.clear();
-
-    // Determine the transformed staircase bounds
-    {
-      for (auto& point : sidePoints) {
-        t_points.push_back(staircase.position + (rotation * (scale * point)).toVec3f());
-      }
-    }
-
-    Vec3f start;
-    Vec3f end;
-
-    // Establish the start and end of the staircase
-    {
-      float furthest = 0.f;
-
-      for (auto& t_point : t_points) {
-        for (auto& t_point2 : t_points) {
-          float distance = (t_point2 - t_point).magnitude();
-
-          if (distance > furthest) {
-            start = t_point;
-            end = t_point2;
-
-            furthest = distance;
-          }
-        }
-      }
-    }
-
-    // Build the staircase steps
-    {
-      u32 totalSteps = u32((start - end).magnitude() / 30.f);
-
-      for (u32 i = 0; i < totalSteps; i++) {
-        auto& step = create_object_from("stair-step");
-
-        step.position = Vec3f::lerp(start, end, i / float(totalSteps));
-        step.color = Vec3f(0.f);
-        step.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), yRotation);
-
-        // Scale the steps to the width of the staircase platform
-        if (staircase.scale.x > staircase.scale.z) {
-          step.scale = Vec3f(staircase.scale.z, 3.f, 15.f);
-        } else {
-          step.scale = Vec3f(15.f, 3.f, staircase.scale.x);
-        }
-
-        commit(step);
-      }
-    }
-  }
-}
-
-internal void rebuildDynamicMeshes(GmContext* context) {
-  // Hide dynamic mesh placeholders
-  for (auto& asset : World::meshAssets) {
-    if (asset.dynamic) {
-      mesh(asset.name)->disabled = true;
-    }
-  }
-
-  // Show dynamic mesh pieces
-  for (auto& asset : World::dynamicMeshPieces) {
-    mesh(asset.name)->disabled = false;
-  }
-
-  rebuildDynamicStaircases(context);
-}
-
 internal void cycleEditorMode(GmContext* context, s8 delta) {
   const std::initializer_list<EditorMode> modeOrder = {
     EditorMode::COLLISION_PLANES,
@@ -642,28 +551,13 @@ namespace Editor {
 
     saveGameWorldData(context);
     updateCollisionPlanes(context, state);
-    rebuildDynamicMeshes(context);
+
+    World::rebuildDynamicMeshes(context);
   }
 
   void initializeGameEditor(GmContext* context, GameState& state) {
     auto& input = get_input();
     auto& commander = context->commander;
-
-    // Create meshes
-    // @todo create these outside of the context of the editor itself
-    {
-      for (auto& asset : World::meshAssets) {
-        add_mesh(asset.name, 100, asset.create());
-
-        // @todo handle additional mesh attributes
-        mesh(asset.name)->texture = asset.attributes.texture;
-        mesh(asset.name)->emissivity = asset.attributes.emissivity;
-      }
-
-      for (auto& asset : World::dynamicMeshPieces) {
-        add_mesh(asset.name, 100, asset.create());
-      }
-    }
 
     input.on<MouseWheelEvent>("mousewheel", [context, &state](const MouseWheelEvent& event) {
       if (event.direction == MouseWheelEvent::Direction::UP) {
