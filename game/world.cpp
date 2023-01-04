@@ -17,10 +17,17 @@ std::vector<MeshAsset> World::meshAssets = {
     }
   },
   {
-    .name = "da-vinci",
-    .defaultColor = Vec3f(1.f),
+    .name = "concrete-slab",
+    .defaultColor = Vec3f(0.5f),
     .create = []() {
-      return Mesh::Model("./game/assets/da-vinci.obj");
+      return Mesh::Cube();
+    }
+  },
+  {
+    .name = "corrugated-metal",
+    .defaultColor = Vec3f(0.5f),
+    .create = []() {
+      return Mesh::Model("./game/assets/corrugated-metal.obj");
     }
   },
   {
@@ -55,50 +62,31 @@ internal void loadGameWorldData(GmContext* context, GameState& state) {
   u64 start = Gm_GetMicroseconds();
 
   // @todo eventually store as binary data
-  auto worldData = Gm_LoadFileContents("./game/data_world.txt");
+  auto worldData = Gm_LoadFileContents("./game/data_collision_planes.txt");
   auto lines = Gm_SplitString(worldData, "\n");
 
-  // @temporary
+  state.collisionPlanes.clear();
   objects("platform").reset();
 
-  // @temporary
-  std::vector<Platform> platforms;
-  Platform platform;
-
-  // @temporary
-  u32 i = 0;
-
-  // @temporary
-  while (i < lines.size() - 1) {
-    auto& line = lines[i];
-
-    if (line[0] == '@') {
-      // @todo check object name
-    } else {
-      auto parts = Gm_SplitString(line, ",");
-      auto& platform = create_object_from("platform");
-
-      #define df(i) stof(parts[i])
-      #define di(i) stoi(parts[i])
-
-      platform.position = Vec3f(df(0), df(1), df(2));
-      platform.scale = Vec3f(df(3), df(4), df(5));
-      platform.rotation = Quaternion(df(6), df(7), df(8), df(9));
-      platform.color = pVec4(di(10), di(11), di(12));
-
-      commit(platform);
+  for (auto& line : lines) {
+    if (line.size() == 0) {
+      continue;
     }
 
-    i++;
-  }
+    auto parts = Gm_SplitString(line, ",");
+    auto& platform = create_object_from("platform");
 
-  // Set up collision planes
-  {
-    state.collisionPlanes.clear();
+    #define df(n) stof(parts[n])
+    #define di(n) stoi(parts[n])
 
-    for (auto& platform : objects("platform")) {
-      Collisions::addObjectCollisionPlanes(platform, state.collisionPlanes);
-    }
+    platform.position = Vec3f(df(0), df(1), df(2));
+    platform.scale = Vec3f(df(3), df(4), df(5));
+    platform.rotation = Quaternion(df(6), df(7), df(8), df(9));
+    platform.color = pVec4(di(10), di(11), di(12));
+
+    commit(platform);
+
+    Collisions::addObjectCollisionPlanes(platform, state.collisionPlanes);
   }
 
   Console::log("Loaded game world data in", Gm_GetMicroseconds() - start, "us");

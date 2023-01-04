@@ -513,10 +513,8 @@ internal void respawnPlayer(GmContext* context, GameState& state) {
   state.previousPlayerPosition = player.position;
 }
 
-internal void saveGameWorldData(GmContext* context) {
+internal void saveCollisionPlanesData(GmContext* context) {
   std::string data;
-
-  data += "@platform\n";
 
   for (auto& platform : objects("platform")) {
     data += Gm_ToString(platform.position) + ",";
@@ -525,7 +523,11 @@ internal void saveGameWorldData(GmContext* context) {
     data += Gm_ToString(platform.color) + "\n";
   }
 
-  Gm_WriteFileContents("./game/data_world.txt", data);
+  Gm_WriteFileContents("./game/data_collision_planes.txt", data);
+}
+
+internal void saveWorldObjectsData(GmContext* context) {
+  // @todo
 }
 
 namespace Editor {
@@ -549,7 +551,8 @@ namespace Editor {
 
     state.isEditorEnabled = false;
 
-    saveGameWorldData(context);
+    saveCollisionPlanesData(context);
+    saveWorldObjectsData(context);
     updateCollisionPlanes(context, state);
 
     World::rebuildDynamicMeshes(context);
