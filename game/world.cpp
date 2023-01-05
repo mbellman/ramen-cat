@@ -28,6 +28,17 @@ std::vector<MeshAsset> World::meshAssets = {
     }
   },
   {
+    .name = "metal-panel",
+    .defaultColor = Vec3f(0.5f),
+    .create = []() {
+      return Mesh::Cube();
+    },
+    .attributes = {
+      .texture = "./game/assets/metal-panel.png",
+      .normalMap = "./game/assets/metal-panel-normals.png"
+    }
+  },
+  {
     .name = "wall-1",
     .defaultColor = Vec3f(1.f),
     .scalingFactor = Vec3f(1.f, 0, 1.f),

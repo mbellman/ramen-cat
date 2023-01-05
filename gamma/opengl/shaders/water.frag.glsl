@@ -196,8 +196,8 @@ void main() {
 
   // @hack Add in the base water color, proportional to fresnel
   water_color += BASE_WATER_COLOR * fresnel_factor;
-  // @hack Fade to white at grazing angles
-  water_color += vec3(1) * pow(1.0 - plane_fresnel, 15);
+  // @hack Fade to aquamarine at grazing angles
+  water_color += vec3(0, 1, 1) * pow(1.0 - plane_fresnel, 15);
 
   out_color_and_depth = vec4(water_color, gl_FragCoord.z);
 }
