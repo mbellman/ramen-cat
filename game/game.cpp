@@ -20,13 +20,13 @@ internal void initializeInputHandlers(GmContext* context, GameState& state) {
 
   input.on<MouseButtonEvent>("mousedown", [&](const MouseButtonEvent& event) {
     if (!Gm_IsWindowFocused()) {
-      SDL_SetRelativeMouseMode(SDL_TRUE);
+      Gm_FocusWindow();
     }
   });
 
   input.on<Key>("keyup", [&](Key key) {
     if (key == Key::ESCAPE) {
-      SDL_SetRelativeMouseMode(SDL_FALSE);
+      Gm_UnfocusWindow();
     }
 
     // @todo use in dev mode only

@@ -270,3 +270,11 @@ void Gm_DestroyContext(GmContext* context) {
 bool Gm_IsWindowFocused() {
   return SDL_GetRelativeMouseMode();
 }
+
+void Gm_FocusWindow() {
+  SDL_SetRelativeMouseMode(SDL_TRUE);
+}
+
+void Gm_UnfocusWindow() {
+  SDL_SetRelativeMouseMode(SDL_FALSE);
+}
