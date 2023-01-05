@@ -82,6 +82,7 @@ std::vector<MeshAsset> World::dynamicMeshPieces = {
   {
     .name = "stair-step",
     .defaultColor = Vec3f(0.f),
+    .maxInstances = 10000,
     .create = []() {
       return Mesh::Cube();
     }
@@ -286,8 +287,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   // Create meshes
   {
     for (auto& asset : World::meshAssets) {
-      // @todo asset.maxInstances
-      add_mesh(asset.name, 100, asset.create());
+      add_mesh(asset.name, asset.maxInstances, asset.create());
 
       // @todo handle all mesh attributes
       mesh(asset.name)->texture = asset.attributes.texture;
@@ -296,7 +296,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
     }
 
     for (auto& asset : World::dynamicMeshPieces) {
-      add_mesh(asset.name, 100, asset.create());
+      add_mesh(asset.name, asset.maxInstances, asset.create());
 
       // @todo handle all mesh attributes
     }

@@ -16,6 +16,7 @@ struct MeshAsset {
   // @todo implement this
   Gamma::Quaternion defaultRotation = Gamma::Quaternion(1.f, 0, 0, 0);
   Gamma::Vec3f scalingFactor = Gamma::Vec3f(1.f);
+  u16 maxInstances = 100;
   MeshCreator create = nullptr;
   Gamma::MeshAttributes attributes;
 };
