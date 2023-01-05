@@ -82,11 +82,13 @@ namespace Gamma {
 
   class InputSystem : public Signaler {
   public:
+    bool didMoveMouseWheel() const;
     bool didPressMouse() const;
     bool didPressKey(Key key) const;
     bool didReleaseMouse() const;
     u64 getLastKeyDown() const;
     const Point<int>& getMouseDelta() const;
+    const MouseWheelEvent::Direction getMouseWheelDirection() const;
     void handleEvent(const SDL_Event& event);
     bool isKeyHeld(Key key) const;
     bool isMouseHeld() const;
@@ -98,9 +100,11 @@ namespace Gamma {
     u64 lastKeyDown = 0;
     bool didPressMouseThisFrame = false;
     bool didReleaseMouseThisFrame = false;
+    bool didMoveMouseWheelThisFrame = false;
     // @todo distinguish between left/right clicks
     bool isMouseButtonHeldDown = false;
     Point<int> mouseDelta = { 0, 0 };
+    MouseWheelEvent::Direction mousewheelDirection;
 
     void handleKeyDown(const SDL_Keycode& code);
     void handleKeyUp(const SDL_Keycode& code);

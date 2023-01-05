@@ -55,6 +55,10 @@ namespace Gamma {
     { SDLK_TAB, Key::TAB }
   };
 
+  bool InputSystem::didMoveMouseWheel() const {
+    return didMoveMouseWheelThisFrame;
+  }
+
   bool InputSystem::didPressMouse() const {
     return didPressMouseThisFrame;
   }
@@ -73,6 +77,10 @@ namespace Gamma {
 
   const Point<int>& InputSystem::getMouseDelta() const {
     return mouseDelta;
+  }
+
+  const MouseWheelEvent::Direction InputSystem::getMouseWheelDirection() const {
+    return mousewheelDirection;
   }
 
   void InputSystem::handleEvent(const SDL_Event& event) {
@@ -173,6 +181,9 @@ namespace Gamma {
       : MouseWheelEvent::UP;
 
     signal("mousewheel", wheelEvent);
+
+    didMoveMouseWheelThisFrame = true;
+    mousewheelDirection = wheelEvent.direction;
   }
 
   void InputSystem::handleTextInput(char character) {
@@ -191,6 +202,7 @@ namespace Gamma {
     pressedKeyState = 0;
     didPressMouseThisFrame = false;
     didReleaseMouseThisFrame = false;
+    didMoveMouseWheelThisFrame = false;
     mouseDelta = { 0, 0 };
   }
 }

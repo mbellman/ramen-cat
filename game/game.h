@@ -26,12 +26,20 @@ struct CameraState {
   Gamma::Vec3f lookAtTarget;
 };
 
+enum CameraMode {
+  FIRST_PERSON,
+  NORMAL,
+  ZOOM_OUT
+};
+
 struct GameState {
   Gamma::ThirdPersonCamera camera3p;
   Gamma::Vec3f velocity;
   Gamma::Vec3f previousPlayerPosition;
   Gamma::Vec3f lastSolidGroundPosition;
   Gamma::Vec3f lastBumpedWallNormal;
+
+  CameraMode cameraMode = CameraMode::NORMAL;
 
   float frameStartTime = 0.f;
   float lastTimeOnSolidGround = 0.f;

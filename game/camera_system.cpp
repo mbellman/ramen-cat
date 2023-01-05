@@ -9,7 +9,15 @@ internal float easeOut(float t) {
 }
 
 internal void updateThirdPersonCameraRadius(GameState& state, float dt) {
-  state.camera3p.radius = 300.f + 200.f * state.camera3p.altitude / Gm_HALF_PI;
+  if (state.cameraMode == CameraMode::FIRST_PERSON) {
+    state.camera3p.radius = 5.f;
+
+    return;
+  }
+
+  float baseRadius = state.cameraMode == CameraMode::NORMAL ? 300.f : 600.f;
+
+  state.camera3p.radius = baseRadius + 200.f * state.camera3p.altitude / Gm_HALF_PI;
 
   if (state.isPlayerMovingThisFrame && state.camera3p.radius < 130.f) {
     state.camera3p.radius += 100.f * dt;
@@ -81,7 +89,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
   auto lookAtPosition = getLookAtTargetPosition(context, state);
   auto targetCameraPosition = lookAtPosition + state.camera3p.calculatePosition();
 
-  // Control camera using mouse movements
+  // Handle camera control inputs
   {
     // @todo Gm_IsWindowFocused()
     if (SDL_GetRelativeMouseMode() && !state.useCameraOverride) {
@@ -90,9 +98,35 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
       state.camera3p.azimuth -= delta.x / 1000.f;
       state.camera3p.altitude += delta.y / 1000.f;
 
-      state.camera3p.limitAltitude(0.99f);
+      state.camera3p.limitAltitude(0.95f);
     }
 
+    // Handle camera mode changes
+    if (input.didMoveMouseWheel()) {
+      if (input.getMouseWheelDirection() == MouseWheelEvent::DOWN) {
+        // Zoom further out
+        if (state.cameraMode == CameraMode::FIRST_PERSON) {
+          state.cameraMode = CameraMode::NORMAL;
+        } else {
+          state.cameraMode = CameraMode::ZOOM_OUT;
+        }
+      } else {
+        // Zoom further in
+        if (state.cameraMode == CameraMode::ZOOM_OUT) {
+          state.cameraMode = CameraMode::NORMAL;
+        } else if (state.isOnSolidGround && !state.isPlayerMovingThisFrame) {
+          state.cameraMode = CameraMode::FIRST_PERSON;
+        }
+      }
+    } else if (state.cameraMode == CameraMode::FIRST_PERSON && state.isPlayerMovingThisFrame) {
+      // Exit first-person mode whenever moving the player
+      state.cameraMode = CameraMode::NORMAL;
+    }
+
+    // Disable movement particles in first-person mode
+    mesh("player-particle")->disabled = state.cameraMode == CameraMode::FIRST_PERSON;
+
+    // Wrap the azimuth to [0, Gm_TAU]
     state.camera3p.azimuth = Gm_Modf(state.camera3p.azimuth, Gm_TAU);
   }
 
