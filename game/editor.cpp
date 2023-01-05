@@ -508,7 +508,7 @@ internal void createNewObject(GmContext* context, GameState& state) {
   updateCollisionPlanes(context, state);
 }
 
-internal void cloneSelectedObject(GmContext* context) {
+internal void cloneSelectedObject(GmContext* context, GameState& state) {
   auto& camera = get_camera();
   auto cameraDirection = camera.orientation.getDirection();
 
@@ -525,6 +525,7 @@ internal void cloneSelectedObject(GmContext* context) {
 
   selectObject(context, object);
   createObjectHistoryAction(context, ActionType::CREATE, object);
+  updateCollisionPlanes(context, state);
 }
 
 internal void deleteObject(GmContext* context, GameState& state, Object& object) {
@@ -744,7 +745,7 @@ namespace Editor {
       if (CTRL_Z) {
         undoLastHistoryAction(context, state);
       } else if (CTRL_V && editor.isObjectSelected) {
-        cloneSelectedObject(context);
+        cloneSelectedObject(context, state);
       } else if (input.didPressKey(Key::R)) {
         respawnPlayer(context, state);
       } else if (input.didPressKey(Key::BACKSPACE) && editor.isObjectSelected) {

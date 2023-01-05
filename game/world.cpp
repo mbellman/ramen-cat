@@ -286,6 +286,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   // Create meshes
   {
     for (auto& asset : World::meshAssets) {
+      // @todo asset.maxInstances
       add_mesh(asset.name, 100, asset.create());
 
       // @todo handle all mesh attributes
