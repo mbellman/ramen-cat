@@ -107,7 +107,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
       if (collision.hit && cDotN < 0.f) {
         auto playerToCollision = collision.point - lookAtPosition;
 
-        targetCameraPosition = lookAtPosition + playerToCollision * 0.95f;
+        targetCameraPosition = lookAtPosition + playerToCollision * 0.9f;
       }
     }
   }

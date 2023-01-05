@@ -13,7 +13,7 @@ std::vector<MeshAsset> World::meshAssets = {
     },
     .attributes = {
       .texture = "./game/assets/lamp.png",
-      .emissivity = 5.f
+      .emissivity = 3.f
     }
   },
   {
@@ -29,6 +29,7 @@ std::vector<MeshAsset> World::meshAssets = {
   },
   {
     .name = "wall-1",
+    .defaultColor = Vec3f(1.f),
     .scalingFactor = Vec3f(1.f, 0, 1.f),
     .create = []() {
       return Mesh::Plane(2);
@@ -39,10 +40,32 @@ std::vector<MeshAsset> World::meshAssets = {
     }
   },
   {
+    .name = "wall-2",
+    .defaultColor = Vec3f(1.f),
+    .scalingFactor = Vec3f(1.f, 0, 1.f),
+    .create = []() {
+      return Mesh::Plane(2);
+    },
+    .attributes = {
+      .texture = "./game/assets/wall-2.png",
+      .normalMap = "./game/assets/wall-2-normals.png"
+    }
+  },
+  {
     .name = "corrugated-metal",
     .defaultColor = Vec3f(0.5f),
     .create = []() {
       return Mesh::Model("./game/assets/corrugated-metal.obj");
+    }
+  },
+  {
+    .name = "roof",
+    .defaultColor = Vec3f(1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/roof.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/roof.png"
     }
   },
   {
