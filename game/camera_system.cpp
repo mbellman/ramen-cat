@@ -91,8 +91,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
 
   // Handle camera control inputs
   {
-    // @todo Gm_IsWindowFocused()
-    if (SDL_GetRelativeMouseMode() && !state.useCameraOverride) {
+    if (Gm_IsWindowFocused() && !state.useCameraOverride) {
       auto& delta = input.getMouseDelta();
 
       state.camera3p.azimuth -= delta.x / 1000.f;

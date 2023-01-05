@@ -266,3 +266,7 @@ void Gm_DestroyContext(GmContext* context) {
   SDL_DestroyWindow(context->window.sdl_window);
   SDL_Quit();
 }
+
+bool Gm_IsWindowFocused() {
+  return SDL_GetRelativeMouseMode();
+}

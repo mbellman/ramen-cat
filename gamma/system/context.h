@@ -46,3 +46,4 @@ void Gm_HandleFrameStart(GmContext* context);
 void Gm_RenderScene(GmContext* context);
 void Gm_HandleFrameEnd(GmContext* context);
 void Gm_DestroyContext(GmContext* context);
+bool Gm_IsWindowFocused();

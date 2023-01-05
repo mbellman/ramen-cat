@@ -787,7 +787,7 @@ namespace Editor {
         editor.selectedObject = *originalObject;
 
         commit(*originalObject);
-      } else if (SDL_GetRelativeMouseMode()) {
+      } else if (Gm_IsWindowFocused()) {
         auto& camera = get_camera();
 
         camera.orientation.yaw += mouseDelta.x / 1500.f;
@@ -795,7 +795,7 @@ namespace Editor {
         camera.rotation = camera.orientation.toQuaternion();        
       }
 
-      if (SDL_GetRelativeMouseMode()) {
+      if (Gm_IsWindowFocused()) {
         Gm_HandleFreeCameraMode(context, 4.f, dt);
       }
 

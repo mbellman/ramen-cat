@@ -19,7 +19,7 @@ internal void initializeInputHandlers(GmContext* context, GameState& state) {
   auto& input = get_input();
 
   input.on<MouseButtonEvent>("mousedown", [&](const MouseButtonEvent& event) {
-    if (!SDL_GetRelativeMouseMode()) {
+    if (!Gm_IsWindowFocused()) {
       SDL_SetRelativeMouseMode(SDL_TRUE);
     }
   });
