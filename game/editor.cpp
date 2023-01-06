@@ -168,10 +168,10 @@ internal void selectObject(GmContext* context, Object& object) {
   }
 }
 
-internal void syncSelectedLightWithSelectedObject() {
-  editor.selectedLight->position = editor.selectedObject.position;
-  editor.selectedLight->radius = 10.f * editor.selectedObject.scale.magnitude();
-  editor.selectedLight->color = editor.selectedObject.color.toVec3f();
+internal void syncLightWithObject(Light& light, const Object& object) {
+  light.position = object.position;
+  light.radius = 10.f * object.scale.magnitude();
+  light.color = object.color.toVec3f();
 }
 
 internal void updateCollisionPlanes(GmContext* context, GameState& state) {
@@ -472,6 +472,12 @@ internal void undoLastHistoryAction(GmContext* context, GameState& state) {
         }
       }
 
+      if (context->scene.meshes[restoredObject._record.meshIndex]->name == "light-sphere") {
+        auto& light = create_light(LightType::POINT);
+
+        syncLightWithObject(light, restoredObject);
+      }
+
       break;
     }
     default: {
@@ -486,7 +492,7 @@ internal void undoLastHistoryAction(GmContext* context, GameState& state) {
         editor.isObjectSelected = true;
 
         if (editor.selectedLight != nullptr) {
-          syncSelectedLightWithSelectedObject();
+          syncLightWithObject(*editor.selectedLight, editor.selectedObject);
         }
       }
     }
@@ -585,6 +591,12 @@ internal void deleteObject(GmContext* context, GameState& state, Object& object)
     updateCollisionPlanes(context, state);
 
     editor.isObjectSelected = false;
+
+    if (editor.selectedLight != nullptr) {
+      remove_light(editor.selectedLight);
+
+      editor.selectedLight = nullptr;
+    }
   }
 }
 
@@ -700,7 +712,7 @@ namespace Editor {
             commit(*liveSelectedObject);
 
             if (editor.selectedLight != nullptr) {
-              syncSelectedLightWithSelectedObject();
+              syncLightWithObject(*editor.selectedLight, editor.selectedObject);
             }
           }
         }
@@ -859,7 +871,7 @@ namespace Editor {
         commit(*originalObject);
 
         if (editor.mode == EditorMode::LIGHTS && editor.selectedLight != nullptr) {
-          syncSelectedLightWithSelectedObject();
+          syncLightWithObject(*editor.selectedLight, editor.selectedObject);
         }
       } else if (Gm_IsWindowFocused()) {
         auto& camera = get_camera();
