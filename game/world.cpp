@@ -257,8 +257,8 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   context->scene.zNear = 5.f;
   context->scene.zFar = 50000.f;
 
-  add_mesh("ocean", 1, Mesh::Plane(2));
-  add_mesh("ocean-floor", 1, Mesh::Plane(2));
+  add_mesh("ocean", 1, Mesh::Disc(12));
+  add_mesh("ocean-floor", 1, Mesh::Disc(12));
   add_mesh("platform", 1000, Mesh::Cube());
   add_mesh("npc", 100, Mesh::Cube());
   add_mesh("sphere", 1, Mesh::Sphere(18));
@@ -275,13 +275,13 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
 
   commit(ocean);
 
-  auto& floor = create_object_from("ocean-floor");
+  auto& oceanFloor = create_object_from("ocean-floor");
 
-  floor.position = Vec3f(0, -2500.f, 0);
-  floor.scale = Vec3f(50000.f, 1.f, 50000.f);
-  floor.color = Vec3f(0.3f, 0.7f, 0.9f);
+  oceanFloor.position = Vec3f(0, -2500.f, 0);
+  oceanFloor.scale = Vec3f(50000.f, 1.f, 50000.f);
+  oceanFloor.color = Vec3f(0.3f, 0.7f, 0.9f);
 
-  commit(floor);
+  commit(oceanFloor);
 
   auto& player = create_object_from("sphere");
 

@@ -329,7 +329,7 @@ namespace Gamma {
     static Mesh* Model(const std::vector<std::string>& paths);
     static Mesh* Particles();
     static Mesh* Plane(u32 size, bool useLoopingTexture = false);
-    // @todo Disc(u32 divisions)
+    static Mesh* Disc(u32 slices);
     // @todo Cylinder(u32 divisions)
 
     // @todo remove?

@@ -499,6 +499,58 @@ namespace Gamma {
   }
 
   /**
+   * Mesh::Sphere()
+   * --------------
+   * 
+   * Constructs a sphere Mesh with a given number of curvature divisions.
+   */
+  Mesh* Mesh::Disc(u32 slices) {
+    auto* mesh = new Mesh();
+    auto& vertices = mesh->vertices;
+    auto& faceElements = mesh->faceElements;
+
+    // Generate the center vertex
+    Vertex center;
+
+    center.position.x = 0.f;
+    center.position.z = 0.f;
+
+    vertices.push_back(center);
+
+    // Generate the edge vertices
+    for (u32 i = 0; i < slices + 1; i++) {
+      float ratio = (i / (float)slices) * Gm_TAU;
+
+      Vertex vertex;
+
+      vertex.position.x = cosf(ratio);
+      vertex.position.z = sinf(ratio);
+
+      vertex.uv.x = vertex.position.x * 0.5f + 0.5f;
+      vertex.uv.y = vertex.position.z * 0.5f + 0.5f;
+
+      vertices.push_back(vertex);
+    }
+
+    // Generate the faces
+    for (u32 i = 0; i < slices; i++) {
+      if (i == slices - 1) {
+        faceElements.push_back(1);
+      } else {
+        faceElements.push_back(i + 2);
+      }
+
+      faceElements.push_back(i + 1);
+      faceElements.push_back(0);
+    }
+
+    Gm_ComputeNormals(mesh);
+    Gm_ComputeTangents(mesh);
+
+    return mesh;
+  }
+
+  /**
    * Mesh::transformGeometry()
    * -------------------------
    *
