@@ -32,6 +32,7 @@ struct HistoryAction {
 static struct EditorState {
   Object observedObject;
   Object selectedObject;
+  Light* selectedLight = nullptr;
   bool isObservingObject = false;
   bool isObjectSelected = false;
   EditorMode mode = EditorMode::OBJECTS;
@@ -140,9 +141,10 @@ internal void selectObject(GmContext* context, Object& object) {
   editor.selectedObject = object;
   editor.isObjectSelected = true;
 
-  // Change the current selected mesh index to that of the object
+  // Special handling
   {
     if (editor.mode == EditorMode::OBJECTS) {
+      // In OBJECTS mode, change the current selected mesh index to that of the object
       u16 meshIndex = editor.selectedObject._record.meshIndex;
       auto& mesh = *context->scene.meshes[meshIndex];
 
@@ -153,8 +155,21 @@ internal void selectObject(GmContext* context, Object& object) {
           break;
         }
       }
+    } else if (editor.mode == EditorMode::LIGHTS) {
+      // In LIGHTS mode, determine the light the selected light sphere is controlling
+      for (auto* light : context->scene.lights) {
+        if (light->position == editor.selectedObject.position) {
+          editor.selectedLight = light;
+
+          break;
+        }
+      }
     }
   }
+}
+
+internal void syncSelectedLightWithSelectedObject() {
+  editor.selectedLight->position = editor.selectedObject.position;
 }
 
 internal void updateCollisionPlanes(GmContext* context, GameState& state) {
@@ -220,6 +235,10 @@ internal void cycleEditorMode(GmContext* context, s8 delta) {
   }
 
   editor.mode = *(modeOrder.begin() + cycleIndex);
+
+  if (editor.mode != EditorMode::LIGHTS) {
+    editor.selectedLight = nullptr;
+  }
 }
 
 internal void cycleActionType(GmContext* context, s8 delta) {
@@ -249,10 +268,7 @@ internal void cycleActionType(GmContext* context, s8 delta) {
 
   editor.currentActionType = *(actionTypeOrder.begin() + cycleIndex);
 
-  if (
-    editor.currentActionType == ActionType::CREATE &&
-    editor.isObjectSelected
-  ) {
+  if (editor.currentActionType == ActionType::CREATE && editor.isObjectSelected) {
     restoreObject(context, editor.selectedObject);
 
     editor.isObjectSelected = false;
@@ -466,6 +482,10 @@ internal void undoLastHistoryAction(GmContext* context, GameState& state) {
 
         editor.selectedObject = *liveLastActionObject;
         editor.isObjectSelected = true;
+
+        if (editor.selectedLight != nullptr) {
+          syncSelectedLightWithSelectedObject();
+        }
       }
     }
   }
@@ -613,6 +633,8 @@ namespace Editor {
     state.isEditorEnabled = true;
 
     showDynamicMeshPlaceholders(context);
+
+    mesh("light-sphere")->disabled = false;
   }
 
   void disableGameEditor(GmContext* context, GameState& state) {
@@ -626,6 +648,7 @@ namespace Editor {
 
     editor.isObservingObject = false;
     editor.isObjectSelected = false;
+    editor.selectedLight = nullptr;
 
     state.isEditorEnabled = false;
 
@@ -634,6 +657,8 @@ namespace Editor {
     updateCollisionPlanes(context, state);
 
     World::rebuildDynamicMeshes(context);
+
+    mesh("light-sphere")->disabled = true;
   }
 
   void initializeGameEditor(GmContext* context, GameState& state) {
@@ -681,6 +706,7 @@ namespace Editor {
       add_mesh("light-sphere", 1000, Mesh::Sphere(10));
 
       mesh("light-sphere")->emissivity = 0.8f;
+      mesh("light-sphere")->disabled = true;
     }
 
     updateCollisionPlanes(context, state);
@@ -753,9 +779,9 @@ namespace Editor {
       if (input.didPressMouse()) {
         if (editor.isObservingObject || editor.isObjectSelected) {
           // Check to ensure that we're observing an object before
-          // we select it. If we don't, we're liable to select a
-          // stale version of editor.observedObject, which can produce
-          // a corrupted editor history.
+          // we select the current 'observed object'. If we don't,
+          // we're liable to select a stale version of the object,
+          // which can produce a corrupted editor history.
           if (editor.isObservingObject) {
             selectObject(context, editor.observedObject);
           }
@@ -819,6 +845,10 @@ namespace Editor {
         editor.selectedObject = *originalObject;
 
         commit(*originalObject);
+
+        if (editor.mode == EditorMode::LIGHTS && editor.selectedLight != nullptr) {
+          syncSelectedLightWithSelectedObject();
+        }
       } else if (Gm_IsWindowFocused()) {
         auto& camera = get_camera();
 
@@ -845,7 +875,7 @@ namespace Editor {
     // Highlight the observed/selected objects
     {
       if (editor.isObservingObject) {
-        highlightObject(context, editor.observedObject, Vec3f(0.f));
+        highlightObject(context, editor.observedObject, Vec3f(1.f, 0.f, 1.f));
       }
 
       if (editor.isObjectSelected) {
