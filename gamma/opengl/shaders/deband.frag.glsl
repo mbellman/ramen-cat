@@ -1,6 +1,6 @@
 #version 460 core
 
-uniform sampler2D texColor;
+uniform sampler2D texColorAndDepth;
 
 in vec2 fragUv;
 
@@ -21,5 +21,5 @@ vec3 deband(vec3 color) {
 }
 
 void main() {
-  out_color = deband(texture(texColor, fragUv).rgb);
+  out_color = deband(texture(texColorAndDepth, fragUv).rgb);
 }

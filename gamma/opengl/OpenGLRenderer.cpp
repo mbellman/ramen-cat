@@ -999,8 +999,6 @@ namespace Gamma {
 
     glBlendFuncSeparate(GL_ONE, GL_ONE, GL_ZERO, GL_ONE);
 
-    // glDisable(GL_BLEND);
-
     OpenGLScreenQuad::render();
 
     glBlendFuncSeparate(GL_ONE, GL_ONE, GL_ONE, GL_ZERO);
@@ -1314,12 +1312,11 @@ namespace Gamma {
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
     glViewport(0, 0, gmContext->window.size.width, gmContext->window.size.height);
-    // glClear(GL_COLOR_BUFFER_BIT);
     glDisable(GL_STENCIL_TEST);
 
     post.debanding.use();
     post.debanding.setVec4f("transform", FULL_SCREEN_TRANSFORM);
-    post.debanding.setInt("texColor", 0);
+    post.debanding.setInt("texColorAndDepth", 0);
 
     OpenGLScreenQuad::render();
   }

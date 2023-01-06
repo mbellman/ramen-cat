@@ -66,7 +66,7 @@ vec2 rotatedVogelDisc(int samples, int index) {
 float getScreenSpaceAmbientOcclusionContribution(float fragment_depth, vec3 fragment_position, vec3 fragment_normal) {
   const int TOTAL_SAMPLES = 16;
   // @todo make configurable
-  const float radius = 8.0;
+  const float radius = 16.0;
   vec3 contribution = vec3(0);
   float linearized_fragment_depth = getLinearizedDepth(fragment_depth, zNear, zFar);
   float occlusion = 0.0;
@@ -89,6 +89,10 @@ float getScreenSpaceAmbientOcclusionContribution(float fragment_depth, vec3 frag
     vec3 view_sample_position = glVec3(matView * glVec4(world_sample_position));
     vec2 screen_sample_position = getScreenCoordinates(view_sample_position, matProjection);
     float sample_depth = textureLod(texColorAndDepth, screen_sample_position, 1).w;
+
+    // Fix incorrectly applied AO where geometry edges meet the skybox
+    sample_depth = sample_depth == 1.0 ? 0.0 : sample_depth;
+
     float linear_sample_depth = getLinearizedDepth(sample_depth, zNear, zFar);
 
     if (linear_sample_depth < view_sample_position.z) {
