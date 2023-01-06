@@ -25,17 +25,6 @@ internal bool isInBetween(float n, float a, float b) {
   return n >= min(a, b) && n <= max(a, b);
 }
 
-internal void setupCollisionPlane(Plane& plane) {
-  plane.normal = Vec3f::cross(plane.p2 - plane.p1, plane.p3 - plane.p2).unit();
-
-  plane.t1 = Vec3f::cross(plane.normal, plane.p2 - plane.p1);
-  plane.t2 = Vec3f::cross(plane.normal, plane.p3 - plane.p2);
-  plane.t3 = Vec3f::cross(plane.normal, plane.p4 - plane.p3);
-  plane.t4 = Vec3f::cross(plane.normal, plane.p1 - plane.p4);
-
-  plane.nDotU = Vec3f::dot(plane.normal, Vec3f(0, 1.f, 0));
-}
-
 void Collisions::addObjectCollisionPlanes(const Object& object, std::vector<Plane>& planes) {
   Matrix4f rotation = object.rotation.toMatrix4f();
 

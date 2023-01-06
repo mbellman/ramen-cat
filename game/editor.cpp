@@ -34,7 +34,7 @@ static struct EditorState {
   Object selectedObject;
   bool isObservingObject = false;
   bool isObjectSelected = false;
-  EditorMode mode = EditorMode::COLLISION_PLANES;
+  EditorMode mode = EditorMode::OBJECTS;
   ActionType currentActionType = ActionType::POSITION;
   u8 currentSelectedMeshIndex = 0;
   // @todo limit size?
@@ -42,6 +42,9 @@ static struct EditorState {
 
   // @todo see if we end up having to use a more optimized lookup structure/world chunks/etc.
   std::vector<Plane> objectCollisionPlanes;
+
+  // @todo see if we end up having to use a more optimized lookup structure/world chunks/etc.
+  std::vector<Plane> lightCollisionPlanes;
 } editor;
 
 internal std::string getEditorModeName(EditorMode mode) {
@@ -159,6 +162,7 @@ internal void updateCollisionPlanes(GmContext* context, GameState& state) {
 
   state.collisionPlanes.clear();
   editor.objectCollisionPlanes.clear();
+  editor.lightCollisionPlanes.clear();
 
   for (auto& platform : objects("platform")) {
     Collisions::addObjectCollisionPlanes(platform, state.collisionPlanes);
@@ -168,6 +172,10 @@ internal void updateCollisionPlanes(GmContext* context, GameState& state) {
     for (auto& object : mesh(asset.name)->objects) {
       Collisions::addObjectCollisionPlanes(object, editor.objectCollisionPlanes);
     }
+  }
+
+  for (auto& sphere : objects("light-sphere")) {
+    Collisions::addObjectCollisionPlanes(sphere, editor.lightCollisionPlanes);
   }
 
   Console::log("Rebuilt collision planes in", (Gm_GetMicroseconds() - start), " us");
@@ -475,6 +483,22 @@ internal void undoLastHistoryAction(GmContext* context, GameState& state) {
   Console::log("[Editor] " + getActionTypeName(action.type) + " action reverted");
 }
 
+internal void createNewLight(GmContext* context, GameState& state) {
+  auto& camera = get_camera();
+  auto& light = create_light(LightType::POINT);
+  auto& lightSphere = create_object_from("light-sphere");
+
+  light.position = camera.position + camera.orientation.getDirection() * 150.f;
+  light.radius = 500.f;
+
+  lightSphere.position = light.position;
+  lightSphere.scale = Vec3f(10.f);
+
+  commit(lightSphere);
+
+  updateCollisionPlanes(context, state);
+}
+
 internal void createNewObject(GmContext* context, GameState& state) {
   auto& camera = get_camera();
   Vec3f spawnPosition = camera.position + camera.orientation.getDirection() * 300.f;
@@ -652,11 +676,14 @@ namespace Editor {
       }
     });
 
-    for (auto& asset : World::meshAssets) {
-      for (auto& object : objects(asset.name)) {
-        Collisions::addObjectCollisionPlanes(object, editor.objectCollisionPlanes);
-      }
+    // Visual aide meshes
+    {
+      add_mesh("light-sphere", 1000, Mesh::Sphere(10));
+
+      mesh("light-sphere")->emissivity = 0.8f;
     }
+
+    updateCollisionPlanes(context, state);
   }
 
   void handleGameEditor(GmContext* context, GameState& state, float dt) {
@@ -687,9 +714,10 @@ namespace Editor {
         Vec3f inverseCameraDirection = cameraDirection.invert();
         float closestDistance = Gm_FLOAT_MAX;
 
-        auto collisionPlanes = editor.mode == EditorMode::OBJECTS
-          ? editor.objectCollisionPlanes
-          : state.collisionPlanes;
+        auto collisionPlanes =
+          editor.mode == EditorMode::OBJECTS ? editor.objectCollisionPlanes :
+          editor.mode == EditorMode::LIGHTS ? editor.lightCollisionPlanes :
+          state.collisionPlanes;
 
         for (auto& plane : collisionPlanes) {
           float nDotC = Vec3f::dot(plane.normal, inverseCameraDirection);
@@ -735,7 +763,11 @@ namespace Editor {
           createObjectHistoryAction(context, editor.currentActionType, editor.selectedObject);
         } else if (editor.currentActionType == ActionType::CREATE) {
           // @todo show an object placement preview
-          createNewObject(context, state);
+          if (editor.mode == EditorMode::LIGHTS) {
+            createNewLight(context, state);
+          } else {
+            createNewObject(context, state);
+          }
         }
       }
 
