@@ -266,6 +266,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   mesh("ocean")->type = MeshType::WATER;
   mesh("ocean")->canCastShadows = false;
   mesh("ocean-floor")->canCastShadows = false;
+  mesh("platform")->disabled = true;
 
   auto& ocean = create_object_from("ocean");
 

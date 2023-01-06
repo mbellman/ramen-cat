@@ -103,7 +103,6 @@ void main() {
 
   vec3 world_position = getWorldPosition(gl_FragCoord.z, getPixelCoords(), matInverseProjection, matInverseView);
   vec3 normalized_fragment_to_camera = normalize(cameraPosition - world_position);
-  vec3 color = vec3(1.0);
   vec3 normal = getNormal(world_position);
 
   // Fresnel effect
