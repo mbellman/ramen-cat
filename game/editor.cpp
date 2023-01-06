@@ -795,8 +795,14 @@ namespace Editor {
         camera.rotation = camera.orientation.toQuaternion();        
       }
 
+      // Handle free camera movement
       if (Gm_IsWindowFocused()) {
-        Gm_HandleFreeCameraMode(context, 4.f, dt);
+        auto speed = 
+          input.isKeyHeld(Key::SPACE) ? 20000.f :
+          input.isKeyHeld(Key::SHIFT) ? 800.f :
+          4000.f;
+
+        Gm_HandleFreeCameraMode(context, speed, dt);
       }
 
       if (input.didReleaseMouse() && editor.isObjectSelected) {

@@ -300,7 +300,7 @@ void Gm_PointCameraAt(GmContext* context, const Gamma::Vec3f& position, bool ups
   camera.rotation = camera.orientation.toQuaternion();
 }
 
-void Gm_HandleFreeCameraMode(GmContext* context, float speedFactor, float dt) {
+void Gm_HandleFreeCameraMode(GmContext* context, float speed, float dt) {
   auto& scene = context->scene;
   auto& camera = scene.camera;
   auto& input = scene.input;
@@ -320,13 +320,12 @@ void Gm_HandleFreeCameraMode(GmContext* context, float speedFactor, float dt) {
   }
 
   if (direction.magnitude() > 0.f) {
-    float speed = (input.isKeyHeld(Key::SHIFT) ? 200.0f : 1000.0f) * speedFactor;
-
     scene.freeCameraVelocity += direction.unit() * speed * dt;
   }
 
   camera.position += scene.freeCameraVelocity * dt;
-  scene.freeCameraVelocity *= (0.995f - dt * 5.0f * speedFactor * 0.3f);
+
+  scene.freeCameraVelocity *= (0.995f - dt * 6.0f);
 
   if (scene.freeCameraVelocity.magnitude() < 0.1f) {
     scene.freeCameraVelocity = Vec3f(0.0f);
