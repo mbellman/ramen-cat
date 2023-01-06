@@ -170,6 +170,7 @@ internal void selectObject(GmContext* context, Object& object) {
 
 internal void syncSelectedLightWithSelectedObject() {
   editor.selectedLight->position = editor.selectedObject.position;
+  editor.selectedLight->radius = 10.f * editor.selectedObject.scale.magnitude();
 }
 
 internal void updateCollisionPlanes(GmContext* context, GameState& state) {
@@ -830,7 +831,13 @@ namespace Editor {
         if (editor.currentActionType == ActionType::POSITION) {
           originalObject->position += actionDelta;
         } else if (editor.currentActionType == ActionType::SCALE) {
-          originalObject->scale += actionDelta;
+          if (editor.mode == EditorMode::LIGHTS) {
+            // Scale light spheres uniformly
+            originalObject->scale += actionDelta.magnitude() * actionDelta.sign();
+          } else {
+            // Scale objects/collision planes along the action axis
+            originalObject->scale += actionDelta;
+          }
         } else if (editor.currentActionType == ActionType::ROTATE) {
           float angle = actionDelta.magnitude();
 

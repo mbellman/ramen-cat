@@ -45,6 +45,7 @@ namespace Gamma {
     Vec3f gl() const;
     Vec3f invert() const;
     float magnitude() const;
+    float sign() const;
     Vec3f unit() const;
     Vec3f xz() const;
   };

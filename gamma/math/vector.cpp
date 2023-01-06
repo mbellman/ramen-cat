@@ -145,6 +145,10 @@ namespace Gamma {
     return sqrtf(x * x + y * y + z * z);
   }
 
+  float Vec3f::sign() const {
+    return x > 0.f || y > 0.f || z > 0.f ? 1.f : -1.f;
+  }
+
   Vec3f Vec3f::unit() const {
     float m = magnitude();
 
