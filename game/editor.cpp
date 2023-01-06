@@ -171,6 +171,7 @@ internal void selectObject(GmContext* context, Object& object) {
 internal void syncSelectedLightWithSelectedObject() {
   editor.selectedLight->position = editor.selectedObject.position;
   editor.selectedLight->radius = 10.f * editor.selectedObject.scale.magnitude();
+  editor.selectedLight->color = editor.selectedObject.color.toVec3f();
 }
 
 internal void updateCollisionPlanes(GmContext* context, GameState& state) {
@@ -697,6 +698,10 @@ namespace Editor {
             editor.selectedObject = *liveSelectedObject;
 
             commit(*liveSelectedObject);
+
+            if (editor.selectedLight != nullptr) {
+              syncSelectedLightWithSelectedObject();
+            }
           }
         }
       }
