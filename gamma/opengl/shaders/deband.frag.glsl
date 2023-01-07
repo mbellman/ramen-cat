@@ -31,14 +31,14 @@ void main() {
     const int MIP_LEVEL = 1;
     const float MAX_DEPTH = 3000.0;
 
-    vec2 texelSize = 1.0 / textureSize(texColorAndDepth, MIP_LEVEL);
+    vec2 texel_size = 1.0 / textureSize(texColorAndDepth, MIP_LEVEL);
 
     vec3 depth_of_field_color = vec3(0.0);
 
-    vec2 uv1 = fragUv + vec2(-1.0, 0.0) * texelSize;
-    vec2 uv2 = fragUv + vec2(1.0, 0.0) * texelSize;
-    vec2 uv3 = fragUv + vec2(0.0, -1.0) * texelSize;
-    vec2 uv4 = fragUv + vec2(0.0, 1.0) * texelSize;
+    vec2 uv1 = fragUv + vec2(-1.0, 0.0) * texel_size;
+    vec2 uv2 = fragUv + vec2(1.0, 0.0) * texel_size;
+    vec2 uv3 = fragUv + vec2(0.0, -1.0) * texel_size;
+    vec2 uv4 = fragUv + vec2(0.0, 1.0) * texel_size;
 
     depth_of_field_color += textureLod(texColorAndDepth, fragUv, MIP_LEVEL).rgb;
     depth_of_field_color += textureLod(texColorAndDepth, uv1, MIP_LEVEL).rgb;
