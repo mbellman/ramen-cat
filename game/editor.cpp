@@ -199,7 +199,9 @@ internal void updateCollisionPlanes(GmContext* context, GameState& state) {
     Collisions::addObjectCollisionPlanes(sphere, editor.lightCollisionPlanes);
   }
 
-  Console::log("Rebuilt collision planes in", (Gm_GetMicroseconds() - start), " us");
+  u32 total = state.collisionPlanes.size() + editor.objectCollisionPlanes.size() + editor.lightCollisionPlanes.size();
+
+  Console::log("Rebuilt", total, "collision planes in", (Gm_GetMicroseconds() - start), "us");
 }
 
 internal void showDynamicMeshPlaceholders(GmContext* context) {
