@@ -3,14 +3,14 @@
 
 namespace Gamma {
   static u32 internalFlags =
+    GammaFlags::ENABLE_DEV_BUFFERS |
+    GammaFlags::ENABLE_DENOISING |
     GammaFlags::RENDER_REFLECTIONS |
     GammaFlags::RENDER_REFRACTIVE_GEOMETRY |
     GammaFlags::RENDER_SHADOWS |
-    GammaFlags::RENDER_AMBIENT_OCCLUSION |
     GammaFlags::RENDER_INDIRECT_SKY_LIGHT |
-    GammaFlags::RENDER_GLOBAL_ILLUMINATION |
-    GammaFlags::RENDER_DEV_BUFFERS |
-    GammaFlags::ENABLE_DENOISING;
+    GammaFlags::RENDER_AMBIENT_OCCLUSION |
+    GammaFlags::RENDER_GLOBAL_ILLUMINATION;
 
   static u32 previousFlags = internalFlags;
 

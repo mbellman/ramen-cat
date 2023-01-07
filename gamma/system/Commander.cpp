@@ -17,9 +17,10 @@ namespace Gamma {
     { "ao", "Ambient occlusion", GammaFlags::RENDER_AMBIENT_OCCLUSION },
     { "gi", "Global illumination", GammaFlags::RENDER_GLOBAL_ILLUMINATION },
     { "skylight", "Indirect sky light", GammaFlags::RENDER_INDIRECT_SKY_LIGHT },
-    { "dev buffers", "Dev buffers", GammaFlags::RENDER_DEV_BUFFERS },
+    { "dev buffers", "Dev buffers", GammaFlags::ENABLE_DEV_BUFFERS },
     { "wireframe", "Wireframe mode", GammaFlags::WIREFRAME_MODE },
-    { "denoising", "Denoising", GammaFlags::ENABLE_DENOISING }
+    { "denoising", "Denoising", GammaFlags::ENABLE_DENOISING },
+    { "dof", "Depth of Field", GammaFlags::RENDER_DEPTH_OF_FIELD }
   };
 
   Commander::Commander() {

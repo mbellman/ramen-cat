@@ -195,7 +195,7 @@ namespace Gamma {
     renderPostEffects();
 
     #if GAMMA_DEVELOPER_MODE
-      if (Gm_IsFlagEnabled(GammaFlags::RENDER_DEV_BUFFERS)) {
+      if (Gm_IsFlagEnabled(GammaFlags::ENABLE_DEV_BUFFERS)) {
         renderDevBuffers();
       }
     #endif
@@ -224,6 +224,18 @@ namespace Gamma {
       #endif
     }
 
+    if (Gm_FlagWasEnabled(GammaFlags::ENABLE_DENOISING)) {
+      shaders.indirectLight.define("USE_DENOISING", "1");
+    } else if (Gm_FlagWasDisabled(GammaFlags::ENABLE_DENOISING)) {
+      shaders.indirectLight.define("USE_DENOISING", "0");
+    }
+
+    if (Gm_FlagWasEnabled(GammaFlags::RENDER_INDIRECT_SKY_LIGHT)) {
+      shaders.lightingPrepass.define("USE_INDIRECT_SKY_LIGHT", "1");
+    } else if (Gm_FlagWasDisabled(GammaFlags::RENDER_INDIRECT_SKY_LIGHT)) {
+      shaders.lightingPrepass.define("USE_INDIRECT_SKY_LIGHT", "0");
+    }
+
     if (Gm_FlagWasEnabled(GammaFlags::RENDER_AMBIENT_OCCLUSION)) {
       shaders.indirectLight.define("USE_SCREEN_SPACE_AMBIENT_OCCLUSION", "1");
       shaders.indirectLightComposite.define("USE_COMPOSITED_INDIRECT_LIGHT", "1");
@@ -246,16 +258,10 @@ namespace Gamma {
       }
     }
 
-    if (Gm_FlagWasEnabled(GammaFlags::RENDER_INDIRECT_SKY_LIGHT)) {
-      shaders.lightingPrepass.define("USE_INDIRECT_SKY_LIGHT", "1");
-    } else if (Gm_FlagWasDisabled(GammaFlags::RENDER_INDIRECT_SKY_LIGHT)) {
-      shaders.lightingPrepass.define("USE_INDIRECT_SKY_LIGHT", "0");
-    }
-
-    if (Gm_FlagWasEnabled(GammaFlags::ENABLE_DENOISING)) {
-      shaders.indirectLight.define("USE_DENOISING", "1");
-    } else if (Gm_FlagWasDisabled(GammaFlags::ENABLE_DENOISING)) {
-      shaders.indirectLight.define("USE_DENOISING", "0");
+    if (Gm_FlagWasEnabled(GammaFlags::RENDER_DEPTH_OF_FIELD)) {
+      post.debanding.define("USE_DEPTH_OF_FIELD", "1");
+    } else if (Gm_FlagWasDisabled(GammaFlags::RENDER_DEPTH_OF_FIELD)) {
+      post.debanding.define("USE_DEPTH_OF_FIELD", "0");
     }
   }
 
@@ -1309,6 +1315,14 @@ namespace Gamma {
    */
   void OpenGLRenderer::renderPostEffects() {
     ctx.accumulationSource->read();
+
+    if (Gm_IsFlagEnabled(GammaFlags::RENDER_DEPTH_OF_FIELD)) {
+      // @todo OpenGLFrameBuffer::createMipmaps(u32 levels)
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 1);
+      glGenerateMipmap(GL_TEXTURE_2D);
+    }
+
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
     glViewport(0, 0, gmContext->window.size.width, gmContext->window.size.height);
@@ -1317,6 +1331,8 @@ namespace Gamma {
     post.debanding.use();
     post.debanding.setVec4f("transform", FULL_SCREEN_TRANSFORM);
     post.debanding.setInt("texColorAndDepth", 0);
+    post.debanding.setFloat("zNear", gmContext->scene.zNear);
+    post.debanding.setFloat("zFar", gmContext->scene.zFar);
 
     OpenGLScreenQuad::render();
   }
