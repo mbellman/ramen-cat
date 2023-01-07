@@ -108,7 +108,7 @@ struct Platform {
   Vec3f color;
 };
 
-internal void loadCollisionPlanesData(GmContext* context, GameState& state) {
+internal void loadCollisionPlanes(GmContext* context, GameState& state) {
   u64 start = Gm_GetMicroseconds();
 
   // @todo eventually store as binary data
@@ -142,7 +142,7 @@ internal void loadCollisionPlanesData(GmContext* context, GameState& state) {
   Console::log("Loaded collision planes in", Gm_GetMicroseconds() - start, "us");
 }
 
-internal void loadWorldObjectsData(GmContext* context) {
+internal void loadWorldObjects(GmContext* context) {
   u64 start = Gm_GetMicroseconds();
 
   // @todo eventually store as binary data
@@ -177,6 +177,31 @@ internal void loadWorldObjectsData(GmContext* context) {
   }
 
   Console::log("Loaded world objects in", Gm_GetMicroseconds() - start, "us");
+}
+
+internal void loadLights(GmContext* context) {
+  u64 start = Gm_GetMicroseconds();
+
+  // @todo eventually store as binary data
+  auto worldData = Gm_LoadFileContents("./game/data_lights.txt");
+  auto lines = Gm_SplitString(worldData, "\n");
+
+  for (auto& line : lines) {
+    if (line.size() == 0) {
+      continue;
+    }
+
+    auto parts = Gm_SplitString(line, ",");
+    auto& light = create_light(LightType::POINT);
+
+    #define df(n) stof(parts[n])
+
+    light.position = Vec3f(df(0), df(1), df(2));
+    light.radius = df(3);
+    light.color = Vec3f(df(4), df(5), df(6));
+  }
+
+  Console::log("Loaded lights in", Gm_GetMicroseconds() - start, "us");
 }
 
 internal void rebuildDynamicStaircases(GmContext* context) {
@@ -295,6 +320,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
 
   light.direction = Vec3f(-0.2f, -1.f, -1.f);
   light.color = Vec3f(1.0f);
+  light.serializable = false;
 
   // Create meshes
   {
@@ -316,8 +342,9 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
 
   // Load world data
   {
-    loadCollisionPlanesData(context, state);
-    loadWorldObjectsData(context);
+    loadCollisionPlanes(context, state);
+    loadWorldObjects(context);
+    loadLights(context);
 
     World::rebuildDynamicMeshes(context);
   }

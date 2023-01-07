@@ -663,6 +663,20 @@ internal void saveWorldObjectsData(GmContext* context) {
   Gm_WriteFileContents("./game/data_world_objects.txt", data);
 }
 
+internal void saveLightsData(GmContext* context) {
+  std::string data;
+
+  for (auto* light : context->scene.lights) {
+    if (light->serializable) {
+      data += Gm_ToString(light->position) + ",";
+      data += std::to_string(light->radius) + ",";
+      data += Gm_ToString(light->color);
+    }
+  }
+
+  Gm_WriteFileContents("./game/data_lights.txt", data);
+}
+
 namespace Editor {
   void enableGameEditor(GmContext* context, GameState& state) {
     state.isEditorEnabled = true;
@@ -689,8 +703,9 @@ namespace Editor {
 
     saveCollisionPlanesData(context);
     saveWorldObjectsData(context);
-    updateCollisionPlanes(context, state);
+    saveLightsData(context);
 
+    updateCollisionPlanes(context, state);
     World::rebuildDynamicMeshes(context);
 
     mesh("light-sphere")->disabled = true;
@@ -746,6 +761,19 @@ namespace Editor {
 
       mesh("light-sphere")->emissivity = 0.8f;
       mesh("light-sphere")->disabled = true;
+    }
+
+    // Generate light spheres for each light
+    {
+      for (auto* light : context->scene.lights) {
+        auto& sphere = create_object_from("light-sphere");
+
+        sphere.position = light->position;
+        sphere.scale = Vec3f(light->radius / 10.f);
+        sphere.color = light->color;
+
+        commit(sphere);
+      }
     }
 
     updateCollisionPlanes(context, state);
