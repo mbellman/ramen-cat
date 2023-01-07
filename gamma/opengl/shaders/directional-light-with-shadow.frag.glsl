@@ -117,7 +117,19 @@ float getLightIntensity(Cascade cascade, vec4 transform) {
     }
   }
 
-  return light_intensity / float(TOTAL_SAMPLES);
+  float fade_factor = 0.0;
+  
+  if (cascade.index == 2) {
+    // Gracefully fade out third-cascade shadows
+    float x_distance = 2.0 * (0.5 - distance(transform.x, 0.5));
+    float y_distance = 2.0 * (0.5 - distance(transform.y, 0.5));
+    float z_distance = 1.0 - transform.z;
+
+    fade_factor = pow(1.0 - (x_distance * y_distance * z_distance), 10);
+    fade_factor = isnan(fade_factor) ? 0.0 : fade_factor;
+  }
+
+  return mix(light_intensity / float(TOTAL_SAMPLES), 1.0, fade_factor);
 }
 
 vec4 getLightSpaceTransform(mat4 matLight, vec3 position) {
