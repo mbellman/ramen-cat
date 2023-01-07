@@ -133,6 +133,16 @@ internal void observeObject(GmContext* context, Object& object) {
   }
 }
 
+internal Light* findLightByPosition(GmContext* context, const Vec3f& position) {
+  for (auto* light : context->scene.lights) {
+    if (light->position == position) {
+      return light;
+    }
+  }
+
+  return nullptr;
+}
+
 internal void selectObject(GmContext* context, Object& object) {
   if (editor.isObjectSelected) {
     restoreObject(context, editor.selectedObject);
@@ -156,14 +166,8 @@ internal void selectObject(GmContext* context, Object& object) {
         }
       }
     } else if (editor.mode == EditorMode::LIGHTS) {
-      // In LIGHTS mode, determine the light the selected light sphere is controlling
-      for (auto* light : context->scene.lights) {
-        if (light->position == editor.selectedObject.position) {
-          editor.selectedLight = light;
-
-          break;
-        }
-      }
+      // In LIGHTS mode, change the selected light to that at the light sphere position
+      editor.selectedLight = findLightByPosition(context, editor.selectedObject.position);
     }
   }
 }
@@ -441,6 +445,16 @@ internal void undoLastHistoryAction(GmContext* context, GameState& state) {
 
   switch (action.type) {
     case ActionType::CREATE:
+      if (editor.mode == EditorMode::LIGHTS) {
+        // In LIGHTS mode, remove any lights at the position
+        // of light spheres removed by CREATE undo actions
+        auto* light = findLightByPosition(context, action.initialObject.position);
+
+        if (light != nullptr) {
+          remove_light(light);
+        }
+      }
+
       remove_object(action.initialObject);
 
       editor.isObjectSelected = false;
@@ -459,6 +473,9 @@ internal void undoLastHistoryAction(GmContext* context, GameState& state) {
 
       commit(restoredObject);
 
+      editor.selectedObject = restoredObject;
+      editor.isObjectSelected = true;
+
       updateCollisionPlanes(context, state);
 
       // When restoring deleted objects using undo, we need to update
@@ -472,10 +489,13 @@ internal void undoLastHistoryAction(GmContext* context, GameState& state) {
         }
       }
 
+      // When restoring light spheres, recreate the deleted light source
       if (context->scene.meshes[restoredObject._record.meshIndex]->name == "light-sphere") {
         auto& light = create_light(LightType::POINT);
 
         syncLightWithObject(light, restoredObject);
+
+        editor.selectedLight = &light;
       }
 
       break;
@@ -524,6 +544,7 @@ internal void createNewLight(GmContext* context, GameState& state) {
 
   commit(lightSphere);
 
+  createObjectHistoryAction(context, ActionType::CREATE, lightSphere);
   updateCollisionPlanes(context, state);
 }
 
