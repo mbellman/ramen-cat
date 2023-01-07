@@ -672,7 +672,7 @@ internal void saveLightsData(GmContext* context) {
     if (light->serializable) {
       data += Gm_ToString(light->position) + ",";
       data += std::to_string(light->radius) + ",";
-      data += Gm_ToString(light->color);
+      data += Gm_ToString(light->color) + "\n";
     }
   }
 
@@ -761,7 +761,7 @@ namespace Editor {
     {
       add_mesh("light-sphere", 1000, Mesh::Sphere(10));
 
-      mesh("light-sphere")->emissivity = 0.8f;
+      mesh("light-sphere")->emissivity = 0.7f;
       mesh("light-sphere")->disabled = true;
     }
 
