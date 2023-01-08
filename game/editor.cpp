@@ -739,6 +739,12 @@ namespace Editor {
 
           auto colorString = Gm_SplitString(command, " ")[1];
           auto parts = Gm_SplitString(colorString, ",");
+
+          // @todo put this in Gm_ParseVec3f, use that here
+          while (parts.size() < 3) {
+            parts.push_back(parts.back());
+          }
+
           auto color = Vec3f(stof(parts[0]), stof(parts[1]), stof(parts[2]));
 
           if (editor.isObjectSelected) {
