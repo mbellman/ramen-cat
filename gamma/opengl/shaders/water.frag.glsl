@@ -99,7 +99,7 @@ vec3 getNormal(vec3 world_position) {
 }
 
 void main() {
-  const float REFRACTION_INTENSITY = 1.0;
+  const float REFRACTION_INTENSITY = 20.0;
 
   vec3 world_position = getWorldPosition(gl_FragCoord.z, getPixelCoords(), matInverseProjection, matInverseView);
   vec3 normalized_fragment_to_camera = normalize(cameraPosition - world_position);
@@ -120,16 +120,16 @@ void main() {
   // @hack invert Z
   vec3 view_refraction_ray = glVec3(matView * glVec4(world_refraction_ray));
   vec2 refracted_color_coords = getScreenCoordinates(view_refraction_ray, matProjection);
-  float sample_depth = texture(texColorAndDepth, getPixelCoords()).w;
+  vec4 sample_color_and_depth = texture(texColorAndDepth, getPixelCoords());
 
-  if (sample_depth < 1.0 && isOffScreen(refracted_color_coords, 0.0)) {
+  if (sample_color_and_depth.w < 1.0 && isOffScreen(refracted_color_coords, 0.0)) {
     // If the refraction sample coordinates are off-screen,
     // disable refractive effects
     // @todo improve this
     refracted_color_coords = getPixelCoords();
   }
 
-  if (gl_FragCoord.z > sample_depth) {
+  if (gl_FragCoord.z > sample_color_and_depth.w) {
     // Accommodation for alpha-blended particles, which write to the
     // depth channel of the color and depth texture, but not to the
     // depth buffer, in order to properly blend against themselves.
@@ -143,7 +143,8 @@ void main() {
   vec3 water_color = vec3(0);
   
   if (refracted_color_and_depth.w < gl_FragCoord.z) {
-    refracted_color_and_depth.rgb = vec3(0);
+    // Don't refract geometry in front of the water surface
+    refracted_color_and_depth.rgb = sample_color_and_depth.rgb;
   }
 
   // Reflection
