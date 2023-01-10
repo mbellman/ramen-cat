@@ -932,6 +932,13 @@ namespace Editor {
         if (editor.currentSelectedMeshIndex > World::meshAssets.size() - 1) {
           editor.currentSelectedMeshIndex = 0;
         }
+      } else if (input.didPressKey(Key::ARROW_DOWN)) {
+        // @todo cycleCurrentObject
+        if (editor.currentSelectedMeshIndex == 0) {
+          editor.currentSelectedMeshIndex = World::meshAssets.size() - 1;
+        } else {
+          editor.currentSelectedMeshIndex--;
+        }
       } else if (input.didPressKey(Key::SHIFT)) {
         editor.cameraSnapStartTime = 0.f;
         editor.isCameraSnapping = false;

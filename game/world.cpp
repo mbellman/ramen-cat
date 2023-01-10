@@ -103,6 +103,17 @@ std::vector<MeshAsset> World::meshAssets = {
     }
   },
   {
+    .name = "pipe-1",
+    .defaultColor = Vec3f(1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/pipe-1.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/pipe-1.png",
+      .normalMap = "./game/assets/pipe-1-normals.png"
+    }
+  },
+  {
     .name = "roof",
     .defaultColor = Vec3f(1.f),
     .create = []() {
