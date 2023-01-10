@@ -67,6 +67,10 @@ namespace Gamma {
     return pressedKeyState & (u64)key;
   }
 
+  bool InputSystem::didReleaseKey(Key key) const {
+    return releasedKeyState & (u64)key;
+  }
+
   bool InputSystem::didReleaseMouse() const {
     return didReleaseMouseThisFrame;
   }
@@ -132,6 +136,7 @@ namespace Gamma {
 
       heldKeyState &= ~(u64)key;
       pressedKeyState &= ~(u64)key;
+      releasedKeyState |= (u64)key;
 
       signal("keyup", key);
     }
@@ -200,6 +205,7 @@ namespace Gamma {
 
   void InputSystem::resetPerFrameState() {
     pressedKeyState = 0;
+    releasedKeyState = 0;
     didPressMouseThisFrame = false;
     didReleaseMouseThisFrame = false;
     didMoveMouseWheelThisFrame = false;

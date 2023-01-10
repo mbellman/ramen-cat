@@ -85,6 +85,7 @@ namespace Gamma {
     bool didMoveMouseWheel() const;
     bool didPressMouse() const;
     bool didPressKey(Key key) const;
+    bool didReleaseKey(Key key) const;
     bool didReleaseMouse() const;
     u64 getLastKeyDown() const;
     const Point<int>& getMouseDelta() const;
@@ -97,6 +98,7 @@ namespace Gamma {
   private:
     u64 heldKeyState = 0;
     u64 pressedKeyState = 0;
+    u64 releasedKeyState = 0;
     u64 lastKeyDown = 0;
     bool didPressMouseThisFrame = false;
     bool didReleaseMouseThisFrame = false;
