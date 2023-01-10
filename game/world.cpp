@@ -63,6 +63,39 @@ std::vector<MeshAsset> World::meshAssets = {
     }
   },
   {
+    .name = "sign-1",
+    .defaultColor = Vec3f(1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/sign-1.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/sign-1.png",
+      .emissivity = 0.5f
+    }
+  },
+  {
+    .name = "door-1",
+    .defaultColor = Vec3f(1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/door-1.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/door-1.png",
+      .emissivity = 0.25f
+    }
+  },
+  {
+    .name = "windows-1",
+    .defaultColor = Vec3f(1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/windows-1.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/windows-1.png",
+      .emissivity = 0.25f
+    }
+  },
+  {
     .name = "corrugated-metal",
     .defaultColor = Vec3f(0.5f),
     .create = []() {
