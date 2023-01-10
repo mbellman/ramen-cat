@@ -932,6 +932,9 @@ namespace Editor {
         if (editor.currentSelectedMeshIndex > World::meshAssets.size() - 1) {
           editor.currentSelectedMeshIndex = 0;
         }
+      } else if (input.didPressKey(Key::SHIFT)) {
+        editor.cameraSnapStartTime = 0.f;
+        editor.isCameraSnapping = false;
       }
 
       if (input.isMouseHeld() && editor.isObjectSelected) {
@@ -973,7 +976,7 @@ namespace Editor {
 
         camera.orientation.yaw += mouseDelta.x / 1500.f;
         camera.orientation.pitch += mouseDelta.y / 1500.f;
-        camera.rotation = camera.orientation.toQuaternion();        
+        camera.rotation = camera.orientation.toQuaternion();
       }
 
       // Handle WASD inputs
