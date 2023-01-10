@@ -38,6 +38,12 @@ static struct EditorState {
   EditorMode mode = EditorMode::OBJECTS;
   ActionType currentActionType = ActionType::POSITION;
   u8 currentSelectedMeshIndex = 0;
+
+  bool useCameraSnapping = false;
+  float lastCameraSnapTime = 0.f;
+  Vec3f cameraSnapTarget;
+  bool preserveCameraSnapDistance = false;
+
   // @todo limit size?
   std::vector<HistoryAction> history;
 
@@ -635,6 +641,12 @@ internal void respawnPlayer(GmContext* context, GameState& state) {
   state.previousPlayerPosition = player.position;
 }
 
+internal void snapCameraTo(GmContext* context, const Vec3f& position, bool preserveCameraSnapDistance) {
+  editor.lastCameraSnapTime = get_running_time();
+  editor.cameraSnapTarget = position;
+  editor.preserveCameraSnapDistance = preserveCameraSnapDistance;
+}
+
 internal void saveCollisionPlanesData(GmContext* context) {
   std::string data;
 
@@ -716,14 +728,6 @@ namespace Editor {
   void initializeGameEditor(GmContext* context, GameState& state) {
     auto& input = get_input();
     auto& commander = context->commander;
-
-    input.on<MouseWheelEvent>("mousewheel", [context, &state](const MouseWheelEvent& event) {
-      if (event.direction == MouseWheelEvent::Direction::UP) {
-        cycleActionType(context, -1);
-      } else {
-        cycleActionType(context, +1);
-      }
-    });
 
     input.on<Key>("keyup", [context](Key key) {
       if (key == Key::C) {
@@ -851,6 +855,14 @@ namespace Editor {
     {
       auto& mouseDelta = input.getMouseDelta();
 
+      if (!editor.useCameraSnapping && input.didMoveMouseWheel()) {
+        if (input.getMouseWheelDirection() == MouseWheelEvent::Direction::UP) {
+          cycleActionType(context, -1);
+        } else {
+          cycleActionType(context, +1);
+        }
+      }
+
       if (input.didPressMouse()) {
         if (editor.isObservingObject || editor.isObjectSelected) {
           // Check to ensure that we're observing an object before
@@ -862,6 +874,13 @@ namespace Editor {
           }
 
           createObjectHistoryAction(context, editor.currentActionType, editor.selectedObject);
+
+          if (editor.useCameraSnapping) {
+            auto& selectedObject = editor.selectedObject;
+            auto distance = 2.f * selectedObject.scale.magnitude();
+
+            snapCameraTo(context, selectedObject.position + (camera.position - selectedObject.position).unit() * distance, false);
+          }
         } else if (editor.currentActionType == ActionType::CREATE) {
           // @todo show an object placement preview
           if (editor.mode == EditorMode::LIGHTS) {
@@ -894,6 +913,8 @@ namespace Editor {
         if (editor.currentSelectedMeshIndex > World::meshAssets.size() - 1) {
           editor.currentSelectedMeshIndex = 0;
         }
+      } else if (input.didPressKey(Key::SHIFT)) {
+        editor.useCameraSnapping = !editor.useCameraSnapping;
       }
 
       if (input.isMouseHeld() && editor.isObjectSelected) {
@@ -938,14 +959,51 @@ namespace Editor {
         camera.rotation = camera.orientation.toQuaternion();        
       }
 
-      // Handle free camera movement
+      // Handle WASD movement
       if (Gm_IsWindowFocused()) {
-        auto speed = 
-          input.isKeyHeld(Key::SPACE) ? 20000.f :
-          input.isKeyHeld(Key::SHIFT) ? 800.f :
-          4000.f;
+        if (editor.useCameraSnapping && editor.isObjectSelected) {
+          auto& selectedObject = editor.selectedObject;
+          auto selectedObjectToCamera = (camera.position - selectedObject.position);
+          auto selectedObjectDistance = selectedObjectToCamera.magnitude();
+          auto azimuth = atan2f(selectedObjectToCamera.z, selectedObjectToCamera.x);
+          auto altitude = atan2f(selectedObjectToCamera.y, selectedObjectToCamera.xz().magnitude());
 
-        Gm_HandleFreeCameraMode(context, speed, dt);
+          ThirdPersonCamera objectCamera;
+
+          objectCamera.altitude = altitude;
+          objectCamera.azimuth = azimuth;
+          objectCamera.radius = selectedObjectDistance;
+
+          if (input.didPressKey(Key::W)) {
+            objectCamera.altitude += Gm_PI / 4.f;
+
+            snapCameraTo(context, editor.selectedObject.position + objectCamera.calculatePosition(), true);
+          } else if (input.didPressKey(Key::A)) {
+            objectCamera.azimuth -= Gm_PI / 4.f;
+
+            snapCameraTo(context, editor.selectedObject.position + objectCamera.calculatePosition(), false);
+          } else if (input.didPressKey(Key::S)) {
+            objectCamera.altitude -= Gm_PI / 4.f;
+
+            snapCameraTo(context, editor.selectedObject.position + objectCamera.calculatePosition(), true);
+          } else if (input.didPressKey(Key::D)) {
+            objectCamera.azimuth += Gm_PI / 4.f;
+
+            snapCameraTo(context, editor.selectedObject.position + objectCamera.calculatePosition(), false);
+          } else if (input.didMoveMouseWheel() && input.getMouseWheelDirection() == MouseWheelEvent::Direction::UP) {
+            objectCamera.radius *= 0.5f;
+
+            snapCameraTo(context, editor.selectedObject.position + objectCamera.calculatePosition(), false);
+          } else if (input.didMoveMouseWheel() && input.getMouseWheelDirection() == MouseWheelEvent::Direction::DOWN) {
+            objectCamera.radius *= 2.f;
+
+            snapCameraTo(context, editor.selectedObject.position + objectCamera.calculatePosition(), false);
+          }
+        } else {
+          float speed = input.isKeyHeld(Key::SPACE) ? 20000.f : 4000.f;
+
+          Gm_HandleFreeCameraMode(context, speed, dt);
+        } 
       }
 
       if (input.didReleaseMouse() && editor.isObjectSelected) {
@@ -966,8 +1024,26 @@ namespace Editor {
       }
     }
 
+    // Handle camera jumps
+    {
+      float alpha = get_running_time() - editor.lastCameraSnapTime;
+
+      if (editor.lastCameraSnapTime != 0.f && alpha < 0.5f) {
+        float selectedObjectDistance = (camera.position - editor.selectedObject.position).magnitude();
+
+        camera.position = Vec3f::lerp(camera.position, editor.cameraSnapTarget, alpha);
+
+        point_camera_at(editor.selectedObject);
+
+        if (editor.preserveCameraSnapDistance) {
+          camera.position = editor.selectedObject.position + (camera.position - editor.selectedObject.position).unit() * selectedObjectDistance;
+        }
+      }
+    }
+
     // Display status messages
     {
+      add_debug_message("Camera snapping: " + std::string(editor.useCameraSnapping ? "ON" : "OFF"));
       add_debug_message("Mode: " + getEditorModeName(editor.mode));
       add_debug_message("Action: " + getActionTypeName(editor.currentActionType));
 
@@ -982,6 +1058,7 @@ namespace Editor {
         auto& p = editor.selectedObject.position;
         auto& s = editor.selectedObject.scale;
         auto& r = editor.selectedObject.rotation;
+
         // @todo Gm_ToString(const Vec3f&), Gm_ToString(const Quaternion&)
         auto position = String(p.x) + ", " + String(p.y) + ", " + String(p.z);
         auto scale = String(s.x) + ", " + String(s.y) + ", " + String(s.z);
