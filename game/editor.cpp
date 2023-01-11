@@ -39,14 +39,6 @@ static struct EditorState {
   ActionType currentActionType = ActionType::POSITION;
   u8 currentSelectedMeshIndex = 0;
 
-  float lastWPressTime = 0.f;
-  float lastAPressTime = 0.f;
-  float lastSPressTime = 0.f;
-  float lastDPressTime = 0.f;
-  float cameraSnapStartTime = 0.f;
-  bool isCameraSnapping = false;
-  Vec3f cameraSnapTarget;
-
   // @todo limit size?
   std::vector<HistoryAction> history;
 
@@ -653,33 +645,6 @@ internal void respawnPlayer(GmContext* context, GameState& state) {
   state.previousPlayerPosition = player.position;
 }
 
-internal void trackLastWasdPressTimes(GmContext* context) {
-  auto& input = get_input();
-  auto runningTime = get_running_time();
-
-  if (input.didPressKey(Key::W)) {
-    editor.lastWPressTime = runningTime;
-  }
-
-  if (input.didPressKey(Key::A)) {
-    editor.lastAPressTime = runningTime;
-  }
-
-  if (input.didPressKey(Key::S)) {
-    editor.lastSPressTime = runningTime;
-  }
-
-  if (input.didPressKey(Key::D)) {
-    editor.lastDPressTime = runningTime;
-  }
-}
-
-internal void snapCameraTo(GmContext* context, const Vec3f& position) {
-  editor.cameraSnapStartTime = get_running_time();
-  editor.cameraSnapTarget = position;
-  editor.isCameraSnapping = true;
-}
-
 internal void saveCollisionPlanesData(GmContext* context) {
   std::string data;
 
@@ -889,8 +854,6 @@ namespace Editor {
     {
       auto& mouseDelta = input.getMouseDelta();
 
-      trackLastWasdPressTimes(context);
-
       if (input.didMoveMouseWheel()) {
         if (input.getMouseWheelDirection() == MouseWheelEvent::Direction::UP) {
           cycleActionType(context, -1);
@@ -949,9 +912,6 @@ namespace Editor {
         } else {
           editor.currentSelectedMeshIndex--;
         }
-      } else if (input.didPressKey(Key::SHIFT)) {
-        editor.cameraSnapStartTime = 0.f;
-        editor.isCameraSnapping = false;
       }
 
       if (input.isMouseHeld() && editor.isObjectSelected) {
@@ -998,30 +958,17 @@ namespace Editor {
 
       // Handle WASD inputs
       if (Gm_IsWindowFocused()) {
-        const float KEY_SNAP_TIME = 0.2f;
-        const float SNAP_DISTANCE = 500.f;
-
-        #define TAP_W input.didReleaseKey(Key::W) && time_since(editor.lastWPressTime) < KEY_SNAP_TIME
-        #define TAP_A input.didReleaseKey(Key::A) && time_since(editor.lastAPressTime) < KEY_SNAP_TIME
-        #define TAP_S input.didReleaseKey(Key::S) && time_since(editor.lastSPressTime) < KEY_SNAP_TIME
-        #define TAP_D input.didReleaseKey(Key::D) && time_since(editor.lastDPressTime) < KEY_SNAP_TIME
-
-        Vec3f snapStart = editor.isCameraSnapping ? editor.cameraSnapTarget : camera.position;
-
         if (input.isKeyHeld(Key::SHIFT) && editor.isObjectSelected) {
           auto& selectedObject = editor.selectedObject;
-          auto selectedObjectToSnapStart = (snapStart - selectedObject.position);
-          auto selectedObjectDistance = selectedObjectToSnapStart.magnitude();
-          auto azimuth = atan2f(selectedObjectToSnapStart.z, selectedObjectToSnapStart.x);
-          auto altitude = atan2f(selectedObjectToSnapStart.y, selectedObjectToSnapStart.xz().magnitude());
+          auto selectedObjectToCamera = camera.position - selectedObject.position;
+          auto selectedObjectDistance = selectedObjectToCamera.magnitude();
+          auto azimuth = atan2f(selectedObjectToCamera.z, selectedObjectToCamera.x);
+          auto altitude = atan2f(selectedObjectToCamera.y, selectedObjectToCamera.xz().magnitude());
 
-          if (editor.isCameraSnapping) {
-            point_camera_at(editor.selectedObject);
-          } else {
-            Vec3f lookAtTarget = Vec3f::lerp(camera.position + camera.orientation.getDirection() * selectedObjectDistance, editor.selectedObject.position, 25.f * dt);
+          // @todo gradually_point_camera_at()
+          Vec3f lookAtTarget = Vec3f::lerp(camera.position + camera.orientation.getDirection() * selectedObjectDistance, selectedObject.position, 25.f * dt);
 
-            point_camera_at(lookAtTarget);
-          }
+          point_camera_at(lookAtTarget);
 
           ThirdPersonCamera objectCamera;
 
@@ -1029,24 +976,13 @@ namespace Editor {
           objectCamera.azimuth = azimuth;
           objectCamera.radius = selectedObjectDistance;
 
-          #define snap_camera() snapCameraTo(context, editor.selectedObject.position + objectCamera.calculatePosition())
+          if (mouseDelta.x != 0 || mouseDelta.y != 0) {
+            objectCamera.altitude += mouseDelta.y / 500.f;
+            objectCamera.azimuth -= mouseDelta.x / 500.f;
 
-          if (TAP_W) {
-            objectCamera.altitude += Gm_PI / 4.f;
+            camera.position = selectedObject.position + objectCamera.calculatePosition();
 
-            snap_camera();
-          } else if (TAP_A) {
-            objectCamera.azimuth -= Gm_PI / 4.f;
-
-            snap_camera();
-          } else if (TAP_S) {
-            objectCamera.altitude -= Gm_PI / 4.f;
-
-            snap_camera();
-          } else if (TAP_D) {
-            objectCamera.azimuth += Gm_PI / 4.f;
-
-            snap_camera();
+            point_camera_at(selectedObject);
           }
         } else {
           float speed =
@@ -1073,26 +1009,6 @@ namespace Editor {
         auto highlightColor = input.isMouseHeld() ? Vec3f(0.7f, 0, 0) : Vec3f(1.f, 0, 0);
 
         highlightObject(context, editor.selectedObject, highlightColor);
-      }
-    }
-
-    // Handle camera snapping
-    {
-      bool isPressingWasd = input.isKeyHeld(Key::W) || input.isKeyHeld(Key::A) || input.isKeyHeld(Key::S) || input.isKeyHeld(Key::D);
-
-      if (isPressingWasd) {
-        editor.cameraSnapStartTime = 0.f;
-      } else if (editor.cameraSnapStartTime != 0.f) {
-        float elapsedSnapTime = time_since(editor.cameraSnapStartTime);
-
-        if (elapsedSnapTime < 1.f) {
-          camera.position = Vec3f::lerp(camera.position, editor.cameraSnapTarget, elapsedSnapTime);
-          editor.isCameraSnapping = true;
-        } else {
-          editor.isCameraSnapping = false;         
-        }
-      } else {
-        editor.isCameraSnapping = false;
       }
     }
 
