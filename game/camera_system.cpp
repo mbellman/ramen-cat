@@ -127,6 +127,17 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
           state.cameraMode = CameraMode::NORMAL;
         }
       }
+
+      // Handle centering the camera behind the player
+      {
+        if (input.didPressKey(Key::SHIFT)) {
+          float azimuth = 0.f;
+
+          if (state.direction.x != 0.f || state.direction.z != 0.f) {
+            state.camera3p.azimuth = atan2f(state.direction.z, state.direction.x) + Gm_PI;
+          }
+        }
+      }
     }
 
     // Disable movement particles in first-person mode

@@ -35,6 +35,7 @@ enum CameraMode {
 struct GameState {
   Gamma::ThirdPersonCamera camera3p;
   Gamma::Vec3f velocity;
+  Gamma::Vec3f direction = Gamma::Vec3f(0, 0, 1.f);
   Gamma::Vec3f previousPlayerPosition;
   Gamma::Vec3f lastSolidGroundPosition;
   Gamma::Vec3f lastBumpedWallNormal;

@@ -122,6 +122,12 @@ void updateGame(GmContext* context, GameState& state, float dt) {
       state.isOnSolidGround = false;
     }
 
+    Vec3f motionLine = player.position - state.previousPlayerPosition;
+
+    if (motionLine.magnitude() > 1.f) {
+      state.direction = motionLine;
+    }
+
     state.previousPlayerPosition = player.position;
   }
 
