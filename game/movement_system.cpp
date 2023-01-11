@@ -167,7 +167,7 @@ namespace MovementSystem {
     if (input.isKeyHeld(Key::W)) {
       state.velocity += forward * rate;
     }
-    
+
     if (input.isKeyHeld(Key::S)) {
       state.velocity += forward.invert() * rate;
     }
@@ -175,7 +175,7 @@ namespace MovementSystem {
     if (input.isKeyHeld(Key::A)) {
       state.velocity += left * rate;
     }
-    
+
     if (input.isKeyHeld(Key::D)) {
       state.velocity += left.invert() * rate;
     }

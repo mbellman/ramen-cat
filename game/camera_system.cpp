@@ -92,34 +92,41 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
   // Handle camera control inputs
   {
     if (Gm_IsWindowFocused() && !state.useCameraOverride) {
-      auto& delta = input.getMouseDelta();
+      auto& input = get_input();
 
-      state.camera3p.azimuth -= delta.x / 1000.f;
-      state.camera3p.altitude += delta.y / 1000.f;
+      // Handle mouse movement
+      {
+        auto& delta = input.getMouseDelta();
 
-      state.camera3p.limitAltitude(0.95f);
-    }
+        state.camera3p.azimuth -= delta.x / 1000.f;
+        state.camera3p.altitude += delta.y / 1000.f;
 
-    // Handle camera mode changes
-    if (input.didMoveMouseWheel()) {
-      if (input.getMouseWheelDirection() == MouseWheelEvent::DOWN) {
-        // Zoom further out
-        if (state.cameraMode == CameraMode::FIRST_PERSON) {
+        state.camera3p.limitAltitude(0.95f);
+      }
+
+      // Handle view mode changes
+      {
+        if (input.didMoveMouseWheel()) {
+          if (input.getMouseWheelDirection() == MouseWheelEvent::DOWN) {
+            // Zoom further out
+            if (state.cameraMode == CameraMode::FIRST_PERSON) {
+              state.cameraMode = CameraMode::NORMAL;
+            } else {
+              state.cameraMode = CameraMode::ZOOM_OUT;
+            }
+          } else {
+            // Zoom further in
+            if (state.cameraMode == CameraMode::ZOOM_OUT) {
+              state.cameraMode = CameraMode::NORMAL;
+            } else if (state.isOnSolidGround && !state.isPlayerMovingThisFrame) {
+              state.cameraMode = CameraMode::FIRST_PERSON;
+            }
+          }
+        } else if (state.cameraMode == CameraMode::FIRST_PERSON && state.isPlayerMovingThisFrame) {
+          // Exit first-person mode whenever moving the player
           state.cameraMode = CameraMode::NORMAL;
-        } else {
-          state.cameraMode = CameraMode::ZOOM_OUT;
-        }
-      } else {
-        // Zoom further in
-        if (state.cameraMode == CameraMode::ZOOM_OUT) {
-          state.cameraMode = CameraMode::NORMAL;
-        } else if (state.isOnSolidGround && !state.isPlayerMovingThisFrame) {
-          state.cameraMode = CameraMode::FIRST_PERSON;
         }
       }
-    } else if (state.cameraMode == CameraMode::FIRST_PERSON && state.isPlayerMovingThisFrame) {
-      // Exit first-person mode whenever moving the player
-      state.cameraMode = CameraMode::NORMAL;
     }
 
     // Disable movement particles in first-person mode
@@ -150,7 +157,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
     auto& camera = get_camera();
 
     if (context->scene.frame > 0) {
-      camera.position = Vec3f::lerp(camera.position, targetCameraPosition, dt * 15.f);
+      camera.position = Vec3f::lerp(camera.position, targetCameraPosition, 15.f * dt);
     } else {
       camera.position = targetCameraPosition;
     }
