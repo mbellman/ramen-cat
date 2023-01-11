@@ -1047,31 +1047,14 @@ namespace Editor {
             objectCamera.azimuth += Gm_PI / 4.f;
 
             snap_camera();
-          } else {
-            float speed =
-              input.isKeyHeld(Key::SPACE) ? 20000.f :
-              input.isKeyHeld(Key::SHIFT) ? 800.f :
-              4000.f;
-
-            Gm_HandleFreeCameraMode(context, speed, dt);            
           }
         } else {
-          if (TAP_W) {
-            snapCameraTo(context, snapStart + camera.orientation.getDirection() * SNAP_DISTANCE);
-          } else if (TAP_A) {
-            snapCameraTo(context, snapStart + camera.orientation.getLeftDirection() * SNAP_DISTANCE);
-          } else if (TAP_S) {
-            snapCameraTo(context, snapStart + camera.orientation.getDirection().invert() * SNAP_DISTANCE);
-          } else if (TAP_D) {
-            snapCameraTo(context, snapStart + camera.orientation.getRightDirection() * SNAP_DISTANCE);
-          } else {
-            float speed =
-              input.isKeyHeld(Key::SPACE) ? 20000.f :
-              input.isKeyHeld(Key::SHIFT) ? 800.f :
-              4000.f;
+          float speed =
+            input.isKeyHeld(Key::SPACE) ? 20000.f :
+            input.isKeyHeld(Key::SHIFT) ? 800.f :
+            4000.f;
 
-            Gm_HandleFreeCameraMode(context, speed, dt);
-          }
+          Gm_HandleFreeCameraMode(context, speed, dt);
         }
       }
 
