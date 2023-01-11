@@ -962,15 +962,17 @@ namespace Editor {
           auto& selectedObject = editor.selectedObject;
           auto selectedObjectToCamera = camera.position - selectedObject.position;
           auto selectedObjectDistance = selectedObjectToCamera.magnitude();
-          auto azimuth = atan2f(selectedObjectToCamera.z, selectedObjectToCamera.x);
-          auto altitude = atan2f(selectedObjectToCamera.y, selectedObjectToCamera.xz().magnitude());
 
           // @todo gradually_point_camera_at()
           Vec3f lookAtTarget = Vec3f::lerp(camera.position + camera.orientation.getDirection() * selectedObjectDistance, selectedObject.position, 25.f * dt);
 
           point_camera_at(lookAtTarget);
 
+          // @todo create_object_third_person_camera()
           ThirdPersonCamera objectCamera;
+
+          auto azimuth = atan2f(selectedObjectToCamera.z, selectedObjectToCamera.x);
+          auto altitude = atan2f(selectedObjectToCamera.y, selectedObjectToCamera.xz().magnitude());
 
           objectCamera.altitude = altitude;
           objectCamera.azimuth = azimuth;

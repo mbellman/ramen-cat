@@ -161,7 +161,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
   LOG_TIME();
 }
 
-void CameraSystem::setCameraStateOverride(GmContext* context, GameState& state, const CameraState& cameraState) {
+void CameraSystem::setTargetCameraState(GmContext* context, GameState& state, const CameraState& cameraState) {
   state.originalCameraState.camera3p = state.camera3p;
   state.originalCameraState.lookAtTarget = getLookAtTargetPosition(context, state);
 

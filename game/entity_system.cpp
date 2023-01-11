@@ -69,7 +69,7 @@ internal void interactWithNpc(GmContext* context, GameState& state, NonPlayerCha
 
   state.activeNpc = &npc;
 
-  CameraSystem::setCameraStateOverride(context, state, {
+  CameraSystem::setTargetCameraState(context, state, {
     .camera3p = {
       .azimuth = atan2f(npcToPlayer.z, npcToPlayer.x) - Gm_TAU / 8.f,
       .altitude = 0.f,
