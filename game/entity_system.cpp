@@ -68,6 +68,7 @@ internal void interactWithNpc(GmContext* context, GameState& state, NonPlayerCha
   Vec3f npcToPlayer = (player.position - npc.position);
 
   state.activeNpc = &npc;
+  state.velocity = Vec3f(0.f);
 
   CameraSystem::setTargetCameraState(context, state, {
     .camera3p = {
@@ -94,6 +95,7 @@ internal void handleNpcs(GmContext* context, GameState& state) {
     // @todo define these constants elsewhere and use them in player/NPC generation
     const float NPC_RADIUS = 20.f;
     const float NPC_HEIGHT = 70.f;
+    const float NPC_INTERACTION_DISTANCE = 120.f;
 
     if (input.didPressKey(Key::SPACE)) {
       if (state.activeNpc == nullptr) {
@@ -101,7 +103,7 @@ internal void handleNpcs(GmContext* context, GameState& state) {
           float xzDistance = (npc.position - player.position).xz().magnitude();
 
           if (
-            xzDistance < 100.f &&
+            xzDistance < NPC_INTERACTION_DISTANCE &&
             player.position.y < npc.position.y + NPC_HEIGHT &&
             player.position.y > npc.position.y - NPC_HEIGHT
           ) {
