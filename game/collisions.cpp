@@ -25,8 +25,9 @@ internal bool isInBetween(float n, float a, float b) {
   return n >= min(a, b) && n <= max(a, b);
 }
 
-void Collisions::addObjectCollisionPlanes(const Object& object, std::vector<Plane>& planes) {
+void Collisions::addObjectCollisionPlanes(const Object& object, std::vector<Plane>& planes, const Gamma::Vec3f& hitboxScale) {
   Matrix4f rotation = object.rotation.toMatrix4f();
+  Vec3f adjustedScale = object.scale * hitboxScale;
 
   // @todo support side masking
   for (auto& points : facePlanePoints) {
@@ -38,10 +39,10 @@ void Collisions::addObjectCollisionPlanes(const Object& object, std::vector<Plan
 
     // Determine the four points of the plane
     {
-      plane.p1 = object.position + (rotation * (object.scale * points[0])).toVec3f();
-      plane.p2 = object.position + (rotation * (object.scale * points[1])).toVec3f();
-      plane.p3 = object.position + (rotation * (object.scale * points[2])).toVec3f();
-      plane.p4 = object.position + (rotation * (object.scale * points[3])).toVec3f();
+      plane.p1 = object.position + (rotation * (adjustedScale * points[0])).toVec3f();
+      plane.p2 = object.position + (rotation * (adjustedScale * points[1])).toVec3f();
+      plane.p3 = object.position + (rotation * (adjustedScale * points[2])).toVec3f();
+      plane.p4 = object.position + (rotation * (adjustedScale * points[3])).toVec3f();
     }
 
     // Precalculate the plane normal/tangents/up factor

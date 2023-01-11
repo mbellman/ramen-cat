@@ -65,6 +65,7 @@ std::vector<MeshAsset> World::meshAssets = {
   {
     .name = "sign-1",
     .defaultColor = Vec3f(1.f),
+    .hitboxScale = Vec3f(0.1f, 0.5f, 1.f),
     .create = []() {
       return Mesh::Model("./game/assets/sign-1.obj");
     },
@@ -76,6 +77,7 @@ std::vector<MeshAsset> World::meshAssets = {
   {
     .name = "door-1",
     .defaultColor = Vec3f(1.f),
+    .hitboxScale = Vec3f(0.5f, 1.f, 0.1f),
     .create = []() {
       return Mesh::Model("./game/assets/door-1.obj");
     },
@@ -87,6 +89,7 @@ std::vector<MeshAsset> World::meshAssets = {
   {
     .name = "windows-1",
     .defaultColor = Vec3f(1.f),
+    .hitboxScale = Vec3f(1.f, 1.f, 0.1f),
     .create = []() {
       return Mesh::Model("./game/assets/windows-1.obj");
     },
@@ -105,6 +108,7 @@ std::vector<MeshAsset> World::meshAssets = {
   {
     .name = "pipe-1",
     .defaultColor = Vec3f(1.f),
+    .hitboxScale = Vec3f(0.3f, 1.f, 0.3f),
     .create = []() {
       return Mesh::Model("./game/assets/pipe-1.obj");
     },
