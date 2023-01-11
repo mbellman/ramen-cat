@@ -183,7 +183,7 @@ internal void selectObject(GmContext* context, Object& object) {
 
 internal void syncLightWithObject(Light& light, const Object& object) {
   light.position = object.position;
-  light.radius = 10.f * object.scale.magnitude();
+  light.radius = 10.f * object.scale.x;
   light.color = object.color.toVec3f();
 }
 
@@ -548,6 +548,7 @@ internal void createNewLight(GmContext* context, GameState& state) {
   auto& lightSphere = create_object_from("light-sphere");
 
   light.position = camera.position + camera.orientation.getDirection() * 150.f;
+  light.power = 5.f;
   light.radius = 500.f;
 
   lightSphere.position = light.position;
@@ -606,6 +607,14 @@ internal void cloneSelectedObject(GmContext* context, GameState& state) {
   object.color = editor.selectedObject.color;
 
   commit(object);
+
+  if (editor.mode == EditorMode::LIGHTS) {
+    auto& light = create_light(LightType::POINT);
+
+    light = *editor.selectedLight;
+
+    syncLightWithObject(light, object);
+  }
 
   selectObject(context, object);
   createObjectHistoryAction(context, ActionType::CREATE, object);
@@ -708,7 +717,8 @@ internal void saveLightsData(GmContext* context) {
     if (light->serializable) {
       data += Gm_ToString(light->position) + ",";
       data += std::to_string(light->radius) + ",";
-      data += Gm_ToString(light->color) + "\n";
+      data += Gm_ToString(light->color) + ",";
+      data += std::to_string(light->power) + "\n";
     }
   }
 

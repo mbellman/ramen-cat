@@ -36,6 +36,8 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
     state.velocity.y = 0.f;
   } else {
     // Allow wall planes to exert a constant outward force
+    // @bug rotated walls don't push the player out enough,
+    // allowing for excessively high vertical wall-kicks
     state.velocity += plane.normal * FORCE_WALL * dt;
   }
 

@@ -39,6 +39,17 @@ std::vector<MeshAsset> World::meshAssets = {
     }
   },
   {
+    .name = "floor-1",
+    .defaultColor = Vec3f(1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/floor-1.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/floor-1.png",
+      .normalMap = "./game/assets/floor-1-normals.png",
+    }
+  },
+  {
     .name = "wall-1",
     .defaultColor = Vec3f(1.f),
     .scalingFactor = Vec3f(1.f, 0, 1.f),
@@ -247,6 +258,7 @@ internal void loadLights(GmContext* context) {
     light.position = Vec3f(df(0), df(1), df(2));
     light.radius = df(3);
     light.color = Vec3f(df(4), df(5), df(6));
+    light.power = df(7);
   }
 
   Console::log("Loaded lights in", Gm_GetMicroseconds() - start, "us");
