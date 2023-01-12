@@ -517,6 +517,7 @@ internal void undoLastHistoryAction(GmContext* context, GameState& state) {
         editor.selectedObject = *liveLastActionObject;
         editor.isObjectSelected = true;
 
+        // @bug this doesn't work if we deselected the object we're undoing actions on
         if (editor.selectedLight != nullptr) {
           syncLightWithObject(*editor.selectedLight, editor.selectedObject);
         }
@@ -542,21 +543,22 @@ internal void createNewLight(GmContext* context, GameState& state) {
   auto& light = create_light(LightType::POINT);
   auto& lightSphere = create_object_from("light-sphere");
 
-  light.position = camera.position + camera.orientation.getDirection() * 150.f;
   light.power = 5.f;
-  light.radius = 500.f;
 
-  lightSphere.position = light.position;
-  lightSphere.scale = Vec3f(10.f);
+  // @temporary
+  lightSphere.position = camera.position + camera.orientation.getDirection() * 150.f;
+  lightSphere.scale = Vec3f(25.f);
 
   commit(lightSphere);
 
+  syncLightWithObject(light, lightSphere);
   createObjectHistoryAction(context, ActionType::CREATE, lightSphere);
   updateCollisionPlanes(context, state);
 }
 
 internal void createNewObject(GmContext* context, GameState& state) {
   auto& camera = get_camera();
+  // @temporary
   Vec3f spawnPosition = camera.position + camera.orientation.getDirection() * 300.f;
 
   // @todo use a common path for collision planes/objects

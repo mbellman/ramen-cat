@@ -13,7 +13,7 @@ std::vector<MeshAsset> World::meshAssets = {
     },
     .attributes = {
       .texture = "./game/assets/lamp.png",
-      .emissivity = 3.f
+      .emissivity = 1.f
     }
   },
   {
@@ -143,6 +143,7 @@ std::vector<MeshAsset> World::meshAssets = {
   {
     .name = "roof",
     .defaultColor = Vec3f(1.f),
+    .hitboxScale = Vec3f(1.f, 0.5f, 0.8f),
     .create = []() {
       return Mesh::Model("./game/assets/roof.obj");
     },
