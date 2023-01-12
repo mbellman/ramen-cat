@@ -28,6 +28,16 @@ internal void initializeInputHandlers(GmContext* context, GameState& state) {
     if (key == Key::ESCAPE) {
       Gm_UnfocusWindow();
     }
+  });
+
+  input.on<Key>("keystart", [&state, &input, context](Key key) {
+    if (key == Key::E) {
+      if (state.isEditorEnabled) {
+        Editor::disableGameEditor(context, state);
+      } else {
+        Editor::enableGameEditor(context, state);
+      }
+    }
 
     // @todo use in dev mode only
     if (key == Key::V && !input.isKeyHeld(Key::CONTROL)) {
@@ -35,16 +45,6 @@ internal void initializeInputHandlers(GmContext* context, GameState& state) {
         Gm_DisableFlags(GammaFlags::VSYNC);
       } else {
         Gm_EnableFlags(GammaFlags::VSYNC);
-      }
-    }
-  });
-
-  input.on<Key>("keystart", [&state, context](Key key) {
-    if (key == Key::E) {
-      if (state.isEditorEnabled) {
-        Editor::disableGameEditor(context, state);
-      } else {
-        Editor::enableGameEditor(context, state);
       }
     }
   });

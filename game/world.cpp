@@ -39,6 +39,18 @@ std::vector<MeshAsset> World::meshAssets = {
     }
   },
   {
+    .name = "metal-guard",
+    .defaultColor = Vec3f(1.f),
+    .hitboxScale = Vec3f(1.f, 0.2f, 0.05f),
+    .create = []() {
+      return Mesh::Model("./game/assets/metal-guard.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/metal-guard.png",
+      .normalMap = "./game/assets/metal-guard-normals.png"
+    }
+  },
+  {
     .name = "floor-1",
     .defaultColor = Vec3f(1.f),
     .create = []() {

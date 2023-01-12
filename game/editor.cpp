@@ -496,6 +496,9 @@ internal void undoLastHistoryAction(GmContext* context, GameState& state) {
       if (context->scene.meshes[restoredObject._record.meshIndex]->name == "light-sphere") {
         auto& light = create_light(LightType::POINT);
 
+        // @todo figure out a better way of determining power
+        light.power = 5.f;
+
         syncLightWithObject(light, restoredObject);
 
         editor.selectedLight = &light;
