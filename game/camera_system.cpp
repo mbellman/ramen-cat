@@ -70,8 +70,8 @@ internal void handleThirdPersonCameraOverrides(GmContext* context, GameState& st
 }
 
 void CameraSystem::initializeGameCamera(GmContext* context, GameState& state) {
-  state.camera3p.azimuth = Gm_PI + Gm_HALF_PI;
-  state.camera3p.altitude = 0.f;
+  state.camera3p.azimuth = Gm_PI - Gm_HALF_PI;
+  state.camera3p.altitude = 0.1f;
 
   updateThirdPersonCameraRadius(state, 0.f);
 
