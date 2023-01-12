@@ -447,24 +447,27 @@ internal void undoLastHistoryAction(GmContext* context, GameState& state) {
   auto& action = editor.history.back();
 
   switch (action.type) {
-    case ActionType::CREATE:
-      if (editor.mode == EditorMode::LIGHTS) {
-        // In LIGHTS mode, remove any lights at the position
-        // of light spheres removed by CREATE undo actions
-        auto* light = findLightByPosition(context, action.initialObject.position);
+    case ActionType::CREATE: {
+      auto& initialObject = action.initialObject;
+
+      if (context->scene.meshes[initialObject._record.meshIndex]->name == "light-sphere") {
+        // When undoing CREATE actions on light spheres,
+        // remove the associated light
+        auto* light = findLightByPosition(context, initialObject.position);
 
         if (light != nullptr) {
           remove_light(light);
         }
       }
 
-      remove_object(action.initialObject);
+      remove_object(initialObject);
 
       editor.isObjectSelected = false;
 
       updateCollisionPlanes(context, state);
 
       break;
+    }
     case ActionType::DELETE: {
       auto& deletedObject = action.initialObject;
       auto& restoredObject = create_object_from(deletedObject._record.meshIndex);
@@ -507,20 +510,27 @@ internal void undoLastHistoryAction(GmContext* context, GameState& state) {
       break;
     }
     default: {
-      auto* liveLastActionObject = Gm_GetObjectByRecord(context, action.initialObject._record);
+      auto& initialObject = action.initialObject;
+      auto* liveLastActionObject = Gm_GetObjectByRecord(context, initialObject._record);
 
       if (liveLastActionObject != nullptr) {
-        *liveLastActionObject = action.initialObject;
+        if (context->scene.meshes[initialObject._record.meshIndex]->name == "light-sphere") {
+          // Update the associated light when undoing actions on light spheres
+          auto* light = findLightByPosition(context, liveLastActionObject->position);
+
+          if (light != nullptr) {
+            syncLightWithObject(*light, initialObject);
+          }
+        }
+
+        *liveLastActionObject = initialObject;
 
         commit(*liveLastActionObject);
 
         editor.selectedObject = *liveLastActionObject;
         editor.isObjectSelected = true;
 
-        // @bug this doesn't work if we deselected the object we're undoing actions on
-        if (editor.selectedLight != nullptr) {
-          syncLightWithObject(*editor.selectedLight, editor.selectedObject);
-        }
+        updateCollisionPlanes(context, state);
       }
     }
   }
