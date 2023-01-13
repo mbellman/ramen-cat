@@ -386,7 +386,6 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   add_mesh("ocean", 1, Mesh::Disc(12));
   add_mesh("ocean-floor", 1, Mesh::Disc(12));
   add_mesh("platform", 1000, Mesh::Cube());
-  add_mesh("npc", 100, Mesh::Cube());
   add_mesh("sphere", 1, Mesh::Sphere(18));
 
   mesh("sphere")->roughness = 0.9f;

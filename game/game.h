@@ -16,9 +16,15 @@ struct Plane {
   #endif
 };
 
+// @todo move to entity_system.h
 struct NonPlayerCharacter {
   Gamma::Vec3f position;
   std::vector<std::string> dialogue;
+};
+
+// @todo move to entity_system.h
+struct Slingshot {
+  Gamma::Vec3f position;
 };
 
 struct CameraState {
@@ -71,6 +77,7 @@ struct GameState {
   std::vector<Plane> collisionPlanes;
 
   std::vector<NonPlayerCharacter> npcs;
+  std::vector<Slingshot> slingshots;
 };
 
 void initializeGame(GmContext* context, GameState& state);

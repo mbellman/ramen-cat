@@ -5,6 +5,8 @@
 
 using namespace Gamma;
 
+const Vec3f DEFAULT_SLINGSHOT_COLOR = Vec3f(0.2f);
+
 internal void loadNpcData(GmContext* context, GameState& state) {
   // @todo eventually store as binary data
   auto npcDataContents = Gm_LoadFileContents("./game/data_npcs.txt");
@@ -62,6 +64,45 @@ internal void loadNpcData(GmContext* context, GameState& state) {
   }
 }
 
+internal void loadEntityData(GmContext* context, GameState& state) {
+  // @todo eventually store as binary data
+  auto entityDataContents = Gm_LoadFileContents("./game/data_entities.txt");
+  auto lines = Gm_SplitString(entityDataContents, "\n");
+
+  // @temporary
+  std::string entityName;
+
+  // @temporary
+  for (u32 i = 0; i < lines.size(); i++) {
+    auto& line = lines[i];
+
+    if (line.size() == 0) {
+      continue;
+    }
+
+    if (line[0] == '@') {
+      entityName = line.substr(1);
+    } else {
+      Vec3f position = Gm_ParseVec3f(line);
+
+      state.slingshots.push_back({
+        .position = position
+      });
+    }
+  }
+
+  // @temporary
+  for (auto& slingshot : state.slingshots) {
+    auto& object = create_object_from("slingshot");
+
+    object.position = slingshot.position;
+    object.color = DEFAULT_SLINGSHOT_COLOR;
+    object.scale = Vec3f(20.f, 40.f, 20.f);
+
+    commit(object);
+  }
+}
+
 internal void interactWithNpc(GmContext* context, GameState& state, NonPlayerCharacter& npc) {
   auto& player = get_player();
   Vec3f npcFacePosition = npc.position + Vec3f(0, 30.f, 0);
@@ -90,7 +131,7 @@ internal void handleNpcs(GmContext* context, GameState& state) {
   auto& input = get_input();
   auto& player = get_player();
 
-  // Handle interactions
+  // Handle talking to NPCs
   {
     // @todo define these constants elsewhere and use them in player/NPC generation
     const float NPC_RADIUS = 20.f;
@@ -126,30 +167,60 @@ internal void handleNpcs(GmContext* context, GameState& state) {
   }
 }
 
+internal void interactWithSlingshot(GmContext* context, GameState& state, Slingshot& slingshot) {
+  // @todo
+}
+
+internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
+  auto& player = get_player();
+
+  // Handle proximity to slingshots
+  {
+    for (auto& slingshot : objects("slingshot")) {
+      Vec3f targetColor = DEFAULT_SLINGSHOT_COLOR;
+
+      if ((slingshot.position - player.position).xz().magnitude() < 100.f) {
+        targetColor = Vec3f(1.f);
+      }
+
+      // @optimize we don't need to constantly lerp the color for
+      // every slingshot; only ones affected by player proximity
+      slingshot.color = Vec3f::lerp(slingshot.color.toVec3f(), targetColor, 10.f * dt);
+
+      commit(slingshot);
+    }
+  }
+}
+
+internal void handleOcean(GmContext* context) {
+  auto& camera = get_camera();
+  auto& ocean = objects("ocean")[0];
+  auto& floor = objects("ocean-floor")[0];
+
+  ocean.position.x = camera.position.x;
+  floor.position.x = camera.position.x;
+
+  ocean.position.z = camera.position.z;
+  floor.position.z = camera.position.z;
+
+  commit(ocean);
+  commit(floor);
+}
+
 void EntitySystem::initializeGameEntities(GmContext* context, GameState& state) {
+  add_mesh("npc", 100, Mesh::Cube());
+  add_mesh("slingshot", 100, Mesh::Cube());
+
   loadNpcData(context, state);
+  loadEntityData(context, state);
 }
 
 void EntitySystem::handleGameEntities(GmContext* context, GameState& state, float dt) {
   START_TIMING("handleGameEntities");
 
   handleNpcs(context, state);
-
-  // Move the ocean/ocean floor along with the player
-  {
-    auto& camera = get_camera();
-    auto& ocean = objects("ocean")[0];
-    auto& floor = objects("ocean-floor")[0];
-
-    ocean.position.x = camera.position.x;
-    floor.position.x = camera.position.x;
-
-    ocean.position.z = camera.position.z;
-    floor.position.z = camera.position.z;
-
-    commit(ocean);
-    commit(floor);
-  }
+  handleSlingshots(context, state, dt);
+  handleOcean(context);
 
   LOG_TIME();
 }
