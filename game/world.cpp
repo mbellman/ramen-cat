@@ -67,6 +67,17 @@ std::vector<MeshAsset> World::meshAssets = {
     }
   },
   {
+    .name = "wood-beam",
+    .defaultColor = Vec3f(1.f),
+    .hitboxScale = Vec3f(1.f, 0.025f, 0.1f),
+    .create = []() {
+      return Mesh::Model("./game/assets/wood-beam.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/wood-beam.png"
+    }
+  },
+  {
     .name = "floor-1",
     .defaultColor = Vec3f(1.f),
     .create = []() {
