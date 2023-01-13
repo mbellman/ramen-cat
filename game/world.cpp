@@ -47,7 +47,7 @@ std::vector<MeshAsset> World::meshAssets = {
   },
   {
     .name = "metal-panel",
-    .defaultColor = Vec3f(0.5f),
+    .defaultColor = Vec3f(1.f),
     .create = []() {
       return Mesh::Cube();
     },

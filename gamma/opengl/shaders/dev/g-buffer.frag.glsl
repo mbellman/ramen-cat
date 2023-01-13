@@ -41,6 +41,6 @@ void main() {
     float emissivity = floor(material) / 10.0;
     float roughness = fract(material);
 
-    out_color = vec3(emissivity, roughness, 0.0);
+    out_color = vec3(roughness, emissivity, 0.0);
   }
 }
