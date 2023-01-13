@@ -6,7 +6,7 @@
 
 uniform vec2 screenSize;
 uniform sampler2D texColorAndDepth;
-uniform sampler2D texNormalAndEmissivity;
+uniform sampler2D texNormalAndMaterial;
 uniform sampler2D texIndirectLightT1;
 uniform vec3 cameraPosition;
 uniform mat4 matView;
@@ -160,7 +160,7 @@ vec3 getScreenSpaceGlobalIlluminationContribution(float fragment_depth, vec3 fra
 void main() {
   vec4 frag_color_and_depth = texture(texColorAndDepth, fragUv);
   vec3 fragment_position = getWorldPosition(frag_color_and_depth.w, fragUv, matInverseProjection, matInverseView);
-  vec3 fragment_normal = texture(texNormalAndEmissivity, fragUv).xyz;
+  vec3 fragment_normal = texture(texNormalAndMaterial, fragUv).xyz;
   vec3 global_illumination = vec3(0.0);
   float ambient_occlusion = 0.0;
 

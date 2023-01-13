@@ -1,7 +1,7 @@
 #version 460 core
 
 uniform sampler2D texColorAndDepth;
-uniform sampler2D texNormalAndEmissivity;
+uniform sampler2D texNormalAndMaterial;
 uniform float zNear;
 uniform float zFar;
 
@@ -28,14 +28,19 @@ void main() {
   } else if (fragUv.x < 0.75) {
     // Normal
     vec2 uv = (fragUv - vec2(0.5, 0.0)) * vec2(4.0, 1.0);
-    vec4 normal_and_emissivity = texture(texNormalAndEmissivity, uv);
+    vec4 normal_and_material = texture(texNormalAndMaterial, uv);
 
-    out_color = normal_and_emissivity.rgb;
+    out_color = normal_and_material.rgb;
   } else {
-    // Emissivity
+    // Material
     vec2 uv = (fragUv - vec2(0.75, 0.0)) * vec2(4.0, 1.0);
-    vec4 normal_and_emissivity = texture(texNormalAndEmissivity, uv);
+    vec4 normal_and_material = texture(texNormalAndMaterial, uv);
 
-    out_color = vec3(normal_and_emissivity.w);
+    // @todo refactor
+    float material = normal_and_material.w;
+    float emissivity = floor(material) / 10.0;
+    float roughness = fract(material);
+
+    out_color = vec3(emissivity, roughness, 0.0);
   }
 }

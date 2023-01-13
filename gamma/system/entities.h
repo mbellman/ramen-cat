@@ -257,10 +257,15 @@ namespace Gamma {
     /**
      * Controls how intensely mesh objects render in their
      * natural color, without a light source contribution.
-     *
-     * @todo material parameters?
      */
     float emissivity = 0.f;
+    /**
+     * Controls light scattering behavior from the surface
+     * of mesh objects. A higher roughness corresponds to
+     * more of a matte appearance, whereas a lower roughness
+     * approximates more glossy/metallic surfaces.
+     */
+    float roughness = 0.6f;
   };
 
   /**

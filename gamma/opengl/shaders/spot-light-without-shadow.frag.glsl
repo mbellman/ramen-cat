@@ -10,7 +10,7 @@ struct Light {
 };
 
 uniform sampler2D texColorAndDepth;
-uniform sampler2D texNormalAndEmissivity;
+uniform sampler2D texNormalAndMaterial;
 uniform vec3 cameraPosition;
 uniform mat4 matInverseProjection;
 uniform mat4 matInverseView;
@@ -26,9 +26,6 @@ layout (location = 0) out vec4 out_color_and_depth;
 #include "utils/conversion.glsl";
 
 void main() {
-  // @todo use from roughness buffer
-  float roughness = 0.6;
-
   #include "inline/spot-light.glsl";
 
   out_color_and_depth = vec4(illuminated_color, frag_color_and_depth.w);

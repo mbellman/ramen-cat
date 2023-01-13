@@ -509,7 +509,8 @@ namespace Gamma {
       if (glMesh->isMeshType(MeshType::DEFAULT)) {
         shaders.geometry.setBool("hasTexture", glMesh->hasTexture());
         shaders.geometry.setBool("hasNormalMap", glMesh->hasNormalMap());
-        shaders.geometry.setFloat("meshEmissivity", glMesh->getSourceMesh()->emissivity);
+        shaders.geometry.setFloat("emissivity", glMesh->getSourceMesh()->emissivity);
+        shaders.geometry.setFloat("roughness", glMesh->getSourceMesh()->roughness);
 
         glMesh->render(ctx.primitiveMode);
       }
@@ -531,7 +532,8 @@ namespace Gamma {
         shaders.foliage.setFloat("foliage.speed", foliage.speed);
         shaders.foliage.setBool("hasTexture", glMesh->hasTexture());
         shaders.foliage.setBool("hasNormalMap", glMesh->hasNormalMap());
-        shaders.foliage.setFloat("meshEmissivity", glMesh->getSourceMesh()->emissivity);
+        shaders.foliage.setFloat("emissivity", glMesh->getSourceMesh()->emissivity);
+        shaders.foliage.setFloat("roughness", glMesh->getSourceMesh()->roughness);
 
         glMesh->render(ctx.primitiveMode);
       }
@@ -743,7 +745,7 @@ namespace Gamma {
     shader.use();
     shader.setVec4f("transform", FULL_SCREEN_TRANSFORM);
     shader.setInt("texColorAndDepth", 0);
-    shader.setInt("texNormalAndEmissivity", 1);
+    shader.setInt("texNormalAndMaterial", 1);
     shader.setVec3f("cameraPosition", ctx.activeCamera->position);
     shader.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
     shader.setMatrix4f("matInverseView", ctx.matInverseView);
@@ -763,7 +765,7 @@ namespace Gamma {
     shader.use();
     shader.setVec4f("transform", FULL_SCREEN_TRANSFORM);
     shader.setInt("texColorAndDepth", 0);
-    shader.setInt("texNormalAndEmissivity", 1);
+    shader.setInt("texNormalAndMaterial", 1);
     shader.setVec3f("cameraPosition", camera.position);
     shader.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
     shader.setMatrix4f("matInverseView", ctx.matInverseView);
@@ -801,7 +803,7 @@ namespace Gamma {
       shader.setVec4f("transform", FULL_SCREEN_TRANSFORM);
       // @todo define an enum for reserved color attachment indexes
       shader.setInt("texColorAndDepth", 0);
-      shader.setInt("texNormalAndEmissivity", 1);
+      shader.setInt("texNormalAndMaterial", 1);
       shader.setInt("texShadowMaps[0]", 3);
       shader.setInt("texShadowMaps[1]", 4);
       shader.setInt("texShadowMaps[2]", 5);
@@ -828,7 +830,7 @@ namespace Gamma {
 
     shader.use();
     shader.setInt("texColorAndDepth", 0);
-    shader.setInt("texNormalAndEmissivity", 1);
+    shader.setInt("texNormalAndMaterial", 1);
     shader.setVec3f("cameraPosition", camera.position);
     shader.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
     shader.setMatrix4f("matInverseView", ctx.matInverseView);
@@ -845,7 +847,7 @@ namespace Gamma {
 
     shader.use();
     shader.setInt("texColorAndDepth", 0);
-    shader.setInt("texNormalAndEmissivity", 1);
+    shader.setInt("texNormalAndMaterial", 1);
     shader.setInt("texShadowMap", 3);
     shader.setVec3f("cameraPosition", camera.position);
     shader.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
@@ -876,7 +878,7 @@ namespace Gamma {
 
     shader.use();
     shader.setInt("texColorAndDepth", 0);
-    shader.setInt("texNormalAndEmissivity", 1);
+    shader.setInt("texNormalAndMaterial", 1);
     shader.setVec3f("cameraPosition", camera.position);
     shader.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
     shader.setMatrix4f("matInverseView", ctx.matInverseView);
@@ -893,7 +895,7 @@ namespace Gamma {
 
     shader.use();
     shader.setInt("texColorAndDepth", 0);
-    shader.setInt("texNormalAndEmissivity", 1);
+    shader.setInt("texNormalAndMaterial", 1);
     shader.setInt("texShadowMap", 3);
     shader.setVec3f("cameraPosition", camera.position);
     shader.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
@@ -963,7 +965,7 @@ namespace Gamma {
 
       shaders.indirectLight.setVec4f("transform", FULL_SCREEN_TRANSFORM);
       shaders.indirectLight.setInt("texColorAndDepth", 0);
-      shaders.indirectLight.setInt("texNormalAndEmissivity", 1);
+      shaders.indirectLight.setInt("texNormalAndMaterial", 1);
       shaders.indirectLight.setInt("texIndirectLightT1", 2);
       shaders.indirectLight.setVec3f("cameraPosition", ctx.activeCamera->position);
       shaders.indirectLight.setMatrix4f("matProjection", ctx.matProjection);
@@ -998,7 +1000,7 @@ namespace Gamma {
 
     shaders.indirectLightComposite.setVec4f("transform", FULL_SCREEN_TRANSFORM);
     shaders.indirectLightComposite.setInt("texColorAndDepth", 0);
-    shaders.indirectLightComposite.setInt("texNormalAndEmissivity", 1);
+    shaders.indirectLightComposite.setInt("texNormalAndMaterial", 1);
     shaders.indirectLightComposite.setInt("texIndirectLight", 2);
     shaders.indirectLightComposite.setFloat("zNear", gmContext->scene.zNear);
     shaders.indirectLightComposite.setFloat("zFar", gmContext->scene.zFar);
@@ -1140,7 +1142,7 @@ namespace Gamma {
     shaders.reflections.use();
     shaders.reflections.setVec4f("transform", FULL_SCREEN_TRANSFORM);
     shaders.reflections.setInt("texColorAndDepth", 0);
-    shaders.reflections.setInt("texNormalAndEmissivity", 1);
+    shaders.reflections.setInt("texNormalAndMaterial", 1);
     shaders.reflections.setVec3f("cameraPosition", camera.position);
     shaders.reflections.setMatrix4f("matView", ctx.matView);
     shaders.reflections.setMatrix4f("matInverseView", ctx.matInverseView);
@@ -1345,7 +1347,7 @@ namespace Gamma {
 
     shaders.gBufferDev.use();
     shaders.gBufferDev.setInt("texColorAndDepth", 0);
-    shaders.gBufferDev.setInt("texNormalAndEmissivity", 1);
+    shaders.gBufferDev.setInt("texNormalAndMaterial", 1);
     shaders.gBufferDev.setFloat("zNear", gmContext->scene.zNear);
     shaders.gBufferDev.setFloat("zFar", gmContext->scene.zFar);
     shaders.gBufferDev.setVec4f("transform", { 0.53f, 0.82f, 0.43f, 0.11f });

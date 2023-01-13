@@ -16,7 +16,7 @@ in vec3 fragBitangent;
 in vec2 fragUv;
 
 layout (location = 0) out vec4 out_color_and_depth;
-layout (location = 1) out vec4 out_normal_and_emissivity;
+layout (location = 1) out vec4 out_normal_and_material;
 
 #include "utils/gl.glsl";
 
@@ -62,5 +62,5 @@ void main() {
 
   out_color_and_depth = vec4(probe_reflector_color, gl_FragCoord.z);
   // @todo support custom emissivity
-  out_normal_and_emissivity = vec4(normal, 0.3);
+  out_normal_and_material = vec4(normal, 3.0);
 }

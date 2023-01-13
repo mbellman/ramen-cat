@@ -18,7 +18,7 @@ struct Cascade {
 };
 
 uniform sampler2D texColorAndDepth;
-uniform sampler2D texNormalAndEmissivity;
+uniform sampler2D texNormalAndMaterial;
 uniform sampler2D texShadowMaps[3];
 uniform vec3 cameraPosition;
 uniform mat4 matInverseProjection;
@@ -145,14 +145,15 @@ vec4 getLightSpaceTransform(mat4 matLight, vec3 position) {
 
 void main() {
   vec4 frag_color_and_depth = texture(texColorAndDepth, fragUv);
-  vec4 frag_normal_and_emissivity = texture(texNormalAndEmissivity, fragUv);
+  vec4 frag_normal_and_material = texture(texNormalAndMaterial, fragUv);
   vec3 color = frag_color_and_depth.rgb;
   vec3 position = getWorldPosition(frag_color_and_depth.w, fragUv, matInverseProjection, matInverseView);
-  vec3 normal = frag_normal_and_emissivity.xyz;
-  float emissivity = frag_normal_and_emissivity.w;
+  vec3 normal = frag_normal_and_material.xyz;
 
-  // @todo store roughness in a third 'material' G-Buffer channel
-  const float roughness = 0.6;
+  // @todo refactor
+  float material = frag_normal_and_material.w;
+  float emissivity = floor(material) / 10.0;
+  float roughness = fract(material);
 
   #include "inline/directional-light.glsl";
 

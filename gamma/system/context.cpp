@@ -107,7 +107,7 @@ static void Gm_DisplayDevtools(GmContext* context) {
     renderer.renderText(font_sm, "Color", u32(window.size.width * 0.55f), u32(window.size.height * 0.035f), FG_COLOR, BG_COLOR);
     renderer.renderText(font_sm, "Depth", u32(window.size.width * 0.657f), u32(window.size.height * 0.035f), FG_COLOR, BG_COLOR);
     renderer.renderText(font_sm, "Normals", u32(window.size.width * 0.765f), u32(window.size.height * 0.035f), FG_COLOR, BG_COLOR);
-    renderer.renderText(font_sm, "Emissivity", u32(window.size.width * 0.872f), u32(window.size.height * 0.035f), FG_COLOR, BG_COLOR);
+    renderer.renderText(font_sm, "Material", u32(window.size.width * 0.872f), u32(window.size.height * 0.035f), FG_COLOR, BG_COLOR);
   }
 }
 

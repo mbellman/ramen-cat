@@ -9,7 +9,7 @@ struct DirectionalLight {
 };
 
 uniform sampler2D texColorAndDepth;
-uniform sampler2D texNormalAndEmissivity;
+uniform sampler2D texNormalAndMaterial;
 uniform vec3 cameraPosition;
 uniform mat4 matInverseProjection;
 uniform mat4 matInverseView;
@@ -23,14 +23,15 @@ layout (location = 0) out vec4 out_colorAndDepth;
 
 void main() {
   vec4 frag_color_and_depth = texture(texColorAndDepth, fragUv);
-  vec4 frag_normal_and_emissivity = texture(texNormalAndEmissivity, fragUv);
+  vec4 frag_normal_and_material = texture(texNormalAndMaterial, fragUv);
   vec3 position = getWorldPosition(frag_color_and_depth.w, fragUv, matInverseProjection, matInverseView);
-  vec3 normal = frag_normal_and_emissivity.xyz;
+  vec3 normal = frag_normal_and_material.xyz;
   vec3 color = frag_color_and_depth.rgb;
-  float emissivity = frag_normal_and_emissivity.w;
 
-  // @todo store roughness in a third 'material' G-Buffer channel
-  const float roughness = 0.6;
+  // @todo refactor
+  float material = frag_normal_and_material.w;
+  float emissivity = floor(material) / 10.0;
+  float roughness = fract(material);
 
   vec3 accumulatedColor = vec3(0.0);
 

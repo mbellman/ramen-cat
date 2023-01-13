@@ -4,7 +4,8 @@ uniform bool hasTexture = false;
 uniform bool hasNormalMap = false;
 uniform sampler2D meshTexture;
 uniform sampler2D meshNormalMap;
-uniform float meshEmissivity = 0.0;  // @todo material parameters?
+uniform float emissivity = 0.0;
+uniform float roughness = 0.6;
 
 flat in vec3 fragColor;
 in vec3 fragNormal;
@@ -13,7 +14,7 @@ in vec3 fragBitangent;
 in vec2 fragUv;
 
 layout (location = 0) out vec4 out_color_and_depth;
-layout (location = 1) out vec4 out_normal_and_emissivity;
+layout (location = 1) out vec4 out_normal_and_material;
 
 vec3 getNormal() {
   vec3 normalized_frag_normal = normalize(fragNormal);
@@ -40,6 +41,11 @@ void main() {
     discard;
   }
 
+  float material = 0.0;
+
+  material += floor(10 * emissivity);
+  material += roughness * 0.99;
+
   out_color_and_depth = vec4(color.rgb, gl_FragCoord.z);
-  out_normal_and_emissivity = vec4(getNormal(), meshEmissivity);
+  out_normal_and_material = vec4(getNormal(), material);
 }

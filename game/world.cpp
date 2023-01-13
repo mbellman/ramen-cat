@@ -29,7 +29,8 @@ std::vector<MeshAsset> World::meshAssets = {
       .foliage = {
         .type = FoliageType::FLOWER
       },
-      .emissivity = 0.1f
+      .emissivity = 0.1f,
+      .roughness = 1.f
     }
   },
   {
@@ -40,7 +41,8 @@ std::vector<MeshAsset> World::meshAssets = {
     },
     .attributes = {
       .texture = "./game/assets/concrete.png",
-      .normalMap = "./game/assets/concrete-normals.png"
+      .normalMap = "./game/assets/concrete-normals.png",
+      .roughness = 0.8f
     }
   },
   {
@@ -51,7 +53,8 @@ std::vector<MeshAsset> World::meshAssets = {
     },
     .attributes = {
       .texture = "./game/assets/metal-panel.png",
-      .normalMap = "./game/assets/metal-panel-normals.png"
+      .normalMap = "./game/assets/metal-panel-normals.png",
+      .roughness = 0.4f
     }
   },
   {
@@ -63,7 +66,8 @@ std::vector<MeshAsset> World::meshAssets = {
     },
     .attributes = {
       .texture = "./game/assets/metal-guard.png",
-      .normalMap = "./game/assets/metal-guard-normals.png"
+      .normalMap = "./game/assets/metal-guard-normals.png",
+      .roughness = 0.1f
     }
   },
   {
@@ -74,7 +78,8 @@ std::vector<MeshAsset> World::meshAssets = {
       return Mesh::Model("./game/assets/wood-beam.obj");
     },
     .attributes = {
-      .texture = "./game/assets/wood-beam.png"
+      .texture = "./game/assets/wood-beam.png",
+      .roughness = 0.5f
     }
   },
   {
@@ -86,6 +91,7 @@ std::vector<MeshAsset> World::meshAssets = {
     .attributes = {
       .texture = "./game/assets/floor-1.png",
       .normalMap = "./game/assets/floor-1-normals.png",
+      .roughness = 0.4f
     }
   },
   {
@@ -157,7 +163,8 @@ std::vector<MeshAsset> World::meshAssets = {
     },
     .attributes = {
       .texture = "./game/assets/pipe-1.png",
-      .normalMap = "./game/assets/pipe-1-normals.png"
+      .normalMap = "./game/assets/pipe-1-normals.png",
+      .roughness = 0.1f
     }
   },
   {
@@ -381,6 +388,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   add_mesh("npc", 100, Mesh::Cube());
   add_mesh("sphere", 1, Mesh::Sphere(18));
 
+  mesh("sphere")->roughness = 0.9f;
   mesh("ocean")->type = MeshType::WATER;
   mesh("ocean")->canCastShadows = false;
   mesh("ocean-floor")->canCastShadows = false;
@@ -426,6 +434,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
       mesh(asset.name)->texture = asset.attributes.texture;
       mesh(asset.name)->normalMap = asset.attributes.normalMap;
       mesh(asset.name)->emissivity = asset.attributes.emissivity;
+      mesh(asset.name)->roughness = asset.attributes.roughness;
     }
 
     for (auto& asset : World::dynamicMeshPieces) {

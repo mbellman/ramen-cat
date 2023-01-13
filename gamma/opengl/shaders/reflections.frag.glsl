@@ -1,7 +1,7 @@
 #version 460 core
 
 uniform sampler2D texColorAndDepth;
-uniform sampler2D texNormalAndEmissivity;
+uniform sampler2D texNormalAndMaterial;
 uniform vec3 cameraPosition;
 uniform mat4 matView;
 uniform mat4 matInverseView;
@@ -171,11 +171,10 @@ float getInitialMarchStepSize() {
 
 void main() {
   vec4 frag_color_and_depth = texture(texColorAndDepth, fragUv);
-  vec4 frag_normal_and_emissivity = texture(texNormalAndEmissivity, fragUv);
+  vec3 frag_world_normal = texture(texNormalAndMaterial, fragUv).rgb;
   vec3 frag_world_position = getWorldPosition(frag_color_and_depth.w, fragUv, matInverseProjection, matInverseView);
   vec3 camera_to_fragment = frag_world_position - cameraPosition;
   vec3 normalized_camera_to_fragment = normalize(camera_to_fragment);
-  vec3 frag_world_normal = frag_normal_and_emissivity.rgb;
 
   // @hack invert Z
   vec4 frag_view_position = glVec4(matView * glVec4(frag_world_position));

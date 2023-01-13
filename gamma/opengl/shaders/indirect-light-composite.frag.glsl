@@ -4,7 +4,6 @@
 
 uniform vec2 screenSize;
 uniform sampler2D texColorAndDepth;
-uniform sampler2D texNormalAndEmissivity;
 uniform sampler2D texIndirectLight;
 
 uniform float zNear;
@@ -19,12 +18,9 @@ layout (location = 0) out vec4 out_color_and_depth;
 #include "utils/conversion.glsl";
 
 void main() {
-  vec4 frag_normal_and_emissivity = texture(texNormalAndEmissivity, fragUv);
   vec4 frag_color_and_depth = texture(texColorAndDepth, fragUv);
   vec3 fragment_albedo = frag_color_and_depth.rgb;
   float linear_fragment_depth = getLinearizedDepth(frag_color_and_depth.w, zNear, zFar);
-  vec3 fragment_normal = frag_normal_and_emissivity.xyz;
-  float emissivity = frag_normal_and_emissivity.w;
   vec3 global_illumination = vec3(0);
   float ambient_occlusion = 0.0;
 

@@ -12,7 +12,7 @@ struct Light {
 };
 
 uniform sampler2D texColorAndDepth;
-uniform sampler2D texNormalAndEmissivity;
+uniform sampler2D texNormalAndMaterial;
 uniform sampler2D texShadowMap;
 uniform vec3 cameraPosition;
 uniform mat4 matInverseProjection;
@@ -75,9 +75,6 @@ float getLightFactor(vec3 position, float incidence, float light_distance) {
 }
 
 void main() {
-  // @todo use from roughness buffer
-  float roughness = 0.6;
-
   #include "inline/spot-light.glsl";
 
   float light_factor = getLightFactor(position, incidence, light_distance);
