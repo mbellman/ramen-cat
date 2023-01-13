@@ -17,6 +17,22 @@ std::vector<MeshAsset> World::meshAssets = {
     }
   },
   {
+    .name = "weeds",
+    .defaultColor = Vec3f(1.f),
+    .hitboxScale = Vec3f(1.f, 1.f, 0.2f),
+    .create = []() {
+      return Mesh::Model("./game/assets/weeds.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/weeds.png",
+      .type = MeshType::FOLIAGE,
+      .foliage = {
+        .type = FoliageType::FLOWER
+      },
+      .emissivity = 0.1f
+    }
+  },
+  {
     .name = "concrete-slab",
     .defaultColor = Vec3f(0.5f),
     .create = []() {
@@ -119,13 +135,6 @@ std::vector<MeshAsset> World::meshAssets = {
     .attributes = {
       .texture = "./game/assets/windows-1.png",
       .emissivity = 0.25f
-    }
-  },
-  {
-    .name = "corrugated-metal",
-    .defaultColor = Vec3f(0.5f),
-    .create = []() {
-      return Mesh::Model("./game/assets/corrugated-metal.obj");
     }
   },
   {
@@ -401,6 +410,8 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
       add_mesh(asset.name, asset.maxInstances, asset.create());
 
       // @todo handle all mesh attributes
+      mesh(asset.name)->type = asset.attributes.type;
+      mesh(asset.name)->foliage = asset.attributes.foliage;
       mesh(asset.name)->texture = asset.attributes.texture;
       mesh(asset.name)->normalMap = asset.attributes.normalMap;
       mesh(asset.name)->emissivity = asset.attributes.emissivity;

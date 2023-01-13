@@ -12,7 +12,7 @@ uniform FoliageBehavior foliage;
 uniform float time;
 
 vec3 getFlowerFoliageOffset(vec3 world_position) {
-  float vertex_distance_from_ground = abs(vertexPosition.y);
+  float vertex_distance_from_ground = abs(vertexPosition.y * 2.0);
   float rate = time * foliage.speed;
   float x_3 = world_position.x / 3.0;
   float z_3 = world_position.z / 3.0;
