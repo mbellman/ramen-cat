@@ -167,12 +167,35 @@ internal void handleNpcs(GmContext* context, GameState& state) {
   }
 }
 
-internal void interactWithSlingshot(GmContext* context, GameState& state, Slingshot& slingshot) {
-  // @todo
+internal void interactWithSlingshot(GmContext* context, GameState& state, const Object& slingshot) {
+  auto& player = get_player();
+
+  // @todo make configurable
+  Vec3f slingshotVelocity = Vec3f(0.f, 1500.f, 370.f);
+
+  state.lastSlingshotInteractionTime = state.frameStartTime;
+  state.slingshotVelocity = slingshotVelocity;
+  state.velocity = Vec3f(0.f);
+
+  Vec3f slingshotToPlayer = player.position - slingshot.position;
+
+  CameraSystem::setTargetCameraState(context, state, {
+    .camera3p = {
+      .azimuth = atan2f(slingshotToPlayer.z, slingshotToPlayer.x) - Gm_PI / 16.f,
+      .altitude = 0.f,
+      .radius = 150.f
+    },
+    .lookAtTarget = slingshot.position
+  });
+
+  // Have the restored camera state center behind the player,
+  // once launched from the slingshot
+  state.originalCameraState.camera3p.azimuth = atan2f(slingshotVelocity.z, slingshotVelocity.x) - Gm_PI;
 }
 
 internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
   auto& player = get_player();
+  auto& input = get_input();
 
   // Handle proximity to slingshots
   {
@@ -181,6 +204,10 @@ internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
 
       if ((slingshot.position - player.position).xz().magnitude() < 100.f) {
         targetColor = Vec3f(1.f);
+
+        if (input.didPressKey(Key::SPACE) && state.velocity.y == 0.f) {
+          interactWithSlingshot(context, state, slingshot);
+        }
       }
 
       // @optimize we don't need to constantly lerp the color for
@@ -188,6 +215,19 @@ internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
       slingshot.color = Vec3f::lerp(slingshot.color.toVec3f(), targetColor, 10.f * dt);
 
       commit(slingshot);
+    }
+  }
+
+  // Handle launching from slingshots
+  {
+    if (
+      state.lastSlingshotInteractionTime != 0.f &&
+      time_since(state.lastSlingshotInteractionTime) > 0.5f
+    ) {
+      CameraSystem::restoreOriginalCameraState(context, state);
+
+      state.lastSlingshotInteractionTime = 0.f;
+      state.velocity = state.slingshotVelocity;
     }
   }
 }
@@ -223,4 +263,8 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   handleOcean(context);
 
   LOG_TIME();
+}
+
+bool EntitySystem::isInteractingWithEntity(GmContext* context, GameState& state) {
+  return state.lastSlingshotInteractionTime != 0.f;
 }

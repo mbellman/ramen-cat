@@ -44,8 +44,8 @@ internal Vec3f getLookAtTargetPosition(GmContext* context, GameState& state) {
   return Vec3f::lerp(tweenStart, tweenEnd, easeOut(t));
 }
 
-internal void handleThirdPersonCameraOverrides(GmContext* context, GameState& state) {
-  float t = (get_running_time() - state.cameraOverrideStartTime) / state.cameraOverrideDuration;
+internal void handleCameraOverride(GmContext* context, GameState& state) {
+  float t = time_since(state.cameraOverrideStartTime) / state.cameraOverrideDuration;
 
   if (state.cameraOverrideStartTime == 0.f) {
     // If we haven't started a camera transition yet,
@@ -82,7 +82,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
   START_TIMING("handleGameCamera");
 
   updateThirdPersonCameraRadius(state, dt);
-  handleThirdPersonCameraOverrides(context, state);
+  handleCameraOverride(context, state);
 
   auto& input = get_input();
   auto& player = get_player();

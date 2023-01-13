@@ -1,5 +1,6 @@
 #include "movement_system.h"
 #include "ui_system.h"
+#include "entity_system.h"
 #include "collisions.h"
 #include "macros.h"
 
@@ -140,7 +141,7 @@ internal void resolveAllNpcCollisions(GmContext* context, GameState& state) {
 
 namespace MovementSystem {
   void handlePlayerMovementInput(GmContext* context, GameState& state, float dt) {
-    if (UISystem::hasBlockingDialogue()) {
+    if (UISystem::hasBlockingDialogue() || EntitySystem::isInteractingWithEntity(context, state)) {
       return;
     }
 

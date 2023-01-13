@@ -77,7 +77,10 @@ struct GameState {
   std::vector<Plane> collisionPlanes;
 
   std::vector<NonPlayerCharacter> npcs;
+
   std::vector<Slingshot> slingshots;
+  float lastSlingshotInteractionTime = 0.f;
+  Gamma::Vec3f slingshotVelocity;
 };
 
 void initializeGame(GmContext* context, GameState& state);
