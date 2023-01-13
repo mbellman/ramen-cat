@@ -393,7 +393,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   auto& player = create_object_from("sphere");
 
   player.scale = Vec3f(20.0f);
-  player.position = Vec3f(-30.f, 250.f, 2220.f);
+  player.position = Vec3f(-30.f, 400.f, 2200.f);
   player.color = Vec3f(1.f, 0.4f, 0.4f);
 
   commit(player);
