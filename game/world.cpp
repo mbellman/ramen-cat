@@ -90,8 +90,7 @@ std::vector<MeshAsset> World::meshAssets = {
     },
     .attributes = {
       .texture = "./game/assets/floor-1.png",
-      .normalMap = "./game/assets/floor-1-normals.png",
-      .roughness = 0.4f
+      .normalMap = "./game/assets/floor-1-normals.png"
     }
   },
   {
@@ -103,7 +102,8 @@ std::vector<MeshAsset> World::meshAssets = {
     },
     .attributes = {
       .texture = "./game/assets/wall-1.png",
-      .normalMap = "./game/assets/wall-1-normals.png"
+      .normalMap = "./game/assets/wall-1-normals.png",
+      .roughness = 0.3f
     }
   },
   {
@@ -115,7 +115,8 @@ std::vector<MeshAsset> World::meshAssets = {
     },
     .attributes = {
       .texture = "./game/assets/wall-2.png",
-      .normalMap = "./game/assets/wall-2-normals.png"
+      .normalMap = "./game/assets/wall-2-normals.png",
+      .roughness = 0.8f
     }
   },
   {
