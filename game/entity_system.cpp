@@ -97,7 +97,7 @@ internal void loadEntityData(GmContext* context, GameState& state) {
 
     object.position = slingshot.position;
     object.color = DEFAULT_SLINGSHOT_COLOR;
-    object.scale = Vec3f(20.f, 40.f, 20.f);
+    object.scale = Vec3f(60.f);
 
     commit(object);
   }
@@ -170,14 +170,17 @@ internal void handleNpcs(GmContext* context, GameState& state) {
 internal void interactWithSlingshot(GmContext* context, GameState& state, const Object& slingshot) {
   auto& player = get_player();
 
+  Vec3f slingshotToPlayer = player.position - slingshot.position;
+  Vec3f playerDirection = slingshotToPlayer.xz().unit();
+
   // @todo make configurable
-  Vec3f slingshotVelocity = Vec3f(0.f, 1500.f, 370.f);
+  float xVelocity = 350.f * playerDirection.x * -1.f;
+  float zVelocity = 350.f * playerDirection.z * -1.f;
+  Vec3f slingshotVelocity = Vec3f(xVelocity, 1500.f, zVelocity);
 
   state.lastSlingshotInteractionTime = state.frameStartTime;
   state.slingshotVelocity = slingshotVelocity;
   state.velocity = Vec3f(0.f);
-
-  Vec3f slingshotToPlayer = player.position - slingshot.position;
 
   CameraSystem::setTargetCameraState(context, state, {
     .camera3p = {
@@ -191,6 +194,8 @@ internal void interactWithSlingshot(GmContext* context, GameState& state, const 
   // Have the restored camera state center behind the player,
   // once launched from the slingshot
   state.originalCameraState.camera3p.azimuth = atan2f(slingshotVelocity.z, slingshotVelocity.x) - Gm_PI;
+  state.originalCameraState.camera3p.altitude = Gm_HALF_PI * 0.8f;
+  state.originalCameraState.camera3p.radius = (state.cameraMode == CameraMode::NORMAL ? 300.f : 600.f) + 200.f * (state.originalCameraState.camera3p.altitude / Gm_HALF_PI);
 }
 
 internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
@@ -249,7 +254,9 @@ internal void handleOcean(GmContext* context) {
 
 void EntitySystem::initializeGameEntities(GmContext* context, GameState& state) {
   add_mesh("npc", 100, Mesh::Cube());
-  add_mesh("slingshot", 100, Mesh::Cube());
+  add_mesh("slingshot", 100, Mesh::Model("./game/assets/slingshot.obj"));
+
+  mesh("slingshot")->roughness = 0.3f;
 
   loadNpcData(context, state);
   loadEntityData(context, state);
