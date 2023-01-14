@@ -167,10 +167,11 @@ internal void handleNpcs(GmContext* context, GameState& state) {
   }
 }
 
-internal void interactWithSlingshot(GmContext* context, GameState& state, const Object& slingshot) {
+internal void interactWithSlingshot(GmContext* context, GameState& state, Object& slingshot) {
   auto& player = get_player();
 
   Vec3f slingshotToPlayer = player.position - slingshot.position;
+  float slingshotToPlayerAngle = atan2f(slingshotToPlayer.z, slingshotToPlayer.x);
   Vec3f playerDirection = slingshotToPlayer.xz().unit();
 
   // @todo make configurable
@@ -182,20 +183,33 @@ internal void interactWithSlingshot(GmContext* context, GameState& state, const 
   state.slingshotVelocity = slingshotVelocity;
   state.velocity = Vec3f(0.f);
 
-  CameraSystem::setTargetCameraState(context, state, {
-    .camera3p = {
-      .azimuth = atan2f(slingshotToPlayer.z, slingshotToPlayer.x) - Gm_PI / 16.f,
-      .altitude = 0.f,
-      .radius = 150.f
-    },
-    .lookAtTarget = slingshot.position
-  });
 
-  // Have the restored camera state center behind the player,
-  // once launched from the slingshot
-  state.originalCameraState.camera3p.azimuth = atan2f(slingshotVelocity.z, slingshotVelocity.x) - Gm_PI;
-  state.originalCameraState.camera3p.altitude = Gm_HALF_PI * 0.8f;
-  state.originalCameraState.camera3p.radius = (state.cameraMode == CameraMode::NORMAL ? 300.f : 600.f) + 200.f * (state.originalCameraState.camera3p.altitude / Gm_HALF_PI);
+  // Update the slingshot direction
+  {
+    float yRotation = -slingshotToPlayerAngle + Gm_HALF_PI;
+
+    slingshot.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), yRotation);
+
+    commit(slingshot); 
+  }
+
+  // Control camera override behavior
+  {
+    CameraSystem::setTargetCameraState(context, state, {
+      .camera3p = {
+        .azimuth = slingshotToPlayerAngle - Gm_PI / 16.f,
+        .altitude = 0.f,
+        .radius = 150.f
+      },
+      .lookAtTarget = slingshot.position
+    });
+
+    // Have the restored camera state center behind/above
+    // the player, once launched from the slingshot
+    state.originalCameraState.camera3p.azimuth = Gm_Modf(atan2f(slingshotVelocity.z, slingshotVelocity.x) - Gm_PI, Gm_TAU);
+    state.originalCameraState.camera3p.altitude = Gm_HALF_PI * 0.8f;
+    state.originalCameraState.camera3p.radius = (state.cameraMode == CameraMode::NORMAL ? 300.f : 600.f) + 200.f * (state.originalCameraState.camera3p.altitude / Gm_HALF_PI);
+  }
 }
 
 internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
@@ -256,7 +270,7 @@ void EntitySystem::initializeGameEntities(GmContext* context, GameState& state) 
   add_mesh("npc", 100, Mesh::Cube());
   add_mesh("slingshot", 100, Mesh::Model("./game/assets/slingshot.obj"));
 
-  mesh("slingshot")->roughness = 0.3f;
+  mesh("slingshot")->roughness = 0.9f;
 
   loadNpcData(context, state);
   loadEntityData(context, state);

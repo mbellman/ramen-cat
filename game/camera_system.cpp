@@ -135,6 +135,10 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
 
           if (state.direction.x != 0.f || state.direction.z != 0.f) {
             state.camera3p.azimuth = atan2f(state.direction.z, state.direction.x) + Gm_PI;
+
+            if (state.camera3p.altitude > 0.3f) {
+              state.camera3p.altitude = 0.3f;
+            }
           }
         }
       }
