@@ -80,6 +80,8 @@ struct GameState {
 
   std::vector<Slingshot> slingshots;
   float lastSlingshotInteractionTime = 0.f;
+  Gamma::ObjectRecord activeSlingshotRecord;
+  float targetSlingshotAngle = 0.f;
   Gamma::Vec3f slingshotVelocity;
 };
 

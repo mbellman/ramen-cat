@@ -6,6 +6,7 @@
 using namespace Gamma;
 
 const Vec3f DEFAULT_SLINGSHOT_COLOR = Vec3f(0.2f);
+const Vec3f HIGHLIGHT_SLINGSHOT_COLOR = Vec3f(1.f);
 
 internal void loadNpcData(GmContext* context, GameState& state) {
   // @todo eventually store as binary data
@@ -167,6 +168,7 @@ internal void handleNpcs(GmContext* context, GameState& state) {
   }
 }
 
+// @todo cleanup/clarity
 internal void interactWithSlingshot(GmContext* context, GameState& state, Object& slingshot) {
   auto& player = get_player();
 
@@ -180,18 +182,10 @@ internal void interactWithSlingshot(GmContext* context, GameState& state, Object
   Vec3f slingshotVelocity = Vec3f(xVelocity, 1500.f, zVelocity);
 
   state.lastSlingshotInteractionTime = state.frameStartTime;
+  state.targetSlingshotAngle = Gm_Modf(-slingshotToPlayerAngle + Gm_HALF_PI, Gm_TAU);
+  state.activeSlingshotRecord = slingshot._record;
   state.slingshotVelocity = slingshotVelocity;
   state.velocity = Vec3f(0.f);
-
-
-  // Update the slingshot direction
-  {
-    float yRotation = -slingshotToPlayerAngle + Gm_HALF_PI;
-
-    slingshot.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), yRotation);
-
-    commit(slingshot); 
-  }
 
   // Control camera override behavior
   {
@@ -222,7 +216,7 @@ internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
       Vec3f targetColor = DEFAULT_SLINGSHOT_COLOR;
 
       if ((slingshot.position - player.position).xz().magnitude() < 100.f) {
-        targetColor = Vec3f(1.f);
+        targetColor = HIGHLIGHT_SLINGSHOT_COLOR;
 
         if (input.didPressKey(Key::SPACE) && state.velocity.y == 0.f) {
           interactWithSlingshot(context, state, slingshot);
@@ -239,14 +233,27 @@ internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
 
   // Handle launching from slingshots
   {
-    if (
-      state.lastSlingshotInteractionTime != 0.f &&
-      time_since(state.lastSlingshotInteractionTime) > 0.5f
-    ) {
-      CameraSystem::restoreOriginalCameraState(context, state);
+    if (state.lastSlingshotInteractionTime != 0.f) {
+      if (time_since(state.lastSlingshotInteractionTime) < 0.5f) {
+        // Wind-up
+        auto* slingshot = Gm_GetObjectByRecord(context, state.activeSlingshotRecord);
 
-      state.lastSlingshotInteractionTime = 0.f;
-      state.velocity = state.slingshotVelocity;
+        if (slingshot != nullptr) {
+          auto direction = slingshot->rotation.getDirection();
+          float currentAngle = Gm_Modf(-atan2f(direction.z, direction.x) + Gm_HALF_PI, Gm_TAU);
+          float angle = Gm_LerpCircularf(currentAngle, state.targetSlingshotAngle, 10.f * dt, Gm_HALF_PI);
+
+          slingshot->rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angle);
+
+          commit(*slingshot);
+        }
+      } else {
+        // Launch
+        CameraSystem::restoreOriginalCameraState(context, state);
+
+        state.lastSlingshotInteractionTime = 0.f;
+        state.velocity = state.slingshotVelocity;
+      }
     }
   }
 }
