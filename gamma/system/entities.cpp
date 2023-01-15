@@ -499,10 +499,10 @@ namespace Gamma {
   }
 
   /**
-   * Mesh::Sphere()
-   * --------------
+   * Mesh::Disc()
+   * ------------
    * 
-   * Constructs a sphere Mesh with a given number of curvature divisions.
+   * Constructs a flat disc Mesh with a given number of slices.
    */
   Mesh* Mesh::Disc(u32 slices) {
     auto* mesh = new Mesh();

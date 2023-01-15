@@ -62,8 +62,8 @@ std::vector<MeshAsset> World::meshAssets = {
       return Mesh::Cube();
     },
     .attributes = {
-      // .texture = "./game/assets/metal-panel.png",
-      // .normalMap = "./game/assets/metal-panel-normals.png",
+      .texture = "./game/assets/metal-panel.png",
+      .normalMap = "./game/assets/metal-panel-normals.png",
       .roughness = 0.4f
     }
   },
