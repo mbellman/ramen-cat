@@ -17,6 +17,16 @@ std::vector<MeshAsset> World::meshAssets = {
     }
   },
   {
+    .name = "small-light",
+    .defaultColor = Vec3f(1.f, 0.9f, 0.7f),
+    .create = []() {
+      return Mesh::Model("./game/assets/small-light.obj");
+    },
+    .attributes = {
+      .emissivity = 1.f
+    }
+  },
+  {
     .name = "weeds",
     .defaultColor = Vec3f(1.f),
     .hitboxScale = Vec3f(1.f, 1.f, 0.2f),
@@ -40,9 +50,9 @@ std::vector<MeshAsset> World::meshAssets = {
       return Mesh::Cube();
     },
     .attributes = {
-      .texture = "./game/assets/concrete.png",
-      .normalMap = "./game/assets/concrete-normals.png",
-      .roughness = 0.8f
+      // .texture = "./game/assets/concrete.png",
+      // .normalMap = "./game/assets/concrete-normals.png",
+      .roughness = 0.9f
     }
   },
   {
@@ -52,8 +62,8 @@ std::vector<MeshAsset> World::meshAssets = {
       return Mesh::Cube();
     },
     .attributes = {
-      .texture = "./game/assets/metal-panel.png",
-      .normalMap = "./game/assets/metal-panel-normals.png",
+      // .texture = "./game/assets/metal-panel.png",
+      // .normalMap = "./game/assets/metal-panel-normals.png",
       .roughness = 0.4f
     }
   },
@@ -101,22 +111,9 @@ std::vector<MeshAsset> World::meshAssets = {
       return Mesh::Plane(2);
     },
     .attributes = {
-      .texture = "./game/assets/wall-1.png",
-      .normalMap = "./game/assets/wall-1-normals.png",
-      .roughness = 0.3f
-    }
-  },
-  {
-    .name = "wall-2",
-    .defaultColor = Vec3f(1.f),
-    .scalingFactor = Vec3f(1.f, 0, 1.f),
-    .create = []() {
-      return Mesh::Plane(2);
-    },
-    .attributes = {
-      .texture = "./game/assets/wall-2.png",
-      .normalMap = "./game/assets/wall-2-normals.png",
-      .roughness = 0.8f
+      // .texture = "./game/assets/wall-1.png",
+      // .normalMap = "./game/assets/wall-1-normals.png",
+      .roughness = 0.1f
     }
   },
   {
@@ -177,6 +174,13 @@ std::vector<MeshAsset> World::meshAssets = {
     },
     .attributes = {
       .texture = "./game/assets/roof.png"
+    }
+  },
+  {
+    .name = "shop-1",
+    .defaultColor = Vec3f(1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/shop-1.obj");
     }
   },
   {
