@@ -1029,13 +1029,18 @@ namespace Editor {
       }
     }
 
-    // Display status messages
+    // Display editor info
     {
       add_debug_message("Mode: " + getEditorModeName(editor.mode));
       add_debug_message("Action: " + getActionTypeName(editor.currentActionType));
 
       if (editor.mode == EditorMode::OBJECTS) {
-        add_debug_message("Mesh: " + World::meshAssets[editor.currentSelectedMeshIndex].name);
+        auto& meshName = World::meshAssets[editor.currentSelectedMeshIndex].name;
+        auto* mesh = mesh(meshName);
+        u32 totalVertices = mesh->vertices.size();
+        u16 totalInstances = mesh->objects.totalActive();
+
+        add_debug_message("Mesh: " + meshName + " (" + std::to_string(totalVertices) + " vertices, " + std::to_string(totalInstances) + " instances)");
       }
 
       if (editor.isObjectSelected) {
