@@ -82,11 +82,12 @@ namespace Gamma {
 
   class InputSystem : public Signaler {
   public:
+    bool didClickMouse() const;
     bool didMoveMouseWheel() const;
-    bool didPressMouse() const;
     bool didPressKey(Key key) const;
     bool didReleaseKey(Key key) const;
     bool didReleaseMouse() const;
+    bool didRightClickMouse() const;
     u64 getLastKeyDown() const;
     const Point<int>& getMouseDelta() const;
     const MouseWheelEvent::Direction getMouseWheelDirection() const;
@@ -100,10 +101,11 @@ namespace Gamma {
     u64 pressedKeyState = 0;
     u64 releasedKeyState = 0;
     u64 lastKeyDown = 0;
-    bool didPressMouseThisFrame = false;
+    // @todo define a struct for per-frame conditions
+    bool didClickMouseThisFrame = false;
+    bool didRightClickThisFrame = false;
     bool didReleaseMouseThisFrame = false;
     bool didMoveMouseWheelThisFrame = false;
-    // @todo distinguish between left/right clicks
     bool isMouseButtonHeldDown = false;
     Point<int> mouseDelta = { 0, 0 };
     MouseWheelEvent::Direction mousewheelDirection;

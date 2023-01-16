@@ -35,6 +35,7 @@ static struct EditorState {
   Light* selectedLight = nullptr;
   bool isObservingObject = false;
   bool isObjectSelected = false;
+  float lastClickTime = 0.f;
   EditorMode mode = EditorMode::OBJECTS;
   ActionType currentActionType = ActionType::POSITION;
   u8 currentSelectedMeshIndex = 0;
@@ -890,17 +891,24 @@ namespace Editor {
         }
       }
 
-      if (input.didPressMouse()) {
-        if (editor.isObservingObject || editor.isObjectSelected) {
-          // Check to ensure that we're observing an object before
-          // we select the current 'observed object'. If we don't,
-          // we're liable to select a stale version of the object,
-          // which can produce a corrupted editor history.
-          if (editor.isObservingObject) {
-            selectObject(context, editor.observedObject);
-          }
+      if (input.didClickMouse()) {
+        editor.lastClickTime = get_running_time();
 
-          createObjectHistoryAction(context, editor.currentActionType, editor.selectedObject);
+        if (editor.isObservingObject || editor.isObjectSelected) {
+          if (input.didRightClickMouse()) {
+            // Object deselection
+            editor.isObjectSelected = false;
+          } else {
+            // Check to ensure that we're observing an object before
+            // we select the current 'observed object'. If we don't,
+            // we're liable to select a stale version of the object,
+            // which can produce a corrupted editor history.
+            if (editor.isObservingObject) {
+              selectObject(context, editor.observedObject);
+            }
+
+            createObjectHistoryAction(context, editor.currentActionType, editor.selectedObject);
+          }
         } else if (editor.currentActionType == ActionType::CREATE) {
           // @todo show an object placement preview
           if (editor.mode == EditorMode::LIGHTS) {
@@ -942,7 +950,7 @@ namespace Editor {
         }
       }
 
-      if (input.isMouseHeld() && editor.isObjectSelected) {
+      if (input.isMouseHeld() && editor.isObjectSelected && time_since(editor.lastClickTime) > 0.1f) {
         float dx = (float)mouseDelta.x;
         float dy = (float)mouseDelta.y;
         auto* originalObject = Gm_GetObjectByRecord(context, editor.selectedObject._record);
