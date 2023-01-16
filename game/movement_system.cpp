@@ -252,17 +252,27 @@ namespace MovementSystem {
     const float gravity = FORCE_GRAVITY * dt;
 
     // Handle gravity/velocity
-    state.velocity.y -= gravity;
-    player.position += state.velocity * dt;
+    {
+      state.velocity.y -= gravity;
+      player.position += state.velocity * dt;
+    }
+
+    float fallDistance = state.lastSolidGroundPosition.y - player.position.y;
 
     resolveAllPlaneCollisions(context, state, dt);
     resolveAllNpcCollisions(context, state);
 
     if (state.velocity.y == 0.f && !state.isPlayerMovingThisFrame) {
-      const float slowdown = 5.f;
+      float alpha =
+        fallDistance > 500.f
+          // Diminish speed more drastically when landing from a high jump
+          ? 100.f * dt
+          : 5.f * dt;
 
-      state.velocity.x = Gm_Lerpf(state.velocity.x, 0.f, slowdown * dt);
-      state.velocity.z = Gm_Lerpf(state.velocity.z, 0.f, slowdown * dt);
+      alpha = alpha > 1.f ? 1.f : alpha;
+
+      state.velocity.x = Gm_Lerpf(state.velocity.x, 0.f, alpha);
+      state.velocity.z = Gm_Lerpf(state.velocity.z, 0.f, alpha);
     }
 
     commit(player);
