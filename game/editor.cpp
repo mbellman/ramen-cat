@@ -344,6 +344,7 @@ internal Vec3f getMostSimilarScalingAxis(const Vec3f& sourceAxis, Object& object
 
 internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mouseDy, float dt) {
   auto& camera = get_camera();
+  auto& input = get_input();
   auto& object = editor.history.back().initialObject;
   bool isVerticalMotion = Gm_Absf(mouseDy) > Gm_Absf(mouseDx);
   float multiplier = 1.f;
@@ -376,6 +377,9 @@ internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mo
 
       if (isVerticalMotion) {
         axis = camera.orientation.getUpDirection().alignToAxis();
+      } else if (input.isKeyHeld(Key::CONTROL)) {
+        // @todo use a better key than CONTROL
+        axis = camera.orientation.getRightDirection().alignToAxis();
       } else {
         axis = getMostSimilarObjectAxis(camera.orientation.getRightDirection(), object);
       }
@@ -950,7 +954,12 @@ namespace Editor {
         }
       }
 
-      if (input.isMouseHeld() && editor.isObjectSelected && time_since(editor.lastClickTime) > 0.1f) {
+      if (
+        input.isMouseHeld() &&
+        !input.isKeyHeld(Key::SHIFT) &&
+        editor.isObjectSelected &&
+        time_since(editor.lastClickTime) > 0.1f
+      ) {
         float dx = (float)mouseDelta.x;
         float dy = (float)mouseDelta.y;
         auto* originalObject = Gm_GetObjectByRecord(context, editor.selectedObject._record);

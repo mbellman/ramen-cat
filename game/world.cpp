@@ -19,6 +19,7 @@ std::vector<MeshAsset> World::meshAssets = {
   {
     .name = "small-light",
     .defaultColor = Vec3f(1.f, 0.9f, 0.7f),
+    .hitboxScale = Vec3f(1.5f),
     .create = []() {
       return Mesh::Model("./game/assets/small-light.obj");
     },
