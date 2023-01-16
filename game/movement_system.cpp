@@ -9,11 +9,24 @@ constexpr float FORCE_WALL = 1000.f;
 
 using namespace Gamma;
 
+internal void applyCollisionResetPosition(const Collision& collision, Object& player, float dt) {
+  auto resetPosition = collision.point + collision.plane.normal * player.scale.x;
+
+  if (collision.plane.nDotU > 0.985f) {
+    float alpha = 30.f * dt;
+    alpha = alpha > 1.f ? 1.f : alpha;
+
+    player.position = Vec3f::lerp(player.position, resetPosition, alpha);    
+  } else {
+    player.position = resetPosition;
+  }
+}
+
 internal void resolveSingleCollision(GmContext* context, GameState& state, const Collision& collision, float dt) {
   auto& player = get_player();
   auto& plane = collision.plane;
 
-  player.position = collision.point + plane.normal * player.scale.x;
+  applyCollisionResetPosition(collision, player, dt);
 
   if (plane.nDotU > 0.7f) {
     // If the collision plane normal points sufficiently upward,
@@ -71,7 +84,7 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
       auto fallCollision = Collisions::getLinePlaneCollision(player.position, fallCollisionLineEnd, plane);
 
       if (fallCollision.hit) {
-        player.position = fallCollision.point + plane.normal * playerRadius;
+        applyCollisionResetPosition(fallCollision, player, dt);
 
         state.velocity.y = 0.f;
         state.lastSolidGroundPosition = player.position;

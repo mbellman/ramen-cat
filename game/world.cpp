@@ -153,6 +153,14 @@ std::vector<MeshAsset> World::meshAssets = {
     }
   },
   {
+    .name = "balcony-1",
+    .defaultColor = Vec3f(1.f),
+    .hitboxScale = Vec3f(1.f, 0.4f, 0.4f),
+    .create = []() {
+      return Mesh::Model("./game/assets/balcony-1.obj");
+    }
+  },
+  {
     .name = "pipe-1",
     .defaultColor = Vec3f(1.f),
     .hitboxScale = Vec3f(0.3f, 1.f, 0.3f),
