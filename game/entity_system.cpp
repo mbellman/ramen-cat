@@ -180,8 +180,10 @@ internal void interactWithSlingshot(GmContext* context, GameState& state, Object
   float xVelocity = 350.f * playerDirection.x * -1.f;
   float zVelocity = 350.f * playerDirection.z * -1.f;
   Vec3f slingshotVelocity = Vec3f(xVelocity, 1500.f, zVelocity);
+  Vec3f slingshotDirection = slingshot.rotation.getDirection();
 
   state.lastSlingshotInteractionTime = state.frameStartTime;
+  state.startingSlingshotAngle = Gm_Modf(-atan2f(slingshotDirection.z, slingshotDirection.x) + Gm_HALF_PI, Gm_TAU);
   state.targetSlingshotAngle = Gm_Modf(-slingshotToPlayerAngle + Gm_HALF_PI, Gm_TAU);
   state.activeSlingshotRecord = slingshot._record;
   state.slingshotVelocity = slingshotVelocity;
@@ -204,6 +206,11 @@ internal void interactWithSlingshot(GmContext* context, GameState& state, Object
     state.originalCameraState.camera3p.altitude = Gm_HALF_PI * 0.8f;
     state.originalCameraState.camera3p.radius = (state.cameraMode == CameraMode::NORMAL ? 300.f : 600.f) + 200.f * (state.originalCameraState.camera3p.altitude / Gm_HALF_PI);
   }
+}
+
+// @todo create easing helpers
+internal float easeOut(float t) {
+  return 1.f - powf(1.f - t, 5);
 }
 
 internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
@@ -234,14 +241,15 @@ internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
   // Handle launching from slingshots
   {
     if (state.lastSlingshotInteractionTime != 0.f) {
-      if (time_since(state.lastSlingshotInteractionTime) < 0.5f) {
+      const float timeSinceLastSlingshotInteraction = time_since(state.lastSlingshotInteractionTime);
+
+      if (timeSinceLastSlingshotInteraction < 0.5f) {
         // Wind-up
         auto* slingshot = Gm_GetObjectByRecord(context, state.activeSlingshotRecord);
 
         if (slingshot != nullptr) {
-          auto direction = slingshot->rotation.getDirection();
-          float currentAngle = Gm_Modf(-atan2f(direction.z, direction.x) + Gm_HALF_PI, Gm_TAU);
-          float angle = Gm_LerpCircularf(currentAngle, state.targetSlingshotAngle, 10.f * dt, Gm_HALF_PI);
+          float alpha = 2.f * timeSinceLastSlingshotInteraction;
+          float angle = Gm_LerpCircularf(state.startingSlingshotAngle, state.targetSlingshotAngle, easeOut(alpha), Gm_HALF_PI);
 
           slingshot->rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angle);
 
