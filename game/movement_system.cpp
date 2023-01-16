@@ -173,9 +173,6 @@ namespace MovementSystem {
     if (state.velocity.y != 0.f) {
       // Reduce movement rate in midair
       rate *= 0.05f;
-    } else if (state.velocity.xz().magnitude() > 600.f) {
-      // Limit top xz speed
-      rate = 0.f;
     }
 
     if (input.isKeyHeld(Key::W)) {
@@ -196,12 +193,31 @@ namespace MovementSystem {
 
     state.isPlayerMovingThisFrame = state.velocity != initialVelocity;
 
+    // Limit horizontal speed on ground
+    {
+      const float MAX_HORIZONTAL_SPEED = 650.f;
+
+      Vec3f horizontalVelocity = state.velocity.xz();
+
+      if (state.velocity.y == 0.f && horizontalVelocity.magnitude() > MAX_HORIZONTAL_SPEED) {
+        Vec3f limitedHorizontalVelocity = horizontalVelocity.unit() * MAX_HORIZONTAL_SPEED;
+
+        state.velocity.x = limitedHorizontalVelocity.x;
+        state.velocity.z = limitedHorizontalVelocity.z;
+      }
+    }
+
     // Handle jump/wall kick actions
     {
       if (input.didPressKey(Key::SPACE)) {
         if (state.velocity.y == 0.f) {
           // Regular jump (@todo use state.isOnSolidGround?)
           state.velocity.y = 500.f;
+
+          // Make sure the player is off the ground plane
+          // at the start of the jump to avoid a next-frame
+          // collision snapping them back in place
+          player.position.y += 1.f;
         } else {
           // If we press SPACE in mid-air, queue a wall kick action.
           // We'll determine whether it's appropriate to perform

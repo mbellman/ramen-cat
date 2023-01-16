@@ -936,7 +936,7 @@ namespace Editor {
       } else if (input.didPressKey(Key::ARROW_DOWN)) {
         // @todo cycleCurrentObject
         if (editor.currentSelectedMeshIndex == 0) {
-          editor.currentSelectedMeshIndex = World::meshAssets.size() - 1;
+          editor.currentSelectedMeshIndex = (u8)World::meshAssets.size() - 1;
         } else {
           editor.currentSelectedMeshIndex--;
         }
