@@ -608,7 +608,20 @@ internal void cloneSelectedObject(GmContext* context, GameState& state) {
     ? create_object_from("platform")
     : create_object_from(editor.selectedObject._record.meshIndex);
 
-  object.position = camera.position + cameraDirection * 500.f;
+  Vec3f spawnPosition = camera.position + cameraDirection * 500.f;
+
+  // Bring the spawn position closer than any objects in front of the camera
+  for (auto& plane : editor.objectCollisionPlanes) {
+    Vec3f start = camera.position;
+    Vec3f end = spawnPosition;
+    auto collision = Collisions::getLinePlaneCollision(start, end, plane);
+
+    if (collision.hit) {
+      spawnPosition = collision.point;
+    }
+  }
+
+  object.position = spawnPosition;
   object.scale = editor.selectedObject.scale;
   object.rotation = editor.selectedObject.rotation;
   object.color = editor.selectedObject.color;
