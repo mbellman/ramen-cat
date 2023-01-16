@@ -154,7 +154,10 @@ namespace Gamma {
       glBufferData(GL_ARRAY_BUFFER, transformedVertices.size() * sizeof(Vertex), transformedVertices.data(), GL_DYNAMIC_DRAW);
     }
 
-    if (!hasCreatedInstanceBuffers || mesh.type != MeshType::PARTICLE_SYSTEM) {
+    if (
+      !hasCreatedInstanceBuffers ||
+      (mesh.type != MeshType::PARTICLE_SYSTEM && mesh.objects.changed)
+    ) {
       // Buffer instance colors/matrices
       glBindBuffer(GL_ARRAY_BUFFER, buffers[GLBuffer::COLOR]);
       glBufferData(GL_ARRAY_BUFFER, mesh.objects.totalVisible() * sizeof(pVec4), mesh.objects.getColors(), GL_DYNAMIC_DRAW);

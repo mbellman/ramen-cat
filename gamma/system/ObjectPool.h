@@ -20,6 +20,12 @@ namespace Gamma {
    */
   class ObjectPool {
   public:
+    /**
+     * Determines whether any of the mesh instances were changed,
+     * and if new instance data needs to be buffered to the GPU.
+     */
+    bool changed = false;
+
     Object& operator[](u32 index);
 
     Object* begin() const;

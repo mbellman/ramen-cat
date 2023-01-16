@@ -42,6 +42,8 @@ namespace Gamma {
     totalActiveObjects++;
     totalVisibleObjects++;
 
+    changed = true;
+
     return object;
   }
 
@@ -69,6 +71,8 @@ namespace Gamma {
     objects = nullptr;
     matrices = nullptr;
     colors = nullptr;
+
+    changed = true; 
   }
 
   Object* ObjectPool::getById(u16 objectId) const {
@@ -126,6 +130,8 @@ namespace Gamma {
       }
     }
 
+    changed = true;
+
     return current;
   }
 
@@ -156,6 +162,8 @@ namespace Gamma {
       }
     }
 
+    changed = true;
+
     totalVisibleObjects = current;
   }
 
@@ -179,6 +187,8 @@ namespace Gamma {
     // Update ID -> index lookup table
     indices[objects[index]._record.id] = index;
     indices[objectId] = UNUSED_OBJECT_INDEX;
+
+    changed = true;
   }
 
   void ObjectPool::reset() {
@@ -189,6 +199,7 @@ namespace Gamma {
     totalActiveObjects = 0;
     totalVisibleObjects = 0;
     runningId = 0;
+    changed = true;
   }
 
   void ObjectPool::reserve(u16 size) {
@@ -225,6 +236,7 @@ namespace Gamma {
 
   void ObjectPool::setColorById(u16 objectId, const pVec4& color) {
     colors[indices[objectId]] = color;
+    changed = true;
   }
 
   u16 ObjectPool::totalActive() const {
@@ -237,5 +249,6 @@ namespace Gamma {
 
   void ObjectPool::transformById(u16 objectId, const Matrix4f& matrix) {
     matrices[indices[objectId]] = matrix;
+    changed = true;
   }
 }
