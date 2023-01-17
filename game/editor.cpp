@@ -220,6 +220,28 @@ internal void showDynamicMeshPlaceholders(GmContext* context) {
   }
 }
 
+internal void resetMovingObjects(GmContext* context, GameState& state) {
+  // Reset lanterns
+  // @todo if this same operation is done in other cases, factor out this block
+  for (auto& initialLantern : state.initialLanternObjects) {
+    auto* liveLantern = Gm_GetObjectByRecord(context, initialLantern._record);
+
+    if (liveLantern != nullptr) {
+      *liveLantern = initialLantern;
+
+      commit(*liveLantern);
+    }
+  }
+}
+
+internal void updateInitialMovingObjects(GmContext* context, GameState& state) {
+  state.initialLanternObjects.clear();
+
+  for (auto& lantern : objects("lantern")) {
+    state.initialLanternObjects.push_back(lantern);
+  }
+}
+
 internal void cycleEditorMode(GmContext* context, s8 delta) {
   const std::initializer_list<EditorMode> modeOrder = {
     EditorMode::COLLISION_PLANES,
@@ -728,6 +750,7 @@ namespace Editor {
     state.isEditorEnabled = true;
 
     showDynamicMeshPlaceholders(context);
+    resetMovingObjects(context, state);
 
     mesh("light-sphere")->disabled = false;
 
@@ -755,6 +778,7 @@ namespace Editor {
     saveWorldObjectsData(context);
     saveLightsData(context);
 
+    updateInitialMovingObjects(context, state);
     updateCollisionPlanes(context, state);
     World::rebuildDynamicMeshes(context);
 
