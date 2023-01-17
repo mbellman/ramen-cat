@@ -177,6 +177,8 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
     point_camera_at(lookAtPosition);
   }
 
+  use_frustum_culling({ "weeds", "lamp" });
+
   LOG_TIME();
 }
 

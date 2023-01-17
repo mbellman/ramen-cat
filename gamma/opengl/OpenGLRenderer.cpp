@@ -609,7 +609,7 @@ namespace Gamma {
           shader.setFloat("foliage.speed", foliage.speed);
           shader.setBool("hasTexture", glMesh->hasTexture());
 
-          if (sourceMesh->canCastShadows && sourceMesh->maxCascade >= cascade) {
+          if (sourceMesh->canCastShadows && sourceMesh->maxCascade >= (cascade + 1)) {
             glMesh->render(ctx.primitiveMode, true);
           }
         }

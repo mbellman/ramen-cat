@@ -13,6 +13,7 @@ std::vector<MeshAsset> World::meshAssets = {
     },
     .attributes = {
       .texture = "./game/assets/lamp.png",
+      .maxCascade = 2,
       .emissivity = 1.f
     }
   },
@@ -24,6 +25,7 @@ std::vector<MeshAsset> World::meshAssets = {
       return Mesh::Model("./game/assets/small-light.obj");
     },
     .attributes = {
+      .maxCascade = 2,
       .emissivity = 1.f
     }
   },
@@ -37,6 +39,7 @@ std::vector<MeshAsset> World::meshAssets = {
     .attributes = {
       .texture = "./game/assets/weeds.png",
       .type = MeshType::FOLIAGE,
+      .maxCascade = 2,
       .foliage = {
         .type = FoliageType::FLOWER
       },
@@ -441,13 +444,17 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
     for (auto& asset : World::meshAssets) {
       add_mesh(asset.name, asset.maxInstances, asset.create());
 
+      auto& mesh = *mesh(asset.name);
+      auto& attributes = asset.attributes;
+
       // @todo handle all mesh attributes
-      mesh(asset.name)->type = asset.attributes.type;
-      mesh(asset.name)->foliage = asset.attributes.foliage;
-      mesh(asset.name)->texture = asset.attributes.texture;
-      mesh(asset.name)->normalMap = asset.attributes.normalMap;
-      mesh(asset.name)->emissivity = asset.attributes.emissivity;
-      mesh(asset.name)->roughness = asset.attributes.roughness;
+      mesh.type = attributes.type;
+      mesh.foliage = attributes.foliage;
+      mesh.texture = attributes.texture;
+      mesh.normalMap = attributes.normalMap;
+      mesh.maxCascade = attributes.maxCascade;
+      mesh.emissivity = attributes.emissivity;
+      mesh.roughness = attributes.roughness;
     }
 
     for (auto& asset : World::dynamicMeshPieces) {
