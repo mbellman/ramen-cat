@@ -213,6 +213,16 @@ internal float easeOut(float t) {
   return 1.f - powf(1.f - t, 5);
 }
 
+internal float easeOutElastic(float t) {
+  const float c4 = (2.f * Gm_PI) / 3.f;
+
+  return (
+    t == 0.f ? 0.f :
+    t == 1.f ? 1.f :
+    powf(2.f, -10.f * t) * sinf((t * 10.f - 0.75f) * c4) + 1.f
+  );
+}
+
 internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
   auto& player = get_player();
   auto& input = get_input();
@@ -241,15 +251,16 @@ internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
   // Handle launching from slingshots
   {
     if (state.lastSlingshotInteractionTime != 0.f) {
+      const float WIND_UP_DURATION = 0.5f;
       const float timeSinceLastSlingshotInteraction = time_since(state.lastSlingshotInteractionTime);
+      auto* slingshot = Gm_GetObjectByRecord(context, state.activeSlingshotRecord);
 
-      if (timeSinceLastSlingshotInteraction < 0.5f) {
+      if (timeSinceLastSlingshotInteraction < WIND_UP_DURATION) {
         // Wind-up
-        auto* slingshot = Gm_GetObjectByRecord(context, state.activeSlingshotRecord);
-
         if (slingshot != nullptr) {
-          float alpha = 2.f * timeSinceLastSlingshotInteraction;
-          float angle = Gm_LerpCircularf(state.startingSlingshotAngle, state.targetSlingshotAngle, easeOut(alpha), Gm_HALF_PI);
+          // @todo change the easing function to not require artificially reducing alpha
+          float alpha = 0.3f * (1.f / WIND_UP_DURATION) * timeSinceLastSlingshotInteraction;
+          float angle = Gm_LerpCircularf(state.startingSlingshotAngle, state.targetSlingshotAngle, easeOutElastic(alpha), Gm_HALF_PI);
 
           slingshot->rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angle);
 
@@ -261,6 +272,12 @@ internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
 
         state.lastSlingshotInteractionTime = 0.f;
         state.velocity = state.slingshotVelocity;
+
+        if (slingshot != nullptr) {
+          slingshot->rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), state.targetSlingshotAngle);
+
+          commit(*slingshot);
+        }
       }
     }
   }
