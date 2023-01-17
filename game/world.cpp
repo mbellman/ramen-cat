@@ -18,6 +18,17 @@ std::vector<MeshAsset> World::meshAssets = {
     }
   },
   {
+    .name = "lantern",
+    .defaultColor = Vec3f(1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/lantern.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/lantern.png",
+      .emissivity = 0.5f
+    }
+  },
+  {
     .name = "small-light",
     .defaultColor = Vec3f(1.f, 0.9f, 0.7f),
     .hitboxScale = Vec3f(1.5f),
@@ -68,6 +79,7 @@ std::vector<MeshAsset> World::meshAssets = {
       return Mesh::Model("./game/assets/japanese-roof.obj");
     },
     .attributes = {
+      .normalMap = "./game/assets/concrete-normals.png",
       .roughness = 0.8f
     }
   },

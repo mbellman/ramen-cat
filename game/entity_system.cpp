@@ -269,6 +269,23 @@ internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
   }
 }
 
+internal void handleLanterns(GmContext* context, GameState& state, float dt) {
+  for (auto& initialLantern : state.initialLanternObjects) {
+    auto* liveLantern = Gm_GetObjectByRecord(context, initialLantern._record);
+
+    if (liveLantern != nullptr) {
+      auto& basePosition = initialLantern.position;
+      float a = get_running_time() + basePosition.z / 200.f;
+      float angle = 0.2f * sinf(a);
+
+      liveLantern->rotation = Quaternion::fromAxisAngle(Vec3f(0, 0, 1.f), angle); 
+      liveLantern->position = basePosition + Vec3f(10.f * sin(a), 5.f * sinf(2.f * a), 0);
+
+      commit(*liveLantern);
+    }
+  }
+}
+
 internal void handleOcean(GmContext* context) {
   auto& camera = get_camera();
   auto& ocean = objects("ocean")[0];
@@ -292,6 +309,15 @@ void EntitySystem::initializeGameEntities(GmContext* context, GameState& state) 
 
   loadNpcData(context, state);
   loadEntityData(context, state);
+
+  // Save initial reference copies of objects which
+  // transform dynamically during game time based on
+  // their initial position/rotation/scale
+  {
+    for (auto& lantern : objects("lantern")) {
+      state.initialLanternObjects.push_back(lantern);
+    }
+  }
 }
 
 void EntitySystem::handleGameEntities(GmContext* context, GameState& state, float dt) {
@@ -299,6 +325,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
 
   handleNpcs(context, state);
   handleSlingshots(context, state, dt);
+  handleLanterns(context, state, dt);
   handleOcean(context);
 
   LOG_TIME();

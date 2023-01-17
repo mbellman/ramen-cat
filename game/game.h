@@ -80,13 +80,14 @@ struct GameState {
   std::vector<NonPlayerCharacter> npcs;
 
   std::vector<Slingshot> slingshots;
-
   // @todo define a struct for this
   float lastSlingshotInteractionTime = 0.f;
   Gamma::ObjectRecord activeSlingshotRecord;
   Gamma::Vec3f slingshotVelocity;
   float startingSlingshotAngle = 0.f;
   float targetSlingshotAngle = 0.f;
+
+  std::vector<Gamma::Object> initialLanternObjects;
 };
 
 void initializeGame(GmContext* context, GameState& state);
