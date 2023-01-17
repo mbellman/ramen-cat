@@ -34,10 +34,10 @@ namespace Gamma {
     AbstractRenderer(GmContext* gmContext): gmContext(gmContext) {};
     virtual ~AbstractRenderer() {};
 
-    virtual void createMesh(const Mesh* mesh) {};
-    virtual void createShadowMap(const Light* light) {};
-    virtual void destroyMesh(const Mesh* mesh) {};
-    virtual void destroyShadowMap(const Light* light) {};
+    virtual void createMesh(Mesh* mesh) {};
+    virtual void createShadowMap(Light* light) {};
+    virtual void destroyMesh(Mesh* mesh) {};
+    virtual void destroyShadowMap(Light* light) {};
 
     virtual Area<u32>& getInternalResolution() final {
       return internalResolution;

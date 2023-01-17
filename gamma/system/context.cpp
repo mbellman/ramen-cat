@@ -232,11 +232,6 @@ void Gm_RenderScene(GmContext* context) {
   #endif
 
   renderer.present();
-
-  // Unmark any object pools as changed after render
-  for (auto& mesh : context->scene.meshes) {
-    mesh->objects.changed = false;
-  }
 }
 
 void Gm_HandleFrameEnd(GmContext* context) {

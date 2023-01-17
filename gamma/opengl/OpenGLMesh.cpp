@@ -22,7 +22,7 @@ namespace Gamma {
     MODEL_MATRIX
   };
 
-  OpenGLMesh::OpenGLMesh(const Mesh* mesh) {
+  OpenGLMesh::OpenGLMesh(Mesh* mesh) {
     sourceMesh = mesh;
 
     glGenVertexArrays(1, &vao);
@@ -166,6 +166,7 @@ namespace Gamma {
       glBufferData(GL_ARRAY_BUFFER, mesh.objects.totalVisible() * sizeof(Matrix4f), mesh.objects.getMatrices(), GL_DYNAMIC_DRAW);
 
       hasCreatedInstanceBuffers = true;
+      mesh.objects.changed = false;
     }
 
     // Bind VAO/EBO and draw instances

@@ -1372,7 +1372,7 @@ namespace Gamma {
     // @todo spot light shadow maps?
   }
 
-  void OpenGLRenderer::createMesh(const Mesh* mesh) {
+  void OpenGLRenderer::createMesh(Mesh* mesh) {
     glMeshes.push_back(new OpenGLMesh(mesh));
 
     #if GAMMA_DEVELOPER_MODE
@@ -1384,7 +1384,7 @@ namespace Gamma {
     #endif
   }
 
-  void OpenGLRenderer::createShadowMap(const Light* light) {
+  void OpenGLRenderer::createShadowMap(Light* light) {
     switch (light->type) {
       case LightType::DIRECTIONAL_SHADOWCASTER:
         glDirectionalShadowMaps.push_back(new OpenGLDirectionalShadowMap(light));
@@ -1398,12 +1398,12 @@ namespace Gamma {
     }
   }
 
-  void OpenGLRenderer::destroyMesh(const Mesh* mesh) {
+  void OpenGLRenderer::destroyMesh(Mesh* mesh) {
     // @todo
     Console::log("[Gamma] Mesh destroyed!");
   }
 
-  void OpenGLRenderer::destroyShadowMap(const Light* light) {
+  void OpenGLRenderer::destroyShadowMap(Light* light) {
     // @todo reduce the repetition between cases here
     // @todo test this to make sure it works!
     switch (light->type) {

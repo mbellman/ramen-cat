@@ -90,10 +90,10 @@ namespace Gamma {
     virtual void init() override;
     virtual void destroy() override;
     virtual void render() override;
-    virtual void createMesh(const Mesh* mesh) override;
-    virtual void createShadowMap(const Light* light) override;
-    virtual void destroyMesh(const Mesh* mesh) override;
-    virtual void destroyShadowMap(const Light* light) override;
+    virtual void createMesh(Mesh* mesh) override;
+    virtual void createShadowMap(Light* light) override;
+    virtual void destroyMesh(Mesh* mesh) override;
+    virtual void destroyShadowMap(Light* light) override;
     virtual const RenderStats& getRenderStats() override;
     virtual void present() override;
     virtual void renderSurface(SDL_Surface* surface, u32 x, u32 y, u32 w, u32 h, const Vec3f& color, const Vec4f& background) override;
