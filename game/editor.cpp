@@ -991,7 +991,11 @@ namespace Editor {
         float dx = (float)mouseDelta.x;
         float dy = (float)mouseDelta.y;
         auto* originalObject = Gm_GetObjectByRecord(context, editor.selectedObject._record);
-        auto actionDelta = getCurrentActionDelta(context, dx, dy, dt);
+        Vec3f actionDelta = getCurrentActionDelta(context, dx, dy, dt);
+
+        if (input.isKeyHeld(Key::CONTROL)) {
+          actionDelta *= 0.1f;
+        }
 
         if (editor.currentActionType == ActionType::POSITION) {
           originalObject->position += actionDelta;
@@ -1029,8 +1033,8 @@ namespace Editor {
         camera.rotation = camera.orientation.toQuaternion();
       }
 
-      // Handle WASD inputs
       if (Gm_IsWindowFocused()) {
+        // Handle rotating around selected objects
         if (input.isKeyHeld(Key::SHIFT) && editor.isObjectSelected) {
           auto& selectedObject = editor.selectedObject;
           auto selectedObjectToCamera = camera.position - selectedObject.position;
@@ -1060,6 +1064,7 @@ namespace Editor {
             point_camera_at(selectedObject);
           }
         } else {
+          // Handle WASD inputs
           float speed =
             input.isKeyHeld(Key::SPACE) ? 20000.f :
             input.isKeyHeld(Key::SHIFT) ? 800.f :
