@@ -214,7 +214,7 @@ internal void showDynamicMeshPlaceholders(GmContext* context) {
     }
   }
 
-  // Hide pieces
+  // Hide dynamic pieces
   for (auto& asset : World::dynamicMeshPieces) {
     mesh(asset.name)->disabled = true;
   }
@@ -752,10 +752,15 @@ namespace Editor {
     showDynamicMeshPlaceholders(context);
     resetMovingObjects(context, state);
 
-    mesh("light-sphere")->disabled = false;
+    // Force certain meshes to be enabled/disabled
+    {
+      for (auto& asset : World::meshAssets) {
+        if (!asset.dynamic) {
+          mesh(asset.name)->objects.showAll();
+        }
+      }
 
-    for (auto& asset : World::meshAssets) {
-      mesh(asset.name)->objects.showAll();
+      mesh("light-sphere")->disabled = false;
     }
   }
 
@@ -780,18 +785,44 @@ namespace Editor {
 
     updateInitialMovingObjects(context, state);
     updateCollisionPlanes(context, state);
+
     World::rebuildDynamicMeshes(context);
 
-    mesh("light-sphere")->disabled = true;
+    // Force certain meshes to be enabled/disabled
+    {
+      for (auto& asset : World::meshAssets) {
+        mesh(asset.name)->disabled = asset.dynamic;
+      }
+
+      for (auto& asset : World::dynamicMeshPieces) {
+        mesh(asset.name)->disabled = false;
+      }
+
+      mesh("light-sphere")->disabled = true;
+    }
   }
 
   void initializeGameEditor(GmContext* context, GameState& state) {
     auto& input = get_input();
     auto& commander = context->commander;
 
-    input.on<Key>("keyup", [context](Key key) {
+    input.on<Key>("keyup", [context, & state](Key key) {
+      // Toggle collision planes
       if (key == Key::C) {
         mesh("platform")->disabled = !mesh("platform")->disabled;
+      }
+
+      // Toggle objects
+      if (key == Key::O) {
+        for (auto& asset : World::meshAssets) {
+          if (!asset.dynamic) {
+            mesh(asset.name)->disabled = !mesh(asset.name)->disabled;
+          }
+        }
+
+        for (auto& asset : World::dynamicMeshPieces) {
+          mesh(asset.name)->disabled = !mesh(asset.name)->disabled || state.isEditorEnabled;
+        }
       }
     });
 
@@ -982,6 +1013,7 @@ namespace Editor {
         }
       }
 
+      // Handle click-drag actions on objects
       if (
         input.isMouseHeld() &&
         !input.isKeyHeld(Key::SHIFT) &&

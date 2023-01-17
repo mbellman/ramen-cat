@@ -506,10 +506,5 @@ void World::rebuildDynamicMeshes(GmContext* context) {
     }
   }
 
-  // Show dynamic mesh pieces
-  for (auto& asset : World::dynamicMeshPieces) {
-    mesh(asset.name)->disabled = false;
-  }
-
   rebuildDynamicStaircases(context);
 }
