@@ -575,5 +575,8 @@
     <ClInclude Include="game\collisions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="game\easing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

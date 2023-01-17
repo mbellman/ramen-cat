@@ -161,6 +161,7 @@
   <ItemGroup>
     <ClInclude Include="game\camera_system.h" />
     <ClInclude Include="game\collisions.h" />
+    <ClInclude Include="game\easing.h" />
     <ClInclude Include="game\editor.h" />
     <ClInclude Include="game\effects_system.h" />
     <ClInclude Include="game\entity_system.h" />

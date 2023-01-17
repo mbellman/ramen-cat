@@ -1,12 +1,9 @@
 #include "camera_system.h"
 #include "collisions.h"
 #include "macros.h"
+#include "easing.h"
 
 using namespace Gamma;
-
-internal float easeOut(float t) {
-  return 1.f - powf(1.f - t, 5);
-}
 
 internal void updateThirdPersonCameraRadius(GameState& state, float dt) {
   if (state.cameraMode == CameraMode::FIRST_PERSON) {

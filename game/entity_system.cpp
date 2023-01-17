@@ -2,6 +2,7 @@
 #include "camera_system.h"
 #include "ui_system.h"
 #include "macros.h"
+#include "easing.h"
 
 using namespace Gamma;
 
@@ -206,21 +207,6 @@ internal void interactWithSlingshot(GmContext* context, GameState& state, Object
     state.originalCameraState.camera3p.altitude = Gm_HALF_PI * 0.8f;
     state.originalCameraState.camera3p.radius = (state.cameraMode == CameraMode::NORMAL ? 300.f : 600.f) + 200.f * (state.originalCameraState.camera3p.altitude / Gm_HALF_PI);
   }
-}
-
-// @todo create easing helpers
-internal float easeOut(float t) {
-  return 1.f - powf(1.f - t, 5);
-}
-
-internal float easeOutElastic(float t) {
-  const float c4 = (2.f * Gm_PI) / 3.f;
-
-  return (
-    t == 0.f ? 0.f :
-    t == 1.f ? 1.f :
-    powf(2.f, -10.f * t) * sinf((t * 10.f - 0.75f) * c4) + 1.f
-  );
 }
 
 internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
