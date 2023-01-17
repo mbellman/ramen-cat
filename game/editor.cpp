@@ -593,8 +593,8 @@ internal void createNewObject(GmContext* context, GameState& state) {
     auto& object = create_object_from(asset.name);
 
     object.position = spawnPosition;
-    object.scale = Vec3f(20.f);
-    object.rotation = Quaternion(1.f, 0, 0, 0);
+    object.scale = asset.defaultScale;
+    object.rotation = asset.defaultRotation;
     object.color = asset.defaultColor;
 
     commit(object);
@@ -730,6 +730,10 @@ namespace Editor {
     showDynamicMeshPlaceholders(context);
 
     mesh("light-sphere")->disabled = false;
+
+    for (auto& asset : World::meshAssets) {
+      mesh(asset.name)->objects.showAll();
+    }
   }
 
   void disableGameEditor(GmContext* context, GameState& state) {

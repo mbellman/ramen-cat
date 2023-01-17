@@ -71,8 +71,7 @@ namespace Gamma {
     objects = nullptr;
     matrices = nullptr;
     colors = nullptr;
-
-    changed = true; 
+    changed = true;
   }
 
   Object* ObjectPool::getById(u16 objectId) const {
@@ -211,10 +210,12 @@ namespace Gamma {
     objects = new Object[size];
     matrices = new Matrix4f[size];
     colors = new pVec4[size];
+    changed = true;
   }
 
   void ObjectPool::showAll() {
     totalVisibleObjects = totalActiveObjects;
+    changed = true;
   }
 
   void ObjectPool::swapObjects(u16 indexA, u16 indexB) {

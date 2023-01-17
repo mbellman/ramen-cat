@@ -60,6 +60,18 @@ std::vector<MeshAsset> World::meshAssets = {
     }
   },
   {
+    .name = "japanese-roof",
+    .defaultColor = Vec3f(0.1f),
+    .defaultScale = Vec3f(100.f),
+    .hitboxScale = Vec3f(1.f, 0.4f, 0.5f),
+    .create = []() {
+      return Mesh::Model("./game/assets/japanese-roof.obj");
+    },
+    .attributes = {
+      .roughness = 0.8f
+    }
+  },
+  {
     .name = "metal-panel",
     .defaultColor = Vec3f(1.f),
     .create = []() {

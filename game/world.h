@@ -15,6 +15,7 @@ struct MeshAsset {
   Gamma::Vec3f defaultColor = Gamma::Vec3f(0, 0, 1.f);
   // @todo implement this
   Gamma::Quaternion defaultRotation = Gamma::Quaternion(1.f, 0, 0, 0);
+  Gamma::Vec3f defaultScale = Gamma::Vec3f(30.f);
   Gamma::Vec3f scalingFactor = Gamma::Vec3f(1.f);
   Gamma::Vec3f hitboxScale = Gamma::Vec3f(1.f);
   u16 maxInstances = 1000;
