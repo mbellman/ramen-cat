@@ -113,7 +113,7 @@ vec3 getScreenSpaceGlobalIlluminationContribution(float fragment_depth, vec3 fra
   vec3 global_illumination = vec3(0.0);
 
   float linearized_fragment_depth = getLinearizedDepth(fragment_depth, zNear, zFar);
-  float radius = max_sample_radius * saturate(1.0 / (linearized_fragment_depth * 0.01));
+  float radius = max_sample_radius * saturate(1.0 / (linearized_fragment_depth * 0.005));
 
   // Bounce a ray off the surface and sample points
   // around the bounce ray screen coordinates
@@ -185,10 +185,8 @@ void main() {
     float sample_depth = textureLod(texColorAndDepth, frag_uv_t1, 1).w;
     float linear_sample_depth = getLinearizedDepth(sample_depth, zNear, zFar);
 
-    // if (distance(linearized_fr/agment_depth, linear_sample_depth) < 1.0) {
-      out_gi_and_ao += sample_t1 * weight;
-      sample_sum += weight;
-    // }
+    out_gi_and_ao += sample_t1 * weight;
+    sample_sum += weight;
 
     const float spatial_spread_size = 4.0;
     const float spatial_spread_weight = 0.3;
@@ -200,10 +198,8 @@ void main() {
         float sample_depth = textureLod(texColorAndDepth, sample_uv, 1).w;
         float linear_sample_depth = getLinearizedDepth(sample_depth, zNear, zFar);
 
-        // if (distance(linearized_fragment_depth, linear_sample_depth) < 2.0) {
-          out_gi_and_ao += texture(texIndirectLightT1, sample_uv) * weight * spatial_spread_weight;
-          sample_sum += weight * spatial_spread_weight;
-        // }
+        out_gi_and_ao += texture(texIndirectLightT1, sample_uv) * weight * spatial_spread_weight;
+        sample_sum += weight * spatial_spread_weight;
       }
     }
 

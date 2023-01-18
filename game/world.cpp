@@ -84,6 +84,19 @@ std::vector<MeshAsset> World::meshAssets = {
     }
   },
   {
+    .name = "bathhouse-roof-segment",
+    .defaultColor = Vec3f(0.8f,0.3f,0.1f),
+    .defaultScale = Vec3f(100.f),
+    .hitboxScale = Vec3f(1.f, 0.15f, 0.75f),
+    .create = []() {
+      return Mesh::Model("./game/assets/bathhouse-roof-segment.obj");
+    },
+    .attributes = {
+      .normalMap = "./game/assets/metal-guard-normals.png",
+      .roughness = 0.8f
+    }
+  },
+  {
     .name = "metal-panel",
     .defaultColor = Vec3f(1.f),
     .create = []() {

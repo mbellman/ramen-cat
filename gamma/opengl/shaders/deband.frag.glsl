@@ -76,6 +76,7 @@ void main() {
   vec3 sky_position = getWorldPosition(1.0, fragUv, matInverseProjection, matInverseView) - cameraPosition;
   vec3 sky_direction = normalize(sky_position);
 
+  // @todo make configurable
   const float horizon_altitude = -2000.0;
   float altitude_above_horizon = cameraPosition.y - horizon_altitude;
   vec2 horizon_direction_2d = normalize(vec2(zFar, -altitude_above_horizon));
