@@ -81,10 +81,12 @@ void main() {
   vec2 horizon_direction_2d = normalize(vec2(zFar, -altitude_above_horizon));
   vec2 sky_direction_2d = normalize(vec2(length(sky_direction.xz), sky_direction.y));
 
+  // @todo make configurable
+  vec3 atmosphere_color = vec3(1.0, 0.8, 1.0);
   float atmosphere_factor = getLinearizedDepth(frag_color_and_depth.w, zNear, zFar) / (zFar * 0.9);
 
   atmosphere_factor *= pow(dot(sky_direction_2d, horizon_direction_2d), 100);
   atmosphere_factor = atmosphere_factor > 1 ? 1 : atmosphere_factor;
 
-  out_color = mix(out_color, vec3(1), atmosphere_factor);
+  out_color = mix(out_color, atmosphere_color, atmosphere_factor);
 }

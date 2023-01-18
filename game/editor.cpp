@@ -399,8 +399,7 @@ internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mo
 
       if (isVerticalMotion) {
         axis = camera.orientation.getUpDirection().alignToAxis();
-      } else if (input.isKeyHeld(Key::CONTROL)) {
-        // @todo use a better key than CONTROL
+      } else if (input.isKeyHeld(Key::Q)) {
         axis = camera.orientation.getRightDirection().alignToAxis();
       } else {
         axis = getMostSimilarObjectAxis(camera.orientation.getRightDirection(), object);
