@@ -718,11 +718,15 @@ internal void saveWorldObjectsData(GmContext* context) {
   for (auto& asset : World::meshAssets) {
     data += "@" + asset.name + "\n";
 
-    for (auto& object : objects(asset.name)) {
-      data += Gm_ToString(object.position) + ",";
-      data += Gm_ToString(object.scale) + ",";
-      data += Gm_ToString(object.rotation) + ",";
-      data += Gm_ToString(object.color) + "\n";
+    for (u16 i = 0; i < objects(asset.name).getHighestId(); i++) {
+      auto* object = objects(asset.name).getById(i);
+
+      if (object != nullptr) {
+        data += Gm_ToString(object->position) + ",";
+        data += Gm_ToString(object->scale) + ",";
+        data += Gm_ToString(object->rotation) + ",";
+        data += Gm_ToString(object->color) + "\n";        
+      }
     }
   }
 

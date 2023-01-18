@@ -35,6 +35,7 @@ namespace Gamma {
     Object* getById(u16 objectId) const;
     Object* getByRecord(const ObjectRecord& record) const;
     pVec4* getColors() const;
+    u16 getHighestId() const;
     Matrix4f* getMatrices() const;
     u16 max() const;
     u16 partitionByDistance(u16 start, float distance, const Vec3f& cameraPosition);
@@ -60,6 +61,7 @@ namespace Gamma {
     u16 totalActiveObjects = 0;
     u16 totalVisibleObjects = 0;
     u16 runningId = 0;
+    u16 highestId = 0;
 
     void swapObjects(u16 indexA, u16 indexB);
   };

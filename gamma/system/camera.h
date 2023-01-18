@@ -9,8 +9,6 @@ namespace Gamma {
   struct Camera {
     Vec3f position;
     Orientation orientation;
-    // @todo @bug higher fov values produce faulty SSAO
-    // near the edges of geometry against the sky
     float fov = 45.f;
     Quaternion rotation = Orientation(0, 0, 0).toQuaternion();
   };

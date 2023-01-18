@@ -25,6 +25,10 @@ namespace Gamma {
     // @todo cycle through indices until an unoccupied slot is found
     assert(indices[id] == UNUSED_OBJECT_INDEX, "Attempted to create an Object in an occupied slot");
 
+    if (runningId > highestId) {
+      highestId = runningId;
+    }
+
     // Retrieve and initialize object
     u16 index = totalActiveObjects;
     Object& object = objects[index];
@@ -92,6 +96,10 @@ namespace Gamma {
 
   pVec4* ObjectPool::getColors() const {
     return colors;
+  }
+
+  u16 ObjectPool::getHighestId() const {
+    return highestId;
   }
 
   Matrix4f* ObjectPool::getMatrices() const {
