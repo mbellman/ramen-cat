@@ -67,7 +67,7 @@ void main() {
     out_color = texture(texColorAndDepth, fragUv).rgb;
   #endif
 
-  // @todo make optional via a flag
+  // @todo make atmospherics optional via a flag
   // @bug This produces an outline on geometry near the horizon line due to
   // accumulation buffer texture filtering. If we disable that, the general
   // visual quality is notably worse until we add FXAA or similar. We can
@@ -84,10 +84,12 @@ void main() {
 
   // @todo make configurable
   vec3 atmosphere_color = vec3(1.0, 0.8, 1.0);
-  float atmosphere_factor = getLinearizedDepth(frag_color_and_depth.w, zNear, zFar) / (zFar * 0.9);
+  float depth_divisor = frag_color_and_depth.w == 1.0 ? zFar : zFar * 0.9;
+  float atmosphere_factor = getLinearizedDepth(frag_color_and_depth.w, zNear, zFar) / depth_divisor;
 
   atmosphere_factor *= pow(dot(sky_direction_2d, horizon_direction_2d), 100);
   atmosphere_factor = atmosphere_factor > 1 ? 1 : atmosphere_factor;
+  atmosphere_factor = isnan(atmosphere_factor) ? 0 : atmosphere_factor;
 
   out_color = mix(out_color, atmosphere_color, atmosphere_factor);
 }
