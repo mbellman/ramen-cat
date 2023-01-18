@@ -4,6 +4,10 @@
 
 uniform sampler2D texColorAndDepth;
 
+uniform mat4 matInverseProjection;
+uniform mat4 matInverseView;
+uniform vec3 cameraPosition;
+
 uniform float zNear;
 uniform float zFar;
 
@@ -23,16 +27,21 @@ vec3 deband(vec3 color) {
   float brightness = max(color.r, 0) + max(color.g, 0) + max(color.b, 0);
   float divisor = brightness * 150.0;
 
+  if (divisor == 0.0) {
+    return vec3(0);
+  }
+
   return color * (1.0 + random(0.0, 1.0) / divisor);
 }
 
 void main() {
+  vec4 frag_color_and_depth = texture(texColorAndDepth, fragUv);
+
   #if USE_DEPTH_OF_FIELD == 1
     const int MIP_LEVEL = 1;
     const float MAX_DEPTH = 3000.0;
 
     vec2 texel_size = 1.0 / textureSize(texColorAndDepth, MIP_LEVEL);
-
     vec3 depth_of_field_color = vec3(0.0);
 
     vec2 uv1 = fragUv + vec2(-1.0, 0.0) * texel_size;
@@ -47,7 +56,6 @@ void main() {
     depth_of_field_color += textureLod(texColorAndDepth, uv4, MIP_LEVEL).rgb;
     depth_of_field_color /= 5.0;
 
-    vec4 frag_color_and_depth = texture(texColorAndDepth, fragUv);
     float depth_factor = getLinearizedDepth(frag_color_and_depth.w, zNear, zFar) / MAX_DEPTH;
 
     if (depth_factor > 1.0) depth_factor = 1.0;
@@ -56,6 +64,27 @@ void main() {
 
     out_color = mix(frag_color_and_depth.rgb, depth_of_field_color, depth_factor);
   #else
-    out_color = deband(texture(texColorAndDepth, fragUv).rgb);
+    out_color = texture(texColorAndDepth, fragUv).rgb;
   #endif
+
+  // @todo make optional via a flag
+  // @bug This produces an outline on geometry near the horizon line due to
+  // accumulation buffer texture filtering. If we disable that, the general
+  // visual quality is notably worse until we add FXAA or similar. We can
+  // also do an atmosphere pass in the skybox shader, and then add a remaining
+  // depth/height-based atmospheric scattering effect here.
+  vec3 sky_position = getWorldPosition(1.0, fragUv, matInverseProjection, matInverseView) - cameraPosition;
+  vec3 sky_direction = normalize(sky_position);
+
+  const float horizon_altitude = -2000.0;
+  float altitude_above_horizon = cameraPosition.y - horizon_altitude;
+  vec2 horizon_direction_2d = normalize(vec2(zFar, -altitude_above_horizon));
+  vec2 sky_direction_2d = normalize(vec2(length(sky_direction.xz), sky_direction.y));
+
+  float atmosphere_factor = getLinearizedDepth(frag_color_and_depth.w, zNear, zFar) / (zFar * 0.9);
+
+  atmosphere_factor *= pow(dot(sky_direction_2d, horizon_direction_2d), 100);
+  atmosphere_factor = atmosphere_factor > 1 ? 1 : atmosphere_factor;
+
+  out_color = mix(out_color, vec3(1), atmosphere_factor);
 }

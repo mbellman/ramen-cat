@@ -9,7 +9,7 @@ uniform sampler2D texClouds;
 
 noperspective in vec2 fragUv;
 
-layout (location = 0) out vec4 out_colorAndDepth;
+layout (location = 0) out vec4 out_color_and_depth;
 
 #include "utils/conversion.glsl";
 #include "utils/skybox.glsl";
@@ -32,5 +32,5 @@ void main() {
   vec4 clouds = texture(texClouds, cloudsUv);
   vec3 clouds_color = mix(clouds.rgb, sky_color, 0.3) * clouds.a;
 
-  out_colorAndDepth = vec4(sky_color + clouds_color, 1.0);
+  out_color_and_depth = vec4(sky_color + clouds_color, 1.0);
 }

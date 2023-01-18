@@ -1018,6 +1018,7 @@ namespace Gamma {
   void OpenGLRenderer::renderSkybox() {
     glStencilFunc(GL_EQUAL, MeshType::SKYBOX, 0xFF);
 
+    // @temporary
     clouds->bind();
 
     shaders.skybox.use();
@@ -1318,6 +1319,9 @@ namespace Gamma {
   void OpenGLRenderer::renderPostEffects() {
     ctx.accumulationSource->read();
 
+    // @todo possibly use nearest-neighbor accumulation buffer filtering combined with FXAA
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
     if (Gm_IsFlagEnabled(GammaFlags::RENDER_DEPTH_OF_FIELD)) {
       // @todo OpenGLFrameBuffer::createMipmaps(u32 levels)
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
@@ -1333,6 +1337,9 @@ namespace Gamma {
     post.debanding.use();
     post.debanding.setVec4f("transform", FULL_SCREEN_TRANSFORM);
     post.debanding.setInt("texColorAndDepth", 0);
+    post.debanding.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
+    post.debanding.setMatrix4f("matInverseView", ctx.matInverseView);
+    post.debanding.setVec3f("cameraPosition", ctx.activeCamera->position);
     post.debanding.setFloat("zNear", gmContext->scene.zNear);
     post.debanding.setFloat("zFar", gmContext->scene.zFar);
 
