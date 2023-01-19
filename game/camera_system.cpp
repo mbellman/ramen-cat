@@ -157,6 +157,24 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
       auto cDotN = Vec3f::dot(targetCameraPosition - collision.point, plane.normal);
 
       if (collision.hit && cDotN < 0.f) {
+        auto& collisionPlatform = *Gm_GetObjectByRecord(context, collision.plane.sourceObjectRecord);
+        auto& scale = collisionPlatform.scale;
+        auto matInverseRotation = collisionPlatform.rotation.toMatrix4f().inverse();
+        auto collisionPlatformToTargetCamera = targetCameraPosition - collisionPlatform.position;
+        auto target = (matInverseRotation.inverse() * collisionPlatformToTargetCamera).toVec3f();
+
+        // Determine whether the target camera position would be outside
+        // of the actual collision platform bounding box, and skip if so.
+        // This way we can pan the camera 'around' collision platforms,
+        // allowing for more freeform motion.
+        if (
+          target.x < -scale.x || target.x > scale.x ||
+          target.y < -scale.y || target.y > scale.y ||
+          target.z < -scale.z || target.z > scale.z
+        ) {
+          continue;
+        }
+
         auto playerToCollision = collision.point - lookAtPosition;
 
         targetCameraPosition = lookAtPosition + playerToCollision * 0.9f;
