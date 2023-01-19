@@ -213,6 +213,7 @@ namespace MovementSystem {
         if (state.velocity.y == 0.f) {
           // Regular jump (@todo use state.isOnSolidGround?)
           state.velocity.y = 500.f;
+          state.isOnSolidGround = false;
 
           // Make sure the player is off the ground plane
           // at the start of the jump to avoid a next-frame
