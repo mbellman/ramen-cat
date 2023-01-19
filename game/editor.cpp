@@ -697,6 +697,10 @@ internal void respawnPlayer(GmContext* context, GameState& state) {
 
   state.velocity = Vec3f(0.f);
   state.previousPlayerPosition = player.position;
+
+  // Prevent respawning in a lower area from erroneously
+  // triggering fall position reset behavior
+  state.lastTimeOnSolidGround = get_running_time();
 }
 
 internal void saveCollisionPlanesData(GmContext* context) {
