@@ -71,23 +71,10 @@ std::vector<MeshAsset> World::meshAssets = {
     }
   },
   {
-    .name = "japanese-roof",
-    .defaultColor = Vec3f(0.1f),
-    .defaultScale = Vec3f(100.f),
-    .hitboxScale = Vec3f(1.f, 0.4f, 0.5f),
-    .create = []() {
-      return Mesh::Model("./game/assets/japanese-roof.obj");
-    },
-    .attributes = {
-      .normalMap = "./game/assets/concrete-normals.png",
-      .roughness = 0.8f
-    }
-  },
-  {
     .name = "bathhouse-roof-segment",
     .defaultColor = Vec3f(0.8f,0.3f,0.1f),
     .defaultScale = Vec3f(100.f),
-    .hitboxScale = Vec3f(1.f, 0.15f, 0.75f),
+    .hitboxScale = Vec3f(1.f, 0.3f, 0.8f),
     .create = []() {
       return Mesh::Model("./game/assets/bathhouse-roof-segment.obj");
     },
