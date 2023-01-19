@@ -65,9 +65,19 @@ std::vector<MeshAsset> World::meshAssets = {
       return Mesh::Cube();
     },
     .attributes = {
-      // .texture = "./game/assets/concrete.png",
-      // .normalMap = "./game/assets/concrete-normals.png",
       .roughness = 0.9f
+    }
+  },
+  {
+    .name = "japanese-roof",
+    .defaultColor = Vec3f(0.2f,0.5f,0.3f),
+    .defaultScale = Vec3f(100.f),
+    .hitboxScale = Vec3f(1.f, 0.05f, 1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/japanese-roof.obj");
+    },
+    .attributes = {
+      .roughness = 0.6f
     }
   },
   {
@@ -171,7 +181,7 @@ std::vector<MeshAsset> World::meshAssets = {
   {
     .name = "windows-1",
     .defaultColor = Vec3f(1.f),
-    .hitboxScale = Vec3f(1.f, 1.f, 0.1f),
+    .hitboxScale = Vec3f(1.f, 0.4f, 0.05f),
     .create = []() {
       return Mesh::Model("./game/assets/windows-1.obj");
     },
