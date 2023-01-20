@@ -9,7 +9,7 @@ constexpr float FORCE_WALL = 1000.f;
 
 using namespace Gamma;
 
-internal void applyCollisionResetPosition(const Collision& collision, Object& player, float dt) {
+internal void resolveNewPositionFromCollision(const Collision& collision, Object& player, float dt) {
   auto resetPosition = collision.point + collision.plane.normal * player.scale.x;
 
   if (collision.plane.nDotU > 0.985f) {
@@ -26,7 +26,7 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
   auto& player = get_player();
   auto& plane = collision.plane;
 
-  applyCollisionResetPosition(collision, player, dt);
+  resolveNewPositionFromCollision(collision, player, dt);
 
   if (plane.nDotU > 0.7f) {
     // If the collision plane normal points sufficiently upward,
@@ -64,9 +64,13 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
 internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, float dt) {
   START_TIMING("resolveAllPlaneCollisions");
 
+  // Assume we're not on solid ground until proven otherwise
+  state.isOnSolidGround = false;
+
   auto& player = get_player();
   float playerRadius = player.scale.x;
   bool isFalling = state.previousPlayerPosition.y - player.position.y > 0.f;
+  bool didHitSolidGround = false;
 
   // @optimize precalculate collision plane min/max y, check against
   // player y and skip collision detection if out of range
@@ -78,28 +82,32 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
 
     if (collision.hit) {
       resolveSingleCollision(context, state, collision, dt);
+
+      if (collision.plane.nDotU > 0.7f) {
+        didHitSolidGround = true;
+      }
     } else if (isFalling && plane.nDotU > 0.6f) {
       // @todo description
       Vec3f fallCollisionLineEnd = player.position - plane.normal * (playerRadius + 5.f);
       auto fallCollision = Collisions::getLinePlaneCollision(player.position, fallCollisionLineEnd, plane);
 
       if (fallCollision.hit) {
-        applyCollisionResetPosition(fallCollision, player, dt);
+        resolveNewPositionFromCollision(fallCollision, player, dt);
 
         state.velocity.y = 0.f;
         state.lastSolidGroundPosition = player.position;
         state.lastTimeOnSolidGround = state.frameStartTime;
+
+        didHitSolidGround = true;
       }
     }
   }
 
-  if (state.velocity.y == 0.f) {
-    // Set the solid ground flag after all collisions are resolved.
-    // Setting it within ground collision resolution can cause
-    // subsequent ground collisions to trigger previous-position
-    // reset behavior, causing the player to get stuck.
-    state.isOnSolidGround = true;
-  }
+  // Set the solid ground flag after all collisions are resolved.
+  // Setting it at ground collision resolution time can cause
+  // subsequent ground collisions to trigger previous-position
+  // reset behavior, causing the player to get stuck.
+  state.isOnSolidGround = didHitSolidGround;
 
   LOG_TIME();
 }
@@ -199,7 +207,7 @@ namespace MovementSystem {
 
       Vec3f horizontalVelocity = state.velocity.xz();
 
-      if (state.velocity.y == 0.f && horizontalVelocity.magnitude() > MAX_HORIZONTAL_SPEED) {
+      if (state.isOnSolidGround && horizontalVelocity.magnitude() > MAX_HORIZONTAL_SPEED) {
         Vec3f limitedHorizontalVelocity = horizontalVelocity.unit() * MAX_HORIZONTAL_SPEED;
 
         state.velocity.x = limitedHorizontalVelocity.x;
@@ -210,8 +218,8 @@ namespace MovementSystem {
     // Handle jump/wall kick actions
     {
       if (input.didPressKey(Key::SPACE)) {
-        if (state.velocity.y == 0.f) {
-          // Regular jump (@todo use state.isOnSolidGround?)
+        if (state.isOnSolidGround) {
+          // Regular jump
           state.velocity.y = 500.f;
           state.isOnSolidGround = false;
 
@@ -266,7 +274,7 @@ namespace MovementSystem {
     resolveAllPlaneCollisions(context, state, dt);
     resolveAllNpcCollisions(context, state);
 
-    if (state.velocity.y == 0.f && !state.isMovingPlayerThisFrame) {
+    if (state.isOnSolidGround && !state.isMovingPlayerThisFrame) {
       if (lastSolidGroundXzDistance > 10.f) {
         // When landing from a jump, immediately reduce the xz velocity
         // to a fraction of the original to slow down quickly

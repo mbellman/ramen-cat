@@ -36,13 +36,11 @@ internal void updatePlayerParticles(GmContext* context, GameState& state, float 
         particle.scale.magnitude() < 0.001f &&
         runningTime - state.lastParticleSpawnTime > PARTICLE_SPAWN_DELAY
       ) {
-        if (state.velocity.y == 0.f) {
-          // Spawn particles when walking/running on ground
+        if (state.isOnSolidGround) {
           particle.position = player.position - Vec3f(0, player.scale.y * 0.5f, 0);
           particle.scale = Vec3f(3.f);
           particle.color = Vec3f(0.5f);
         } else {
-          // Spawn particles when jumping/falling through the air
           particle.position = player.position;
           particle.scale = Vec3f(5.f);
           particle.color = Vec3f(1.f, 1.f, 0);

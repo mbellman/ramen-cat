@@ -116,12 +116,6 @@ void updateGame(GmContext* context, GameState& state, float dt) {
 
   // Track end-of-frame variables
   {
-    if (state.isOnSolidGround && state.velocity.xz().magnitude() > 1.f) {
-      // If we were on solid ground, but any movement
-      // occurs along the xz plane, all bets are off!
-      state.isOnSolidGround = false;
-    }
-
     Vec3f motionLine = player.position - state.previousPlayerPosition;
 
     if (motionLine.magnitude() > 1.f) {
