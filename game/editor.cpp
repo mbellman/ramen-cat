@@ -221,56 +221,30 @@ internal void showDynamicMeshPlaceholders(GmContext* context) {
 }
 
 internal void resetMovingObjects(GmContext* context, GameState& state) {
-  // @todo refactor
-  for (auto& initialLantern : state.initialLanternObjects) {
-    auto* liveLantern = get_object_by_record(initialLantern._record);
+  for (auto& initialObject : state.initialMovingObjects) {
+    auto* liveObject = get_object_by_record(initialObject._record);
 
-    if (liveLantern != nullptr) {
-      *liveLantern = initialLantern;
+    if (liveObject != nullptr) {
+      *liveObject = initialObject;
 
-      commit(*liveLantern);
-    }
-  }
-
-  // @todo refactor
-  for (auto& initialWindmillWheel : state.initialWindmillWheelObjects) {
-    auto* liveWindmillWheel = get_object_by_record(initialWindmillWheel._record);
-
-    if (liveWindmillWheel != nullptr) {
-      *liveWindmillWheel = initialWindmillWheel;
-
-      commit(*liveWindmillWheel);
-    }
-  }
-
-  // @todo refactor
-  for (auto& initialAcFan : state.initialAcFanObjects) {
-    auto* liveAcFan = get_object_by_record(initialAcFan._record);
-
-    if (liveAcFan != nullptr) {
-      *liveAcFan = initialAcFan;
-
-      commit(*liveAcFan);
+      commit(*liveObject);
     }
   }
 }
 
 internal void updateInitialMovingObjects(GmContext* context, GameState& state) {
-  // @todo refactor
-  state.initialLanternObjects.clear();
-  state.initialWindmillWheelObjects.clear();
-  state.initialAcFanObjects.clear();
+  state.initialMovingObjects.clear();
 
   for (auto& object : objects("lantern")) {
-    state.initialLanternObjects.push_back(object);
+    state.initialMovingObjects.push_back(object);
   }
 
   for (auto& object : objects("windmill-wheel")) {
-    state.initialWindmillWheelObjects.push_back(object);
+    state.initialMovingObjects.push_back(object);
   }
 
   for (auto& object : objects("ac-fan")) {
-    state.initialAcFanObjects.push_back(object);
+    state.initialMovingObjects.push_back(object);
   }
 }
 

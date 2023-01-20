@@ -273,54 +273,60 @@ internal void handleLanterns(GmContext* context, GameState& state, float dt) {
   const float HORIZONTAL_DRIFT = 15.f;
   const float VERTICAL_DRIFT = 5.f;
 
-  for (auto& initialLantern : state.initialLanternObjects) {
-    auto* liveLantern = get_object_by_record(initialLantern._record);
+  for (auto& initialObject : state.initialMovingObjects) {
+    if (is_mesh_object(initialObject, "lantern")) {
+      auto* lantern = get_object_by_record(initialObject._record);
 
-    if (liveLantern != nullptr) {
-      auto& basePosition = initialLantern.position;
-      float a = get_running_time() + basePosition.z / 200.f;
-      float angle = 0.2f * sinf(a);
+      if (lantern != nullptr) {
+        auto& basePosition = initialObject.position;
+        float a = get_running_time() + basePosition.z / 200.f;
+        float angle = 0.2f * sinf(a);
 
-      float x = HORIZONTAL_DRIFT * sin(a);
-      float y = VERTICAL_DRIFT * powf(Gm_Absf(x) / HORIZONTAL_DRIFT, 2);
+        float x = HORIZONTAL_DRIFT * sin(a);
+        float y = VERTICAL_DRIFT * powf(Gm_Absf(x) / HORIZONTAL_DRIFT, 2);
 
-      liveLantern->rotation = Quaternion::fromAxisAngle(Vec3f(0, 0, 1.f), angle); 
-      liveLantern->position = basePosition + Vec3f(x, y, 0);
+        lantern->rotation = Quaternion::fromAxisAngle(Vec3f(0, 0, 1.f), angle); 
+        lantern->position = basePosition + Vec3f(x, y, 0);
 
-      commit(*liveLantern);
+        commit(*lantern);
+      }
     }
   }
 }
 
 internal void handleWindmillWheels(GmContext* context, GameState& state, float dt) {
-  for (auto& initialWindmillWheel : state.initialWindmillWheelObjects) {
-    auto* liveWindmillWheel = get_object_by_record(initialWindmillWheel._record);
+  for (auto& initialObject : state.initialMovingObjects) {
+    if (is_mesh_object(initialObject, "windmill-wheel")) {
+      auto* windmillWheel = get_object_by_record(initialObject._record);
 
-    if (liveWindmillWheel != nullptr) {
-      auto rotationAxis = initialWindmillWheel.rotation.getDirection();
-      // Rotate larger windmill wheels more slowly
-      float scaleRatio = Gm_Clampf(initialWindmillWheel.scale.magnitude() / 500.f, 0.f, 1.f);
-      float rotationSpeedFactor = Gm_Lerpf(2.f, 0.2f, scaleRatio);
-      float angle = rotationSpeedFactor * get_running_time();
+      if (windmillWheel != nullptr) {
+        auto rotationAxis = initialObject.rotation.getDirection();
+        // Rotate larger windmill wheels more slowly
+        float scaleRatio = Gm_Clampf(initialObject.scale.magnitude() / 500.f, 0.f, 1.f);
+        float rotationSpeedFactor = Gm_Lerpf(2.f, 0.2f, scaleRatio);
+        float angle = rotationSpeedFactor * get_running_time();
 
-      liveWindmillWheel->rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initialWindmillWheel.rotation;
+        windmillWheel->rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initialObject.rotation;
 
-      commit(*liveWindmillWheel);
+        commit(*windmillWheel);
+      }
     }
   }
 }
 
 internal void handleAcFans(GmContext* context, GameState& state, float dt) {
-  for (auto& initialAcFan : state.initialAcFanObjects) {
-    auto* liveAcFan = get_object_by_record(initialAcFan._record);
+  for (auto& initialObject : state.initialMovingObjects) {
+    if (is_mesh_object(initialObject, "ac-fan")) {
+      auto* acFan = get_object_by_record(initialObject._record);
 
-    if (liveAcFan != nullptr) {
-      auto rotationAxis = initialAcFan.rotation.getDirection();
-      float angle = 3.f * get_running_time();
+      if (acFan != nullptr) {
+        auto rotationAxis = initialObject.rotation.getDirection();
+        float angle = 3.f * get_running_time();
 
-      liveAcFan->rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initialAcFan.rotation;
+        acFan->rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initialObject.rotation;
 
-      commit(*liveAcFan);
+        commit(*acFan);
+      }
     }
   }
 }
@@ -349,21 +355,18 @@ void EntitySystem::initializeGameEntities(GmContext* context, GameState& state) 
   loadNpcData(context, state);
   loadEntityData(context, state);
 
-  // Save initial reference copies of objects which
-  // transform dynamically during game time based on
-  // their initial position/rotation/scale
-  // @todo refactor
+  // Save initial reference copies of moving objects
   {
     for (auto& lantern : objects("lantern")) {
-      state.initialLanternObjects.push_back(lantern);
+      state.initialMovingObjects.push_back(lantern);
     }
 
     for (auto& windmillWheel : objects("windmill-wheel")) {
-      state.initialWindmillWheelObjects.push_back(windmillWheel);
+      state.initialMovingObjects.push_back(windmillWheel);
     }
 
     for (auto& acFan : objects("ac-fan")) {
-      state.initialAcFanObjects.push_back(acFan);
+      state.initialMovingObjects.push_back(acFan);
     }
   }
 }
