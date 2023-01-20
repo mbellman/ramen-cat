@@ -8,6 +8,18 @@
 #define set_active_mesh(meshName) u16 __activeMeshIndex = context->scene.meshMap.at(meshName)->index
 #define is_active_mesh(object) object._record.meshIndex == __activeMeshIndex
 
+#define for_moving_objects(meshName, code)\
+  set_active_mesh(meshName);\
+  for (auto& initial : state.initialMovingObjects) {\
+    if (is_active_mesh(initial)) {\
+      auto* __object = get_object_by_record(initial._record);\
+      if (__object != nullptr) {\
+        auto& object = *__object;\
+        code\
+      }\
+    }\
+  }
+
 using namespace Gamma;
 
 const Vec3f DEFAULT_SLINGSHOT_COLOR = Vec3f(0.2f);
@@ -277,68 +289,44 @@ internal void handleLanterns(GmContext* context, GameState& state, float dt) {
   const float HORIZONTAL_DRIFT = 15.f;
   const float VERTICAL_DRIFT = 5.f;
 
-  set_active_mesh("lantern");
+  for_moving_objects("lantern", {
+    auto& basePosition = initial.position;
+    float a = get_running_time() + basePosition.z / 200.f;
+    float angle = 0.2f * sinf(a);
 
-  for (auto& initialObject : state.initialMovingObjects) {
-    if (is_active_mesh(initialObject)) {
-      auto* lantern = get_object_by_record(initialObject._record);
+    float x = HORIZONTAL_DRIFT * sin(a);
+    float y = VERTICAL_DRIFT * powf(Gm_Absf(x) / HORIZONTAL_DRIFT, 2);
 
-      if (lantern != nullptr) {
-        auto& basePosition = initialObject.position;
-        float a = get_running_time() + basePosition.z / 200.f;
-        float angle = 0.2f * sinf(a);
+    object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 0, 1.f), angle); 
+    object.position = basePosition + Vec3f(x, y, 0);
 
-        float x = HORIZONTAL_DRIFT * sin(a);
-        float y = VERTICAL_DRIFT * powf(Gm_Absf(x) / HORIZONTAL_DRIFT, 2);
-
-        lantern->rotation = Quaternion::fromAxisAngle(Vec3f(0, 0, 1.f), angle); 
-        lantern->position = basePosition + Vec3f(x, y, 0);
-
-        commit(*lantern);
-      }
-    }
-  }
+    commit(object);
+  });
 }
 
 internal void handleWindmillWheels(GmContext* context, GameState& state, float dt) {
-  set_active_mesh("windmill-wheel");
+  for_moving_objects("windmill-wheel", {
+    auto rotationAxis = initial.rotation.getDirection();
+    // Rotate larger windmill wheels more slowly
+    float scaleRatio = Gm_Clampf(initial.scale.magnitude() / 500.f, 0.f, 1.f);
+    float rotationSpeedFactor = Gm_Lerpf(2.f, 0.2f, scaleRatio);
+    float angle = rotationSpeedFactor * get_running_time();
 
-  for (auto& initialObject : state.initialMovingObjects) {
-    if (is_active_mesh(initialObject)) {
-      auto* windmillWheel = get_object_by_record(initialObject._record);
+    object.rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initial.rotation;
 
-      if (windmillWheel != nullptr) {
-        auto rotationAxis = initialObject.rotation.getDirection();
-        // Rotate larger windmill wheels more slowly
-        float scaleRatio = Gm_Clampf(initialObject.scale.magnitude() / 500.f, 0.f, 1.f);
-        float rotationSpeedFactor = Gm_Lerpf(2.f, 0.2f, scaleRatio);
-        float angle = rotationSpeedFactor * get_running_time();
-
-        windmillWheel->rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initialObject.rotation;
-
-        commit(*windmillWheel);
-      }
-    }
-  }
+    commit(object);
+  });
 }
 
 internal void handleAcFans(GmContext* context, GameState& state, float dt) {
-  set_active_mesh("ac-fan");
+  for_moving_objects("ac-fan", {
+    auto rotationAxis = initial.rotation.getDirection();
+    float angle = 3.f * get_running_time();
 
-  for (auto& initialObject : state.initialMovingObjects) {
-    if (is_active_mesh(initialObject)) {
-      auto* acFan = get_object_by_record(initialObject._record);
+    object.rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initial.rotation;
 
-      if (acFan != nullptr) {
-        auto rotationAxis = initialObject.rotation.getDirection();
-        float angle = 3.f * get_running_time();
-
-        acFan->rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initialObject.rotation;
-
-        commit(*acFan);
-      }
-    }
-  }
+    commit(object);
+  });
 }
 
 internal void handleOcean(GmContext* context) {
