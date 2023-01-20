@@ -239,7 +239,7 @@ internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
     if (state.lastSlingshotInteractionTime != 0.f) {
       const float WIND_UP_DURATION = 0.5f;
       const float timeSinceLastSlingshotInteraction = time_since(state.lastSlingshotInteractionTime);
-      auto* slingshot = Gm_GetObjectByRecord(context, state.activeSlingshotRecord);
+      auto* slingshot = get_object_by_record(state.activeSlingshotRecord);
 
       if (timeSinceLastSlingshotInteraction < WIND_UP_DURATION) {
         // Wind-up
@@ -274,7 +274,7 @@ internal void handleLanterns(GmContext* context, GameState& state, float dt) {
   const float VERTICAL_DRIFT = 5.f;
 
   for (auto& initialLantern : state.initialLanternObjects) {
-    auto* liveLantern = Gm_GetObjectByRecord(context, initialLantern._record);
+    auto* liveLantern = get_object_by_record(initialLantern._record);
 
     if (liveLantern != nullptr) {
       auto& basePosition = initialLantern.position;

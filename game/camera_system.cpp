@@ -165,7 +165,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
       auto cDotN = Vec3f::dot(targetCameraPosition - collision.point, plane.normal);
 
       if (collision.hit && cDotN < 0.f) {
-        auto& collisionPlatform = *Gm_GetObjectByRecord(context, collision.plane.sourceObjectRecord);
+        auto& collisionPlatform = *get_object_by_record(collision.plane.sourceObjectRecord);
         auto& scale = collisionPlatform.scale;
         auto matInverseRotation = collisionPlatform.rotation.toMatrix4f().inverse();
         auto collisionPlatformToTargetCamera = targetCameraPosition - collisionPlatform.position;

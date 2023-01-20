@@ -100,7 +100,7 @@ internal bool areObjectPropertiesIdentical(Object& a, Object& b) {
 }
 
 internal void restoreObject(GmContext* context, const Object& object) {
-  auto* originalObject = Gm_GetObjectByRecord(context, object._record);
+  auto* originalObject = get_object_by_record(object._record);
 
   if (originalObject != nullptr) {
     *originalObject = object;
@@ -110,7 +110,7 @@ internal void restoreObject(GmContext* context, const Object& object) {
 }
 
 internal void highlightObject(GmContext* context, const Object& object, const Vec3f& highlightColor) {
-  Object* originalObject = Gm_GetObjectByRecord(context, object._record);
+  Object* originalObject = get_object_by_record(object._record);
 
   if (originalObject == nullptr) {
     return;
@@ -224,7 +224,7 @@ internal void resetMovingObjects(GmContext* context, GameState& state) {
   // Reset lanterns
   // @todo if this same operation is done in other cases, factor out this block
   for (auto& initialLantern : state.initialLanternObjects) {
-    auto* liveLantern = Gm_GetObjectByRecord(context, initialLantern._record);
+    auto* liveLantern = get_object_by_record(initialLantern._record);
 
     if (liveLantern != nullptr) {
       *liveLantern = initialLantern;
@@ -428,7 +428,7 @@ internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mo
 internal void createObjectHistoryAction(GmContext* context, ActionType type, Object& object) {
   if (editor.history.size() > 0) {
     auto& lastAction = editor.history.back();
-    auto* liveLastActionObject = Gm_GetObjectByRecord(context, lastAction.initialObject._record);
+    auto* liveLastActionObject = get_object_by_record(lastAction.initialObject._record);
 
     if (
       liveLastActionObject != nullptr &&
@@ -537,7 +537,7 @@ internal void undoLastHistoryAction(GmContext* context, GameState& state) {
     }
     default: {
       auto& initialObject = action.initialObject;
-      auto* liveLastActionObject = Gm_GetObjectByRecord(context, initialObject._record);
+      auto* liveLastActionObject = get_object_by_record(initialObject._record);
 
       if (liveLastActionObject != nullptr) {
         if (context->scene.meshes[initialObject._record.meshIndex]->name == "light-sphere") {
@@ -668,7 +668,7 @@ internal void cloneSelectedObject(GmContext* context, GameState& state) {
 }
 
 internal void deleteObject(GmContext* context, GameState& state, Object& object) {
-  auto* originalObject = Gm_GetObjectByRecord(context, object._record);
+  auto* originalObject = get_object_by_record(object._record);
 
   if (originalObject != nullptr) {
     createObjectHistoryAction(context, ActionType::DELETE, object);
@@ -850,7 +850,7 @@ namespace Editor {
           auto color = Vec3f(stof(parts[0]), stof(parts[1]), stof(parts[2]));
 
           if (editor.isObjectSelected) {
-            auto* liveSelectedObject = Gm_GetObjectByRecord(context, editor.selectedObject._record);
+            auto* liveSelectedObject = get_object_by_record(editor.selectedObject._record);
 
             liveSelectedObject->color = color;
             editor.selectedObject = *liveSelectedObject;
@@ -933,7 +933,7 @@ namespace Editor {
             if (collision.hit && distance < closestDistance) {
               // @todo none of the editor features should be enabled when not in developer mode anyway
               #if GAMMA_DEVELOPER_MODE
-                auto* object = Gm_GetObjectByRecord(context, plane.sourceObjectRecord);
+                auto* object = get_object_by_record(plane.sourceObjectRecord);
               #else
                 auto* object = nullptr;
               #endif
@@ -1029,7 +1029,7 @@ namespace Editor {
       ) {
         float dx = (float)mouseDelta.x;
         float dy = (float)mouseDelta.y;
-        auto* originalObject = Gm_GetObjectByRecord(context, editor.selectedObject._record);
+        auto* originalObject = get_object_by_record(editor.selectedObject._record);
         Vec3f actionDelta = getCurrentActionDelta(context, dx, dy, dt);
 
         if (input.isKeyHeld(Key::CONTROL)) {

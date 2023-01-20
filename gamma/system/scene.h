@@ -23,6 +23,7 @@
 #define save_light(lightName, light) Gm_SaveLight(context, lightName, light)
 #define has_object(objectName) Gm_HasObject(context, objectName)
 #define find_object(objectName) Gm_FindObject(context, objectName)
+#define get_object_by_record(record) Gm_GetObjectByRecord(context, record)
 #define object(objectName) Gm_GetObject(context, objectName)
 #define light(lightName) Gm_GetLight(context, lightName)
 #define remove_object(object) Gm_RemoveObject(context, object)
