@@ -211,6 +211,20 @@ std::vector<MeshAsset> World::meshAssets = {
       .roughness = 0.1f
     }
   },
+
+  {
+    .name = "pipe-curve",
+    .defaultColor = Vec3f(1.f),
+    .hitboxScale = Vec3f(0.3f, 0.5f, 0.6f),
+    .create = []() {
+      return Mesh::Model("./game/assets/pipe-curve.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/pipe-1.png",
+      .normalMap = "./game/assets/pipe-1-normals.png",
+      .roughness = 0.1f
+    }
+  },
   {
     .name = "roof",
     .defaultColor = Vec3f(1.f),

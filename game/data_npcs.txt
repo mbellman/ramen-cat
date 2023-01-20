@@ -9,3 +9,17 @@ on the other side of this gap.
 1154.0,243.0,2130.0
 Hey, what is your favorite kind of pizza?
 -
+@man
+-750.0,474.0,-5556.0
+Good day. Welcome to Umimura Bathhouse.
+Do you have a reservation for your visit?
+-
+Oh...I see.
+-
+Are you here to make a delivery?
+-
+Well, I can only permit entry to those
+with reservations or deliveries.
+-
+Frightfully sorry! Please have a nice day.
+-

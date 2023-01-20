@@ -594,8 +594,18 @@ internal void createNewLight(GmContext* context, GameState& state) {
 
 internal void createNewObject(GmContext* context, GameState& state) {
   auto& camera = get_camera();
-  // @temporary
   Vec3f spawnPosition = camera.position + camera.orientation.getDirection() * 300.f;
+
+  // Bring the spawn position closer than any objects in front of the camera
+  for (auto& plane : editor.objectCollisionPlanes) {
+    Vec3f start = camera.position;
+    Vec3f end = spawnPosition;
+    auto collision = Collisions::getLinePlaneCollision(start, end, plane);
+
+    if (collision.hit) {
+      spawnPosition = collision.point;
+    }
+  }
 
   // @todo use a common path for collision planes/objects
   if (editor.mode == EditorMode::COLLISION_PLANES) {
