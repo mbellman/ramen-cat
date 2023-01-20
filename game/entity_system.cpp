@@ -4,6 +4,9 @@
 #include "macros.h"
 #include "easing.h"
 
+#define set_active_mesh(meshName) u16 __activeMeshIndex = context->scene.meshMap.at(meshName)->index
+#define is_active_mesh(object) object._record.meshIndex == __activeMeshIndex
+
 using namespace Gamma;
 
 const Vec3f DEFAULT_SLINGSHOT_COLOR = Vec3f(0.2f);
@@ -273,8 +276,10 @@ internal void handleLanterns(GmContext* context, GameState& state, float dt) {
   const float HORIZONTAL_DRIFT = 15.f;
   const float VERTICAL_DRIFT = 5.f;
 
+  set_active_mesh("lantern");
+
   for (auto& initialObject : state.initialMovingObjects) {
-    if (is_mesh_object(initialObject, "lantern")) {
+    if (is_active_mesh(initialObject)) {
       auto* lantern = get_object_by_record(initialObject._record);
 
       if (lantern != nullptr) {
@@ -295,8 +300,10 @@ internal void handleLanterns(GmContext* context, GameState& state, float dt) {
 }
 
 internal void handleWindmillWheels(GmContext* context, GameState& state, float dt) {
+  set_active_mesh("windmill-wheel");
+
   for (auto& initialObject : state.initialMovingObjects) {
-    if (is_mesh_object(initialObject, "windmill-wheel")) {
+    if (is_active_mesh(initialObject)) {
       auto* windmillWheel = get_object_by_record(initialObject._record);
 
       if (windmillWheel != nullptr) {
@@ -315,8 +322,10 @@ internal void handleWindmillWheels(GmContext* context, GameState& state, float d
 }
 
 internal void handleAcFans(GmContext* context, GameState& state, float dt) {
+  set_active_mesh("ac-fan");
+
   for (auto& initialObject : state.initialMovingObjects) {
-    if (is_mesh_object(initialObject, "ac-fan")) {
+    if (is_active_mesh(initialObject)) {
       auto* acFan = get_object_by_record(initialObject._record);
 
       if (acFan != nullptr) {
