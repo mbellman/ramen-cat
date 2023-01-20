@@ -261,19 +261,22 @@ namespace MovementSystem {
     // Track the xz distance traveled from the last solid ground position
     // *before* resolving collisions, so that any resolved ground collisions
     // won't reset it. We use this to determine ground friction afterward.
-    float solidGroundXzDistance = (state.lastSolidGroundPosition.xz() - player.position.xz()).magnitude();
+    float lastSolidGroundXzDistance = (state.lastSolidGroundPosition.xz() - player.position.xz()).magnitude();
 
     resolveAllPlaneCollisions(context, state, dt);
     resolveAllNpcCollisions(context, state);
 
     if (state.velocity.y == 0.f && !state.isMovingPlayerThisFrame) {
-      // Handle solid ground friction
-      float frictionAlpha = Gm_Clampf(solidGroundXzDistance / 1000.f, 0.f, 1.f);
-      float friction = Gm_Lerpf(5.f, 100.f, frictionAlpha);
-      float slowdownAlpha = Gm_Clampf(friction * dt, 0.f, 1.f);
-
-      state.velocity.x = Gm_Lerpf(state.velocity.x, 0.f, slowdownAlpha);
-      state.velocity.z = Gm_Lerpf(state.velocity.z, 0.f, slowdownAlpha);
+      if (lastSolidGroundXzDistance > 10.f) {
+        // When landing from a jump, immediately reduce the xz velocity
+        // to a fraction of the original to slow down quickly
+        state.velocity.x *= 0.25f;
+        state.velocity.z *= 0.25f;
+      } else {
+        // Gradually slow down along solid ground
+        state.velocity.x *= (1.0f - 5.f * dt);
+        state.velocity.z *= (1.0f - 5.f * dt);
+      }
     }
 
     commit(player);
