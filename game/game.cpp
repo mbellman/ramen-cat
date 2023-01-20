@@ -86,7 +86,7 @@ void updateGame(GmContext* context, GameState& state, float dt) {
   // Set start-of-frame variables
   {
     state.frameStartTime = get_running_time();
-    state.isPlayerMovingThisFrame = false;
+    state.isMovingPlayerThisFrame = false;
   }
 
   EntitySystem::handleGameEntities(context, state, dt);

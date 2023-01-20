@@ -191,7 +191,7 @@ namespace MovementSystem {
       state.velocity += left.invert() * rate;
     }
 
-    state.isPlayerMovingThisFrame = state.velocity != initialVelocity;
+    state.isMovingPlayerThisFrame = state.velocity != initialVelocity;
 
     // Limit horizontal speed on ground
     {
@@ -266,7 +266,7 @@ namespace MovementSystem {
     resolveAllPlaneCollisions(context, state, dt);
     resolveAllNpcCollisions(context, state);
 
-    if (state.velocity.y == 0.f && !state.isPlayerMovingThisFrame) {
+    if (state.velocity.y == 0.f && !state.isMovingPlayerThisFrame) {
       // Handle solid ground friction
       float frictionAlpha = Gm_Clampf(solidGroundXzDistance / 1000.f, 0.f, 1.f);
       float friction = Gm_Lerpf(5.f, 100.f, frictionAlpha);

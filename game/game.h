@@ -56,7 +56,7 @@ struct GameState {
   float lastParticleSpawnTime = 0.f;
 
   bool isOnSolidGround = false;
-  bool isPlayerMovingThisFrame = false;
+  bool isMovingPlayerThisFrame = false;
   bool isRepositioningCamera = false;
 
   // NPC handling

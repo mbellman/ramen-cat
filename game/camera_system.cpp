@@ -16,7 +16,7 @@ internal void updateThirdPersonCameraRadius(GameState& state, float dt) {
 
   state.camera3p.radius = baseRadius + 200.f * state.camera3p.altitude / Gm_HALF_PI;
 
-  if (state.isPlayerMovingThisFrame && state.camera3p.radius < 130.f) {
+  if (state.isMovingPlayerThisFrame && state.camera3p.radius < 130.f) {
     state.camera3p.radius += 100.f * dt;
   }
 }
@@ -115,11 +115,11 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
             // Zoom further in
             if (state.cameraMode == CameraMode::ZOOM_OUT) {
               state.cameraMode = CameraMode::NORMAL;
-            } else if (state.isOnSolidGround && !state.isPlayerMovingThisFrame) {
+            } else if (state.isOnSolidGround && !state.isMovingPlayerThisFrame) {
               state.cameraMode = CameraMode::FIRST_PERSON;
             }
           }
-        } else if (state.cameraMode == CameraMode::FIRST_PERSON && state.isPlayerMovingThisFrame) {
+        } else if (state.cameraMode == CameraMode::FIRST_PERSON && state.isMovingPlayerThisFrame) {
           // Exit first-person mode whenever moving the player
           state.cameraMode = CameraMode::NORMAL;
         }
@@ -127,15 +127,22 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
 
       // Handle centering the camera behind the player
       {
+        float targetAzimuth = state.camera3p.azimuth;
+
+        if (state.direction.x != 0.f && state.direction.z != 0.f) {
+          targetAzimuth = atan2f(state.direction.z, state.direction.x) + Gm_PI;
+        }
+
+        // @todo restore this when adding gamepad/analog controls
+        // if (state.isMovingPlayerThisFrame) {
+        //   state.camera3p.azimuth = Gm_LerpCircularf(state.camera3p.azimuth, targetAzimuth, 2.f * dt, Gm_PI);
+        // }
+
         if (input.didPressKey(Key::SHIFT)) {
-          float azimuth = 0.f;
+          state.camera3p.azimuth = targetAzimuth;
 
-          if (state.direction.x != 0.f || state.direction.z != 0.f) {
-            state.camera3p.azimuth = atan2f(state.direction.z, state.direction.x) + Gm_PI;
-
-            if (state.camera3p.altitude > 0.3f) {
-              state.camera3p.altitude = 0.3f;
-            }
+          if (state.camera3p.altitude > 0.3f) {
+            state.camera3p.altitude = 0.3f;
           }
         }
       }
