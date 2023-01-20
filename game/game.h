@@ -55,9 +55,9 @@ struct GameState {
   float lastWallKickTime = 0.f;
   float lastParticleSpawnTime = 0.f;
 
-  // @bug this isn't always correct
   bool isOnSolidGround = false;
   bool isPlayerMovingThisFrame = false;
+  bool isRepositioningCamera = false;
 
   // NPC handling
   NonPlayerCharacter* activeNpc = nullptr;

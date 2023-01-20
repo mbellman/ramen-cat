@@ -151,6 +151,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
   // Reposition the camera if necessary to avoid clipping inside walls
   {
     auto& camera = get_camera();
+    bool didRepositionCamera = false;
 
     for (auto& plane : state.collisionPlanes) {
       auto collision = Collisions::getLinePlaneCollision(lookAtPosition, targetCameraPosition, plane);
@@ -161,25 +162,32 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
         auto& scale = collisionPlatform.scale;
         auto matInverseRotation = collisionPlatform.rotation.toMatrix4f().inverse();
         auto collisionPlatformToTargetCamera = targetCameraPosition - collisionPlatform.position;
-        auto target = (matInverseRotation.inverse() * collisionPlatformToTargetCamera).toVec3f();
+        auto target = (matInverseRotation * collisionPlatformToTargetCamera).toVec3f();
 
-        // Determine whether the target camera position would be outside
-        // of the actual collision platform bounding box, and skip if so.
-        // This way we can pan the camera 'around' collision platforms,
-        // allowing for more freeform motion.
         if (
+          // Check to see that the camera isn't currently being repositioned
+          // before we do our inside-collision-platform check. If the camera
+          // is already in a repositioned state, continue to reposition it.
+          !state.isRepositioningCamera && (
+          // Determine whether the target camera position would be outside
+          // of the actual collision platform bounding box, and skip if so.
+          // This way we can pan the camera 'around' collision platforms,
+          // allowing for more freeform motion.
           target.x < -scale.x || target.x > scale.x ||
           target.y < -scale.y || target.y > scale.y ||
           target.z < -scale.z || target.z > scale.z
-        ) {
+        )) {
           continue;
         }
 
         auto playerToCollision = collision.point - lookAtPosition;
 
         targetCameraPosition = lookAtPosition + playerToCollision * 0.9f;
+        didRepositionCamera = true;
       }
     }
+
+    state.isRepositioningCamera = didRepositionCamera;
   }
 
   // Update the actual view camera position/orientation
