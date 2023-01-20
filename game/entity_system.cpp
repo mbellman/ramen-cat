@@ -310,6 +310,21 @@ internal void handleWindmillWheels(GmContext* context, GameState& state, float d
   }
 }
 
+internal void handleAcFans(GmContext* context, GameState& state, float dt) {
+  for (auto& initialAcFan : state.initialAcFanObjects) {
+    auto* liveAcFan = get_object_by_record(initialAcFan._record);
+
+    if (liveAcFan != nullptr) {
+      auto rotationAxis = initialAcFan.rotation.getDirection();
+      float angle = 3.f * get_running_time();
+
+      liveAcFan->rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initialAcFan.rotation;
+
+      commit(*liveAcFan);
+    }
+  }
+}
+
 internal void handleOcean(GmContext* context) {
   auto& camera = get_camera();
   auto& ocean = objects("ocean")[0];
@@ -337,6 +352,7 @@ void EntitySystem::initializeGameEntities(GmContext* context, GameState& state) 
   // Save initial reference copies of objects which
   // transform dynamically during game time based on
   // their initial position/rotation/scale
+  // @todo refactor
   {
     for (auto& lantern : objects("lantern")) {
       state.initialLanternObjects.push_back(lantern);
@@ -344,6 +360,10 @@ void EntitySystem::initializeGameEntities(GmContext* context, GameState& state) 
 
     for (auto& windmillWheel : objects("windmill-wheel")) {
       state.initialWindmillWheelObjects.push_back(windmillWheel);
+    }
+
+    for (auto& acFan : objects("ac-fan")) {
+      state.initialAcFanObjects.push_back(acFan);
     }
   }
 }
@@ -355,6 +375,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   handleSlingshots(context, state, dt);
   handleLanterns(context, state, dt);
   handleWindmillWheels(context, state, dt);
+  handleAcFans(context, state, dt);
   handleOcean(context);
 
   LOG_TIME();

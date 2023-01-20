@@ -89,6 +89,7 @@ struct GameState {
 
   std::vector<Gamma::Object> initialLanternObjects;
   std::vector<Gamma::Object> initialWindmillWheelObjects;
+  std::vector<Gamma::Object> initialAcFanObjects;
 };
 
 void initializeGame(GmContext* context, GameState& state);

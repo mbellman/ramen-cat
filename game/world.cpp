@@ -168,6 +168,28 @@ std::vector<MeshAsset> World::meshAssets = {
     }
   },
   {
+    .name = "ac-unit",
+    .defaultColor = Vec3f(1.f),
+    .hitboxScale = Vec3f(1.f, 0.6f, 0.5f),
+    .create = []() {
+      return Mesh::Model("./game/assets/ac-unit.obj");
+    },
+    .attributes = {
+      .roughness = 0.4f
+    }
+  },
+  {
+    .name = "ac-fan",
+    .defaultColor = Vec3f(0.1f),
+    .hitboxScale = Vec3f(1.f, 1.f, 0.1f),
+    .create = []() {
+      return Mesh::Model("./game/assets/ac-fan.obj");
+    },
+    .attributes = {
+      .roughness = 0.2f
+    }
+  },
+  {
     .name = "sign-1",
     .defaultColor = Vec3f(1.f),
     .hitboxScale = Vec3f(0.1f, 0.5f, 1.f),

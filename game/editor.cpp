@@ -242,11 +242,24 @@ internal void resetMovingObjects(GmContext* context, GameState& state) {
       commit(*liveWindmillWheel);
     }
   }
+
+  // @todo refactor
+  for (auto& initialAcFan : state.initialAcFanObjects) {
+    auto* liveAcFan = get_object_by_record(initialAcFan._record);
+
+    if (liveAcFan != nullptr) {
+      *liveAcFan = initialAcFan;
+
+      commit(*liveAcFan);
+    }
+  }
 }
 
 internal void updateInitialMovingObjects(GmContext* context, GameState& state) {
+  // @todo refactor
   state.initialLanternObjects.clear();
   state.initialWindmillWheelObjects.clear();
+  state.initialAcFanObjects.clear();
 
   for (auto& object : objects("lantern")) {
     state.initialLanternObjects.push_back(object);
@@ -254,6 +267,10 @@ internal void updateInitialMovingObjects(GmContext* context, GameState& state) {
 
   for (auto& object : objects("windmill-wheel")) {
     state.initialWindmillWheelObjects.push_back(object);
+  }
+
+  for (auto& object : objects("ac-fan")) {
+    state.initialAcFanObjects.push_back(object);
   }
 }
 
