@@ -19,13 +19,9 @@
 #define create_light(type) Gm_CreateLight(context, type)
 #define create_object_from(meshName) Gm_CreateObjectFrom(context, meshName)
 #define commit(object) Gm_Commit(context, object)
-#define save_object(objectName, object) Gm_SaveObject(context, objectName, object)
 #define save_light(lightName, light) Gm_SaveLight(context, lightName, light)
-#define has_object(objectName) Gm_HasObject(context, objectName)
-#define find_object(objectName) Gm_FindObject(context, objectName)
 #define get_object_by_record(record) Gm_GetObjectByRecord(context, record)
 #define is_mesh_object(object, meshName) object._record.meshIndex == context->scene.meshMap.at(meshName)->index
-#define object(objectName) Gm_GetObject(context, objectName)
 #define light(lightName) Gm_GetLight(context, lightName)
 #define remove_object(object) Gm_RemoveObject(context, object)
 #define remove_light(light) Gm_RemoveLight(context, light)
