@@ -292,6 +292,24 @@ internal void handleLanterns(GmContext* context, GameState& state, float dt) {
   }
 }
 
+internal void handleWindmillWheels(GmContext* context, GameState& state, float dt) {
+  for (auto& initialWindmillWheel : state.initialWindmillWheelObjects) {
+    auto* liveWindmillWheel = get_object_by_record(initialWindmillWheel._record);
+
+    if (liveWindmillWheel != nullptr) {
+      auto rotationAxis = initialWindmillWheel.rotation.getDirection();
+      // Rotate larger windmill wheels more slowly
+      float scaleRatio = Gm_Clampf(initialWindmillWheel.scale.magnitude() / 500.f, 0.f, 1.f);
+      float rotationSpeedFactor = Gm_Lerpf(2.f, 0.2f, scaleRatio);
+      float angle = rotationSpeedFactor * get_running_time();
+
+      liveWindmillWheel->rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initialWindmillWheel.rotation;
+
+      commit(*liveWindmillWheel);
+    }
+  }
+}
+
 internal void handleOcean(GmContext* context) {
   auto& camera = get_camera();
   auto& ocean = objects("ocean")[0];
@@ -323,6 +341,10 @@ void EntitySystem::initializeGameEntities(GmContext* context, GameState& state) 
     for (auto& lantern : objects("lantern")) {
       state.initialLanternObjects.push_back(lantern);
     }
+
+    for (auto& windmillWheel : objects("windmill-wheel")) {
+      state.initialWindmillWheelObjects.push_back(windmillWheel);
+    }
   }
 }
 
@@ -332,6 +354,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   handleNpcs(context, state);
   handleSlingshots(context, state, dt);
   handleLanterns(context, state, dt);
+  handleWindmillWheels(context, state, dt);
   handleOcean(context);
 
   LOG_TIME();

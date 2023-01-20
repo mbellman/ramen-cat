@@ -131,6 +131,19 @@ std::vector<MeshAsset> World::meshAssets = {
     }
   },
   {
+    .name = "windmill-wheel",
+    .defaultColor = Vec3f(1.f),
+    .defaultScale = Vec3f(75.f),
+    .hitboxScale = Vec3f(1.f, 1.f, 0.1f),
+    .create = []() {
+      return Mesh::Model("./game/assets/windmill-wheel.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/wood-beam.png",
+      .roughness = 0.6f
+    }
+  },
+  {
     .name = "floor-1",
     .defaultColor = Vec3f(1.f),
     .create = []() {

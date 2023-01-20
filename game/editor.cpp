@@ -221,8 +221,7 @@ internal void showDynamicMeshPlaceholders(GmContext* context) {
 }
 
 internal void resetMovingObjects(GmContext* context, GameState& state) {
-  // Reset lanterns
-  // @todo if this same operation is done in other cases, factor out this block
+  // @todo refactor
   for (auto& initialLantern : state.initialLanternObjects) {
     auto* liveLantern = get_object_by_record(initialLantern._record);
 
@@ -232,13 +231,29 @@ internal void resetMovingObjects(GmContext* context, GameState& state) {
       commit(*liveLantern);
     }
   }
+
+  // @todo refactor
+  for (auto& initialWindmillWheel : state.initialWindmillWheelObjects) {
+    auto* liveWindmillWheel = get_object_by_record(initialWindmillWheel._record);
+
+    if (liveWindmillWheel != nullptr) {
+      *liveWindmillWheel = initialWindmillWheel;
+
+      commit(*liveWindmillWheel);
+    }
+  }
 }
 
 internal void updateInitialMovingObjects(GmContext* context, GameState& state) {
   state.initialLanternObjects.clear();
+  state.initialWindmillWheelObjects.clear();
 
-  for (auto& lantern : objects("lantern")) {
-    state.initialLanternObjects.push_back(lantern);
+  for (auto& object : objects("lantern")) {
+    state.initialLanternObjects.push_back(object);
+  }
+
+  for (auto& object : objects("windmill-wheel")) {
+    state.initialWindmillWheelObjects.push_back(object);
   }
 }
 

@@ -88,6 +88,7 @@ struct GameState {
   float targetSlingshotAngle = 0.f;
 
   std::vector<Gamma::Object> initialLanternObjects;
+  std::vector<Gamma::Object> initialWindmillWheelObjects;
 };
 
 void initializeGame(GmContext* context, GameState& state);

@@ -29,6 +29,7 @@ namespace Gamma {
     void operator*=(const Quaternion& q2);
 
     void debug() const;
+    // @todo rename getForwardDirection()
     Vec3f getDirection() const;
     Vec3f getLeftDirection() const;
     Vec3f getUpDirection() const;
