@@ -168,6 +168,11 @@ namespace Gamma {
     shaders.water.fragment("./gamma/opengl/shaders/water.frag.glsl");
     shaders.water.link();
 
+    shaders.post.init();
+    shaders.post.vertex("./gamma/opengl/shaders/quad.vert.glsl");
+    shaders.post.fragment("./gamma/opengl/shaders/post.frag.glsl");
+    shaders.post.link();
+
     #if GAMMA_DEVELOPER_MODE
       shaders.gBufferDev.init();
       shaders.gBufferDev.vertex("./gamma/opengl/shaders/quad.vert.glsl");
@@ -210,6 +215,7 @@ namespace Gamma {
     shaders.refractivePrepass.destroy();
     shaders.refractiveGeometry.destroy();
     shaders.water.destroy();
+    shaders.post.destroy();
 
     #if GAMMA_DEVELOPER_MODE
       shaders.gBufferDev.destroy();

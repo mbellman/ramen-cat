@@ -44,6 +44,7 @@ namespace Gamma {
     OpenGLShader refractivePrepass;
     OpenGLShader refractiveGeometry;
     OpenGLShader water;
+    OpenGLShader post;
 
     // Shadowcaster shaders
     OpenGLShader directionalShadowcaster;
@@ -119,10 +120,6 @@ namespace Gamma {
     std::vector<OpenGLSpotShadowMap*> glSpotShadowMaps;
     std::map<std::string, OpenGLCubeMap*> glProbes;
     bool areProbesRendered = false;
-
-    struct PostShaders {
-      OpenGLShader debanding;
-    } post;
  
     void renderSceneToGBuffer();
     void renderDirectionalShadowMaps();

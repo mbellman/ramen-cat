@@ -80,12 +80,6 @@ namespace Gamma {
 
     lightDisc.init();
 
-    // Initialize post shaders
-    post.debanding.init();
-    post.debanding.vertex("./gamma/opengl/shaders/quad.vert.glsl");
-    post.debanding.fragment("./gamma/opengl/shaders/deband.frag.glsl");
-    post.debanding.link();
-
     // Initialize remaining shaders
     screen.init();
     screen.vertex("./gamma/opengl/shaders/quad.vert.glsl");
@@ -259,9 +253,9 @@ namespace Gamma {
     }
 
     if (Gm_FlagWasEnabled(GammaFlags::RENDER_DEPTH_OF_FIELD)) {
-      post.debanding.define("USE_DEPTH_OF_FIELD", "1");
+      shaders.post.define("USE_DEPTH_OF_FIELD", "1");
     } else if (Gm_FlagWasDisabled(GammaFlags::RENDER_DEPTH_OF_FIELD)) {
-      post.debanding.define("USE_DEPTH_OF_FIELD", "0");
+      shaders.post.define("USE_DEPTH_OF_FIELD", "0");
     }
   }
 
@@ -1334,14 +1328,14 @@ namespace Gamma {
     glViewport(0, 0, gmContext->window.size.width, gmContext->window.size.height);
     glDisable(GL_STENCIL_TEST);
 
-    post.debanding.use();
-    post.debanding.setVec4f("transform", FULL_SCREEN_TRANSFORM);
-    post.debanding.setInt("texColorAndDepth", 0);
-    post.debanding.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
-    post.debanding.setMatrix4f("matInverseView", ctx.matInverseView);
-    post.debanding.setVec3f("cameraPosition", ctx.activeCamera->position);
-    post.debanding.setFloat("zNear", gmContext->scene.zNear);
-    post.debanding.setFloat("zFar", gmContext->scene.zFar);
+    shaders.post.use();
+    shaders.post.setVec4f("transform", FULL_SCREEN_TRANSFORM);
+    shaders.post.setInt("texColorAndDepth", 0);
+    shaders.post.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
+    shaders.post.setMatrix4f("matInverseView", ctx.matInverseView);
+    shaders.post.setVec3f("cameraPosition", ctx.activeCamera->position);
+    shaders.post.setFloat("zNear", gmContext->scene.zNear);
+    shaders.post.setFloat("zFar", gmContext->scene.zFar);
 
     OpenGLScreenQuad::render();
   }
