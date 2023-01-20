@@ -1,6 +1,7 @@
 #include "entity_system.h"
 #include "camera_system.h"
 #include "ui_system.h"
+#include "world.h"
 #include "macros.h"
 #include "easing.h"
 
@@ -366,16 +367,12 @@ void EntitySystem::initializeGameEntities(GmContext* context, GameState& state) 
 
   // Save initial reference copies of moving objects
   {
-    for (auto& lantern : objects("lantern")) {
-      state.initialMovingObjects.push_back(lantern);
-    }
-
-    for (auto& windmillWheel : objects("windmill-wheel")) {
-      state.initialMovingObjects.push_back(windmillWheel);
-    }
-
-    for (auto& acFan : objects("ac-fan")) {
-      state.initialMovingObjects.push_back(acFan);
+    for (auto& asset : World::meshAssets) {
+      if (asset.moving) {
+        for (auto& object : objects(asset.name)) {
+          state.initialMovingObjects.push_back(object);
+        }
+      }
     }
   }
 }

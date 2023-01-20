@@ -235,16 +235,12 @@ internal void resetMovingObjects(GmContext* context, GameState& state) {
 internal void updateInitialMovingObjects(GmContext* context, GameState& state) {
   state.initialMovingObjects.clear();
 
-  for (auto& object : objects("lantern")) {
-    state.initialMovingObjects.push_back(object);
-  }
-
-  for (auto& object : objects("windmill-wheel")) {
-    state.initialMovingObjects.push_back(object);
-  }
-
-  for (auto& object : objects("ac-fan")) {
-    state.initialMovingObjects.push_back(object);
+  for (auto& asset : World::meshAssets) {
+    if (asset.moving) {
+      for (auto& object : objects(asset.name)) {
+        state.initialMovingObjects.push_back(object);
+      }
+    }
   }
 }
 

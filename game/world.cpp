@@ -19,6 +19,7 @@ std::vector<MeshAsset> World::meshAssets = {
   },
   {
     .name = "lantern",
+    .moving = true,
     .defaultColor = Vec3f(1.f),
     .create = []() {
       return Mesh::Model("./game/assets/lantern.obj");
@@ -132,6 +133,7 @@ std::vector<MeshAsset> World::meshAssets = {
   },
   {
     .name = "windmill-wheel",
+    .moving = true,
     .defaultColor = Vec3f(1.f),
     .defaultScale = Vec3f(75.f),
     .hitboxScale = Vec3f(1.f, 1.f, 0.1f),
@@ -180,6 +182,7 @@ std::vector<MeshAsset> World::meshAssets = {
   },
   {
     .name = "ac-fan",
+    .moving = true,
     .defaultColor = Vec3f(0.1f),
     .hitboxScale = Vec3f(1.f, 1.f, 0.1f),
     .create = []() {
