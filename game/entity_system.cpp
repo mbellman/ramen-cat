@@ -106,11 +106,13 @@ internal void loadEntityData(GmContext* context, GameState& state) {
       Vec3f position = Vec3f(stof(parts[0]), stof(parts[1]), stof(parts[2]));
       float xzVelocity = stof(parts[3]);
       float yVelocity = stof(parts[4]);
+      float initialRotation = stof(parts[5]);
 
       state.slingshots.push_back({
         .position = position,
         .xzVelocity = xzVelocity,
-        .yVelocity = yVelocity
+        .yVelocity = yVelocity,
+        .initialRotation = initialRotation
       });
     }
   }
@@ -120,8 +122,9 @@ internal void loadEntityData(GmContext* context, GameState& state) {
     auto& object = create_object_from("slingshot");
 
     object.position = slingshot.position;
-    object.color = DEFAULT_SLINGSHOT_COLOR;
     object.scale = Vec3f(60.f);
+    object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), slingshot.initialRotation);
+    object.color = DEFAULT_SLINGSHOT_COLOR;
 
     commit(object);
   }
