@@ -64,9 +64,6 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
 internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, float dt) {
   START_TIMING("resolveAllPlaneCollisions");
 
-  // Assume we're not on solid ground until proven otherwise
-  state.isOnSolidGround = false;
-
   auto& player = get_player();
   float playerRadius = player.scale.x;
   bool isFalling = state.previousPlayerPosition.y - player.position.y > 0.f;
@@ -253,6 +250,14 @@ namespace MovementSystem {
       }
     }
 
+    {
+      if (state.isOnSolidGround && state.velocity.xz().magnitude() > 1.f) {
+        // If we were on solid ground, but any movement
+        // occurs along the xz plane, all bets are off!
+        state.isOnSolidGround = false;
+      }
+    }
+
     LOG_TIME();
   }
 
@@ -275,9 +280,9 @@ namespace MovementSystem {
     resolveAllNpcCollisions(context, state);
 
     if (state.isOnSolidGround && !state.isMovingPlayerThisFrame) {
-      if (lastSolidGroundXzDistance > 10.f) {
-        // When landing from a jump, immediately reduce the xz velocity
-        // to a fraction of the original to slow down quickly
+      if (lastSolidGroundXzDistance > 100.f) {
+        // When landing from sufficiently long jumps, immediately reduce
+        // the xz velocity to a fraction of the original to slow down quickly
         state.velocity.x *= 0.25f;
         state.velocity.z *= 0.25f;
       } else {
