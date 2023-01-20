@@ -25,6 +25,8 @@ struct NonPlayerCharacter {
 // @todo move to entity_system.h
 struct Slingshot {
   Gamma::Vec3f position;
+  float xzVelocity = 350.f;
+  float yVelocity = 1500.f;
 };
 
 struct CameraState {

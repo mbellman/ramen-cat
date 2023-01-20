@@ -100,11 +100,17 @@ internal void loadEntityData(GmContext* context, GameState& state) {
 
     if (line[0] == '@') {
       entityName = line.substr(1);
-    } else {
-      Vec3f position = Gm_ParseVec3f(line);
+    } else if (entityName == "slingshot") {
+      auto parts = Gm_SplitString(line, ",");
+
+      Vec3f position = Vec3f(stof(parts[0]), stof(parts[1]), stof(parts[2]));
+      float xzVelocity = stof(parts[3]);
+      float yVelocity = stof(parts[4]);
 
       state.slingshots.push_back({
-        .position = position
+        .position = position,
+        .xzVelocity = xzVelocity,
+        .yVelocity = yVelocity
       });
     }
   }
@@ -185,24 +191,37 @@ internal void handleNpcs(GmContext* context, GameState& state) {
   }
 }
 
-// @todo cleanup/clarity
-internal void interactWithSlingshot(GmContext* context, GameState& state, Object& slingshot) {
+internal void interactWithSlingshot(GmContext* context, GameState& state, Object& object) {
   auto& player = get_player();
 
-  Vec3f slingshotToPlayer = player.position - slingshot.position;
+  // @temporary
+  float xzVelocity = 350.f;
+  float yVelocity = 1500.f;
+
+  // @temporary
+  for (auto& slingshot : state.slingshots) {
+    if (slingshot.position == object.position) {
+      xzVelocity = slingshot.xzVelocity;
+      yVelocity = slingshot.yVelocity;
+
+      break;
+    }
+  }
+
+  Vec3f slingshotToPlayer = player.position - object.position;
   float slingshotToPlayerAngle = atan2f(slingshotToPlayer.z, slingshotToPlayer.x);
   Vec3f playerDirection = slingshotToPlayer.xz().unit();
 
   // @todo make configurable
-  float xVelocity = 350.f * playerDirection.x * -1.f;
-  float zVelocity = 350.f * playerDirection.z * -1.f;
-  Vec3f slingshotVelocity = Vec3f(xVelocity, 1500.f, zVelocity);
-  Vec3f slingshotDirection = slingshot.rotation.getDirection();
+  float xVelocity = xzVelocity * playerDirection.x * -1.f;
+  float zVelocity = xzVelocity * playerDirection.z * -1.f;
+  Vec3f slingshotVelocity = Vec3f(xVelocity, yVelocity, zVelocity);
+  Vec3f slingshotDirection = object.rotation.getDirection();
 
   state.lastSlingshotInteractionTime = state.frameStartTime;
   state.startingSlingshotAngle = Gm_Modf(-atan2f(slingshotDirection.z, slingshotDirection.x) + Gm_HALF_PI, Gm_TAU);
   state.targetSlingshotAngle = Gm_Modf(-slingshotToPlayerAngle + Gm_HALF_PI, Gm_TAU);
-  state.activeSlingshotRecord = slingshot._record;
+  state.activeSlingshotRecord = object._record;
   state.slingshotVelocity = slingshotVelocity;
   state.velocity = Vec3f(0.f);
 
@@ -214,7 +233,7 @@ internal void interactWithSlingshot(GmContext* context, GameState& state, Object
         .altitude = 0.f,
         .radius = 150.f
       },
-      .lookAtTarget = slingshot.position
+      .lookAtTarget = object.position
     });
 
     // Have the restored camera state center behind/above
@@ -272,8 +291,9 @@ internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
         // Launch
         CameraSystem::restoreOriginalCameraState(context, state);
 
-        state.lastSlingshotInteractionTime = 0.f;
         state.velocity = state.slingshotVelocity;
+        state.lastSlingshotInteractionTime = 0.f;
+        state.isOnSolidGround = false;
 
         if (slingshot != nullptr) {
           slingshot->rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), state.targetSlingshotAngle);
