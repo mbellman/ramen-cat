@@ -1,10 +1,14 @@
+#define USE_DEV_LIGHT_DISCS 0
+
 vec4 frag_color_and_depth = texture(texColorAndDepth, fragUv);
 vec3 position = getWorldPosition(frag_color_and_depth.w, fragUv, matInverseProjection, matInverseView);
 vec3 surface_to_light = light.position - position;
 float light_distance = length(surface_to_light);
 
 if (light_distance > light.radius) {
-  discard;
+  #if USE_DEV_LIGHT_DISCS == 0
+    discard;
+  #endif
 }
 
 vec4 frag_normal_and_material = texture(texNormalAndMaterial, fragUv);
@@ -33,4 +37,8 @@ vec3 radiant_flux = light.color * light.power * light.radius;
 vec3 diffuse_term = frag_color * radiant_flux * incidence * attenuation * hack_diffuse_radial_influence * hack_soft_tapering * (1.0 - specularity) * sqrt(roughness);
 vec3 specular_term = 5.0 * radiant_flux * specularity * attenuation * hack_specular_radial_influence;
 
-vec3 illuminated_color = (diffuse_term + specular_term) * (1.0 - min(1.0, emissivity));
+#if USE_DEV_LIGHT_DISCS == 1
+  vec3 illuminated_color = light.color * vec3(0.3) + (diffuse_term + specular_term) * (1.0 - min(1.0, emissivity));
+#else
+  vec3 illuminated_color = (diffuse_term + specular_term) * (1.0 - min(1.0, emissivity));
+#endif

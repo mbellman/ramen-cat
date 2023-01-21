@@ -118,6 +118,7 @@ namespace Gamma {
     glCompileShader(shader);
 
     GLint status;
+
     glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
 
     if (status != GL_TRUE) {

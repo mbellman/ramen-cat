@@ -224,6 +224,18 @@ namespace Gamma {
       shaders.indirectLight.define("USE_DENOISING", "0");
     }
 
+    if (Gm_FlagWasEnabled(GammaFlags::ENABLE_DEV_LIGHT_DISCS)) {
+      shaders.pointLight.define("USE_DEV_LIGHT_DISCS", "1");
+      shaders.pointShadowcaster.define("USE_DEV_LIGHT_DISCS", "1");
+      shaders.spotLight.define("USE_DEV_LIGHT_DISCS", "1");
+      shaders.spotShadowcaster.define("USE_DEV_LIGHT_DISCS", "1");
+    } else if (Gm_FlagWasDisabled(GammaFlags::ENABLE_DEV_LIGHT_DISCS)) {
+      shaders.pointLight.define("USE_DEV_LIGHT_DISCS", "0");
+      shaders.pointShadowcaster.define("USE_DEV_LIGHT_DISCS", "0");
+      shaders.spotLight.define("USE_DEV_LIGHT_DISCS", "0");
+      shaders.spotShadowcaster.define("USE_DEV_LIGHT_DISCS", "0");
+    }
+
     if (Gm_FlagWasEnabled(GammaFlags::RENDER_INDIRECT_SKY_LIGHT)) {
       shaders.lightingPrepass.define("USE_INDIRECT_SKY_LIGHT", "1");
     } else if (Gm_FlagWasDisabled(GammaFlags::RENDER_INDIRECT_SKY_LIGHT)) {

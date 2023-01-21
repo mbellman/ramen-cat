@@ -3,8 +3,8 @@
 
 namespace Gamma {
   static u32 internalFlags =
-    GammaFlags::ENABLE_DEV_BUFFERS |
     GammaFlags::ENABLE_DENOISING |
+    GammaFlags::ENABLE_DEV_BUFFERS |
     GammaFlags::RENDER_REFLECTIONS |
     GammaFlags::RENDER_REFRACTIVE_GEOMETRY |
     GammaFlags::RENDER_SHADOWS |
