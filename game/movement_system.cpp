@@ -69,10 +69,17 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
   bool isFalling = state.previousPlayerPosition.y - player.position.y > 0.f;
   bool didHitSolidGround = false;
 
-  // @optimize precalculate collision plane min/max y, check against
-  // player y and skip collision detection if out of range
   // @todo implement world chunks + only consider collision planes local to the player
   for (auto& plane : state.collisionPlanes) {
+    // @todo see if 20.f is a robust enough buffer for early out
+    if (
+      player.position.y > plane.maxY + 20.f ||
+      player.position.y < plane.minY - 20.f
+    ) {
+      // Early out for collision planes not local to the player y position
+      continue;
+    }
+
     Vec3f lineStart = state.previousPlayerPosition;
     Vec3f lineEnd = player.position - plane.normal * playerRadius;
     auto collision = Collisions::getLinePlaneCollision(lineStart, lineEnd, plane);

@@ -10,6 +10,8 @@ struct Plane {
   Gamma::Vec3f t1, t2, t3, t4;
   Gamma::Vec3f normal;
   float nDotU = 0.f;
+  float maxY = 0.f;
+  float minY = 0.f;
 
   #if GAMMA_DEVELOPER_MODE
     Gamma::ObjectRecord sourceObjectRecord;

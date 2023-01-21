@@ -43,6 +43,16 @@ void Collisions::addObjectCollisionPlanes(const Object& object, std::vector<Plan
       plane.p2 = object.position + (rotation * (adjustedScale * points[1])).toVec3f();
       plane.p3 = object.position + (rotation * (adjustedScale * points[2])).toVec3f();
       plane.p4 = object.position + (rotation * (adjustedScale * points[3])).toVec3f();
+
+      plane.minY = plane.p1.y;
+      if (plane.p2.y < plane.minY) plane.minY = plane.p2.y;
+      if (plane.p3.y < plane.minY) plane.minY = plane.p3.y;
+      if (plane.p4.y < plane.minY) plane.minY = plane.p4.y;
+
+      plane.maxY = plane.p1.y;
+      if (plane.p2.y > plane.maxY) plane.maxY = plane.p2.y;
+      if (plane.p3.y > plane.maxY) plane.maxY = plane.p3.y;
+      if (plane.p4.y > plane.maxY) plane.maxY = plane.p4.y;
     }
 
     // Precalculate the plane normal/tangents/up factor
