@@ -120,11 +120,36 @@ std::vector<MeshAsset> World::meshAssets = {
     }
   },
   {
+    .name = "ladder",
+    .defaultColor = Vec3f(1.f),
+    .hitboxScale = Vec3f(0.45f, 1.f, 0.2f),
+    .create = []() {
+      return Mesh::Model("./game/assets/ladder.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/metal-guard.png",
+      .normalMap = "./game/assets/metal-guard-normals.png",
+      .roughness = 0.1f
+    }
+  },
+  {
     .name = "wood-beam",
     .defaultColor = Vec3f(1.f),
     .hitboxScale = Vec3f(1.f, 0.025f, 0.1f),
     .create = []() {
       return Mesh::Model("./game/assets/wood-beam.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/wood-beam.png",
+      .roughness = 0.5f
+    }
+  },
+  {
+    .name = "wood-supports",
+    .defaultColor = Vec3f(1.f),
+    .hitboxScale = Vec3f(0.5f, 1.7f, 0.15f),
+    .create = []() {
+      return Mesh::Model("./game/assets/wood-supports.obj");
     },
     .attributes = {
       .texture = "./game/assets/wood-beam.png",

@@ -12,13 +12,13 @@ Hey, what is your favorite kind of pizza?
 @man
 -750.0,474.0,-5556.0
 Good day. Welcome to Umimura Bathhouse.
-Do you have a reservation for your visit?
+Do you have a reservation?
 -
 Oh...I see.
 -
 Are you here to make a delivery?
 -
-Well, I can only permit entry to those
+...Well, I can only permit visitors
 with reservations or deliveries.
 -
 Frightfully sorry! Please have a nice day.
