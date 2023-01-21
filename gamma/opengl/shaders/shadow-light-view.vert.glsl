@@ -21,13 +21,13 @@ void main() {
   // @todo make a utility for this
   switch (foliage.type) {
     case FLOWER:
-      world_position.xyz += getFlowerFoliageOffset(world_position.xyz);
+      world_position.xyz += getFlowerFoliageOffset(vertexPosition, world_position.xyz);
       break;
     case BRANCH:
-      world_position.xyz += getBranchFoliageOffset(world_position.xyz);
+      world_position.xyz += getBranchFoliageOffset(vertexPosition, world_position.xyz);
       break;
     case LEAF:
-      world_position.xyz += getLeafFoliageOffset(world_position.xyz);
+      world_position.xyz += getLeafFoliageOffset(vertexPosition, world_position.xyz);
       break;
   }
 

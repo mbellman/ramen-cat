@@ -7,7 +7,6 @@ using namespace Gamma;
 std::vector<MeshAsset> World::meshAssets = {
   {
     .name = "lamp",
-    .defaultColor = Vec3f(1.f),
     .create = []() {
       return Mesh::Model("./game/assets/lamp.obj");
     },
@@ -20,7 +19,6 @@ std::vector<MeshAsset> World::meshAssets = {
   {
     .name = "lantern",
     .moving = true,
-    .defaultColor = Vec3f(1.f),
     .create = []() {
       return Mesh::Model("./game/assets/lantern.obj");
     },
@@ -43,7 +41,6 @@ std::vector<MeshAsset> World::meshAssets = {
   },
   {
     .name = "weeds",
-    .defaultColor = Vec3f(1.f),
     .hitboxScale = Vec3f(1.f, 1.f, 0.2f),
     .create = []() {
       return Mesh::Model("./game/assets/weeds.obj");
@@ -57,6 +54,33 @@ std::vector<MeshAsset> World::meshAssets = {
       },
       .emissivity = 0.1f,
       .roughness = 1.f
+    }
+  },
+  {
+    .name = "palm-trunk",
+    .hitboxScale = Vec3f(0.1f, 1.f, 0.1f),
+    .create = []() {
+      return Mesh::Model("./game/assets/palm-trunk.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/palm-trunk.png",
+      .roughness = 0.8f
+    }
+  },
+  {
+    .name = "palm-leaf",
+    .defaultRotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI),
+    .hitboxScale = Vec3f(0.2f, 1.f, 0.1f),
+    .create = []() {
+      return Mesh::Model("./game/assets/palm-leaf.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/palm-leaf.png",
+      .type = MeshType::FOLIAGE,
+      .foliage = {
+        .type = FoliageType::LEAF
+      },
+      .roughness = 0.8f
     }
   },
   {
@@ -96,7 +120,6 @@ std::vector<MeshAsset> World::meshAssets = {
   },
   {
     .name = "metal-panel",
-    .defaultColor = Vec3f(1.f),
     .create = []() {
       return Mesh::Cube();
     },
@@ -108,7 +131,6 @@ std::vector<MeshAsset> World::meshAssets = {
   },
   {
     .name = "metal-guard",
-    .defaultColor = Vec3f(1.f),
     .hitboxScale = Vec3f(1.f, 0.2f, 0.05f),
     .create = []() {
       return Mesh::Model("./game/assets/metal-guard.obj");
@@ -121,7 +143,6 @@ std::vector<MeshAsset> World::meshAssets = {
   },
   {
     .name = "ladder",
-    .defaultColor = Vec3f(1.f),
     .hitboxScale = Vec3f(0.45f, 1.f, 0.2f),
     .create = []() {
       return Mesh::Model("./game/assets/ladder.obj");
@@ -134,7 +155,6 @@ std::vector<MeshAsset> World::meshAssets = {
   },
   {
     .name = "wood-beam",
-    .defaultColor = Vec3f(1.f),
     .hitboxScale = Vec3f(1.f, 0.025f, 0.1f),
     .create = []() {
       return Mesh::Model("./game/assets/wood-beam.obj");
@@ -146,7 +166,6 @@ std::vector<MeshAsset> World::meshAssets = {
   },
   {
     .name = "wood-supports",
-    .defaultColor = Vec3f(1.f),
     .hitboxScale = Vec3f(0.5f, 1.7f, 0.15f),
     .create = []() {
       return Mesh::Model("./game/assets/wood-supports.obj");
@@ -159,7 +178,6 @@ std::vector<MeshAsset> World::meshAssets = {
   {
     .name = "windmill-wheel",
     .moving = true,
-    .defaultColor = Vec3f(1.f),
     .defaultScale = Vec3f(75.f),
     .hitboxScale = Vec3f(1.f, 1.f, 0.1f),
     .create = []() {
@@ -172,7 +190,6 @@ std::vector<MeshAsset> World::meshAssets = {
   },
   {
     .name = "floor-1",
-    .defaultColor = Vec3f(1.f),
     .create = []() {
       return Mesh::Model("./game/assets/floor-1.obj");
     },
@@ -183,7 +200,6 @@ std::vector<MeshAsset> World::meshAssets = {
   },
   {
     .name = "wall-1",
-    .defaultColor = Vec3f(1.f),
     .scalingFactor = Vec3f(1.f, 0, 1.f),
     .create = []() {
       return Mesh::Plane(2);
@@ -196,7 +212,6 @@ std::vector<MeshAsset> World::meshAssets = {
   },
   {
     .name = "metal-sheet",
-    .defaultColor = Vec3f(1.f),
     .hitboxScale = Vec3f(0.5f, 0.6f, 0.025f),
     .create = []() {
       return Mesh::Model("./game/assets/metal-sheet.obj");
@@ -209,7 +224,6 @@ std::vector<MeshAsset> World::meshAssets = {
   },
   {
     .name = "ac-unit",
-    .defaultColor = Vec3f(1.f),
     .hitboxScale = Vec3f(1.f, 0.6f, 0.5f),
     .create = []() {
       return Mesh::Model("./game/assets/ac-unit.obj");
@@ -232,7 +246,6 @@ std::vector<MeshAsset> World::meshAssets = {
   },
   {
     .name = "sign-1",
-    .defaultColor = Vec3f(1.f),
     .hitboxScale = Vec3f(0.1f, 0.5f, 1.f),
     .create = []() {
       return Mesh::Model("./game/assets/sign-1.obj");
@@ -244,7 +257,6 @@ std::vector<MeshAsset> World::meshAssets = {
   },
   {
     .name = "door-1",
-    .defaultColor = Vec3f(1.f),
     .hitboxScale = Vec3f(0.5f, 1.f, 0.1f),
     .create = []() {
       return Mesh::Model("./game/assets/door-1.obj");
@@ -256,7 +268,6 @@ std::vector<MeshAsset> World::meshAssets = {
   },
   {
     .name = "windows-1",
-    .defaultColor = Vec3f(1.f),
     .hitboxScale = Vec3f(1.f, 0.4f, 0.05f),
     .create = []() {
       return Mesh::Model("./game/assets/windows-1.obj");
@@ -268,7 +279,6 @@ std::vector<MeshAsset> World::meshAssets = {
   },
   {
     .name = "balcony-1",
-    .defaultColor = Vec3f(1.f),
     .hitboxScale = Vec3f(1.f, 0.4f, 0.4f),
     .create = []() {
       return Mesh::Model("./game/assets/balcony-1.obj");
@@ -276,7 +286,6 @@ std::vector<MeshAsset> World::meshAssets = {
   },
   {
     .name = "pipe-1",
-    .defaultColor = Vec3f(1.f),
     .hitboxScale = Vec3f(0.3f, 1.f, 0.3f),
     .create = []() {
       return Mesh::Model("./game/assets/pipe-1.obj");
@@ -290,7 +299,6 @@ std::vector<MeshAsset> World::meshAssets = {
 
   {
     .name = "pipe-curve",
-    .defaultColor = Vec3f(1.f),
     .hitboxScale = Vec3f(0.3f, 0.5f, 0.6f),
     .create = []() {
       return Mesh::Model("./game/assets/pipe-curve.obj");
@@ -303,7 +311,6 @@ std::vector<MeshAsset> World::meshAssets = {
   },
   {
     .name = "roof",
-    .defaultColor = Vec3f(1.f),
     .hitboxScale = Vec3f(1.f, 0.5f, 0.8f),
     .create = []() {
       return Mesh::Model("./game/assets/roof.obj");
@@ -314,7 +321,6 @@ std::vector<MeshAsset> World::meshAssets = {
   },
   {
     .name = "shop-1",
-    .defaultColor = Vec3f(1.f),
     .create = []() {
       return Mesh::Model("./game/assets/shop-1.obj");
     }
