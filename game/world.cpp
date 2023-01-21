@@ -170,6 +170,19 @@ std::vector<MeshAsset> World::meshAssets = {
     }
   },
   {
+    .name = "metal-sheet",
+    .defaultColor = Vec3f(1.f),
+    .hitboxScale = Vec3f(0.5f, 0.6f, 0.025f),
+    .create = []() {
+      return Mesh::Model("./game/assets/metal-sheet.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/metal-sheet.png",
+      .normalMap = "./game/assets/metal-sheet-normals.png",
+      .roughness = 0.1f
+    }
+  },
+  {
     .name = "ac-unit",
     .defaultColor = Vec3f(1.f),
     .hitboxScale = Vec3f(1.f, 0.6f, 0.5f),
