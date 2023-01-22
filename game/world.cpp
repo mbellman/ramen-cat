@@ -57,6 +57,19 @@ std::vector<MeshAsset> World::meshAssets = {
     }
   },
   {
+    .name = "bush",
+    .create = []() {
+      return Mesh::Model("./game/assets/bush.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/bush.png",
+      .type = MeshType::FOLIAGE,
+      .foliage = {
+        .type = FoliageType::FLOWER
+      }
+    }
+  },
+  {
     .name = "palm-trunk",
     .hitboxScale = Vec3f(0.1f, 1.f, 0.1f),
     .create = []() {
