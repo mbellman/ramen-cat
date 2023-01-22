@@ -357,8 +357,23 @@ std::vector<MeshAsset> World::meshAssets = {
   },
   {
     .name = "shop-1",
+    .hitboxScale = Vec3f(1.f, 0.3f, 1.f),
     .create = []() {
       return Mesh::Model("./game/assets/shop-1.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/shop-1.png"
+    }
+  },
+  {
+    .name = "ramen-bowl",
+    .hitboxScale = Vec3f(1.f, 0.4f, 1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/ramen-bowl.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/ramen-bowl.png",
+      .roughness = 0.4f
     }
   },
   {
