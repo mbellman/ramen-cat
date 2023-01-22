@@ -17,5 +17,7 @@ namespace Gamma {
     GLuint id;
     GLenum unit;
     std::string path;
+
+    void initialize(bool enableMipmaps);
   };
 }

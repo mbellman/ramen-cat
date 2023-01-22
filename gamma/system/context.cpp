@@ -93,7 +93,9 @@ static void Gm_DisplayDevtools(GmContext* context) {
 
     // @todo clear messages after a set duration
     while (message != nullptr) {
-      renderer.renderText(font_sm, message->text.c_str(), 25, window.size.height - 150 + (messageIndex++) * 25);
+      auto color = message->warning ? Vec3f(0.8f, 0, 0) : Vec3f(1.f);
+
+      renderer.renderText(font_sm, message->text.c_str(), 25, window.size.height - 150 + (messageIndex++) * 25, color);
 
       message = message->next;
     }

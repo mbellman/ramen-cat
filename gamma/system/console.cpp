@@ -12,12 +12,13 @@ namespace Gamma {
     // @todo
   }
 
-  void Console::storeMessage(const std::string message) {
+  void Console::storeMessage(const std::string message, bool warning) {
     auto* consoleMessage = new ConsoleMessage();
 
     // @todo use system time or something we can
     // determine HH:MM:SS from
     consoleMessage->time = SDL_GetTicks();
+    consoleMessage->warning = warning;
     consoleMessage->text = message;
     consoleMessage->next = nullptr;
 

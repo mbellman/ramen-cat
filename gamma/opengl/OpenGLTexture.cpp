@@ -1,10 +1,16 @@
 #include <string>
 
-#include "opengl/OpenGLTexture.h"
-#include "system/assert.h"
-
 #include "glew.h"
 #include "SDL_image.h"
+
+#include "opengl/OpenGLTexture.h"
+#include "system/assert.h"
+#include "system/flags.h"
+
+#if GAMMA_DEVELOPER_MODE == 1
+  #include "system/console.h"
+  #include "system/file.h"
+#endif
 
 namespace Gamma {
   // @todo add hot-reloading in dev mode
@@ -12,9 +18,37 @@ namespace Gamma {
     this->unit = unit;
     this->path = path;
 
+    initialize(enableMipmaps);
+
+    #if GAMMA_DEVELOPER_MODE == 1
+      Gm_WatchFile(path.c_str(), [=]() {
+        glDeleteTextures(1, &id);
+        initialize(enableMipmaps);
+
+        Console::log("[Gamma] Hot-reloaded texture:", path);
+      }); 
+    #endif
+  }
+
+  OpenGLTexture::~OpenGLTexture() {
+    glDeleteTextures(1, &id);
+  }
+
+  void OpenGLTexture::bind() {
+    glActiveTexture(unit);
+    glBindTexture(GL_TEXTURE_2D, id);
+  }
+
+  void OpenGLTexture::initialize(bool enableMipmaps) {
     SDL_Surface* surface = IMG_Load(path.c_str());
 
-    assert(surface != 0, "Failed to load texture: " + path);
+    if (surface == 0) {
+      Console::warn("[Gamma] Failed to load texture:", path);
+
+      SDL_FreeSurface(surface);
+
+      return;
+    }
 
     GLuint format = surface->format->BytesPerPixel == 4 ? GL_RGBA : GL_RGB;
 
@@ -34,15 +68,6 @@ namespace Gamma {
     }
 
     SDL_FreeSurface(surface);
-  }
-
-  OpenGLTexture::~OpenGLTexture() {
-    glDeleteTextures(1, &id);
-  }
-
-  void OpenGLTexture::bind() {
-    glActiveTexture(unit);
-    glBindTexture(GL_TEXTURE_2D, id);
   }
 
   const std::string& OpenGLTexture::getPath() const {

@@ -56,7 +56,7 @@ namespace Gamma {
       file = f;
       isLoading = true;
     } else {
-      Console::log("[Gamma] AbstractLoader failed to load file:", filePath);
+      Console::warn("[Gamma] AbstractLoader failed to load file:", filePath);
     }
   }
 
