@@ -217,11 +217,21 @@ std::vector<MeshAsset> World::meshAssets = {
   {
     .name = "floor-1",
     .create = []() {
-      return Mesh::Model("./game/assets/floor-1.obj");
+      return Mesh::Model("./game/assets/texture-cube.obj");
     },
     .attributes = {
       .texture = "./game/assets/floor-1.png",
       .normalMap = "./game/assets/floor-1-normals.png"
+    }
+  },
+  {
+    .name = "tiles-1",
+    .create = []() {
+      return Mesh::Model("./game/assets/texture-cube.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/tiles-1.png",
+      .normalMap = "./game/assets/tiles-1-normals.png"
     }
   },
   {
