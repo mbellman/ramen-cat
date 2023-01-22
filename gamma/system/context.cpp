@@ -101,13 +101,15 @@ static void Gm_DisplayDevtools(GmContext* context) {
 
   // Display dev buffer labels
   {
-    const auto FG_COLOR = Vec3f(1.f);
-    const auto BG_COLOR = Vec4f(0, 0, 0, 0.75f);
+    if (Gm_IsFlagEnabled(GammaFlags::ENABLE_DEV_BUFFERS)) {
+      const auto FG_COLOR = Vec3f(1.f);
+      const auto BG_COLOR = Vec4f(0, 0, 0, 0.75f);
 
-    renderer.renderText(font_sm, "Color", u32(window.size.width * 0.55f), u32(window.size.height * 0.035f), FG_COLOR, BG_COLOR);
-    renderer.renderText(font_sm, "Depth", u32(window.size.width * 0.657f), u32(window.size.height * 0.035f), FG_COLOR, BG_COLOR);
-    renderer.renderText(font_sm, "Normals", u32(window.size.width * 0.765f), u32(window.size.height * 0.035f), FG_COLOR, BG_COLOR);
-    renderer.renderText(font_sm, "Material", u32(window.size.width * 0.872f), u32(window.size.height * 0.035f), FG_COLOR, BG_COLOR);
+      renderer.renderText(font_sm, "Color", u32(window.size.width * 0.55f), u32(window.size.height * 0.035f), FG_COLOR, BG_COLOR);
+      renderer.renderText(font_sm, "Depth", u32(window.size.width * 0.657f), u32(window.size.height * 0.035f), FG_COLOR, BG_COLOR);
+      renderer.renderText(font_sm, "Normals", u32(window.size.width * 0.765f), u32(window.size.height * 0.035f), FG_COLOR, BG_COLOR);
+      renderer.renderText(font_sm, "Material", u32(window.size.width * 0.872f), u32(window.size.height * 0.035f), FG_COLOR, BG_COLOR);
+    }
   }
 }
 

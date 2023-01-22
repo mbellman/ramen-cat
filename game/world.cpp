@@ -132,6 +132,19 @@ std::vector<MeshAsset> World::meshAssets = {
     }
   },
   {
+    .name = "bathhouse-roof-spire",
+    .defaultColor = Vec3f(0.8f,0.6f,0.2f),
+    .defaultScale = Vec3f(100.f),
+    .hitboxScale = Vec3f(1.f, 2.f, 1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/bathhouse-roof-spire.obj");
+    },
+    .attributes = {
+      .normalMap = "./game/assets/metal-guard-normals.png",
+      .roughness = 0.8f
+    }
+  },
+  {
     .name = "metal-panel",
     .create = []() {
       return Mesh::Cube();

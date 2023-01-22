@@ -1161,19 +1161,16 @@ namespace Editor {
         // @todo clean this up
         #define String(x) std::to_string(x)
 
-        auto& p = editor.selectedObject.position;
-        auto& s = editor.selectedObject.scale;
-        auto& r = editor.selectedObject.rotation;
-
-        // @todo Gm_ToString(const Vec3f&), Gm_ToString(const Quaternion&)
-        auto position = String(p.x) + ", " + String(p.y) + ", " + String(p.z);
-        auto scale = String(s.x) + ", " + String(s.y) + ", " + String(s.z);
-        auto rotation = String(r.w) + ", " + String(r.x) + ", " + String(r.y) + ", " + String(r.z);
+        auto& position = editor.selectedObject.position;
+        auto& scale = editor.selectedObject.scale;
+        auto& rotation = editor.selectedObject.rotation;
+        auto& color = editor.selectedObject.color;
 
         add_debug_message("Active object:");
-        add_debug_message("Position: " + position);
-        add_debug_message("Scale: " + scale);
-        add_debug_message("Rotation: " + rotation);
+        add_debug_message("Position: " + Gm_ToString(position));
+        add_debug_message("Scale: " + Gm_ToString(scale));
+        add_debug_message("Rotation: " + Gm_ToString(rotation));
+        add_debug_message("Color: " + Gm_ToString(color.toVec3f()));
       }
     }
 
