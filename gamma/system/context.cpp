@@ -102,8 +102,6 @@ static void Gm_DisplayDevtools(GmContext* context) {
     }
   }
 
-  context->debugMessages.clear();
-
   // Display command line
   {
     if (commander.isOpen()) {
@@ -256,6 +254,8 @@ void Gm_HandleFrameEnd(GmContext* context) {
 
   context->scene.ui.surfaces.clear();
   context->scene.ui.texts.clear();
+
+  context->debugMessages.clear();
 
   Gm_SavePreviousFlags();
 }
