@@ -3,6 +3,7 @@
 #include "entity_system.h"
 #include "collisions.h"
 #include "macros.h"
+#include "game_constants.h"
 
 constexpr float FORCE_GRAVITY = 750.f;
 constexpr float FORCE_WALL = 1000.f;
@@ -121,9 +122,6 @@ internal void resolveAllNpcCollisions(GmContext* context, GameState& state) {
 
   auto& player = get_player();
 
-  // @todo define these constants elsewhere and use them in player/NPC generation
-  const float NPC_RADIUS = 20.f;
-  const float NPC_HEIGHT = 70.f;
   const float PLAYER_RADIUS = player.scale.x;
 
   const float distanceThreshold = NPC_RADIUS + PLAYER_RADIUS + 10.f;

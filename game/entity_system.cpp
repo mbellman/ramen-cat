@@ -4,6 +4,7 @@
 #include "world.h"
 #include "macros.h"
 #include "easing.h"
+#include "game_constants.h"
 
 #define set_active_mesh(meshName) u16 __activeMeshIndex = context->scene.meshMap.at(meshName)->index
 #define is_active_mesh(object) object._record.meshIndex == __activeMeshIndex
@@ -76,7 +77,7 @@ internal void loadNpcData(GmContext* context, GameState& state) {
 
     object.position = npc.position;
     object.color = Vec3f(1.f, 0, 1.f);
-    object.scale = Vec3f(20.f, 70.f, 20.f);
+    object.scale = Vec3f(NPC_RADIUS, NPC_HEIGHT, NPC_RADIUS);
 
     commit(object);
   }
@@ -142,7 +143,7 @@ internal void interactWithNpc(GmContext* context, GameState& state, NonPlayerCha
     .camera3p = {
       .azimuth = atan2f(npcToPlayer.z, npcToPlayer.x) - Gm_TAU / 8.f,
       .altitude = 0.f,
-      .radius = 150.f
+      .radius = NPC_INTERACTION_CAMERA_RADIUS
     },
     .lookAtTarget = {
       (npcFacePosition.x + player.position.x) / 2.f,
@@ -160,18 +161,13 @@ internal void handleNpcs(GmContext* context, GameState& state) {
 
   // Handle talking to NPCs
   {
-    // @todo define these constants elsewhere and use them in player/NPC generation
-    const float NPC_RADIUS = 20.f;
-    const float NPC_HEIGHT = 70.f;
-    const float NPC_INTERACTION_DISTANCE = 120.f;
-
     if (input.didPressKey(Key::SPACE)) {
       if (state.activeNpc == nullptr) {
         for (auto& npc : state.npcs) {
-          float xzDistance = (npc.position - player.position).xz().magnitude();
+          float npcXzDistance = (npc.position - player.position).xz().magnitude();
 
           if (
-            xzDistance < NPC_INTERACTION_DISTANCE &&
+            npcXzDistance < NPC_INTERACTION_TRIGGER_DISTANCE &&
             player.position.y < npc.position.y + NPC_HEIGHT &&
             player.position.y > npc.position.y - NPC_HEIGHT
           ) {
@@ -234,7 +230,7 @@ internal void interactWithSlingshot(GmContext* context, GameState& state, Object
       .camera3p = {
         .azimuth = slingshotToPlayerAngle - Gm_PI / 16.f,
         .altitude = 0.f,
-        .radius = 150.f
+        .radius = SLINGSHOT_WIND_UP_CAMERA_RADIUS
       },
       .lookAtTarget = object.position
     });
@@ -243,7 +239,9 @@ internal void interactWithSlingshot(GmContext* context, GameState& state, Object
     // the player, once launched from the slingshot
     state.originalCameraState.camera3p.azimuth = Gm_Modf(atan2f(slingshotVelocity.z, slingshotVelocity.x) - Gm_PI, Gm_TAU);
     state.originalCameraState.camera3p.altitude = Gm_HALF_PI * 0.8f;
-    state.originalCameraState.camera3p.radius = (state.cameraMode == CameraMode::NORMAL ? 300.f : 600.f) + 200.f * (state.originalCameraState.camera3p.altitude / Gm_HALF_PI);
+    state.originalCameraState.camera3p.radius =
+      (state.cameraMode == CameraMode::NORMAL ? CAMERA_NORMAL_BASE_RADIUS : CAMERA_ZOOM_OUT_BASE_RADIUS)
+      + CAMERA_RADIUS_ALTITUDE_MULTIPLIER * (state.originalCameraState.camera3p.altitude / Gm_HALF_PI);
   }
 }
 
@@ -256,7 +254,7 @@ internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
     for (auto& slingshot : objects("slingshot")) {
       Vec3f targetColor = DEFAULT_SLINGSHOT_COLOR;
 
-      if ((slingshot.position - player.position).xz().magnitude() < 100.f) {
+      if ((slingshot.position - player.position).xz().magnitude() < SLINGSHOT_INTERACTION_TRIGGER_DISTANCE) {
         targetColor = HIGHLIGHT_SLINGSHOT_COLOR;
 
         if (input.didPressKey(Key::SPACE)) {
@@ -277,15 +275,14 @@ internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
   // Handle launching from slingshots
   {
     if (state.lastSlingshotInteractionTime != 0.f) {
-      const float WIND_UP_DURATION = 0.5f;
       const float timeSinceLastSlingshotInteraction = time_since(state.lastSlingshotInteractionTime);
       auto* slingshot = get_object_by_record(state.activeSlingshotRecord);
 
-      if (timeSinceLastSlingshotInteraction < WIND_UP_DURATION) {
+      if (timeSinceLastSlingshotInteraction < SLINGSHOT_WIND_UP_DURATION_SECONDS) {
         // Wind-up
         if (slingshot != nullptr) {
           // @todo change the easing function to not require artificially reducing alpha
-          float alpha = 0.3f * (1.f / WIND_UP_DURATION) * timeSinceLastSlingshotInteraction;
+          float alpha = 0.3f * (1.f / SLINGSHOT_WIND_UP_DURATION_SECONDS) * timeSinceLastSlingshotInteraction;
           float angle = Gm_LerpCircularf(state.startingSlingshotAngle, state.targetSlingshotAngle, easeOutElastic(alpha), Gm_HALF_PI);
 
           slingshot->rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angle);
@@ -311,16 +308,13 @@ internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
 }
 
 internal void handleLanterns(GmContext* context, GameState& state, float dt) {
-  const float HORIZONTAL_DRIFT = 15.f;
-  const float VERTICAL_DRIFT = 5.f;
-
   for_moving_objects("lantern", {
     auto& basePosition = initial.position;
     float a = get_running_time() + basePosition.z / 200.f;
     float angle = 0.2f * sinf(a);
 
-    float x = HORIZONTAL_DRIFT * sin(a);
-    float y = VERTICAL_DRIFT * powf(Gm_Absf(x) / HORIZONTAL_DRIFT, 2);
+    float x = LANTERN_HORIZONTAL_DRIFT * sin(a);
+    float y = LANTERN_VERTICAL_DRIFT * powf(Gm_Absf(x) / LANTERN_HORIZONTAL_DRIFT, 2);
 
     object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 0, 1.f), angle); 
     object.position = basePosition + Vec3f(x, y, 0);
