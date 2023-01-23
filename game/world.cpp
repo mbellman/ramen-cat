@@ -100,6 +100,7 @@ std::vector<MeshAsset> World::meshAssets = {
   {
     .name = "concrete-slab",
     .defaultColor = Vec3f(0.5f),
+    .maxInstances = 10000,
     .create = []() {
       return Mesh::Cube();
     },
