@@ -118,6 +118,18 @@ void updateGame(GmContext* context, GameState& state, float dt) {
     }
   }
 
+  #if GAMMA_DEVELOPER_MODE == 1
+    // Allow CTRL-Z to reset the player position when falling
+    {
+      auto& input = get_input();
+
+      if (input.isKeyHeld(Key::CONTROL) && input.didPressKey(Key::Z)) {
+        player.position = state.lastSolidGroundPosition;
+        state.velocity = Vec3f(0.f);
+      }
+    }
+  #endif
+
   // Track end-of-frame variables
   {
     Vec3f motionLine = player.position - state.previousPlayerPosition;

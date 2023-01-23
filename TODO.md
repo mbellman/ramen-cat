@@ -1,6 +1,5 @@
 EDITOR
 ------
-* CTRL Z to reposition on last solid ground, reset velocity
 * count # of vertices over all instances of a mesh
 * show # of dynamic entity pieces
 * camera-relative repositioning hotkey
