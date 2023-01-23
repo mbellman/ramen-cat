@@ -23,7 +23,6 @@ BUGS
 ASSETS
 ------
 * flowers
-
 * update mini rooves to look more japanese
 * staircase step improvements
 * stars
