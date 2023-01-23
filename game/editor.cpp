@@ -1046,6 +1046,8 @@ namespace Editor {
 
         if (input.isKeyHeld(Key::CONTROL)) {
           actionDelta *= 0.1f;
+        } else if (input.isKeyHeld(Key::NUM_1)) {
+          actionDelta *= 10.f;
         }
 
         if (editor.currentActionType == ActionType::POSITION) {

@@ -71,8 +71,6 @@ static void Gm_DisplayDevtools(GmContext* context) {
       for (auto& message : context->debugMessages) {
         renderer.renderText(font_sm, message.c_str(), 25, 200 + index++ * 25, Vec3f(1.f), Vec4f(0.f, 0.f, 0.f, 0.8f));
       }
-
-      context->debugMessages.clear();
     }
 
     // Display console messages
@@ -103,6 +101,8 @@ static void Gm_DisplayDevtools(GmContext* context) {
       }
     }
   }
+
+  context->debugMessages.clear();
 
   // Display command line
   {
