@@ -66,7 +66,7 @@ std::vector<MeshAsset> World::meshAssets = {
       .type = MeshType::FOLIAGE,
       .foliage = {
         .type = FoliageType::FLOWER,
-        .factor = 3.f
+        .factor = 5.f
       }
     }
   },
@@ -292,6 +292,17 @@ std::vector<MeshAsset> World::meshAssets = {
     },
     .attributes = {
       .roughness = 0.2f
+    }
+  },
+  {
+    .name = "kick-sign",
+    .hitboxScale = Vec3f(1.f, 1.1f, 0.15f),
+    .create = []() {
+      return Mesh::Model("./game/assets/kick-sign.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/kick-sign.png",
+      .roughness = 0.4f
     }
   },
   {
