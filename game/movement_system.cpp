@@ -5,9 +5,6 @@
 #include "macros.h"
 #include "game_constants.h"
 
-constexpr float FORCE_GRAVITY = 750.f;
-constexpr float FORCE_WALL = 1000.f;
-
 using namespace Gamma;
 
 internal void resolveNewPositionFromCollision(const Collision& collision, Object& player, float dt) {
@@ -205,12 +202,10 @@ namespace MovementSystem {
 
     // Limit horizontal speed on ground
     {
-      const float MAX_HORIZONTAL_SPEED = 650.f;
-
       Vec3f horizontalVelocity = state.velocity.xz();
 
-      if (state.isOnSolidGround && horizontalVelocity.magnitude() > MAX_HORIZONTAL_SPEED) {
-        Vec3f limitedHorizontalVelocity = horizontalVelocity.unit() * MAX_HORIZONTAL_SPEED;
+      if (state.isOnSolidGround && horizontalVelocity.magnitude() > MAXIMUM_HORIZONTAL_GROUND_SPEED) {
+        Vec3f limitedHorizontalVelocity = horizontalVelocity.unit() * MAXIMUM_HORIZONTAL_GROUND_SPEED;
 
         state.velocity.x = limitedHorizontalVelocity.x;
         state.velocity.z = limitedHorizontalVelocity.z;
@@ -222,7 +217,7 @@ namespace MovementSystem {
       if (input.didPressKey(Key::SPACE)) {
         if (state.isOnSolidGround) {
           // Regular jump
-          state.velocity.y = 500.f;
+          state.velocity.y = JUMP_Y_VELOCITY;
           state.isOnSolidGround = false;
 
           // Make sure the player is off the ground plane

@@ -23,9 +23,6 @@
 
 using namespace Gamma;
 
-const Vec3f DEFAULT_SLINGSHOT_COLOR = Vec3f(0.2f);
-const Vec3f HIGHLIGHT_SLINGSHOT_COLOR = Vec3f(1.f);
-
 internal void loadNpcData(GmContext* context, GameState& state) {
   // @todo eventually store as binary data
   auto npcDataContents = Gm_LoadFileContents("./game/data_npcs.txt");

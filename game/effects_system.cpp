@@ -1,10 +1,8 @@
 #include "effects_system.h"
 #include "macros.h"
+#include "game_constants.h"
 
 using namespace Gamma;
-
-const u16 TOTAL_PARTICLES = 30;
-const float PARTICLE_SPAWN_DELAY = 1.f / float(TOTAL_PARTICLES);
 
 internal void initializePlayerParticles(GmContext* context) {
   add_mesh("player-particle", TOTAL_PARTICLES, Mesh::Sphere(6));
