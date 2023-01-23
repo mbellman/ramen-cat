@@ -1166,7 +1166,8 @@ namespace Editor {
 
     // Display editor info
     {
-      add_debug_message("Mode: " + getEditorModeName(editor.mode));
+      add_debug_message(getEditorModeName(editor.mode) + " Editor");
+      add_debug_message("Position: " + Gm_ToString(camera.position));
       add_debug_message("Action: " + getActionTypeName(editor.currentActionType));
 
       if (editor.mode == EditorMode::OBJECTS) {

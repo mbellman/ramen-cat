@@ -5,7 +5,6 @@ EDITOR
 * camera-relative repositioning hotkey
 * uniform scaling hotkey
 * hitbox offset
-* debug camera position
 
 BUGS
 ----
