@@ -15,6 +15,7 @@ namespace Gamma {
     { "denoising", "Denoising", GammaFlags::ENABLE_DENOISING },
     { "light discs", "Light discs", GammaFlags::ENABLE_DEV_LIGHT_DISCS },
     { "buffers", "Dev buffers", GammaFlags::ENABLE_DEV_BUFFERS },
+    { "tools", "Dev tools", GammaFlags::ENABLE_DEV_TOOLS },
 
     { "reflect", "Reflections", GammaFlags::RENDER_REFLECTIONS },
     { "refract", "Refractive geometry", GammaFlags::RENDER_REFRACTIVE_GEOMETRY },

@@ -13,8 +13,9 @@ namespace Gamma {
     VSYNC = 1 << 2,
 
     ENABLE_DENOISING = 1 << 3,
-    ENABLE_DEV_LIGHT_DISCS = 1 << 6,
+    ENABLE_DEV_LIGHT_DISCS = 1 << 4,
     ENABLE_DEV_BUFFERS = 1 << 5,
+    ENABLE_DEV_TOOLS = 1 << 6,
 
     RENDER_REFLECTIONS = 1 << 12,
     RENDER_REFRACTIVE_GEOMETRY = 1 << 13,

@@ -34,44 +34,74 @@ static void Gm_DisplayDevtools(GmContext* context) {
   u64 averageFrameTime = frameTimeAverager.average();
   u32 frameTimeBudget = u32(100.0f * (float)averageFrameTime / 16667.0f);
 
-  // Render system-defined debug messages
-  {
-    auto fpsLabel = "FPS: "
-      + String(fpsAverager.average())
-      + ", low "
-      + String(fpsAverager.low())
-      + " (V-Sync " + (renderStats.isVSynced ? "ON" : "OFF") + ")";
+  if (Gm_IsFlagEnabled(GammaFlags::ENABLE_DEV_TOOLS)) {
+    // Render system-defined debug messages
+    {
+      auto fpsLabel = "FPS: "
+        + String(fpsAverager.average())
+        + ", low "
+        + String(fpsAverager.low())
+        + " (V-Sync " + (renderStats.isVSynced ? "ON" : "OFF") + ")";
 
-    auto frameTimeLabel = "Frame time: "
-      + String(averageFrameTime)
-      + "us, high "
-      + String(frameTimeAverager.high())
-      + " ("
-      + String(frameTimeBudget)
-      + "%)";
+      auto frameTimeLabel = "Frame time: "
+        + String(averageFrameTime)
+        + "us, high "
+        + String(frameTimeAverager.high())
+        + " ("
+        + String(frameTimeBudget)
+        + "%)";
 
-    auto resolutionLabel = "Resolution: " + String(resolution.width) + " x " + String(resolution.height);
-    auto vertsLabel = "Verts: " + String(sceneStats.verts);
-    auto trisLabel = "Tris: " + String(sceneStats.tris);
-    auto memoryLabel = "GPU Memory: " + String(renderStats.gpuMemoryUsed) + "MB / " + String(renderStats.gpuMemoryTotal) + "MB";
+      auto resolutionLabel = "Resolution: " + String(resolution.width) + " x " + String(resolution.height);
+      auto vertsLabel = "Verts: " + String(sceneStats.verts);
+      auto trisLabel = "Tris: " + String(sceneStats.tris);
+      auto memoryLabel = "GPU Memory: " + String(renderStats.gpuMemoryUsed) + "MB / " + String(renderStats.gpuMemoryTotal) + "MB";
 
-    renderer.renderText(font_sm, fpsLabel.c_str(), 25, 25);
-    renderer.renderText(font_sm, frameTimeLabel.c_str(), 25, 50);
-    renderer.renderText(font_sm, resolutionLabel.c_str(), 25, 75);
-    renderer.renderText(font_sm, vertsLabel.c_str(), 25, 100);
-    renderer.renderText(font_sm, trisLabel.c_str(), 25, 125);
-    renderer.renderText(font_sm, memoryLabel.c_str(), 25, 150);
-  }
-
-  // Render user-defined debug messages
-  {
-    u8 index = 0;
-
-    for (auto& message : context->debugMessages) {
-      renderer.renderText(font_sm, message.c_str(), 25, 200 + index++ * 25, Vec3f(1.f), Vec4f(0.f, 0.f, 0.f, 0.8f));
+      renderer.renderText(font_sm, fpsLabel.c_str(), 25, 25);
+      renderer.renderText(font_sm, frameTimeLabel.c_str(), 25, 50);
+      renderer.renderText(font_sm, resolutionLabel.c_str(), 25, 75);
+      renderer.renderText(font_sm, vertsLabel.c_str(), 25, 100);
+      renderer.renderText(font_sm, trisLabel.c_str(), 25, 125);
+      renderer.renderText(font_sm, memoryLabel.c_str(), 25, 150);
     }
 
-    context->debugMessages.clear();
+    // Render user-defined debug messages
+    {
+      u8 index = 0;
+
+      for (auto& message : context->debugMessages) {
+        renderer.renderText(font_sm, message.c_str(), 25, 200 + index++ * 25, Vec3f(1.f), Vec4f(0.f, 0.f, 0.f, 0.8f));
+      }
+
+      context->debugMessages.clear();
+    }
+
+    // Display console messages
+    {
+      auto* message = Console::getFirstMessage();
+      u8 messageIndex = 0;
+
+      // @todo clear messages after a set duration
+      while (message != nullptr) {
+        auto color = message->warning ? Vec3f(0.8f, 0, 0) : Vec3f(1.f);
+
+        renderer.renderText(font_sm, message->text.c_str(), 25, window.size.height - 150 + (messageIndex++) * 25, color);
+
+        message = message->next;
+      }
+    }
+
+    // Display dev buffer labels
+    {
+      if (Gm_IsFlagEnabled(GammaFlags::ENABLE_DEV_BUFFERS)) {
+        const auto FG_COLOR = Vec3f(1.f);
+        const auto BG_COLOR = Vec4f(0, 0, 0, 0.75f);
+
+        renderer.renderText(font_sm, "Color", u32(window.size.width * 0.55f), u32(window.size.height * 0.035f), FG_COLOR, BG_COLOR);
+        renderer.renderText(font_sm, "Depth", u32(window.size.width * 0.657f), u32(window.size.height * 0.035f), FG_COLOR, BG_COLOR);
+        renderer.renderText(font_sm, "Normals", u32(window.size.width * 0.765f), u32(window.size.height * 0.035f), FG_COLOR, BG_COLOR);
+        renderer.renderText(font_sm, "Material", u32(window.size.width * 0.872f), u32(window.size.height * 0.035f), FG_COLOR, BG_COLOR);
+      }
+    }
   }
 
   // Display command line
@@ -83,34 +113,6 @@ static void Gm_DisplayDevtools(GmContext* context) {
       const Vec4f bgColor = Vec4f(0.0f, 0.0f, 0.0f, 0.8f);
 
       renderer.renderText(font_lg, command.c_str(), 25, window.size.height - 200, fgColor, bgColor);
-    }
-  }
-
-  // Display console messages
-  {
-    auto* message = Console::getFirstMessage();
-    u8 messageIndex = 0;
-
-    // @todo clear messages after a set duration
-    while (message != nullptr) {
-      auto color = message->warning ? Vec3f(0.8f, 0, 0) : Vec3f(1.f);
-
-      renderer.renderText(font_sm, message->text.c_str(), 25, window.size.height - 150 + (messageIndex++) * 25, color);
-
-      message = message->next;
-    }
-  }
-
-  // Display dev buffer labels
-  {
-    if (Gm_IsFlagEnabled(GammaFlags::ENABLE_DEV_BUFFERS)) {
-      const auto FG_COLOR = Vec3f(1.f);
-      const auto BG_COLOR = Vec4f(0, 0, 0, 0.75f);
-
-      renderer.renderText(font_sm, "Color", u32(window.size.width * 0.55f), u32(window.size.height * 0.035f), FG_COLOR, BG_COLOR);
-      renderer.renderText(font_sm, "Depth", u32(window.size.width * 0.657f), u32(window.size.height * 0.035f), FG_COLOR, BG_COLOR);
-      renderer.renderText(font_sm, "Normals", u32(window.size.width * 0.765f), u32(window.size.height * 0.035f), FG_COLOR, BG_COLOR);
-      renderer.renderText(font_sm, "Material", u32(window.size.width * 0.872f), u32(window.size.height * 0.035f), FG_COLOR, BG_COLOR);
     }
   }
 }
