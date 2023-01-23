@@ -162,7 +162,7 @@ void main() {
 
   // @todo refactor
   vec2 cloudsUv = vec2(
-    -(atan(reflection_ray.z, reflection_ray.x) + PI) / TAU,
+    -(atan(reflection_ray.z, reflection_ray.x) + PI) / TAU + time * CLOUD_MOVEMENT_RATE,
     -reflection_ray.y - 0.5
   );
 

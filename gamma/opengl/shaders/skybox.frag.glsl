@@ -18,8 +18,6 @@ layout (location = 0) out vec4 out_color_and_depth;
 #define PI 3.141592
 #define TAU PI * 2.0
 
-const float CLOUD_MOVEMENT_RATE = 0.002;
-
 void main() {
   // @todo figure out how to calculate direction
   // from camera direction + fragUv
