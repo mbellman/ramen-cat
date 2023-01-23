@@ -34,4 +34,5 @@ namespace Gamma {
   u32 Gm_GetFlags();
   bool Gm_IsFlagEnabled(GammaFlags flag);
   void Gm_SavePreviousFlags();
+  void Gm_ToggleFlag(GammaFlags flag);
 }

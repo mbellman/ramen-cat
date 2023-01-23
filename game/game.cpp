@@ -28,6 +28,10 @@ internal void initializeInputHandlers(GmContext* context, GameState& state) {
     if (key == Key::ESCAPE) {
       Gm_UnfocusWindow();
     }
+
+    if (key == Key::L) {
+      Gm_ToggleFlag(GammaFlags::ENABLE_DEV_LIGHT_DISCS);
+    }
   });
 
   input.on<Key>("keystart", [&state, &input, context](Key key) {

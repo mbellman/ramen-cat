@@ -42,4 +42,12 @@ namespace Gamma {
   void Gm_SavePreviousFlags() {
     previousFlags = internalFlags;
   }
+
+  void Gm_ToggleFlag(GammaFlags flag) {
+    if (internalFlags & flag) {
+      Gm_DisableFlags(flag);
+    } else {
+      Gm_EnableFlags(flag);
+    }
+  }
 }
