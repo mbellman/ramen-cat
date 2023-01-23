@@ -259,7 +259,9 @@ internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
       if ((slingshot.position - player.position).xz().magnitude() < 100.f) {
         targetColor = HIGHLIGHT_SLINGSHOT_COLOR;
 
-        if (input.didPressKey(Key::SPACE) && state.velocity.y == 0.f) {
+        if (input.didPressKey(Key::SPACE)) {
+          state.velocity = Vec3f(0.f);
+
           interactWithSlingshot(context, state, slingshot);
         }
       }
