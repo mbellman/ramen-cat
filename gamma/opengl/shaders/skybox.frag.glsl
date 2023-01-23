@@ -3,6 +3,7 @@
 uniform vec3 cameraPosition;
 uniform mat4 matInverseProjection;
 uniform mat4 matInverseView;
+uniform float time;
 
 // @temporary
 uniform sampler2D texClouds;
@@ -17,6 +18,8 @@ layout (location = 0) out vec4 out_color_and_depth;
 #define PI 3.141592
 #define TAU PI * 2.0
 
+const float CLOUD_MOVEMENT_RATE = 0.002;
+
 void main() {
   // @todo figure out how to calculate direction
   // from camera direction + fragUv
@@ -25,7 +28,7 @@ void main() {
   vec3 sky_color = getSkyColor(direction).rgb;
 
   vec2 cloudsUv = vec2(
-    -(atan(direction.z, direction.x) + PI) / TAU,
+    -(atan(direction.z, direction.x) + PI) / TAU + time * CLOUD_MOVEMENT_RATE,
     -direction.y - 0.5
   );
 

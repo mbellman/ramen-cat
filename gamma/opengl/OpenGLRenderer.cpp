@@ -1035,6 +1035,7 @@ namespace Gamma {
     shaders.skybox.setVec3f("cameraPosition", ctx.activeCamera->position);
     shaders.skybox.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
     shaders.skybox.setMatrix4f("matInverseView", ctx.matInverseView);
+    shaders.skybox.setFloat("time", gmContext->scene.runningTime);
     // @temporary
     shaders.skybox.setInt("texClouds", 3);
 
