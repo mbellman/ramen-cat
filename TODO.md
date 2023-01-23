@@ -1,6 +1,5 @@
 EDITOR
 ------
-* count # of vertices over all instances of a mesh
 * show # of dynamic entity pieces
 * camera-relative repositioning hotkey
 * uniform scaling hotkey
@@ -8,7 +7,6 @@ EDITOR
 
 BUGS
 ----
-* jumping at high framerates on sloped surfaces
 * clouds texture near vec3(0, 1, 0)
 * fix flying off downward slopes
 * imported models are inverted along X
@@ -30,7 +28,6 @@ ASSETS
 
 GAME
 ----
-* allow small off-ground delays before jumps
 * camera radius pan-out when velocity is high enough
 * silhouettes of certain objects behind things
 * area titles

@@ -230,7 +230,7 @@ namespace MovementSystem {
           // Make sure the player is off the ground plane
           // at the start of the jump to avoid a next-frame
           // collision snapping them back in place
-          player.position.y += 1.f;
+          player.position.y += 2.f;
         } else {
           // If we press SPACE in mid-air, queue a wall kick action.
           // We'll determine whether it's appropriate to perform
