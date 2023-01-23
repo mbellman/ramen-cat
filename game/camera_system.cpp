@@ -13,8 +13,9 @@ internal void updateThirdPersonCameraRadius(GameState& state, float dt) {
   }
 
   float baseRadius = state.cameraMode == CameraMode::NORMAL ? 300.f : 600.f;
+  float altitudeRadius = 200.f * state.camera3p.altitude / Gm_HALF_PI;
 
-  state.camera3p.radius = baseRadius + 200.f * state.camera3p.altitude / Gm_HALF_PI;
+  state.camera3p.radius = baseRadius + altitudeRadius;
 
   if (state.isMovingPlayerThisFrame && state.camera3p.radius < 130.f) {
     state.camera3p.radius += 100.f * dt;
@@ -208,6 +209,21 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
     }
 
     point_camera_at(lookAtPosition);
+  }
+
+  // Adjust the FOV when moving at higher speeds
+  {
+    const float BASE_FOV = 45.f;
+    const float FOV_ADJUSTMENT_FACTOR = 20.f;
+
+    auto& camera = get_camera();
+    auto playerSpeed = state.velocity.magnitude() - 800.f;
+    if (playerSpeed < 0.f) playerSpeed = 0.f;
+
+    float targetFov = BASE_FOV + FOV_ADJUSTMENT_FACTOR * playerSpeed / (playerSpeed + 500.f);
+    float alpha = Gm_Clampf(10.f * dt, 0.f, 1.f);
+
+    camera.fov = Gm_Lerpf(camera.fov, targetFov, alpha);
   }
 
   use_frustum_culling({ "weeds", "lamp" });

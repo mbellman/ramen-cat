@@ -28,7 +28,6 @@ ASSETS
 
 GAME
 ----
-* camera radius pan-out when velocity is high enough
 * silhouettes of certain objects behind things
 * area titles
 * npc model improvements/highlight when nearby
