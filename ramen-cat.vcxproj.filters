@@ -578,5 +578,8 @@
     <ClInclude Include="game\easing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="game\game_constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -2,18 +2,23 @@
 #include "collisions.h"
 #include "macros.h"
 #include "easing.h"
+#include "game_constants.h"
 
 using namespace Gamma;
 
 internal void updateThirdPersonCameraRadius(GameState& state, float dt) {
   if (state.cameraMode == CameraMode::FIRST_PERSON) {
-    state.camera3p.radius = 5.f;
+    state.camera3p.radius = CAMERA_FIRST_PERSON_RADIUS;
 
     return;
   }
 
-  float baseRadius = state.cameraMode == CameraMode::NORMAL ? 300.f : 600.f;
-  float altitudeRadius = 200.f * state.camera3p.altitude / Gm_HALF_PI;
+  float baseRadius =
+    state.cameraMode == CameraMode::NORMAL
+      ? CAMERA_NORMAL_BASE_RADIUS
+      : CAMERA_ZOOM_OUT_BASE_RADIUS;
+
+  float altitudeRadius = CAMERA_RADIUS_ALTITUDE_MULTIPLIER * state.camera3p.altitude / Gm_HALF_PI;
 
   state.camera3p.radius = baseRadius + altitudeRadius;
 
@@ -213,14 +218,12 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
 
   // Adjust the FOV when moving at higher speeds
   {
-    const float BASE_FOV = 45.f;
-    const float FOV_ADJUSTMENT_FACTOR = 20.f;
-
     auto& camera = get_camera();
-    auto playerSpeed = state.velocity.magnitude() - 800.f;
-    if (playerSpeed < 0.f) playerSpeed = 0.f;
+    float speedOverFovLimit = state.velocity.magnitude() - CAMERA_FOV_MINIMUM_SPEED;
+    if (speedOverFovLimit < 0.f) speedOverFovLimit = 0.f;
 
-    float targetFov = BASE_FOV + FOV_ADJUSTMENT_FACTOR * playerSpeed / (playerSpeed + 500.f);
+    float fovSpeedFactor = speedOverFovLimit / (speedOverFovLimit + CAMERA_FOV_SPEED_INTERVAL);
+    float targetFov = CAMERA_BASE_FOV + CAMERA_FOV_VELOCITY_MULTIPLIER * fovSpeedFactor;
     float alpha = Gm_Clampf(10.f * dt, 0.f, 1.f);
 
     camera.fov = Gm_Lerpf(camera.fov, targetFov, alpha);
