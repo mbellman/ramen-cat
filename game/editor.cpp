@@ -1173,10 +1173,11 @@ namespace Editor {
       if (editor.mode == EditorMode::OBJECTS) {
         auto& meshName = World::meshAssets[editor.currentSelectedMeshIndex].name;
         auto* mesh = mesh(meshName);
-        u32 totalVertices = mesh->vertices.size();
+        u32 verticesPerMesh = mesh->vertices.size();
         u16 totalInstances = mesh->objects.totalActive();
+        u32 totalVertices = verticesPerMesh * (u32)totalInstances;
 
-        add_debug_message("Mesh: " + meshName + " (" + std::to_string(totalVertices) + " vertices, " + std::to_string(totalInstances) + " instances)");
+        add_debug_message("Mesh: " + meshName + " (" + std::to_string(verticesPerMesh) + " vertices, " + std::to_string(totalInstances) + " instances [" + std::to_string(totalVertices) + " vertices total])");
       }
 
       if (editor.isObjectSelected) {
