@@ -81,6 +81,10 @@ bool Gm_StringStartsWith(const std::string& str, const std::string& start) {
   return str.substr(0, start.size()) == start;
 }
 
+bool Gm_StringContains(const std::string& str, const std::string& term) {
+  return str.find(term) != std::string::npos;
+}
+
 std::string Gm_ToString(const Vec3f& v) {
   return std::to_string(v.x) + "," + std::to_string(v.y) + "," + std::to_string(v.z);
 }

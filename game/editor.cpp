@@ -715,6 +715,23 @@ internal void respawnPlayer(GmContext* context, GameState& state) {
   state.lastTimeOnSolidGround = get_running_time();
 }
 
+internal void setSelectedMeshByCommand(GmContext* context, const std::string& command) {
+  auto parts = Gm_SplitString(command, " ");
+  auto searchTerm = parts[1];
+
+  for (u8 i = 0; i < World::meshAssets.size(); i++) {
+    auto& asset = World::meshAssets[i];
+
+    if (Gm_StringContains(asset.name, searchTerm)) {
+      editor.currentSelectedMeshIndex = i;
+      editor.mode = EditorMode::OBJECTS;
+      editor.selectedLight = nullptr;
+
+      break;
+    }
+  }
+}
+
 internal void saveCollisionPlanesData(GmContext* context) {
   std::string data;
 
@@ -873,6 +890,8 @@ namespace Editor {
               syncLightWithObject(*editor.selectedLight, editor.selectedObject);
             }
           }
+        } else if (Gm_StringStartsWith(command, "mesh")) {
+          setSelectedMeshByCommand(context, command);
         }
       }
     });
