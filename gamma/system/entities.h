@@ -203,6 +203,7 @@ namespace Gamma {
   struct Foliage {
     FoliageType type = FoliageType::NONE;
     float speed = 1.f;
+    float factor = 1.f;
   };
 
   /**

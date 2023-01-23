@@ -536,6 +536,7 @@ namespace Gamma {
 
         shaders.foliage.setInt("foliage.type", foliage.type);
         shaders.foliage.setFloat("foliage.speed", foliage.speed);
+        shaders.foliage.setFloat("foliage.factor", foliage.factor);
         shaders.foliage.setBool("hasTexture", glMesh->hasTexture());
         shaders.foliage.setBool("hasNormalMap", glMesh->hasNormalMap());
         shaders.foliage.setFloat("emissivity", glMesh->getSourceMesh()->emissivity);
@@ -613,6 +614,7 @@ namespace Gamma {
 
           shader.setInt("foliage.type", foliage.type);
           shader.setFloat("foliage.speed", foliage.speed);
+          shader.setFloat("foliage.factor", foliage.factor);
           shader.setBool("hasTexture", glMesh->hasTexture());
 
           if (sourceMesh->canCastShadows && sourceMesh->maxCascade >= (cascade + 1)) {
@@ -660,6 +662,7 @@ namespace Gamma {
 
         shader.setInt("foliage.type", foliage.type);
         shader.setFloat("foliage.speed", foliage.speed);
+        shader.setFloat("foliage.factor", foliage.factor);
         shader.setBool("hasTexture", glMesh->hasTexture());
 
         if (sourceMesh->canCastShadows) {

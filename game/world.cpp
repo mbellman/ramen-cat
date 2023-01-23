@@ -65,7 +65,8 @@ std::vector<MeshAsset> World::meshAssets = {
       .texture = "./game/assets/bush.png",
       .type = MeshType::FOLIAGE,
       .foliage = {
-        .type = FoliageType::FLOWER
+        .type = FoliageType::FLOWER,
+        .factor = 3.f
       }
     }
   },
