@@ -229,6 +229,12 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
     camera.fov = Gm_Lerpf(camera.fov, targetFov, alpha);
   }
 
+  LOG_TIME();
+}
+
+void CameraSystem::handleVisibilityCullingAndLevelsOfDetail(GmContext* context, GameState& state) {
+  START_TIMING("handleVisibilityCullingAndLevelsOfDetail");
+
   use_frustum_culling({ "weeds", "lamp" });
 
   LOG_TIME();

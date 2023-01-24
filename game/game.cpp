@@ -97,6 +97,7 @@ void updateGame(GmContext* context, GameState& state, float dt) {
   MovementSystem::handlePlayerMovementInput(context, state, dt);
   MovementSystem::handlePlayerMovementPhysics(context, state, dt);
   CameraSystem::handleGameCamera(context, state, dt);
+  CameraSystem::handleVisibilityCullingAndLevelsOfDetail(context, state);
   EffectsSystem::handleGameEffects(context, state, dt);
   UISystem::handleUI(context, state, dt);
 
