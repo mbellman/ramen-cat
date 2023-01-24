@@ -715,7 +715,35 @@ internal void respawnPlayer(GmContext* context, GameState& state) {
   state.lastTimeOnSolidGround = get_running_time();
 }
 
-internal void setSelectedMeshByCommand(GmContext* context, const std::string& command) {
+internal void handleColorCommand(GmContext* context, const std::string& command) {
+  // @todo allow color edits to be undone
+  using namespace std;
+
+  auto colorString = Gm_SplitString(command, " ")[1];
+  auto parts = Gm_SplitString(colorString, ",");
+
+  // @todo put this in Gm_ParseVec3f, use that here
+  while (parts.size() < 3) {
+    parts.push_back(parts.back());
+  }
+
+  auto color = Vec3f(stof(parts[0]), stof(parts[1]), stof(parts[2]));
+
+  if (editor.isObjectSelected) {
+    auto* liveSelectedObject = get_object_by_record(editor.selectedObject._record);
+
+    liveSelectedObject->color = color;
+    editor.selectedObject = *liveSelectedObject;
+
+    commit(*liveSelectedObject);
+
+    if (editor.selectedLight != nullptr) {
+      syncLightWithObject(*editor.selectedLight, editor.selectedObject);
+    }
+  }
+}
+
+internal void handleMeshCommand(GmContext* context, const std::string& command) {
   auto parts = Gm_SplitString(command, " ");
   auto searchTerm = parts[1];
 
@@ -729,6 +757,15 @@ internal void setSelectedMeshByCommand(GmContext* context, const std::string& co
 
       break;
     }
+  }
+}
+
+internal void handlePowerCommand(GmContext* context, const std::string& command) {
+  if (editor.mode == EditorMode::LIGHTS && editor.selectedLight != nullptr) {
+    auto parts = Gm_SplitString(command, " ");
+    float power = stof(parts[1]);
+
+    editor.selectedLight->power = power;
   }
 }
 
@@ -865,33 +902,11 @@ namespace Editor {
     context->commander.on<std::string>("command", [&state, context](std::string command) {
       if (state.isEditorEnabled) {
         if (Gm_StringStartsWith(command, "color ")) {
-          // @todo allow color edits to be undone
-          using namespace std;
-
-          auto colorString = Gm_SplitString(command, " ")[1];
-          auto parts = Gm_SplitString(colorString, ",");
-
-          // @todo put this in Gm_ParseVec3f, use that here
-          while (parts.size() < 3) {
-            parts.push_back(parts.back());
-          }
-
-          auto color = Vec3f(stof(parts[0]), stof(parts[1]), stof(parts[2]));
-
-          if (editor.isObjectSelected) {
-            auto* liveSelectedObject = get_object_by_record(editor.selectedObject._record);
-
-            liveSelectedObject->color = color;
-            editor.selectedObject = *liveSelectedObject;
-
-            commit(*liveSelectedObject);
-
-            if (editor.selectedLight != nullptr) {
-              syncLightWithObject(*editor.selectedLight, editor.selectedObject);
-            }
-          }
+          handleColorCommand(context, command);
         } else if (Gm_StringStartsWith(command, "mesh")) {
-          setSelectedMeshByCommand(context, command);
+          handleMeshCommand(context, command);
+        } else if (Gm_StringStartsWith(command, "power")) {
+          handlePowerCommand(context, command);
         }
       }
     });
