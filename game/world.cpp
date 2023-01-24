@@ -617,7 +617,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   add_mesh("sphere", 1, Mesh::Sphere(18));
 
   mesh("sphere")->roughness = 0.9f;
-  mesh("sphere")->silhouette = true;
+  // mesh("sphere")->silhouette = true;
 
   mesh("ocean")->type = MeshType::WATER;
   mesh("ocean")->canCastShadows = false;

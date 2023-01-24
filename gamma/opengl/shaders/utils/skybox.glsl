@@ -1,4 +1,4 @@
-const float CLOUD_MOVEMENT_RATE = 0.002;
+const float CLOUD_MOVEMENT_RATE = 0.001;
 
 // @todo allow for custom configuration
 vec4 getSkyColor(vec3 direction) {
