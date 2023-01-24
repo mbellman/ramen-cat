@@ -84,7 +84,8 @@ std::vector<MeshAsset> World::meshAssets = {
   {
     .name = "palm-leaf",
     .defaultRotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI),
-    .hitboxScale = Vec3f(0.2f, 1.f, 0.1f),
+    .hitboxScale = Vec3f(0.2f, 0.5f, 0.2f),
+    .hitboxOffset = Vec3f(0, 1.f, 0.9),
     .create = []() {
       return Mesh::Model("./game/assets/palm-leaf.obj");
     },

@@ -19,6 +19,7 @@ struct MeshAsset {
   Gamma::Vec3f defaultScale = Gamma::Vec3f(50.f);
   Gamma::Vec3f scalingFactor = Gamma::Vec3f(1.f);
   Gamma::Vec3f hitboxScale = Gamma::Vec3f(1.f);
+  Gamma::Vec3f hitboxOffset = Gamma::Vec3f(0.f);
   u16 maxInstances = 1000;
   MeshCreator create = nullptr;
   Gamma::MeshAttributes attributes;

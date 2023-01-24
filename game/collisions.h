@@ -12,6 +12,6 @@ struct Collision {
 };
 
 namespace Collisions {
-  void addObjectCollisionPlanes(const Gamma::Object& object, std::vector<Plane>& planes, const Gamma::Vec3f& hitboxScale = Gamma::Vec3f(1.f));
+  void addObjectCollisionPlanes(const Gamma::Object& object, std::vector<Plane>& planes, const Gamma::Vec3f& hitboxScale = Gamma::Vec3f(1.f), const Gamma::Vec3f& hitboxOffset = Gamma::Vec3f(0.f));
   Collision getLinePlaneCollision(const Gamma::Vec3f& lineStart, const Gamma::Vec3f& lineEnd, const Plane& plane);
 }

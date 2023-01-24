@@ -193,7 +193,7 @@ internal void updateCollisionPlanes(GmContext* context, GameState& state) {
 
   for (auto& asset : World::meshAssets) {
     for (auto& object : mesh(asset.name)->objects) {
-      Collisions::addObjectCollisionPlanes(object, editor.objectCollisionPlanes, asset.hitboxScale);
+      Collisions::addObjectCollisionPlanes(object, editor.objectCollisionPlanes, asset.hitboxScale, asset.hitboxOffset);
     }
   }
 

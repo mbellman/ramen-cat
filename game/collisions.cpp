@@ -25,7 +25,7 @@ internal bool isInBetween(float n, float a, float b) {
   return n >= min(a, b) && n <= max(a, b);
 }
 
-void Collisions::addObjectCollisionPlanes(const Object& object, std::vector<Plane>& planes, const Gamma::Vec3f& hitboxScale) {
+void Collisions::addObjectCollisionPlanes(const Object& object, std::vector<Plane>& planes, const Vec3f& hitboxScale, const Vec3f& hitboxOffset) {
   Matrix4f rotation = object.rotation.toMatrix4f();
   Vec3f adjustedScale = object.scale * hitboxScale;
 
@@ -39,10 +39,15 @@ void Collisions::addObjectCollisionPlanes(const Object& object, std::vector<Plan
 
     // Determine the four points of the plane
     {
-      plane.p1 = object.position + (rotation * (adjustedScale * points[0])).toVec3f();
-      plane.p2 = object.position + (rotation * (adjustedScale * points[1])).toVec3f();
-      plane.p3 = object.position + (rotation * (adjustedScale * points[2])).toVec3f();
-      plane.p4 = object.position + (rotation * (adjustedScale * points[3])).toVec3f();
+      auto p1 = points[0] + hitboxOffset;
+      auto p2 = points[1] + hitboxOffset;
+      auto p3 = points[2] + hitboxOffset;
+      auto p4 = points[3] + hitboxOffset;
+
+      plane.p1 = object.position + (rotation * (adjustedScale * p1)).toVec3f();
+      plane.p2 = object.position + (rotation * (adjustedScale * p2)).toVec3f();
+      plane.p3 = object.position + (rotation * (adjustedScale * p3)).toVec3f();
+      plane.p4 = object.position + (rotation * (adjustedScale * p4)).toVec3f();
 
       plane.minY = plane.p1.y;
       if (plane.p2.y < plane.minY) plane.minY = plane.p2.y;
