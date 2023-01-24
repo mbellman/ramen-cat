@@ -115,8 +115,8 @@ void Gm_UseSceneFile(GmContext* context, const std::string& filename) {
         mesh->texture = Gm_ReadYamlProperty<std::string>(meshConfig, "texture");
       }
 
-      if (Gm_HasYamlProperty(meshConfig, "normalMap")) {
-        mesh->normalMap = Gm_ReadYamlProperty<std::string>(meshConfig, "normalMap");
+      if (Gm_HasYamlProperty(meshConfig, "normals")) {
+        mesh->normals = Gm_ReadYamlProperty<std::string>(meshConfig, "normals");
       }
 
       if (Gm_HasYamlProperty(meshConfig, "type")) {

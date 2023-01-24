@@ -220,13 +220,7 @@ namespace Gamma {
     /**
      * An optional normal map texture for the mesh.
      */
-    std::string normalMap = "";
-    /**
-     * An optional specularity map texture for the mesh.
-     *
-     * @todo This doesn't actually control specularity yet
-     */
-    std::string specularityMap = "";
+    std::string normals = "";
     /**
      * The probe name to use for probe reflectors.
      */

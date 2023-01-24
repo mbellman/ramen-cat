@@ -130,7 +130,7 @@ std::vector<MeshAsset> World::meshAssets = {
       return Mesh::Model("./game/assets/bathhouse-roof-segment.obj");
     },
     .attributes = {
-      .normalMap = "./game/assets/metal-guard-normals.png",
+      .normals = "./game/assets/metal-guard-normals.png",
       .roughness = 0.8f
     }
   },
@@ -143,7 +143,7 @@ std::vector<MeshAsset> World::meshAssets = {
       return Mesh::Model("./game/assets/bathhouse-roof-corner.obj");
     },
     .attributes = {
-      .normalMap = "./game/assets/metal-guard-normals.png",
+      .normals = "./game/assets/metal-guard-normals.png",
       .roughness = 0.8f
     }
   },
@@ -156,7 +156,7 @@ std::vector<MeshAsset> World::meshAssets = {
       return Mesh::Model("./game/assets/bathhouse-roof-spire.obj");
     },
     .attributes = {
-      .normalMap = "./game/assets/metal-guard-normals.png",
+      .normals = "./game/assets/metal-guard-normals.png",
       .roughness = 0.8f
     }
   },
@@ -167,7 +167,7 @@ std::vector<MeshAsset> World::meshAssets = {
     },
     .attributes = {
       .texture = "./game/assets/metal-panel.png",
-      .normalMap = "./game/assets/metal-panel-normals.png",
+      .normals = "./game/assets/metal-panel-normals.png",
       .roughness = 0.4f
     }
   },
@@ -179,7 +179,7 @@ std::vector<MeshAsset> World::meshAssets = {
     },
     .attributes = {
       .texture = "./game/assets/metal-guard.png",
-      .normalMap = "./game/assets/metal-guard-normals.png",
+      .normals = "./game/assets/metal-guard-normals.png",
       .roughness = 0.1f
     }
   },
@@ -191,7 +191,7 @@ std::vector<MeshAsset> World::meshAssets = {
     },
     .attributes = {
       .texture = "./game/assets/metal-guard.png",
-      .normalMap = "./game/assets/metal-guard-normals.png",
+      .normals = "./game/assets/metal-guard-normals.png",
       .roughness = 0.1f
     }
   },
@@ -237,7 +237,7 @@ std::vector<MeshAsset> World::meshAssets = {
     },
     .attributes = {
       .texture = "./game/assets/floor-1.png",
-      .normalMap = "./game/assets/floor-1-normals.png"
+      .normals = "./game/assets/floor-1-normals.png"
     }
   },
   {
@@ -247,7 +247,7 @@ std::vector<MeshAsset> World::meshAssets = {
     },
     .attributes = {
       .texture = "./game/assets/tiles-1.png",
-      .normalMap = "./game/assets/tiles-1-normals.png"
+      .normals = "./game/assets/tiles-1-normals.png"
     }
   },
   {
@@ -258,7 +258,7 @@ std::vector<MeshAsset> World::meshAssets = {
     },
     .attributes = {
       // .texture = "./game/assets/wall-1.png",
-      // .normalMap = "./game/assets/wall-1-normals.png",
+      // .normals = "./game/assets/wall-1-normals.png",
       .roughness = 0.1f
     }
   },
@@ -270,7 +270,7 @@ std::vector<MeshAsset> World::meshAssets = {
     },
     .attributes = {
       .texture = "./game/assets/metal-sheet.png",
-      .normalMap = "./game/assets/metal-sheet-normals.png",
+      .normals = "./game/assets/metal-sheet-normals.png",
       .roughness = 0.1f
     }
   },
@@ -355,7 +355,7 @@ std::vector<MeshAsset> World::meshAssets = {
     },
     .attributes = {
       .texture = "./game/assets/pipe-1.png",
-      .normalMap = "./game/assets/pipe-1-normals.png",
+      .normals = "./game/assets/pipe-1-normals.png",
       .roughness = 0.1f
     }
   },
@@ -367,7 +367,7 @@ std::vector<MeshAsset> World::meshAssets = {
     },
     .attributes = {
       .texture = "./game/assets/pipe-1.png",
-      .normalMap = "./game/assets/pipe-1-normals.png",
+      .normals = "./game/assets/pipe-1-normals.png",
       .roughness = 0.1f
     }
   },
@@ -412,7 +412,7 @@ std::vector<MeshAsset> World::meshAssets = {
     },
     .attributes = {
       .texture = "./game/assets/hot-air-balloon.png",
-      .normalMap = "./game/assets/hot-air-balloon-normals.png",
+      .normals = "./game/assets/hot-air-balloon-normals.png",
       .canCastShadows = false,
       .emissivity = 0.3f,
       .roughness = 0.7f
@@ -680,7 +680,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
       mesh.type = attributes.type;
       mesh.foliage = attributes.foliage;
       mesh.texture = attributes.texture;
-      mesh.normalMap = attributes.normalMap;
+      mesh.normals = attributes.normals;
       mesh.maxCascade = attributes.maxCascade;
       mesh.canCastShadows = attributes.canCastShadows;
       mesh.emissivity = attributes.emissivity;
