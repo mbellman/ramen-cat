@@ -345,6 +345,18 @@ internal void handleAcFans(GmContext* context, GameState& state, float dt) {
   });
 }
 
+internal void handleHotAirBalloons(GmContext* context, GameState& state, float dt) {
+  for_moving_objects("hot-air-balloon", {
+    float heightRate = 0.5f * get_running_time();
+    float rotationRate = 0.7f * get_running_time();
+
+    object.position = initial.position + Vec3f(0, 20.f, 0) * sinf(heightRate);
+    object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), 0.05f * sinf(rotationRate));
+
+    commit(object);
+  });
+}
+
 internal void handleOcean(GmContext* context) {
   auto& camera = get_camera();
   auto& ocean = objects("ocean")[0];
@@ -389,6 +401,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   handleLanterns(context, state, dt);
   handleWindmillWheels(context, state, dt);
   handleAcFans(context, state, dt);
+  handleHotAirBalloons(context, state, dt);
   handleOcean(context);
 
   LOG_TIME();

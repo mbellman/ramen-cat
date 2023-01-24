@@ -359,7 +359,6 @@ std::vector<MeshAsset> World::meshAssets = {
       .roughness = 0.1f
     }
   },
-
   {
     .name = "pipe-curve",
     .hitboxScale = Vec3f(0.3f, 0.5f, 0.6f),
@@ -401,6 +400,22 @@ std::vector<MeshAsset> World::meshAssets = {
     .attributes = {
       .texture = "./game/assets/ramen-bowl.png",
       .roughness = 0.4f
+    }
+  },
+  {
+    .name = "hot-air-balloon",
+    .moving = true,
+    .defaultColor = Vec3f(1.f),
+    .defaultScale = Vec3f(200.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/hot-air-balloon.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/hot-air-balloon.png",
+      .normalMap = "./game/assets/hot-air-balloon-normals.png",
+      .canCastShadows = false,
+      .emissivity = 0.3f,
+      .roughness = 0.7f
     }
   },
   {
@@ -667,6 +682,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
       mesh.texture = attributes.texture;
       mesh.normalMap = attributes.normalMap;
       mesh.maxCascade = attributes.maxCascade;
+      mesh.canCastShadows = attributes.canCastShadows;
       mesh.emissivity = attributes.emissivity;
       mesh.roughness = attributes.roughness;
       mesh.silhouette = attributes.silhouette;

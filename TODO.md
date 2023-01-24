@@ -2,6 +2,7 @@ EDITOR
 ------
 * camera-relative repositioning hotkey
 * uniform scaling hotkey
+* light power control
 
 BUGS
 ----
@@ -25,6 +26,8 @@ ASSETS
 
 GAME
 ----
+* non-uniform balloon motion
+* jumping off of balloons
 * area titles
 * npc model improvements/highlight when nearby
 * collectibles
