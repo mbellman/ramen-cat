@@ -60,6 +60,8 @@ struct GameState {
   float lastWallKickTime = 0.f;
   float lastParticleSpawnTime = 0.f;
 
+  float dayNightCycleTime = 0.f;
+
   bool isOnSolidGround = false;
   bool isMovingPlayerThisFrame = false;
   bool isRepositioningCamera = false;

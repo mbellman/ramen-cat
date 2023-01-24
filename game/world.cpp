@@ -668,6 +668,8 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   light.color = Vec3f(1.0f);
   light.serializable = false;
 
+  save_light("day-night-light", &light);
+
   // Create meshes
   {
     for (auto& asset : World::meshAssets) {

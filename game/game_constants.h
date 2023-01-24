@@ -49,3 +49,5 @@ constexpr static float CAMERA_FOV_SPEED_INTERVAL = 500.f;
  */
 constexpr static u16 TOTAL_PARTICLES = 30;
 constexpr static float PARTICLE_SPAWN_DELAY = 1.f / float(TOTAL_PARTICLES);
+
+constexpr static float INITIAL_DAY_NIGHT_CYCLE_TIME = 2.4f;

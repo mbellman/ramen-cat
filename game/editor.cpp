@@ -745,7 +745,7 @@ internal void handleColorCommand(GmContext* context, const std::string& command)
   }
 }
 
-internal void handleMeshCommand(GmContext* context, const std::string& command) {
+internal void handleMeshCommand(const std::string& command) {
   auto parts = Gm_SplitString(command, " ");
   auto searchTerm = parts[1];
 
@@ -762,13 +762,20 @@ internal void handleMeshCommand(GmContext* context, const std::string& command) 
   }
 }
 
-internal void handlePowerCommand(GmContext* context, const std::string& command) {
+internal void handlePowerCommand(const std::string& command) {
   if (editor.mode == EditorMode::LIGHTS && editor.selectedLight != nullptr) {
     auto parts = Gm_SplitString(command, " ");
     float power = stof(parts[1]);
 
     editor.selectedLight->power = power;
   }
+}
+
+internal void handleTimeCommand(GameState& state, const std::string& command) {
+  auto parts = Gm_SplitString(command, " ");
+  float time = stof(parts[1]);
+
+  state.dayNightCycleTime = time;
 }
 
 internal void saveCollisionPlanesData(GmContext* context) {
@@ -906,10 +913,14 @@ namespace Editor {
         if (Gm_StringStartsWith(command, "color ")) {
           handleColorCommand(context, command);
         } else if (Gm_StringStartsWith(command, "mesh")) {
-          handleMeshCommand(context, command);
+          handleMeshCommand(command);
         } else if (Gm_StringStartsWith(command, "power")) {
-          handlePowerCommand(context, command);
+          handlePowerCommand(command);
         }
+      }
+
+      if (Gm_StringStartsWith(command, "time")) {
+        handleTimeCommand(state, command);
       }
     });
 

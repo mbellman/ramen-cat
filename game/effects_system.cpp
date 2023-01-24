@@ -21,7 +21,7 @@ internal void initializePlayerParticles(GmContext* context) {
   }
 }
 
-internal void updatePlayerParticles(GmContext* context, GameState& state, float dt) {
+internal void handlePlayerParticles(GmContext* context, GameState& state, float dt) {
   auto& particles = objects("player-particle");
 
   // Find the next available particle to spawn behind the player
@@ -69,14 +69,31 @@ internal void updatePlayerParticles(GmContext* context, GameState& state, float 
   }
 }
 
+internal void handleDayNightCycle(GmContext* context, GameState& state, float dt) {
+  state.dayNightCycleTime += dt * 0.0025f;
+  state.dayNightCycleTime = Gm_Modf(state.dayNightCycleTime, Gm_PI);
+
+  float daytimeFactor = sqrt(sinf(state.dayNightCycleTime));
+  auto& light = light("day-night-light");
+
+  light.direction.y = -1.f * (0.5f + 0.5f * sinf(state.dayNightCycleTime * 2.f - Gm_HALF_PI));
+  light.direction.z = cosf(state.dayNightCycleTime);
+  light.power = daytimeFactor;
+  light.color.y = daytimeFactor;
+  light.color.z = daytimeFactor;
+}
+
 void EffectsSystem::initializeGameEffects(GmContext* context, GameState& state) {
   initializePlayerParticles(context);
+
+  state.dayNightCycleTime = INITIAL_DAY_NIGHT_CYCLE_TIME;
 }
 
 void EffectsSystem::handleGameEffects(GmContext* context, GameState& state, float dt) {
   START_TIMING("handleGameEffects");
 
-  updatePlayerParticles(context, state, dt);
+  handlePlayerParticles(context, state, dt);
+  handleDayNightCycle(context, state, dt);
 
   LOG_TIME();
 }

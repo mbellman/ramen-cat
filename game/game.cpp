@@ -64,7 +64,10 @@ void initializeGame(GmContext* context, GameState& state) {
   EntitySystem::initializeGameEntities(context, state);
   EffectsSystem::initializeGameEffects(context, state);
   UISystem::initializeUI(context, state);
-  Editor::initializeGameEditor(context, state);
+
+  #if GAMMA_DEVELOPER_MODE == 1
+    Editor::initializeGameEditor(context, state);
+  #endif
 
   state.previousPlayerPosition = get_player().position;
 }
@@ -83,6 +86,7 @@ void updateGame(GmContext* context, GameState& state, float dt) {
   {
     add_debug_message("Player position: " + Gm_ToString(player.position));
     add_debug_message("Player velocity: " + Gm_ToString(state.velocity));
+    add_debug_message("Day/Night cycle time: " + std::to_string(state.dayNightCycleTime));
   }
 
   START_TIMING("updateGame");

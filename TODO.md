@@ -35,7 +35,6 @@ GAME
 * controller support
 * compound entities
 * animated cat behavior (scaled spheres as appendages for now)
-* day/night cycle
 * catnip power up + screen-warp effect
 * dialogue events/camera changes during dialogue
 * cylinder collision refactor
