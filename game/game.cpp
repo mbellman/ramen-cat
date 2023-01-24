@@ -120,13 +120,31 @@ void updateGame(GmContext* context, GameState& state, float dt) {
   }
 
   #if GAMMA_DEVELOPER_MODE == 1
-    // Allow CTRL-Z to reset the player position when falling
+    // Keep track of our last solid ground positions so we can undo movements
+    {
+      if (
+        !state.isOnSolidGround && (
+          state.lastSolidGroundPositions.size() == 0 ||
+          state.lastSolidGroundPositions.back() != state.lastSolidGroundPosition
+        )
+      ) {
+        state.lastSolidGroundPositions.push_back(state.lastSolidGroundPosition);
+      }
+    }
+
+    // Allow CTRL-Z to 'rewind' through our last solid ground positions
     {
       auto& input = get_input();
 
-      if (input.isKeyHeld(Key::CONTROL) && input.didPressKey(Key::Z)) {
-        player.position = state.lastSolidGroundPosition;
+      if (
+        input.isKeyHeld(Key::CONTROL) &&
+        input.didPressKey(Key::Z) &&
+        state.lastSolidGroundPositions.size() > 0
+      ) {
+        player.position = state.lastSolidGroundPositions.back();
         state.velocity = Vec3f(0.f);
+
+        state.lastSolidGroundPositions.pop_back();
       }
     }
   #endif

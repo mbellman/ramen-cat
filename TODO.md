@@ -1,6 +1,5 @@
 EDITOR
 ------
-* camera-relative repositioning hotkey
 
 BUGS
 ----
@@ -29,7 +28,6 @@ GAME
 * collectibles
 * hot-reloading NPCs/entities data
 * avoid running off edges without input
-* bouncy platforms/objects
 * food carts
 * lens flare
 * capes/gliding

@@ -93,6 +93,10 @@ struct GameState {
   float targetSlingshotAngle = 0.f;
 
   std::vector<Gamma::Object> initialMovingObjects;
+
+  #if GAMMA_DEVELOPER_MODE == 1
+    std::vector<Gamma::Vec3f> lastSolidGroundPositions;
+  #endif
 };
 
 void initializeGame(GmContext* context, GameState& state);
