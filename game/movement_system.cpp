@@ -159,6 +159,31 @@ internal void resolveAllNpcCollisions(GmContext* context, GameState& state) {
   LOG_TIME();
 }
 
+internal void resolveAllHotAirBalloonCollisions(GmContext* context, GameState& state, float dt) {
+  START_TIMING("resolveAllHotAirBalloonCollisions");
+
+  auto& player = get_player();
+  float playerRadius = player.scale.x;
+
+  for (auto& balloon : objects("hot-air-balloon")) {
+    float balloonRadius = balloon.scale.x;
+    Vec3f balloonToPlayer = player.position - balloon.position;
+
+    if (balloonToPlayer.magnitude() < playerRadius + balloonRadius) {
+      Vec3f normalizedBalloonToPlayer = balloonToPlayer.unit();
+
+      player.position = balloon.position + normalizedBalloonToPlayer * (balloonRadius + playerRadius);
+      state.velocity = Vec3f::reflect(state.velocity, normalizedBalloonToPlayer) * 1.2f;
+
+      commit(player);
+
+      break;
+    }
+  }
+
+  LOG_TIME();
+}
+
 namespace MovementSystem {
   void handlePlayerMovementInput(GmContext* context, GameState& state, float dt) {
     if (UISystem::hasBlockingDialogue() || EntitySystem::isInteractingWithEntity(context, state)) {
@@ -278,6 +303,7 @@ namespace MovementSystem {
 
     resolveAllPlaneCollisions(context, state, dt);
     resolveAllNpcCollisions(context, state);
+    resolveAllHotAirBalloonCollisions(context, state, dt);
 
     if (state.isOnSolidGround && !state.isMovingPlayerThisFrame) {
       if (lastSolidGroundXzDistance > 100.f) {
