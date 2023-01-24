@@ -347,10 +347,12 @@ internal void handleAcFans(GmContext* context, GameState& state, float dt) {
 
 internal void handleHotAirBalloons(GmContext* context, GameState& state, float dt) {
   for_moving_objects("hot-air-balloon", {
-    float heightRate = 0.5f * get_running_time();
-    float rotationRate = 0.7f * get_running_time();
+    float offset = object.position.x + object.position.z;
+    float heightRate = 0.5f * get_running_time() + offset;
+    float heightOscillation = object.scale.x / 10.f;
+    float rotationRate = 0.7f * get_running_time() + offset;
 
-    object.position = initial.position + Vec3f(0, 20.f, 0) * sinf(heightRate);
+    object.position = initial.position + Vec3f(0, heightOscillation, 0) * sinf(heightRate);
     object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), 0.05f * sinf(rotationRate));
 
     commit(object);

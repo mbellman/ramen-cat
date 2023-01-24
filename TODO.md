@@ -24,7 +24,6 @@ ASSETS
 
 GAME
 ----
-* non-uniform balloon motion
 * area titles
 * npc model improvements/highlight when nearby
 * collectibles
