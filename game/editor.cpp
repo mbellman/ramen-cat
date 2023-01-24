@@ -1075,7 +1075,8 @@ namespace Editor {
       ) {
         float dx = (float)mouseDelta.x;
         float dy = (float)mouseDelta.y;
-        auto* originalObject = get_object_by_record(editor.selectedObject._record);
+        auto& originalObject = *get_object_by_record(editor.selectedObject._record);
+        auto& asset = World::meshAssets[editor.currentSelectedMeshIndex];
         Vec3f actionDelta = getCurrentActionDelta(context, dx, dy, dt);
 
         if (input.isKeyHeld(Key::CONTROL)) {
@@ -1085,14 +1086,14 @@ namespace Editor {
         }
 
         if (editor.currentActionType == ActionType::POSITION) {
-          originalObject->position += actionDelta;
+          originalObject.position += actionDelta;
         } else if (editor.currentActionType == ActionType::SCALE) {
-          if (editor.mode == EditorMode::LIGHTS) {
-            // Scale light spheres uniformly
-            originalObject->scale += actionDelta.magnitude() * actionDelta.sign();
+          if (editor.mode == EditorMode::LIGHTS || input.isKeyHeld(Key::Q)) {
+            // Scale light spheres or objects while holding Q uniformly
+            originalObject.scale += actionDelta.magnitude() * actionDelta.sign();
           } else {
             // Scale objects/collision planes along the action axis
-            originalObject->scale += actionDelta;
+            originalObject.scale += actionDelta;
           }
         } else if (editor.currentActionType == ActionType::ROTATE) {
           float angle = actionDelta.magnitude();
@@ -1100,14 +1101,14 @@ namespace Editor {
           if (angle > 0.f) {
             Vec3f axis = actionDelta.unit();
 
-            originalObject->rotation *= Quaternion::fromAxisAngle(axis, angle);
+            originalObject.rotation *= Quaternion::fromAxisAngle(axis, angle);
           }
         }
 
-        originalObject->color = editor.selectedObject.color;
-        editor.selectedObject = *originalObject;
+        originalObject.color = editor.selectedObject.color;
+        editor.selectedObject = originalObject;
 
-        commit(*originalObject);
+        commit(originalObject);
 
         if (editor.mode == EditorMode::LIGHTS && editor.selectedLight != nullptr) {
           syncLightWithObject(*editor.selectedLight, editor.selectedObject);

@@ -1,7 +1,6 @@
 EDITOR
 ------
 * camera-relative repositioning hotkey
-* uniform scaling hotkey
 
 BUGS
 ----
