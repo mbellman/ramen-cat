@@ -600,6 +600,10 @@ internal void rebuildDynamicStaircases(GmContext* context) {
       }
     }
   }
+
+  u16 totalStairSteps = objects("stair-step").totalActive();
+
+  Console::log("Generated", std::to_string(totalStairSteps), "stair steps");
 }
 
 void World::initializeGameWorld(GmContext* context, GameState& state) {

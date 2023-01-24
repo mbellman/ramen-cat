@@ -1,6 +1,5 @@
 EDITOR
 ------
-* show # of dynamic entity pieces
 * camera-relative repositioning hotkey
 * uniform scaling hotkey
 * hitbox offset
