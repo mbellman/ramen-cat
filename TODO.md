@@ -27,7 +27,6 @@ ASSETS
 
 GAME
 ----
-* silhouettes of certain objects behind things
 * area titles
 * npc model improvements/highlight when nearby
 * collectibles

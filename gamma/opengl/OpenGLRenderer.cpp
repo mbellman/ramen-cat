@@ -309,17 +309,24 @@ namespace Gamma {
     ctx.hasReflectiveObjects = false;
     ctx.hasRefractiveObjects = false;
     ctx.hasWaterObjects = false;
+    ctx.hasSilhouetteObjects = false;
 
     for (auto* glMesh : glMeshes) {
-      if (glMesh->getObjectCount() > 0) {
-        if (glMesh->isMeshType(MeshType::EMISSIVE)) {
+      auto& mesh = *glMesh->getSourceMesh();
+
+      if (!mesh.disabled && mesh.objects.totalActive() > 0) {
+        if (mesh.type == MeshType::EMISSIVE) {
           ctx.hasEmissiveObjects = true;
-        } else if (glMesh->isMeshType(MeshType::REFLECTIVE)) {
+        } else if (mesh.type == MeshType::REFLECTIVE) {
           ctx.hasReflectiveObjects = true;
-        } else if (glMesh->isMeshType(MeshType::REFRACTIVE)) {
+        } else if (mesh.type == MeshType::REFRACTIVE) {
           ctx.hasRefractiveObjects = true;
-        } else if (glMesh->isMeshType(MeshType::WATER)) {
+        } else if (mesh.type == MeshType::WATER) {
           ctx.hasWaterObjects = true;
+        }
+
+        if (mesh.silhouette) {
+          ctx.hasSilhouetteObjects = true;
         }
       }
     }
@@ -454,6 +461,10 @@ namespace Gamma {
 
     if (ctx.hasWaterObjects) {
       renderWater();
+    }
+
+    if (ctx.hasSilhouetteObjects) {
+      renderSilhouettes();
     }
 
     swapAccumulationBuffers();
@@ -1321,6 +1332,30 @@ namespace Gamma {
     shaders.copyFrame.setInt("texColorAndDepth", 0);
 
     OpenGLScreenQuad::render();
+  }
+
+  void OpenGLRenderer::renderSilhouettes() {
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
+    glDisable(GL_STENCIL_TEST);
+    glDepthFunc(GL_GREATER);
+
+    shaders.silhouette.use();
+
+    shaders.silhouette.setMatrix4f("matProjection", ctx.matProjection);
+    shaders.silhouette.setMatrix4f("matView", ctx.matView);
+    shaders.silhouette.setInt("meshTexture", 0);
+
+    for (auto* glMesh : glMeshes) {
+      if (glMesh->getSourceMesh()->silhouette) {
+        glMesh->render(ctx.primitiveMode);
+      }
+    }
+
+    glDisable(GL_CULL_FACE);
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_STENCIL_TEST);
+    glDepthFunc(GL_LESS);
   }
 
   /**

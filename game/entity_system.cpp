@@ -362,9 +362,11 @@ internal void handleOcean(GmContext* context) {
 
 void EntitySystem::initializeGameEntities(GmContext* context, GameState& state) {
   add_mesh("npc", 100, Mesh::Cube());
-  add_mesh("slingshot", 100, Mesh::Model("./game/assets/slingshot.obj"));
+  mesh("npc")->silhouette = true;
 
+  add_mesh("slingshot", 100, Mesh::Model("./game/assets/slingshot.obj"));
   mesh("slingshot")->roughness = 0.9f;
+  mesh("slingshot")->silhouette = true;
 
   loadNpcData(context, state);
   loadEntityData(context, state);

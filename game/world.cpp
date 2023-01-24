@@ -612,6 +612,8 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   add_mesh("sphere", 1, Mesh::Sphere(18));
 
   mesh("sphere")->roughness = 0.9f;
+  mesh("sphere")->silhouette = true;
+
   mesh("ocean")->type = MeshType::WATER;
   mesh("ocean")->canCastShadows = false;
   mesh("ocean-floor")->canCastShadows = false;
@@ -662,6 +664,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
       mesh.maxCascade = attributes.maxCascade;
       mesh.emissivity = attributes.emissivity;
       mesh.roughness = attributes.roughness;
+      mesh.silhouette = attributes.silhouette;
     }
 
     for (auto& asset : World::dynamicMeshPieces) {

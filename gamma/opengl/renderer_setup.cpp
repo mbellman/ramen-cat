@@ -168,6 +168,11 @@ namespace Gamma {
     shaders.water.fragment("./gamma/opengl/shaders/water.frag.glsl");
     shaders.water.link();
 
+    shaders.silhouette.init();
+    shaders.silhouette.vertex("./gamma/opengl/shaders/geometry.vert.glsl");
+    shaders.silhouette.fragment("./gamma/opengl/shaders/silhouette.frag.glsl");
+    shaders.silhouette.link();
+
     shaders.post.init();
     shaders.post.vertex("./gamma/opengl/shaders/quad.vert.glsl");
     shaders.post.fragment("./gamma/opengl/shaders/post.frag.glsl");

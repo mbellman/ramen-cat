@@ -267,6 +267,11 @@ namespace Gamma {
      * approximates more glossy/metallic surfaces.
      */
     float roughness = 0.6f;
+    /**
+     * Controls whether the mesh instances should render silhouettes
+     * when occluded by other geometry.
+     */
+    bool silhouette = false;
   };
 
   /**
