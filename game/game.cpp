@@ -81,8 +81,8 @@ void updateGame(GmContext* context, GameState& state, float dt) {
 
   // Show debug info
   {
-    add_debug_message("Position: " + Gm_ToString(player.position));
-    add_debug_message("Velocity: " + Gm_ToString(state.velocity));
+    add_debug_message("Player position: " + Gm_ToString(player.position));
+    add_debug_message("Player velocity: " + Gm_ToString(state.velocity));
   }
 
   START_TIMING("updateGame");

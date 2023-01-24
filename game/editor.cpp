@@ -1183,7 +1183,7 @@ namespace Editor {
     // Display editor info
     {
       add_debug_message(getEditorModeName(editor.mode) + " Editor");
-      add_debug_message("Position: " + Gm_ToString(camera.position));
+      add_debug_message("Camera position: " + Gm_ToString(camera.position));
       add_debug_message("Action: " + getActionTypeName(editor.currentActionType));
 
       if (editor.mode == EditorMode::OBJECTS) {
@@ -1197,19 +1197,27 @@ namespace Editor {
       }
 
       if (editor.isObjectSelected) {
-        // @todo clean this up
         #define String(x) std::to_string(x)
 
-        auto& position = editor.selectedObject.position;
-        auto& scale = editor.selectedObject.scale;
-        auto& rotation = editor.selectedObject.rotation;
-        auto& color = editor.selectedObject.color;
+        if (editor.selectedLight != nullptr) {
+          // Selected light
+          auto& light = *editor.selectedLight;
 
-        add_debug_message("Active object:");
-        add_debug_message("Position: " + Gm_ToString(position));
-        add_debug_message("Scale: " + Gm_ToString(scale));
-        add_debug_message("Rotation: " + Gm_ToString(rotation));
-        add_debug_message("Color: " + Gm_ToString(color.toVec3f()));
+          add_debug_message("Active light:");
+          add_debug_message("Position: " + Gm_ToString(light.position));
+          add_debug_message("Radius: " + std::to_string(light.radius));
+          add_debug_message("Color: " + Gm_ToString(light.color));
+          add_debug_message("Power: " + std::to_string(light.power));
+        } else {
+          // Selected object
+          auto& object = editor.selectedObject;
+
+          add_debug_message("Active object:");
+          add_debug_message("Position: " + Gm_ToString(object.position));
+          add_debug_message("Scale: " + Gm_ToString(object.scale));
+          add_debug_message("Rotation: " + Gm_ToString(object.rotation));
+          add_debug_message("Color: " + Gm_ToString(object.color.toVec3f()));
+        }
       }
     }
 
