@@ -33,6 +33,8 @@ constexpr static float JUMP_Y_VELOCITY = 500.f;
  * Camera constants
  * ----------------
  */
+const static Gamma::Vec3f CAMERA_TITLE_SCREEN_POSITION = Gamma::Vec3f(-3985.f, 2235.f, -1320.f);
+
 constexpr static float CAMERA_FIRST_PERSON_RADIUS  = 5.f;
 constexpr static float CAMERA_NORMAL_BASE_RADIUS = 300.f;
 constexpr static float CAMERA_ZOOM_OUT_BASE_RADIUS = 600.f;
@@ -50,4 +52,4 @@ constexpr static float CAMERA_FOV_SPEED_INTERVAL = 500.f;
 constexpr static u16 TOTAL_PARTICLES = 30;
 constexpr static float PARTICLE_SPAWN_DELAY = 1.f / float(TOTAL_PARTICLES);
 
-constexpr static float INITIAL_DAY_NIGHT_CYCLE_TIME = 2.4f;
+constexpr static float INITIAL_DAY_NIGHT_CYCLE_TIME = 2.f;

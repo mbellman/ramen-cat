@@ -6,7 +6,11 @@
 
 #include "macros.h"
 
-internal float easeOut(float t) {
+internal float easeOutCubic(float t) {
+  return 1.f - powf(1.f - t, 3);
+}
+
+internal float easeOutQuint(float t) {
   return 1.f - powf(1.f - t, 5);
 }
 

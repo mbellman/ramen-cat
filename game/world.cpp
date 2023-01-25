@@ -304,6 +304,7 @@ std::vector<MeshAsset> World::meshAssets = {
     },
     .attributes = {
       .texture = "./game/assets/kick-sign.png",
+      .emissivity = 0.2f,
       .roughness = 0.4f
     }
   },

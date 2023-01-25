@@ -44,7 +44,7 @@ internal Vec3f getLookAtTargetPosition(GmContext* context, GameState& state) {
     t = 1.f;
   }
 
-  return Vec3f::lerp(tweenStart, tweenEnd, easeOut(t));
+  return Vec3f::lerp(tweenStart, tweenEnd, easeOutQuint(t));
 }
 
 internal void handleCameraOverride(GmContext* context, GameState& state) {
@@ -67,9 +67,9 @@ internal void handleCameraOverride(GmContext* context, GameState& state) {
   auto tweenStart = state.sourceCameraState.camera3p;
   auto tweenEnd = state.targetCameraState.camera3p;
 
-  state.camera3p.azimuth = Gm_LerpCircularf(tweenStart.azimuth, tweenEnd.azimuth, easeOut(t), Gm_PI);
-  state.camera3p.altitude = Gm_Lerpf(tweenStart.altitude, tweenEnd.altitude, easeOut(t));
-  state.camera3p.radius = Gm_Lerpf(tweenStart.radius, tweenEnd.radius, easeOut(t));
+  state.camera3p.azimuth = Gm_LerpCircularf(tweenStart.azimuth, tweenEnd.azimuth, easeOutQuint(t), Gm_PI);
+  state.camera3p.altitude = Gm_Lerpf(tweenStart.altitude, tweenEnd.altitude, easeOutQuint(t));
+  state.camera3p.radius = Gm_Lerpf(tweenStart.radius, tweenEnd.radius, easeOutQuint(t));
 }
 
 void CameraSystem::initializeGameCamera(GmContext* context, GameState& state) {
@@ -82,6 +82,10 @@ void CameraSystem::initializeGameCamera(GmContext* context, GameState& state) {
 }
 
 void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float dt) {
+  if (state.gameStartTime == 0.f) {
+    return;
+  }
+
   START_TIMING("handleGameCamera");
 
   updateThirdPersonCameraRadius(state, dt);
@@ -213,7 +217,17 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
       camera.position = targetCameraPosition;
     }
 
-    point_camera_at(lookAtPosition);
+    if (time_since(state.gameStartTime) > 2.f) {
+      point_camera_at(lookAtPosition);
+    } else {
+      // @temporary
+      float alpha = easeOutCubic(time_since(state.gameStartTime) * 0.5f);
+
+      camera.position = Vec3f::lerp(CAMERA_TITLE_SCREEN_POSITION, targetCameraPosition, alpha);
+      camera.orientation.yaw = Gm_Lerpf(Gm_PI * 0.6f, Gm_PI, alpha);
+      camera.orientation.pitch = Gm_Lerpf(0.f, 0.1f, alpha);
+      camera.rotation = camera.orientation.toQuaternion();
+    }
   }
 
   // Adjust the FOV when moving at higher speeds

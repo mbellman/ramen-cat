@@ -10,6 +10,7 @@
 #include "effects_system.h"
 #include "ui_system.h"
 #include "editor.h"
+#include "game_constants.h"
 #include "macros.h"
 
 using namespace Gamma;
@@ -29,11 +30,18 @@ internal void initializeInputHandlers(GmContext* context, GameState& state) {
       Gm_UnfocusWindow();
     }
 
+    // @todo use in dev mode only
     if (key == Key::L) {
       Gm_ToggleFlag(GammaFlags::ENABLE_DEV_LIGHT_DISCS);
     }
+
+    // @todo use in dev mode only
+    if (key == Key::T) {
+      Gm_ToggleFlag(GammaFlags::ENABLE_DEV_TOOLS);
+    }
   });
 
+  // @todo use in dev mode only
   input.on<Key>("keystart", [&state, &input, context](Key key) {
     if (key == Key::E) {
       if (state.isEditorEnabled) {
@@ -43,7 +51,6 @@ internal void initializeInputHandlers(GmContext* context, GameState& state) {
       }
     }
 
-    // @todo use in dev mode only
     if (key == Key::V && !input.isKeyHeld(Key::CONTROL)) {
       if (Gm_IsFlagEnabled(GammaFlags::VSYNC)) {
         Gm_DisableFlags(GammaFlags::VSYNC);
@@ -56,6 +63,7 @@ internal void initializeInputHandlers(GmContext* context, GameState& state) {
 
 void initializeGame(GmContext* context, GameState& state) {
   Gm_EnableFlags(GammaFlags::VSYNC);
+  Gm_DisableFlags(GammaFlags::ENABLE_DEV_TOOLS);
 
   initializeInputHandlers(context, state);
 
@@ -70,6 +78,15 @@ void initializeGame(GmContext* context, GameState& state) {
   #endif
 
   state.previousPlayerPosition = get_player().position;
+
+  // Set title screen position
+  {
+    auto& camera = get_camera();
+
+    camera.position = CAMERA_TITLE_SCREEN_POSITION;
+    camera.orientation.yaw = Gm_PI * 0.6f;
+    camera.rotation = camera.orientation.toQuaternion();
+  }
 }
 
 void updateGame(GmContext* context, GameState& state, float dt) {
@@ -104,6 +121,13 @@ void updateGame(GmContext* context, GameState& state, float dt) {
   CameraSystem::handleVisibilityCullingAndLevelsOfDetail(context, state);
   EffectsSystem::handleGameEffects(context, state, dt);
   UISystem::handleUI(context, state, dt);
+
+  // @temporary
+  {
+    if (state.gameStartTime == 0.f && get_input().didPressKey(Key::SPACE)) {
+      state.gameStartTime = state.frameStartTime;
+    }
+  }
 
   // Reset the player position after falling longer than 2 seconds
   {

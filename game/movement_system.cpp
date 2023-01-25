@@ -186,7 +186,11 @@ internal void resolveAllHotAirBalloonCollisions(GmContext* context, GameState& s
 
 namespace MovementSystem {
   void handlePlayerMovementInput(GmContext* context, GameState& state, float dt) {
-    if (UISystem::hasBlockingDialogue() || EntitySystem::isInteractingWithEntity(context, state)) {
+    if (
+      UISystem::hasBlockingDialogue() ||
+      EntitySystem::isInteractingWithEntity(context, state) ||
+      state.gameStartTime == 0.f
+    ) {
       return;
     }
 
