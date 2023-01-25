@@ -76,11 +76,14 @@ internal void handleDayNightCycle(GmContext* context, GameState& state, float dt
   float daytimeFactor = sqrt(sinf(state.dayNightCycleTime));
   auto& light = light("day-night-light");
 
-  light.direction.y = -1.f * (0.5f + 0.5f * sinf(state.dayNightCycleTime * 2.f - Gm_HALF_PI));
+  light.direction.y = 0.05f + -1.f * (0.5f + 0.5f * sinf(state.dayNightCycleTime * 2.f - Gm_HALF_PI));
   light.direction.z = cosf(state.dayNightCycleTime);
   light.power = daytimeFactor;
   light.color.y = daytimeFactor;
   light.color.z = daytimeFactor;
+
+  context->scene.sunDirection = light.direction.invert().unit();
+  context->scene.sunColor = light.color * Vec3f(1.f, 0.95f, 0.4f);
 }
 
 void EffectsSystem::initializeGameEffects(GmContext* context, GameState& state) {

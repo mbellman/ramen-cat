@@ -769,8 +769,8 @@ namespace Gamma {
     shader.setVec3f("cameraPosition", ctx.activeCamera->position);
     shader.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
     shader.setMatrix4f("matInverseView", ctx.matInverseView);
-
-    // @todo allow for custom skylight configuration
+    shader.setVec3f("sunDirection", gmContext->scene.sunDirection);
+    shader.setVec3f("sunColor", gmContext->scene.sunColor);
 
     OpenGLScreenQuad::render();
   }
@@ -1047,6 +1047,9 @@ namespace Gamma {
     shaders.skybox.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
     shaders.skybox.setMatrix4f("matInverseView", ctx.matInverseView);
     shaders.skybox.setFloat("time", gmContext->scene.runningTime);
+    shaders.skybox.setVec3f("sunDirection", gmContext->scene.sunDirection);
+    shaders.skybox.setVec3f("sunColor", gmContext->scene.sunColor);
+
     // @temporary
     shaders.skybox.setInt("texClouds", 3);
 
@@ -1301,6 +1304,8 @@ namespace Gamma {
     shaders.water.setMatrix4f("matView", ctx.matView);
     shaders.water.setMatrix4f("matInverseView", ctx.matInverseView);
     shaders.water.setVec3f("cameraPosition", camera.position);
+    shaders.water.setVec3f("sunDirection", gmContext->scene.sunDirection);
+    shaders.water.setVec3f("sunColor", gmContext->scene.sunColor);
     shaders.water.setFloat("time", gmContext->scene.runningTime);
     shaders.water.setFloat("zNear", gmContext->scene.zNear);
     shaders.water.setFloat("zFar", gmContext->scene.zFar);

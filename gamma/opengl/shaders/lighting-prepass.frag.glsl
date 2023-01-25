@@ -8,6 +8,9 @@ uniform vec3 cameraPosition;
 uniform mat4 matInverseProjection;
 uniform mat4 matInverseView;
 
+uniform vec3 sunDirection;
+uniform vec3 sunColor;
+
 in vec2 fragUv;
 
 layout (location = 0) out vec4 out_color_and_depth;
@@ -32,7 +35,7 @@ vec3 getIndirectSkyLightContribution(vec3 fragment_normal, float roughness) {
   for (int i = 0; i < 6; i++) {
     vec3 direction = normalize(0.2 * fragment_normal + sky_sample_offsets[i] * roughness);
 
-    contribution += getSkyColor(direction).rgb * indirect_sky_light_intensity;
+    contribution += getSkyColor(direction, sunDirection, sunColor).rgb * indirect_sky_light_intensity;
   }
 
   return contribution / 6.0;

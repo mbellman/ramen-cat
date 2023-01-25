@@ -81,6 +81,8 @@ struct GmScene {
   Gamma::Vec3f freeCameraVelocity = Gamma::Vec3f(0.0f);
   u32 frame = 0;
   float runningTime = 0.0f;
+  Gamma::Vec3f sunDirection;
+  Gamma::Vec3f sunColor;
   float zNear = 1.f;
   float zFar = 10000.f;
 

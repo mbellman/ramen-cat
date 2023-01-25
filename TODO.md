@@ -47,5 +47,5 @@ ENGINE
 * sound
 * planar reflections
 * infinite particles
-* skylight contribution gradation
+* skylight contribution gradation/probe-based GI
 * Mesh::MeshPack() ?
