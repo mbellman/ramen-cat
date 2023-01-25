@@ -37,7 +37,7 @@ void main() {
 
   // @hack avoid clouds texture distortion near vec3(0, 1, 0)
   // @todo make this configurable, or determine a better way to avoid distortion
-  if (abs(direction.y) > 0.5) {
+  if (abs(direction.y) > 0.7) {
     clouds_color = vec3(0);
   }
 
