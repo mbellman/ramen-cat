@@ -6,8 +6,8 @@
 
 #include "macros.h"
 
-internal float easeOutCubic(float t) {
-  return 1.f - powf(1.f - t, 3);
+internal float easeInOutQuad(float t) {
+  return t < 0.5f ? 4.f * t * t * t : 1.f - powf(-2.f * t + 2.f, 3) / 2.f;
 }
 
 internal float easeOutQuint(float t) {

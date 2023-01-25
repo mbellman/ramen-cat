@@ -70,8 +70,10 @@ internal void handlePlayerParticles(GmContext* context, GameState& state, float 
 }
 
 internal void handleDayNightCycle(GmContext* context, GameState& state, float dt) {
-  state.dayNightCycleTime += dt * 0.0025f;
-  state.dayNightCycleTime = Gm_Modf(state.dayNightCycleTime, Gm_PI);
+  if (state.gameStartTime != 0.f) {
+    state.dayNightCycleTime += dt * 0.0025f;
+    state.dayNightCycleTime = Gm_Modf(state.dayNightCycleTime, Gm_PI);
+  }
 
   float daytimeFactor = sqrt(sinf(state.dayNightCycleTime));
   auto& light = light("day-night-light");

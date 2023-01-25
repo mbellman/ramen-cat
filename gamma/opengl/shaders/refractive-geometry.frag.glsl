@@ -1,12 +1,16 @@
 #version 460 core
 
+uniform bool hasNormalMap = false;
 uniform vec2 screenSize;
 uniform sampler2D texColorAndDepth;
+uniform sampler2D meshNormalMap;
 uniform mat4 matProjection;
 uniform mat4 matView;
 uniform mat4 matInverseProjection;
 uniform mat4 matInverseView;
 uniform vec3 cameraPosition;
+uniform vec3 sunDirection;
+uniform vec3 sunColor;
 
 flat in vec3 fragColor;
 in vec3 fragNormal;
@@ -25,12 +29,30 @@ vec2 getPixelCoords() {
   return gl_FragCoord.xy / screenSize;
 }
 
+vec3 getNormal() {
+  vec3 normalized_frag_normal = normalize(fragNormal);
+
+  if (hasNormalMap) {
+    vec3 mappedNormal = texture(meshNormalMap, fragUv).rgb * 2.0 - vec3(1.0);
+
+    mat3 tangentMatrix = mat3(
+      normalize(fragTangent),
+      normalize(fragBitangent),
+      normalized_frag_normal
+    );
+
+    return normalize(tangentMatrix * mappedNormal);
+  } else {
+    return normalized_frag_normal;
+  }
+}
+
 void main() {
   const float REFRACTION_INTENSITY = 4.0;
 
   vec3 position = getWorldPosition(gl_FragCoord.z, getPixelCoords(), matInverseProjection, matInverseView);
   vec3 color = vec3(1.0);
-  vec3 normal = normalize(fragNormal);
+  vec3 normal = getNormal();
   vec3 normalized_fragment_to_camera = normalize(cameraPosition - position);
 
   vec3 refraction_ray = refract(normalized_fragment_to_camera, normal, 0.7);
@@ -62,7 +84,7 @@ void main() {
     // Skybox
     vec3 direction = normalize(world_refraction_ray - cameraPosition);
 
-    refracted_color_and_depth.rgb = getSkyColor(direction).rgb;
+    refracted_color_and_depth.rgb = getSkyColor(direction, sunDirection, sunColor).rgb;
   }
 
   // Slightly darken fragments facing the camera more directly

@@ -46,8 +46,8 @@ std::vector<MeshAsset> World::meshAssets = {
       return Mesh::Model("./game/assets/weeds.obj");
     },
     .attributes = {
-      .texture = "./game/assets/weeds.png",
       .type = MeshType::FOLIAGE,
+      .texture = "./game/assets/weeds.png",
       .maxCascade = 2,
       .foliage = {
         .type = FoliageType::FLOWER
@@ -62,8 +62,8 @@ std::vector<MeshAsset> World::meshAssets = {
       return Mesh::Model("./game/assets/bush.obj");
     },
     .attributes = {
-      .texture = "./game/assets/bush.png",
       .type = MeshType::FOLIAGE,
+      .texture = "./game/assets/bush.png",
       .foliage = {
         .type = FoliageType::FLOWER,
         .factor = 5.f
@@ -90,8 +90,8 @@ std::vector<MeshAsset> World::meshAssets = {
       return Mesh::Model("./game/assets/palm-leaf.obj");
     },
     .attributes = {
-      .texture = "./game/assets/palm-leaf.png",
       .type = MeshType::FOLIAGE,
+      .texture = "./game/assets/palm-leaf.png",
       .foliage = {
         .type = FoliageType::LEAF
       },
@@ -104,6 +104,17 @@ std::vector<MeshAsset> World::meshAssets = {
     .maxInstances = 10000,
     .create = []() {
       return Mesh::Cube();
+    },
+    .attributes = {
+      .roughness = 0.9f
+    }
+  },
+  {
+    .name = "concrete-half-arch",
+    .defaultColor = Vec3f(0.8f),
+    .maxInstances = 1000,
+    .create = []() {
+      return Mesh::Model("./game/assets/concrete-half-arch.obj");
     },
     .attributes = {
       .roughness = 0.9f
@@ -340,6 +351,19 @@ std::vector<MeshAsset> World::meshAssets = {
       .texture = "./game/assets/windows-1.png",
       .emissivity = 0.25f
     }
+  },
+  {
+    .name = "glass-window",
+    .defaultColor = Vec3f(1.f),
+    .maxInstances = 1000,
+    .create = []() {
+      return Mesh::Cube();
+    },
+    .attributes = {
+      .type = MeshType::REFRACTIVE,
+      .normals = "./game/assets/glass-normals.png",
+      .roughness = 0.9f
+    } 
   },
   {
     .name = "balcony-1",

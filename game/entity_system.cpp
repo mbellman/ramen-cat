@@ -251,7 +251,7 @@ internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
     for (auto& slingshot : objects("slingshot")) {
       Vec3f targetColor = DEFAULT_SLINGSHOT_COLOR;
 
-      if ((slingshot.position - player.position).xz().magnitude() < SLINGSHOT_INTERACTION_TRIGGER_DISTANCE) {
+      if ((slingshot.position - player.position).magnitude() < SLINGSHOT_INTERACTION_TRIGGER_DISTANCE) {
         targetColor = HIGHLIGHT_SLINGSHOT_COLOR;
 
         if (input.didPressKey(Key::SPACE)) {

@@ -217,11 +217,14 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
       camera.position = targetCameraPosition;
     }
 
-    if (time_since(state.gameStartTime) > 2.f) {
+    // @temporary
+    float titleTransitionDuration = 2.f;
+
+    if (time_since(state.gameStartTime) > titleTransitionDuration) {
       point_camera_at(lookAtPosition);
     } else {
       // @temporary
-      float alpha = easeOutCubic(time_since(state.gameStartTime) * 0.5f);
+      float alpha = easeInOutQuad(time_since(state.gameStartTime) / titleTransitionDuration);
 
       camera.position = Vec3f::lerp(CAMERA_TITLE_SCREEN_POSITION, targetCameraPosition, alpha);
       camera.orientation.yaw = Gm_Lerpf(Gm_PI * 0.6f, Gm_PI, alpha);
@@ -249,7 +252,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
 void CameraSystem::handleVisibilityCullingAndLevelsOfDetail(GmContext* context, GameState& state) {
   START_TIMING("handleVisibilityCullingAndLevelsOfDetail");
 
-  use_frustum_culling({ "weeds", "lamp" });
+  use_frustum_culling({ "weeds", "lamp", "ladder", "ac-unit", "ac-fan" });
 
   LOG_TIME();
 }

@@ -1228,14 +1228,19 @@ namespace Gamma {
     #endif
 
     shaders.refractiveGeometry.setInt("texColorAndDepth", 0);
+    shaders.refractiveGeometry.setInt("meshNormalMap", 1);
     shaders.refractiveGeometry.setMatrix4f("matProjection", ctx.matProjection);
     shaders.refractiveGeometry.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
     shaders.refractiveGeometry.setMatrix4f("matView", ctx.matView);
     shaders.refractiveGeometry.setMatrix4f("matInverseView", ctx.matInverseView);
     shaders.refractiveGeometry.setVec3f("cameraPosition", camera.position);
+    shaders.refractiveGeometry.setVec3f("sunDirection", gmContext->scene.sunDirection);
+    shaders.refractiveGeometry.setVec3f("sunColor", gmContext->scene.sunColor);
 
     for (auto* glMesh : glMeshes) {
       if (glMesh->isMeshType(MeshType::REFRACTIVE)) {
+        shaders.refractiveGeometry.setBool("hasNormalMap", glMesh->hasNormalMap());
+
         glMesh->render(ctx.primitiveMode);
       }
     }

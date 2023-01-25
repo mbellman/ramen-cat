@@ -141,8 +141,9 @@ namespace Gamma {
       // @todo if we use texture units which won't conflict with
       // the G-Buffer, we can have textured refractive objects.
       checkAndLoadTexture(mesh.texture, glTexture, GL_TEXTURE0);
-      checkAndLoadTexture(mesh.normals, glNormalMap, GL_TEXTURE1);
     }
+
+    checkAndLoadTexture(mesh.normals, glNormalMap, GL_TEXTURE1);
 
     if (sourceMesh->transformedVertices.size() > 0) {
       // Re-buffer geometry

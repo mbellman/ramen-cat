@@ -214,6 +214,10 @@ namespace Gamma {
    */
   struct MeshAttributes {
     /**
+     * Defines the mesh type.
+     */
+    MeshType type = MeshType::DEFAULT;
+    /**
      * An optional albedo texture for the mesh.
      */
     std::string texture = "";
@@ -225,12 +229,6 @@ namespace Gamma {
      * The probe name to use for probe reflectors.
      */
     std::string probe = "";
-    /**
-     * Defines the mesh type.
-     *
-     * @see MeshType
-     */
-    u8 type = MeshType::DEFAULT;
     /**
      * Controls the maximum directional cascaded shadow
      * map that the mesh objects should be rendered to.

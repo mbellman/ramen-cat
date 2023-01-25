@@ -844,6 +844,8 @@ namespace Editor {
 
       mesh("light-sphere")->disabled = false;
     }
+
+    Gm_EnableFlags(GammaFlags::ENABLE_DEV_TOOLS);
   }
 
   void disableGameEditor(GmContext* context, GameState& state) {
