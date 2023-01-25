@@ -83,6 +83,7 @@ struct GmScene {
   float runningTime = 0.0f;
   Gamma::Vec3f sunDirection;
   Gamma::Vec3f sunColor;
+  std::string clouds;
   float zNear = 1.f;
   float zFar = 10000.f;
 

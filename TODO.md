@@ -43,7 +43,6 @@ ENGINE
 ------
 * cache textures
 * atmospheric scattering improvements
-* proper clouds handling
 * sound
 * planar reflections
 * infinite particles

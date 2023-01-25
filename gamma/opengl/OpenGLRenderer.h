@@ -74,6 +74,7 @@ namespace Gamma {
     std::vector<Light*> directionalShadowcasters;
     std::vector<Light*> spotLights;
     std::vector<Light*> spotShadowcasters;
+    OpenGLTexture* cloudsTexture = nullptr;
     Camera* activeCamera = nullptr;
     Matrix4f matProjection;
     Matrix4f matInverseProjection;
@@ -104,9 +105,6 @@ namespace Gamma {
     virtual void resetShadowMaps() override;
 
   private:
-    // @temporary
-    OpenGLTexture* clouds = nullptr;
-
     SDL_GLContext glContext;
     RendererBuffers buffers;
     RendererShaders shaders;

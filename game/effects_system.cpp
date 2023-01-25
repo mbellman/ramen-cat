@@ -87,9 +87,10 @@ internal void handleDayNightCycle(GmContext* context, GameState& state, float dt
 }
 
 void EffectsSystem::initializeGameEffects(GmContext* context, GameState& state) {
-  initializePlayerParticles(context);
-
+  context->scene.clouds = "./game/assets/clouds.png";
   state.dayNightCycleTime = INITIAL_DAY_NIGHT_CYCLE_TIME;
+
+  initializePlayerParticles(context);
 }
 
 void EffectsSystem::handleGameEffects(GmContext* context, GameState& state, float dt) {
