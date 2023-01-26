@@ -94,5 +94,5 @@ void main() {
   out_color = mix(out_color, atmosphere_color, atmosphere_factor);
 
   // @todo gamma correction/tone-mapping
-  // out_color = pow(out_color, vec3(1 / 2.2)) - 0.2;
+  // out_color = pow(out_color, vec3(1 / 2.2));
 }
