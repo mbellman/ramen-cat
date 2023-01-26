@@ -1,6 +1,7 @@
 EDITOR
 ------
 * adjust camera3p azimuth when respawning the player
+* SHIFT + mousedrag should center on the collision point
 
 BUGS
 ----
