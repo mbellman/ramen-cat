@@ -92,4 +92,7 @@ void main() {
   atmosphere_factor = isnan(atmosphere_factor) ? 0 : atmosphere_factor;
 
   out_color = mix(out_color, atmosphere_color, atmosphere_factor);
+
+  // @todo gamma correction/tone-mapping
+  // out_color = pow(out_color, vec3(1 / 1.4));
 }

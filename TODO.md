@@ -8,6 +8,7 @@ EDITOR
 
 BUGS
 ----
+* enabling editor with objects disabled restores dynamic object placeholders
 * fix flying off downward slopes
 * imported models are inverted along X
 * rotated collision plane wall kick height
