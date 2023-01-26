@@ -2,6 +2,9 @@ EDITOR
 ------
 * adjust camera3p azimuth when respawning the player
 * SHIFT + mousedrag should center on the collision point
+* when changing to collision planes mode, show collision planes
+* add a collision plane in the same position/scale/rotation as an object
+* when creating an object, make it selected
 
 BUGS
 ----
@@ -25,6 +28,7 @@ ASSETS
 
 GAME
 ----
+* midair jump forward/down action
 * area titles
 * npc model improvements/highlight when nearby
 * collectibles
