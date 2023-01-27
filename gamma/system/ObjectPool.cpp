@@ -145,7 +145,6 @@ namespace Gamma {
   // @todo consolidate logic in partitionByDistance/partitionByVisibility
   // @todo accept a distance threshold to avoid culling partially
   // in-frame/partially out-of-frame objects
-  // @todo use camera FoV to determine dot product threshold
   void ObjectPool::partitionByVisibility(const Camera& camera) {
     u16 current = 0;
     u16 end = totalActive();
@@ -154,6 +153,7 @@ namespace Gamma {
     while (end > current) {
       Vec3f objectUnitViewPosition = (objects[current].position - camera.position).unit();
 
+      // @todo use camera FoV to determine dot product threshold
       if (Vec3f::dot(cameraDirection, objectUnitViewPosition) >= 0.7f) {
         current++;
       } else {
