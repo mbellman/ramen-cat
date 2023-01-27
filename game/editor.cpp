@@ -596,6 +596,19 @@ internal void createNewLight(GmContext* context, GameState& state) {
   updateCollisionPlanes(context, state);
 }
 
+internal void createNewObjectFromMesh(GmContext* context, const std::string& meshName, const Object& attributes) {
+  auto& object = create_object_from(meshName);
+
+  object.position = attributes.position;
+  object.scale = attributes.scale;
+  object.rotation = attributes.rotation;
+  object.color = attributes.color;
+
+  commit(object);
+
+  createObjectHistoryAction(context, ActionType::CREATE, object);
+}
+
 internal void createNewObject(GmContext* context, GameState& state) {
   auto& camera = get_camera();
   Vec3f spawnPosition = camera.position + camera.orientation.getDirection() * 300.f;
@@ -613,28 +626,21 @@ internal void createNewObject(GmContext* context, GameState& state) {
 
   // @todo use a common path for collision planes/objects
   if (editor.mode == EditorMode::COLLISION_PLANES) {
-    auto& platform = create_object_from("platform");
-
-    platform.position = spawnPosition;
-    platform.scale = Vec3f(50.f, 20.f, 50.f);
-    platform.rotation = Quaternion(1.f, 0, 0, 0);
-    platform.color = Vec3f(0, 0, 1.f);
-
-    commit(platform);
-
-    createObjectHistoryAction(context, ActionType::CREATE, platform);
+    createNewObjectFromMesh(context, "platform", {
+      .position = spawnPosition,
+      .scale = Vec3f(50.f, 20.f, 50.f),
+      .rotation = Quaternion(1.f, 0, 0, 0),
+      .color = Vec3f(0, 0, 1.f)
+    });
   } else if (editor.mode == EditorMode::OBJECTS) {
     auto& asset = World::meshAssets[editor.currentSelectedMeshIndex];
-    auto& object = create_object_from(asset.name);
 
-    object.position = spawnPosition;
-    object.scale = asset.defaultScale;
-    object.rotation = asset.defaultRotation;
-    object.color = asset.defaultColor;
-
-    commit(object);
-
-    createObjectHistoryAction(context, ActionType::CREATE, object);
+    createNewObjectFromMesh(context, asset.name, {
+      .position = spawnPosition,
+      .scale = asset.defaultScale,
+      .rotation = asset.defaultRotation,
+      .color = asset.defaultColor
+    });
   }
 
   updateCollisionPlanes(context, state);
@@ -890,9 +896,13 @@ namespace Editor {
     auto& input = get_input();
     auto& commander = context->commander;
 
-    input.on<Key>("keyup", [context, & state](Key key) {
+    input.on<Key>("keyup", [context, &state, &input](Key key) {
       // Toggle collision planes
-      if (key == Key::C) {
+      if (
+        key == Key::C &&
+        !input.isKeyHeld(Key::CONTROL) &&
+        !input.isKeyHeld(Key::SHIFT)
+      ) {
         mesh("platform")->disabled = !mesh("platform")->disabled;
       }
 
@@ -1137,7 +1147,7 @@ namespace Editor {
       }
 
       if (Gm_IsWindowFocused()) {
-        // Handle rotating around selected objects
+        // Handle rotating around selected objects/SHIFT + [key] actions
         if (input.isKeyHeld(Key::SHIFT) && editor.isObjectSelected) {
           auto& selectedObject = editor.selectedObject;
           auto selectedObjectToCamera = camera.position - selectedObject.position;
@@ -1165,6 +1175,20 @@ namespace Editor {
             camera.position = selectedObject.position + objectCamera.calculatePosition();
 
             point_camera_at(selectedObject);
+          }
+
+          if (input.didPressKey(Key::C)) {
+            // Create a new collision plane aligned with the selected object
+            mesh("platform")->disabled = false;
+
+            createNewObjectFromMesh(context, "platform", {
+              .position = selectedObject.position + Vec3f(0, 0.5f, 0),
+              .scale = selectedObject.scale,
+              .rotation = selectedObject.rotation,
+              .color = Vec3f(0, 0, 1.f)
+            });
+
+            updateCollisionPlanes(context, state);
           }
         } else {
           // Handle WASD inputs

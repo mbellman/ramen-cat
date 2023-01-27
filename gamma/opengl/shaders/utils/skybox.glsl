@@ -16,7 +16,7 @@ vec4 getSkyColor(vec3 direction, vec3 sunDirection, vec3 sunColor) {
 
   vec3 skylight = vec3(2 * pow(0.5 * cos(y) + 0.5, 50));
 
-  // skylight += (1.0 - dot(direction, vec3(0, 1, 0))) * 2;
+  // skylight += (1.0 - dot(direction, vec3(0, 1, 0))) * vec3(0.6,0.8,1) * 2;
 
   vec3 sunlight = adjusted_sun_color * sun_brightness * pow(max(sun_dot, 0.0), 100);
   vec3 atmosphere = 0.2 * (skylight + sunlight);
