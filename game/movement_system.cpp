@@ -10,8 +10,8 @@ using namespace Gamma;
 internal void resolveNewPositionFromCollision(const Collision& collision, Object& player, float dt) {
   auto resetPosition = collision.point + collision.plane.normal * player.scale.x;
 
-  if (collision.plane.nDotU > 0.985f) {
-    float alpha = 30.f * dt;
+  if (collision.plane.nDotU > 0.99f) {
+    float alpha = 50.f * dt;
     alpha = alpha > 1.f ? 1.f : alpha;
 
     player.position = Vec3f::lerp(player.position, resetPosition, alpha);    
@@ -90,7 +90,7 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
       }
     } else if (isFalling && plane.nDotU > 0.6f) {
       // @todo description
-      Vec3f fallCollisionLineEnd = player.position - plane.normal * (playerRadius + 5.f);
+      Vec3f fallCollisionLineEnd = player.position - plane.normal * (playerRadius + 10.f);
       auto fallCollision = Collisions::getLinePlaneCollision(player.position, fallCollisionLineEnd, plane);
 
       if (fallCollision.hit) {

@@ -183,6 +183,19 @@ std::vector<MeshAsset> World::meshAssets = {
     }
   },
   {
+    .name = "metal-grate",
+    .defaultScale = Vec3f(100.f),
+    .hitboxScale = Vec3f(1.f, 0.0f, 1.f),
+    .create = []() {
+      return Mesh::Plane(2);
+    },
+    .attributes = {
+      .texture = "./game/assets/metal-grate.png",
+      .normals = "./game/assets/metal-grate-normals.png",
+      .roughness = 0.1f
+    }
+  },
+  {
     .name = "metal-guard",
     .hitboxScale = Vec3f(1.f, 0.2f, 0.05f),
     .create = []() {
