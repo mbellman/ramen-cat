@@ -9,6 +9,7 @@ EDITOR
 BUGS
 ----
 * enabling editor with objects disabled restores dynamic object placeholders
+* prevent crashes on commands without args
 * fix flying off downward slopes
 * imported models are inverted along X
 * rotated collision plane wall kick height
@@ -30,6 +31,7 @@ ASSETS
 GAME
 ----
 * midair jump forward/down action
+* daytime sky color changes
 * area titles
 * npc model improvements/highlight when nearby
 * collectibles

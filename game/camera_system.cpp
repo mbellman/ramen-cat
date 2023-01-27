@@ -218,13 +218,13 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
     }
 
     // @temporary
-    float titleTransitionDuration = 2.f;
+    float titleTransitionDuration = 3.f;
 
     if (time_since(state.gameStartTime) > titleTransitionDuration) {
       point_camera_at(lookAtPosition);
     } else {
       // @temporary
-      float alpha = easeInOutQuad(time_since(state.gameStartTime) / titleTransitionDuration);
+      float alpha = easeInOutQuart(time_since(state.gameStartTime) / titleTransitionDuration);
 
       camera.position = Vec3f::lerp(CAMERA_TITLE_SCREEN_POSITION, targetCameraPosition, alpha);
       camera.orientation.yaw = Gm_Lerpf(Gm_PI * 0.6f, Gm_PI, alpha);
