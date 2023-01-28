@@ -90,7 +90,7 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
       }
     } else if (isFalling && plane.nDotU > 0.6f) {
       // @todo description
-      Vec3f fallCollisionLineEnd = player.position - plane.normal * (playerRadius + 10.f);
+      Vec3f fallCollisionLineEnd = player.position - plane.normal * (playerRadius + 5.f);
       auto fallCollision = Collisions::getLinePlaneCollision(player.position, fallCollisionLineEnd, plane);
 
       if (fallCollision.hit) {
