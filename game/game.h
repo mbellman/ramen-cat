@@ -52,7 +52,8 @@ struct GameState {
   Gamma::Vec3f direction = Gamma::Vec3f(0, 0, 1.f);
   Gamma::Vec3f previousPlayerPosition;
   Gamma::Vec3f lastSolidGroundPosition;
-  Gamma::Vec3f lastBumpedWallNormal;
+  Gamma::Vec3f lastWallBumpNormal;
+  Gamma::Vec3f lastWallBumpVelocity;
 
   CameraMode cameraMode = CameraMode::NORMAL;
 
@@ -68,6 +69,9 @@ struct GameState {
   bool isOnSolidGround = false;
   bool isMovingPlayerThisFrame = false;
   bool isRepositioningCamera = false;
+
+  bool canPerformWallKick = false;
+  bool canPerformAirDash = false;
 
   // NPC handling
   NonPlayerCharacter* activeNpc = nullptr;

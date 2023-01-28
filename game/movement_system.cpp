@@ -54,8 +54,13 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
   }
 
   if (Gm_Absf(plane.nDotU) <= 0.7f) {
-    state.lastWallBumpTime = state.frameStartTime;
-    state.lastBumpedWallNormal = plane.normal;
+    state.lastWallBumpNormal = plane.normal;
+
+    if (!state.isOnSolidGround && time_since(state.lastWallBumpTime) > 0.5f) {
+      state.lastWallBumpTime = state.frameStartTime;
+      state.lastWallBumpVelocity = state.velocity;
+      state.velocity = Vec3f(0.f);
+    }
   }
 }
 
@@ -173,9 +178,11 @@ internal void resolveAllHotAirBalloonCollisions(GmContext* context, GameState& s
       Vec3f normalizedBalloonToPlayer = balloonToPlayer.unit();
 
       player.position = balloon.position + normalizedBalloonToPlayer * (balloonRadius + playerRadius);
-      state.velocity = Vec3f::reflect(state.velocity, normalizedBalloonToPlayer) * 1.2f;
 
       commit(player);
+
+      state.velocity = Vec3f::reflect(state.velocity, normalizedBalloonToPlayer) * 1.2f;
+      state.canPerformAirDash = true;
 
       break;
     }
@@ -247,36 +254,54 @@ namespace MovementSystem {
         if (state.isOnSolidGround) {
           // Regular jump
           state.velocity.y = JUMP_Y_VELOCITY;
+
           state.isOnSolidGround = false;
+          state.canPerformAirDash = true;
+          state.canPerformWallKick = true;
 
           // Make sure the player is off the ground plane
           // at the start of the jump to avoid a next-frame
           // collision snapping them back in place
           player.position.y += 2.f;
-        } else {
-          // If we press SPACE in mid-air, queue a wall kick action.
-          // We'll determine whether it's appropriate to perform
-          // a wall kick next.
-          state.lastWallKickInputTime = state.frameStartTime;
+        } else if (state.canPerformWallKick && time_since(state.lastWallBumpTime) < 0.5f) {
+          // Wall kick
+          Vec3f wallPlaneVelocity = state.lastWallBumpVelocity.alignToPlane(state.lastWallBumpNormal);
+          Vec3f kickDirection = (state.lastWallBumpNormal + Vec3f(0, 3.f, 0)).unit();
+
+          state.velocity = wallPlaneVelocity + kickDirection * state.lastWallBumpVelocity.magnitude();
+          state.lastWallBumpTime = 0.f;
+          state.lastWallKickTime = state.frameStartTime;
+
+          state.canPerformAirDash = true;
+          state.canPerformWallKick = true;
+        } else if (state.canPerformAirDash) {
+          // Air dash
+          state.velocity = camera.orientation.getDirection().xz() * 1000.f;
+
+          state.canPerformAirDash = false;
+          state.canPerformWallKick = true;
         }
       }
 
-      float timeSinceLastWallBump = state.frameStartTime - state.lastWallBumpTime;
-      float timeSinceLastWallKickInput = state.frameStartTime - state.lastWallKickInputTime;
-      float timeSinceLastWallKick = state.frameStartTime - state.lastWallKickTime;
+      // float timeSinceLastWallBump = state.frameStartTime - state.lastWallBumpTime;
+      // float timeSinceLastWallKickInput = state.frameStartTime - state.lastWallKickInputTime;
+      // float timeSinceLastWallKick = state.frameStartTime - state.lastWallKickTime;
 
-      if (
-        timeSinceLastWallBump < 0.2f &&
-        timeSinceLastWallKickInput < 0.2f &&
-        timeSinceLastWallKick > 0.3f
-      ) {
-        // Wall kick
-        Vec3f wallPlaneVelocity = state.velocity.alignToPlane(state.lastBumpedWallNormal);
-        Vec3f kickDirection = (state.lastBumpedWallNormal + Vec3f(0, 3.f, 0)).unit();
+      // if (
+      //   timeSinceLastWallBump < 0.2f &&
+      //   timeSinceLastWallKickInput < 0.2f &&
+      //   timeSinceLastWallKick > 0.3f
+      // ) {
+      //   // Wall kick
+      //   Vec3f wallPlaneVelocity = state.velocity.alignToPlane(state.lastWallBumpNormal);
+      //   Vec3f kickDirection = (state.lastWallBumpNormal + Vec3f(0, 3.f, 0)).unit();
 
-        state.velocity = wallPlaneVelocity + kickDirection * state.velocity.magnitude();
-        state.lastWallKickTime = state.frameStartTime;
-      }
+      //   state.velocity = wallPlaneVelocity + kickDirection * state.velocity.magnitude();
+      //   state.lastWallKickTime = state.frameStartTime;
+
+      //   state.canPerformAirDash = true;
+      //   state.canPerformWallKick = true;
+      // }
     }
 
     {
@@ -296,8 +321,22 @@ namespace MovementSystem {
 
     // Handle gravity/velocity
     {
-      state.velocity.y -= gravity;
-      player.position += state.velocity * dt;
+      if (
+        time_since(state.lastWallBumpTime) > 0.5f ||
+        !state.canPerformWallKick
+      ) {
+        state.velocity.y -= gravity;
+        player.position += state.velocity * dt;
+      }
+    }
+
+    if (
+      state.canPerformWallKick &&
+      time_since(state.lastWallBumpTime) > 0.5f &&
+      time_since(state.lastWallBumpTime) < 1.f
+    ) {
+      state.canPerformWallKick = false;
+      state.velocity = Vec3f(0.f);
     }
 
     // Track the xz distance traveled from the last solid ground position

@@ -31,7 +31,6 @@ ASSETS
 
 GAME
 ----
-* midair jump forward/down action
 * daytime sky color changes
 * area titles
 * npc model improvements/highlight when nearby

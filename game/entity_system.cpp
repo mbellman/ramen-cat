@@ -272,7 +272,7 @@ internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
   // Handle launching from slingshots
   {
     if (state.lastSlingshotInteractionTime != 0.f) {
-      const float timeSinceLastSlingshotInteraction = time_since(state.lastSlingshotInteractionTime);
+      float timeSinceLastSlingshotInteraction = time_since(state.lastSlingshotInteractionTime);
       auto* slingshot = get_object_by_record(state.activeSlingshotRecord);
 
       if (timeSinceLastSlingshotInteraction < SLINGSHOT_WIND_UP_DURATION_SECONDS) {
@@ -292,7 +292,10 @@ internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
 
         state.velocity = state.slingshotVelocity;
         state.lastSlingshotInteractionTime = 0.f;
+
         state.isOnSolidGround = false;
+        state.canPerformAirDash = true;
+        state.canPerformWallKick = true;
 
         if (slingshot != nullptr) {
           slingshot->rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), state.targetSlingshotAngle);
