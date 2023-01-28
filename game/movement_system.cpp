@@ -56,7 +56,11 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
   if (Gm_Absf(plane.nDotU) <= 0.7f) {
     state.lastWallBumpNormal = plane.normal;
 
-    if (!state.isOnSolidGround && time_since(state.lastWallBumpTime) > 0.5f) {
+    if (
+      !state.isOnSolidGround &&
+      state.canPerformWallKick &&
+      time_since(state.lastWallBumpTime) > WALL_KICK_DELAY_DURATION
+    ) {
       state.lastWallBumpTime = state.frameStartTime;
       state.lastWallBumpVelocity = state.velocity;
       state.velocity = Vec3f(0.f);
@@ -263,7 +267,7 @@ namespace MovementSystem {
           // at the start of the jump to avoid a next-frame
           // collision snapping them back in place
           player.position.y += 2.f;
-        } else if (state.canPerformWallKick && time_since(state.lastWallBumpTime) < 0.5f) {
+        } else if (state.canPerformWallKick && time_since(state.lastWallBumpTime) < WALL_KICK_DELAY_DURATION) {
           // Wall kick
           Vec3f wallPlaneVelocity = state.lastWallBumpVelocity.alignToPlane(state.lastWallBumpNormal);
           Vec3f kickDirection = (state.lastWallBumpNormal + Vec3f(0, 3.f, 0)).unit();
@@ -282,26 +286,6 @@ namespace MovementSystem {
           state.canPerformWallKick = true;
         }
       }
-
-      // float timeSinceLastWallBump = state.frameStartTime - state.lastWallBumpTime;
-      // float timeSinceLastWallKickInput = state.frameStartTime - state.lastWallKickInputTime;
-      // float timeSinceLastWallKick = state.frameStartTime - state.lastWallKickTime;
-
-      // if (
-      //   timeSinceLastWallBump < 0.2f &&
-      //   timeSinceLastWallKickInput < 0.2f &&
-      //   timeSinceLastWallKick > 0.3f
-      // ) {
-      //   // Wall kick
-      //   Vec3f wallPlaneVelocity = state.velocity.alignToPlane(state.lastWallBumpNormal);
-      //   Vec3f kickDirection = (state.lastWallBumpNormal + Vec3f(0, 3.f, 0)).unit();
-
-      //   state.velocity = wallPlaneVelocity + kickDirection * state.velocity.magnitude();
-      //   state.lastWallKickTime = state.frameStartTime;
-
-      //   state.canPerformAirDash = true;
-      //   state.canPerformWallKick = true;
-      // }
     }
 
     {
@@ -321,22 +305,27 @@ namespace MovementSystem {
 
     // Handle gravity/velocity
     {
-      if (
-        time_since(state.lastWallBumpTime) > 0.5f ||
-        !state.canPerformWallKick
-      ) {
+      bool isDelayingWallKick = state.canPerformWallKick && time_since(state.lastWallBumpTime) <= WALL_KICK_DELAY_DURATION;
+
+      // When hitting a wall and delaying a wall-kick,
+      // we want to pause for a moment to allow the
+      // kick action to be performed. Only apply gravity
+      // and move the player if this isn't happening.
+      if (!isDelayingWallKick) {
         state.velocity.y -= gravity;
         player.position += state.velocity * dt;
       }
-    }
 
-    if (
-      state.canPerformWallKick &&
-      time_since(state.lastWallBumpTime) > 0.5f &&
-      time_since(state.lastWallBumpTime) < 1.f
-    ) {
-      state.canPerformWallKick = false;
-      state.velocity = Vec3f(0.f);
+      if (
+        state.canPerformWallKick &&
+        time_since(state.lastWallBumpTime) > WALL_KICK_DELAY_DURATION &&
+        time_since(state.lastWallBumpTime) < 1.f
+      ) {
+        // If we hit a wall, and wait longer than the wall kick
+        // delay duration, prohibit wall kicks and fall down.
+        state.canPerformWallKick = false;
+        state.velocity = Vec3f(0.f);
+      }
     }
 
     // Track the xz distance traveled from the last solid ground position
