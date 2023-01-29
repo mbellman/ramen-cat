@@ -6,7 +6,7 @@
 
 using namespace Gamma;
 
-internal void updateThirdPersonCameraRadius(GameState& state, float dt) {
+internal void updateThirdPersonCameraRadius(GmContext* context, GameState& state, float dt) {
   if (state.cameraMode == CameraMode::FIRST_PERSON) {
     state.camera3p.radius = CAMERA_FIRST_PERSON_RADIUS;
 
@@ -24,6 +24,14 @@ internal void updateThirdPersonCameraRadius(GameState& state, float dt) {
 
   if (state.isMovingPlayerThisFrame && state.camera3p.radius < 130.f) {
     state.camera3p.radius += 100.f * dt;
+  }
+
+  if (state.lastWallBumpTime != 0.f && time_since(state.lastWallBumpTime) <= WALL_KICK_WINDOW_DURATION) {
+    // Zoom in to the player when winding up a potential wall kick
+    float calculatedRadius = state.camera3p.radius;
+    float alpha = time_since(state.lastWallBumpTime) / WALL_KICK_WINDOW_DURATION;
+
+    state.camera3p.radius = Gm_Lerpf(calculatedRadius, calculatedRadius * 0.6f, alpha);
   }
 }
 
@@ -76,7 +84,7 @@ void CameraSystem::initializeGameCamera(GmContext* context, GameState& state) {
   state.camera3p.azimuth = Gm_PI - Gm_HALF_PI;
   state.camera3p.altitude = 0.1f;
 
-  updateThirdPersonCameraRadius(state, 0.f);
+  updateThirdPersonCameraRadius(context, state, 0.f);
 
   get_camera().position = get_player().position + state.camera3p.calculatePosition();
 }
@@ -88,7 +96,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
 
   START_TIMING("handleGameCamera");
 
-  updateThirdPersonCameraRadius(state, dt);
+  updateThirdPersonCameraRadius(context, state, dt);
   handleCameraOverride(context, state);
 
   auto& input = get_input();
@@ -218,7 +226,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
     }
 
     // @temporary
-    float titleTransitionDuration = 3.0f;
+    float titleTransitionDuration = 3.f;
 
     if (time_since(state.gameStartTime) > titleTransitionDuration) {
       point_camera_at(lookAtPosition);

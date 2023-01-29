@@ -85,8 +85,6 @@ struct GameState {
   // @todo use in dev mode only
   bool isEditorEnabled = false;
 
-  // @todo calculate nearby collision planes on each frame,
-  // and only check collisions against those
   std::vector<Plane> collisionPlanes;
 
   std::vector<NonPlayerCharacter> npcs;
