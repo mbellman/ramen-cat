@@ -62,9 +62,9 @@ internal void handlePlayerParticles(GmContext* context, GameState& state, float 
         if (state.isOnSolidGround) {
           particle.scale = Vec3f(0.f);
         } else {
-          Vec3f randomPositionWithinUnitSphere = Vec3f(Gm_Randomf(-1.f, 1.f), Gm_Randomf(-1.f, 1.f), Gm_Randomf(-1.f, 1.f)).unit();
-
           #define fractf(v) (v - float(int(v)))
+
+          Vec3f randomPositionWithinUnitSphere = Vec3f(Gm_Randomf(-1.f, 1.f), Gm_Randomf(-1.f, 1.f), Gm_Randomf(-1.f, 1.f)).unit();
 
           float r = fractf(state.frameStartTime);
           r *= 2.f;

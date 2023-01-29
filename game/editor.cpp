@@ -736,8 +736,11 @@ internal void respawnPlayer(GmContext* context, GameState& state) {
 
   commit(player);
 
+  Vec3f playerToCamera = camera.position - player.position;
+
   state.velocity = Vec3f(0.f);
   state.previousPlayerPosition = player.position;
+  state.camera3p.azimuth = atan2f(playerToCamera.z, playerToCamera.x);
 
   // Prevent respawning in a lower area from erroneously
   // triggering fall position reset behavior
