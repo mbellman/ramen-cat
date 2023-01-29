@@ -6,7 +6,6 @@ EDITOR
 
 BUGS
 ----
-* enabling editor with objects disabled restores dynamic object placeholders
 * prevent crashes on commands without args
 * fix flying off downward slopes
 * imported models are inverted along X

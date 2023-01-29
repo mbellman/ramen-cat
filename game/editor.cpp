@@ -921,6 +921,8 @@ namespace Editor {
   }
 
   void initializeGameEditor(GmContext* context, GameState& state) {
+    #define toggle_mesh(meshName) mesh(meshName)->disabled = !mesh(meshName)->disabled
+
     auto& input = get_input();
     auto& commander = context->commander;
 
@@ -931,7 +933,7 @@ namespace Editor {
         !input.isKeyHeld(Key::CONTROL) &&
         !input.isKeyHeld(Key::SHIFT)
       ) {
-        mesh("platform")->disabled = !mesh("platform")->disabled;
+        toggle_mesh("platform");
 
         if (state.isEditorEnabled) {
           editor.currentActionType = ActionType::POSITION;
@@ -948,8 +950,12 @@ namespace Editor {
       // Toggle objects
       if (key == Key::O) {
         for (auto& asset : World::meshAssets) {
+          if (asset.dynamic && state.isEditorEnabled) {
+            toggle_mesh(asset.name);
+          }
+          
           if (!asset.dynamic) {
-            mesh(asset.name)->disabled = !mesh(asset.name)->disabled;
+            toggle_mesh(asset.name);
           }
         }
 
