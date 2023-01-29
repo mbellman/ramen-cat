@@ -6,6 +6,8 @@
  * Entity constants
  * ----------------
  */
+constexpr static float PLAYER_RADIUS = 20.f;
+
 constexpr static float NPC_RADIUS = 20.f;
 constexpr static float NPC_HEIGHT = 70.f;
 constexpr static float NPC_INTERACTION_TRIGGER_DISTANCE = 120.f;
@@ -51,7 +53,9 @@ constexpr static float CAMERA_FOV_SPEED_INTERVAL = 500.f;
  * Effects constants
  * -----------------
  */
-constexpr static u16 TOTAL_PARTICLES = 30;
-constexpr static float PARTICLE_SPAWN_DELAY = 1.f / float(TOTAL_PARTICLES);
+constexpr static u16 TOTAL_GROUND_PARTICLES = 30;
+constexpr static u16 TOTAL_AIR_PARTICLES = 100;
+constexpr static float GROUND_PARTICLE_SPAWN_DELAY = 1.f / float(TOTAL_GROUND_PARTICLES);
+constexpr static float AIR_PARTICLE_SPAWN_DELAY = 1.f / float(TOTAL_AIR_PARTICLES);
 
 constexpr static float INITIAL_DAY_NIGHT_CYCLE_TIME = 2.f;

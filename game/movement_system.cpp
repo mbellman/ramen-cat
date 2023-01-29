@@ -8,7 +8,7 @@
 using namespace Gamma;
 
 internal void resolveNewPositionFromCollision(const Collision& collision, Object& player, float dt) {
-  auto resetPosition = collision.point + collision.plane.normal * player.scale.x;
+  auto resetPosition = collision.point + collision.plane.normal * PLAYER_RADIUS;
 
   if (collision.plane.nDotU > 0.985f) {
     float alpha = 30.f * dt;
@@ -72,7 +72,6 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
   START_TIMING("resolveAllPlaneCollisions");
 
   auto& player = get_player();
-  float playerRadius = player.scale.x;
   bool isFalling = state.previousPlayerPosition.y - player.position.y > 0.f;
   bool didHitSolidGround = false;
 
@@ -88,7 +87,7 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
     }
 
     Vec3f lineStart = state.previousPlayerPosition;
-    Vec3f lineEnd = player.position - plane.normal * playerRadius;
+    Vec3f lineEnd = player.position - plane.normal * PLAYER_RADIUS;
     auto collision = Collisions::getLinePlaneCollision(lineStart, lineEnd, plane);
 
     if (collision.hit) {
@@ -99,7 +98,7 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
       }
     } else if (isFalling && plane.nDotU > 0.6f) {
       // @todo description
-      Vec3f fallCollisionLineEnd = player.position - plane.normal * (playerRadius + 5.f);
+      Vec3f fallCollisionLineEnd = player.position - plane.normal * (PLAYER_RADIUS + 5.f);
       auto fallCollision = Collisions::getLinePlaneCollision(player.position, fallCollisionLineEnd, plane);
 
       if (fallCollision.hit) {
@@ -128,7 +127,7 @@ internal void resolveAllNpcCollisions(GmContext* context, GameState& state) {
 
   auto& player = get_player();
 
-  const float PLAYER_RADIUS = player.scale.x;
+  const float PLAYER_RADIUS = PLAYER_RADIUS;
 
   const float distanceThreshold = NPC_RADIUS + PLAYER_RADIUS + 10.f;
 
@@ -172,16 +171,15 @@ internal void resolveAllHotAirBalloonCollisions(GmContext* context, GameState& s
   START_TIMING("resolveAllHotAirBalloonCollisions");
 
   auto& player = get_player();
-  float playerRadius = player.scale.x;
 
   for (auto& balloon : objects("hot-air-balloon")) {
     float balloonRadius = balloon.scale.x;
     Vec3f balloonToPlayer = player.position - balloon.position;
 
-    if (balloonToPlayer.magnitude() < playerRadius + balloonRadius) {
+    if (balloonToPlayer.magnitude() < PLAYER_RADIUS + balloonRadius) {
       Vec3f normalizedBalloonToPlayer = balloonToPlayer.unit();
 
-      player.position = balloon.position + normalizedBalloonToPlayer * (balloonRadius + playerRadius);
+      player.position = balloon.position + normalizedBalloonToPlayer * (balloonRadius + PLAYER_RADIUS);
 
       commit(player);
 

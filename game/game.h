@@ -60,7 +60,8 @@ struct GameState {
   float frameStartTime = 0.f;
   float lastTimeOnSolidGround = 0.f;
   float lastWallBumpTime = 0.f;
-  float lastParticleSpawnTime = 0.f;
+  float lastGroundParticleSpawnTime = 0.f;
+  float lastAirParticleSpawnTime = 0.f;
 
   float dayNightCycleTime = 0.f;
 
