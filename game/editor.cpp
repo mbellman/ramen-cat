@@ -269,9 +269,16 @@ internal void cycleEditorMode(GmContext* context, s8 delta) {
   }
 
   editor.mode = *(modeOrder.begin() + cycleIndex);
+  editor.isObjectSelected = false;
 
+  // When exiting LIGHTS mode, deselect the selected light
   if (editor.mode != EditorMode::LIGHTS) {
     editor.selectedLight = nullptr;
+  }
+
+  // When entering COLLISION_PLANES mode, ensure that collision planes are visible
+  if (editor.mode == EditorMode::COLLISION_PLANES) {
+    mesh("platform")->disabled = false;
   }
 }
 
@@ -773,8 +780,9 @@ internal void handleMeshCommand(const std::string& command) {
     auto& asset = World::meshAssets[i];
 
     if (Gm_StringContains(asset.name, searchTerm)) {
-      editor.currentSelectedMeshIndex = i;
       editor.mode = EditorMode::OBJECTS;
+      editor.currentSelectedMeshIndex = i;
+      editor.isObjectSelected = false;
       editor.selectedLight = nullptr;
 
       break;
@@ -865,6 +873,12 @@ namespace Editor {
       mesh("light-sphere")->disabled = false;
     }
 
+    // Default to OBJECTS mode when enabling the editor without visible collision planes
+    if (mesh("platform")->disabled) {
+      editor.mode = EditorMode::OBJECTS;
+      editor.isObjectSelected = false;
+    }
+
     Gm_EnableFlags(GammaFlags::ENABLE_DEV_TOOLS);
   }
 
@@ -918,6 +932,17 @@ namespace Editor {
         !input.isKeyHeld(Key::SHIFT)
       ) {
         mesh("platform")->disabled = !mesh("platform")->disabled;
+
+        if (state.isEditorEnabled) {
+          editor.currentActionType = ActionType::POSITION;
+          editor.isObjectSelected = false;
+
+          if (mesh("platform")->disabled) {
+            editor.mode = EditorMode::OBJECTS;
+          } else {
+            editor.mode = EditorMode::COLLISION_PLANES;
+          }
+        }
       }
 
       // Toggle objects

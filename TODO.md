@@ -2,8 +2,6 @@ EDITOR
 ------
 * adjust camera3p azimuth when respawning the player
 * SHIFT + mousedrag should center on the collision point
-* when changing to collision planes mode, show collision planes
-* when toggling collision planes, change editor mode
 * count # of active meshes
 
 BUGS
