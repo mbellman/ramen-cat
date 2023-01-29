@@ -59,7 +59,7 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
     if (
       !state.isOnSolidGround &&
       state.canPerformWallKick &&
-      time_since(state.lastWallBumpTime) > WALL_KICK_DELAY_DURATION
+      time_since(state.lastWallBumpTime) > WALL_KICK_WINDOW_DURATION
     ) {
       state.lastWallBumpTime = state.frameStartTime;
       state.lastWallBumpVelocity = state.velocity;
@@ -267,7 +267,7 @@ namespace MovementSystem {
           // at the start of the jump to avoid a next-frame
           // collision snapping them back in place
           player.position.y += 2.f;
-        } else if (state.canPerformWallKick && time_since(state.lastWallBumpTime) < WALL_KICK_DELAY_DURATION) {
+        } else if (state.canPerformWallKick && time_since(state.lastWallBumpTime) < WALL_KICK_WINDOW_DURATION) {
           // Wall kick
           Vec3f wallPlaneVelocity = state.lastWallBumpVelocity.alignToPlane(state.lastWallBumpNormal);
           Vec3f kickDirection = (state.lastWallBumpNormal + Vec3f(0, 3.f, 0)).unit();
@@ -280,7 +280,13 @@ namespace MovementSystem {
           state.canPerformWallKick = true;
         } else if (state.canPerformAirDash) {
           // Air dash
-          state.velocity = camera.orientation.getDirection().xz() * 1000.f;
+          Vec3f airDashDirection = camera.orientation.getDirection();
+
+          if (airDashDirection.y < 0.f) {
+            airDashDirection = (airDashDirection * Vec3f(2.f, 1.f, 2.f)).unit();
+          }
+
+          state.velocity = airDashDirection * 1000.f;
 
           state.canPerformAirDash = false;
           state.canPerformWallKick = true;
@@ -305,24 +311,21 @@ namespace MovementSystem {
 
     // Handle gravity/velocity
     {
-      bool isDelayingWallKick = state.canPerformWallKick && time_since(state.lastWallBumpTime) <= WALL_KICK_DELAY_DURATION;
+      bool isWindingUpWallKick = state.canPerformWallKick && time_since(state.lastWallBumpTime) <= WALL_KICK_WINDOW_DURATION;
 
-      // When hitting a wall and delaying a wall-kick,
-      // we want to pause for a moment to allow the
-      // kick action to be performed. Only apply gravity
-      // and move the player if this isn't happening.
-      if (!isDelayingWallKick) {
+      // Only apply gravity/velocity if we're not winding up a wall kick
+      if (!isWindingUpWallKick) {
         state.velocity.y -= gravity;
         player.position += state.velocity * dt;
       }
 
       if (
         state.canPerformWallKick &&
-        time_since(state.lastWallBumpTime) > WALL_KICK_DELAY_DURATION &&
+        time_since(state.lastWallBumpTime) > WALL_KICK_WINDOW_DURATION &&
         time_since(state.lastWallBumpTime) < 1.f
       ) {
         // If we hit a wall, and wait longer than the wall kick
-        // delay duration, prohibit wall kicks and fall down.
+        // window duration, prohibit wall kicks and fall down
         state.canPerformWallKick = false;
         state.velocity = Vec3f(0.f);
       }

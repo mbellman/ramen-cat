@@ -218,7 +218,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
     }
 
     // @temporary
-    float titleTransitionDuration = 0.1f;
+    float titleTransitionDuration = 3.0f;
 
     if (time_since(state.gameStartTime) > titleTransitionDuration) {
       point_camera_at(lookAtPosition);

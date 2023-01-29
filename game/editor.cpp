@@ -110,18 +110,18 @@ internal void restoreObject(GmContext* context, const Object& object) {
 }
 
 internal void highlightObject(GmContext* context, const Object& object, const Vec3f& highlightColor) {
-  Object* originalObject = get_object_by_record(object._record);
+  Object* liveObject = get_object_by_record(object._record);
 
-  if (originalObject == nullptr) {
+  if (liveObject == nullptr) {
     return;
   }
 
   Vec3f originalColor = object.color.toVec3f();
-  float alpha = 0.8f + std::sinf(get_running_time() * 4.f) * 0.2f;
+  float alpha = 0.7f + std::sinf(get_running_time() * 3.f) * 0.3f;
 
-  originalObject->color = Vec3f::lerp(originalColor, highlightColor, alpha);
+  liveObject->color = Vec3f::lerp(originalColor, highlightColor, alpha);
 
-  commit(*originalObject);
+  commit(*liveObject);
 }
 
 internal void observeObject(GmContext* context, Object& object) {
