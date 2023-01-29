@@ -274,7 +274,6 @@ namespace MovementSystem {
 
           state.velocity = wallPlaneVelocity + kickDirection * state.lastWallBumpVelocity.magnitude();
           state.lastWallBumpTime = 0.f;
-          state.lastWallKickTime = state.frameStartTime;
 
           state.canPerformAirDash = true;
           state.canPerformWallKick = true;
