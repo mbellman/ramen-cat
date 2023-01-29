@@ -468,6 +468,7 @@ std::vector<MeshAsset> World::meshAssets = {
   {
     .name = "onigiri",
     .moving = true,
+    .defaultScale = Vec3f(40.f),
     .hitboxScale = Vec3f(0.7f, 1.f, 0.5f),
     .create = []() {
       return Mesh::Model("./game/assets/onigiri.obj");

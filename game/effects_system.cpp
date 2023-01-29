@@ -6,10 +6,11 @@ using namespace Gamma;
 
 internal void initializePlayerParticles(GmContext* context) {
   add_mesh("ground-particle", TOTAL_GROUND_PARTICLES, Mesh::Sphere(6));
-  add_mesh("air-particle", TOTAL_AIR_PARTICLES, Mesh::Sphere(4));
-
   mesh("ground-particle")->emissivity = 0.5f;
+
+  add_mesh("air-particle", TOTAL_AIR_PARTICLES, Mesh::Sphere(4));
   mesh("air-particle")->emissivity = 0.8f;
+  mesh("air-particle")->canCastShadows = false;
 
   for (u8 i = 0; i < TOTAL_GROUND_PARTICLES; i++) {
     auto& particle = create_object_from("ground-particle");
@@ -59,7 +60,7 @@ internal void handlePlayerParticles(GmContext* context, GameState& state, float 
         particle.scale.x == 0.f &&
         time_since(state.lastAirParticleSpawnTime) > AIR_PARTICLE_SPAWN_DELAY
       ) {
-        if (state.isOnSolidGround) {
+        if (state.isOnSolidGround || state.canPerformAirDash) {
           particle.scale = Vec3f(0.f);
         } else {
           #define fractf(v) (v - float(int(v)))

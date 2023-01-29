@@ -380,6 +380,19 @@ internal void handleHotAirBalloons(GmContext* context, GameState& state, float d
   });
 }
 
+internal void handleOnigiri(GmContext* context, GameState& state, float dt) {
+  float alpha = 2.f * state.frameStartTime;
+
+  for_moving_objects("onigiri", {
+    float yOffset = sinf(alpha + float(object._record.id) * 0.5f);
+
+    object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), state.frameStartTime);
+    object.position = initial.position + Vec3f(0, yOffset, 0) * 10.f;
+
+    commit(object);
+  });
+}
+
 internal void handleOcean(GmContext* context) {
   auto& camera = get_camera();
   auto& ocean = objects("ocean")[0];
@@ -426,6 +439,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   handleWindmillWheels(context, state, dt);
   handleAcFans(context, state, dt);
   handleHotAirBalloons(context, state, dt);
+  handleOnigiri(context, state, dt);
   handleOcean(context);
 
   LOG_TIME();
