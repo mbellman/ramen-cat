@@ -7,6 +7,7 @@ uniform sampler2D texColorAndDepth;
 uniform mat4 matInverseProjection;
 uniform mat4 matInverseView;
 uniform vec3 cameraPosition;
+uniform float time;
 
 uniform float zNear;
 uniform float zFar;
@@ -35,7 +36,14 @@ vec3 deband(vec3 color) {
 }
 
 void main() {
-  vec4 frag_color_and_depth = texture(texColorAndDepth, fragUv);
+  // @todo cleanup
+  float aspect_ratio = 1920.0 / 1080.0;
+  vec2 frag_uv_ratio = vec2(1.0, 1 / aspect_ratio);
+  float radius = length(fragUv * frag_uv_ratio - vec2(0.5, 0.5) * frag_uv_ratio);
+  float offset = distance(radius, fract(time));
+  float displacement = pow(1.0 - offset, 30);
+  vec2 uv = fragUv;// (fragUv - 0.5) * (1.0 - displacement * 0.1) + 0.5;
+  vec4 frag_color_and_depth = texture(texColorAndDepth, uv);
 
   #if USE_DEPTH_OF_FIELD == 1
     const int MIP_LEVEL = 1;
@@ -44,12 +52,12 @@ void main() {
     vec2 texel_size = 1.0 / textureSize(texColorAndDepth, MIP_LEVEL);
     vec3 depth_of_field_color = vec3(0.0);
 
-    vec2 uv1 = fragUv + vec2(-1.0, 0.0) * texel_size;
-    vec2 uv2 = fragUv + vec2(1.0, 0.0) * texel_size;
-    vec2 uv3 = fragUv + vec2(0.0, -1.0) * texel_size;
-    vec2 uv4 = fragUv + vec2(0.0, 1.0) * texel_size;
+    vec2 uv1 = uv + vec2(-1.0, 0.0) * texel_size;
+    vec2 uv2 = uv + vec2(1.0, 0.0) * texel_size;
+    vec2 uv3 = uv + vec2(0.0, -1.0) * texel_size;
+    vec2 uv4 = uv + vec2(0.0, 1.0) * texel_size;
 
-    depth_of_field_color += textureLod(texColorAndDepth, fragUv, MIP_LEVEL).rgb;
+    depth_of_field_color += textureLod(texColorAndDepth, uv, MIP_LEVEL).rgb;
     depth_of_field_color += textureLod(texColorAndDepth, uv1, MIP_LEVEL).rgb;
     depth_of_field_color += textureLod(texColorAndDepth, uv2, MIP_LEVEL).rgb;
     depth_of_field_color += textureLod(texColorAndDepth, uv3, MIP_LEVEL).rgb;
@@ -64,7 +72,7 @@ void main() {
 
     out_color = mix(frag_color_and_depth.rgb, depth_of_field_color, depth_factor);
   #else
-    out_color = texture(texColorAndDepth, fragUv).rgb;
+    out_color = frag_color_and_depth.rgb;
   #endif
 
   // @todo make atmospherics optional via a flag
@@ -73,7 +81,7 @@ void main() {
   // visual quality is notably worse until we add FXAA or similar. We can
   // also do an atmosphere pass in the skybox shader, and then add a remaining
   // depth/height-based atmospheric scattering effect here.
-  vec3 sky_position = getWorldPosition(1.0, fragUv, matInverseProjection, matInverseView) - cameraPosition;
+  vec3 sky_position = getWorldPosition(1.0, uv, matInverseProjection, matInverseView) - cameraPosition;
   vec3 sky_direction = normalize(sky_position);
 
   // @todo make configurable

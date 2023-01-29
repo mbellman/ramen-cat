@@ -1394,6 +1394,7 @@ namespace Gamma {
     shaders.post.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
     shaders.post.setMatrix4f("matInverseView", ctx.matInverseView);
     shaders.post.setVec3f("cameraPosition", ctx.activeCamera->position);
+    shaders.post.setFloat("time", gmContext->scene.runningTime);
     shaders.post.setFloat("zNear", gmContext->scene.zNear);
     shaders.post.setFloat("zFar", gmContext->scene.zFar);
 

@@ -464,6 +464,20 @@ std::vector<MeshAsset> World::meshAssets = {
       return Mesh::Model("./game/assets/person.obj");
     }
   },
+
+  {
+    .name = "onigiri",
+    .moving = true,
+    .hitboxScale = Vec3f(0.7f, 1.f, 0.5f),
+    .create = []() {
+      return Mesh::Model("./game/assets/onigiri.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/onigiri.png",
+      .emissivity = 0.2f
+    }
+  },
+  
   {
     .name = "staircase",
     .dynamic = true,
