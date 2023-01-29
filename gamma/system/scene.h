@@ -87,6 +87,10 @@ struct GmScene {
   float zNear = 1.f;
   float zFar = 10000.f;
 
+  struct Fx {
+    float screenWarpTime = 0.f;
+  } fx;
+
   struct GmUI {
     std::vector<RenderSurface> surfaces;
     std::vector<RenderText> texts;

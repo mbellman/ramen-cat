@@ -1388,15 +1388,17 @@ namespace Gamma {
     glViewport(0, 0, gmContext->window.size.width, gmContext->window.size.height);
     glDisable(GL_STENCIL_TEST);
 
+    auto& scene = gmContext->scene;
+
     shaders.post.use();
     shaders.post.setVec4f("transform", FULL_SCREEN_TRANSFORM);
     shaders.post.setInt("texColorAndDepth", 0);
     shaders.post.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
     shaders.post.setMatrix4f("matInverseView", ctx.matInverseView);
     shaders.post.setVec3f("cameraPosition", ctx.activeCamera->position);
-    shaders.post.setFloat("time", gmContext->scene.runningTime);
-    shaders.post.setFloat("zNear", gmContext->scene.zNear);
-    shaders.post.setFloat("zFar", gmContext->scene.zFar);
+    shaders.post.setFloat("time", scene.runningTime - scene.fx.screenWarpTime);
+    shaders.post.setFloat("zNear", scene.zNear);
+    shaders.post.setFloat("zFar", scene.zFar);
 
     OpenGLScreenQuad::render();
   }

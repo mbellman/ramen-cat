@@ -277,6 +277,8 @@ namespace MovementSystem {
 
           state.canPerformAirDash = true;
           state.canPerformWallKick = true;
+
+          context->scene.fx.screenWarpTime = state.frameStartTime;
         } else if (state.canPerformAirDash) {
           // Air dash
           Vec3f airDashDirection = camera.orientation.getDirection();
@@ -289,6 +291,8 @@ namespace MovementSystem {
 
           state.canPerformAirDash = false;
           state.canPerformWallKick = true;
+
+          context->scene.fx.screenWarpTime = state.frameStartTime;
         }
       }
     }
