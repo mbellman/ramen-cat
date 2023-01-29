@@ -339,6 +339,13 @@ namespace MovementSystem {
     resolveAllNpcCollisions(context, state);
     resolveAllHotAirBalloonCollisions(context, state, dt);
 
+    if (state.isOnSolidGround) {
+      // Reset the ability to perform wall kicks any time we're on solid ground.
+      // Otherwise, jumping and landing keeps the flag set to true, and bumping
+      // into a wall triggers the wall kick wind-up action.
+      state.canPerformWallKick = false;
+    }
+
     if (state.isOnSolidGround && !state.isMovingPlayerThisFrame) {
       if (lastSolidGroundXzDistance > 100.f) {
         // When landing from sufficiently long jumps, immediately reduce
