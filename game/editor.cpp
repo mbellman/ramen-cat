@@ -594,9 +594,14 @@ internal void createNewLight(GmContext* context, GameState& state) {
   syncLightWithObject(light, lightSphere);
   createObjectHistoryAction(context, ActionType::CREATE, lightSphere);
   updateCollisionPlanes(context, state);
+
+  editor.currentActionType = ActionType::POSITION;
+  editor.selectedLight = &light;
+
+  selectObject(context, lightSphere);
 }
 
-internal void createNewObjectFromMesh(GmContext* context, const std::string& meshName, const Object& attributes) {
+internal Object& createNewObjectFromMesh(GmContext* context, const std::string& meshName, const Object& attributes) {
   auto& object = create_object_from(meshName);
 
   object.position = attributes.position;
@@ -607,6 +612,8 @@ internal void createNewObjectFromMesh(GmContext* context, const std::string& mes
   commit(object);
 
   createObjectHistoryAction(context, ActionType::CREATE, object);
+
+  return object;
 }
 
 internal void createNewObject(GmContext* context, GameState& state) {
@@ -624,26 +631,31 @@ internal void createNewObject(GmContext* context, GameState& state) {
     }
   }
 
-  // @todo use a common path for collision planes/objects
   if (editor.mode == EditorMode::COLLISION_PLANES) {
-    createNewObjectFromMesh(context, "platform", {
+    auto& object = createNewObjectFromMesh(context, "platform", {
       .position = spawnPosition,
       .scale = Vec3f(50.f, 20.f, 50.f),
       .rotation = Quaternion(1.f, 0, 0, 0),
       .color = Vec3f(0, 0, 1.f)
     });
+
+    selectObject(context, object);
   } else if (editor.mode == EditorMode::OBJECTS) {
     auto& asset = World::meshAssets[editor.currentSelectedMeshIndex];
 
-    createNewObjectFromMesh(context, asset.name, {
+    auto& object = createNewObjectFromMesh(context, asset.name, {
       .position = spawnPosition,
       .scale = asset.defaultScale,
       .rotation = asset.defaultRotation,
       .color = asset.defaultColor
     });
+
+    selectObject(context, object);
   }
 
   updateCollisionPlanes(context, state);
+
+  editor.currentActionType = ActionType::POSITION;
 }
 
 internal void cloneSelectedObject(GmContext* context, GameState& state) {
@@ -685,6 +697,8 @@ internal void cloneSelectedObject(GmContext* context, GameState& state) {
   selectObject(context, object);
   createObjectHistoryAction(context, ActionType::CREATE, object);
   updateCollisionPlanes(context, state);
+
+  editor.currentActionType = ActionType::POSITION;
 }
 
 internal void deleteObject(GmContext* context, GameState& state, Object& object) {
