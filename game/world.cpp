@@ -443,7 +443,6 @@ std::vector<MeshAsset> World::meshAssets = {
   {
     .name = "hot-air-balloon",
     .moving = true,
-    .defaultColor = Vec3f(1.f),
     .defaultScale = Vec3f(200.f),
     .create = []() {
       return Mesh::Model("./game/assets/hot-air-balloon.obj");
@@ -454,6 +453,15 @@ std::vector<MeshAsset> World::meshAssets = {
       .canCastShadows = false,
       .emissivity = 0.3f,
       .roughness = 0.7f
+    }
+  },
+  {
+    .name = "person",
+    .moving = true,
+    .defaultScale = Vec3f(65.f),
+    .hitboxScale = Vec3f(0.6f, 1.4f, 0.2f),
+    .create = []() {
+      return Mesh::Model("./game/assets/person.obj");
     }
   },
   {

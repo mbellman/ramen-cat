@@ -152,41 +152,6 @@ internal void interactWithNpc(GmContext* context, GameState& state, NonPlayerCha
   UISystem::queueDialogue(context, state, npc.dialogue);
 }
 
-internal void handleNpcs(GmContext* context, GameState& state) {
-  auto& input = get_input();
-  auto& player = get_player();
-
-  // Handle talking to NPCs
-  {
-    if (input.didPressKey(Key::SPACE)) {
-      if (state.activeNpc == nullptr) {
-        for (auto& npc : state.npcs) {
-          float npcXzDistance = (npc.position - player.position).xz().magnitude();
-
-          if (
-            npcXzDistance < NPC_INTERACTION_TRIGGER_DISTANCE &&
-            player.position.y < npc.position.y + NPC_HEIGHT &&
-            player.position.y > npc.position.y - NPC_HEIGHT
-          ) {
-            interactWithNpc(context, state, npc);
-
-            break;
-          }
-        }
-      }
-    }
-  }
-
-  // Handle ending conversions with NPCs
-  {
-    if (state.activeNpc != nullptr && UISystem::isDialogueQueueEmpty()) {
-      state.activeNpc = nullptr;
-
-      CameraSystem::restoreOriginalCameraState(context, state);
-    }
-  }
-}
-
 internal void interactWithSlingshot(GmContext* context, GameState& state, Object& object) {
   auto& player = get_player();
 
@@ -240,6 +205,59 @@ internal void interactWithSlingshot(GmContext* context, GameState& state, Object
       (state.cameraMode == CameraMode::NORMAL ? CAMERA_NORMAL_BASE_RADIUS : CAMERA_ZOOM_OUT_BASE_RADIUS)
       + CAMERA_RADIUS_ALTITUDE_MULTIPLIER * (state.originalCameraState.camera3p.altitude / Gm_HALF_PI);
   }
+}
+
+internal void handleNpcs(GmContext* context, GameState& state) {
+  auto& input = get_input();
+  auto& player = get_player();
+
+  // Handle talking to NPCs
+  {
+    if (input.didPressKey(Key::SPACE)) {
+      if (state.activeNpc == nullptr) {
+        for (auto& npc : state.npcs) {
+          float npcXzDistance = (npc.position - player.position).xz().magnitude();
+
+          if (
+            npcXzDistance < NPC_INTERACTION_TRIGGER_DISTANCE &&
+            player.position.y < npc.position.y + NPC_HEIGHT &&
+            player.position.y > npc.position.y - NPC_HEIGHT
+          ) {
+            interactWithNpc(context, state, npc);
+
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  // Handle ending conversions with NPCs
+  {
+    if (state.activeNpc != nullptr && UISystem::isDialogueQueueEmpty()) {
+      state.activeNpc = nullptr;
+
+      CameraSystem::restoreOriginalCameraState(context, state);
+    }
+  }
+}
+
+internal void handlePeople(GmContext* context, GameState& state) {
+  auto& player = get_player();
+
+  for_moving_objects("person", {
+    Vec3f personToPlayer = player.position - object.position;
+    Vec3f baseDirection = initial.rotation.getDirection();
+    float baseAngle = atan2f(baseDirection.x, baseDirection.z);
+    float facingAngle = atan2f(personToPlayer.x, personToPlayer.z);
+    float distance = personToPlayer.magnitude();
+    float alpha = powf(1.f - distance / (distance + 1000.f), 2.f);
+    float angle = Gm_LerpCircularf(baseAngle, facingAngle, alpha, Gm_PI);
+
+    object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angle);
+
+    commit(object);
+  });
 }
 
 internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
@@ -402,6 +420,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   START_TIMING("handleGameEntities");
 
   handleNpcs(context, state);
+  handlePeople(context, state);
   handleSlingshots(context, state, dt);
   handleLanterns(context, state, dt);
   handleWindmillWheels(context, state, dt);
