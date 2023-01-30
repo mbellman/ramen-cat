@@ -26,7 +26,6 @@ ASSETS
 
 GAME
 ----
-* daytime sky color changes
 * area titles
 * npc model improvements/highlight when nearby
 * collectibles

@@ -126,10 +126,7 @@ internal void resolveAllNpcCollisions(GmContext* context, GameState& state) {
   START_TIMING("resolveAllNpcCollisions");
 
   auto& player = get_player();
-
-  const float PLAYER_RADIUS = PLAYER_RADIUS;
-
-  const float distanceThreshold = NPC_RADIUS + PLAYER_RADIUS + 10.f;
+  float distanceThreshold = NPC_RADIUS + PLAYER_RADIUS + 10.f;
 
   // @todo refactor cylinder collision behavior
   for (auto& npc : state.npcs) {

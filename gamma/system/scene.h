@@ -81,11 +81,15 @@ struct GmScene {
   Gamma::Vec3f freeCameraVelocity = Gamma::Vec3f(0.0f);
   u32 frame = 0;
   float runningTime = 0.0f;
-  Gamma::Vec3f sunDirection;
-  Gamma::Vec3f sunColor;
   std::string clouds;
   float zNear = 1.f;
   float zFar = 10000.f;
+
+  struct Sky {
+    Gamma::Vec3f sunDirection;
+    Gamma::Vec3f sunColor;
+    Gamma::Vec3f atmosphereColor;
+  } sky;
 
   struct Fx {
     float screenWarpTime = 0.f;

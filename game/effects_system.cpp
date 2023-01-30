@@ -8,7 +8,7 @@ internal void initializePlayerParticles(GmContext* context) {
   add_mesh("ground-particle", TOTAL_GROUND_PARTICLES, Mesh::Sphere(6));
   mesh("ground-particle")->emissivity = 0.5f;
 
-  add_mesh("air-particle", TOTAL_AIR_PARTICLES, Mesh::Sphere(4));
+  add_mesh("air-particle", TOTAL_AIR_PARTICLES, Mesh::Sphere(5));
   mesh("air-particle")->emissivity = 0.8f;
   mesh("air-particle")->canCastShadows = false;
 
@@ -125,8 +125,9 @@ internal void handleDayNightCycle(GmContext* context, GameState& state, float dt
     state.dayNightCycleTime = Gm_Modf(state.dayNightCycleTime, Gm_PI);
   }
 
-  float daytimeFactor = sqrt(sinf(state.dayNightCycleTime));
+  auto& scene = context->scene;
   auto& light = light("day-night-light");
+  float daytimeFactor = sqrt(sinf(state.dayNightCycleTime));
 
   light.direction.y = 0.05f + -1.f * (0.5f + 0.5f * sinf(state.dayNightCycleTime * 2.f - Gm_HALF_PI));
   light.direction.z = cosf(state.dayNightCycleTime);
@@ -134,8 +135,9 @@ internal void handleDayNightCycle(GmContext* context, GameState& state, float dt
   light.color.y = daytimeFactor;
   light.color.z = daytimeFactor;
 
-  context->scene.sunDirection = light.direction.invert().unit();
-  context->scene.sunColor = light.color * Vec3f(1.f, 0.95f, 0.4f);
+  scene.sky.sunDirection = light.direction.invert().unit();
+  scene.sky.sunColor = light.color * Vec3f(1.f, 0.95f, 0.4f);
+  scene.sky.atmosphereColor = Vec3f::lerp(Vec3f(1.f, 0.5f, 0.9f), Vec3f(1.f), daytimeFactor);
 }
 
 void EffectsSystem::initializeGameEffects(GmContext* context, GameState& state) {

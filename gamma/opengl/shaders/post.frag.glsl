@@ -7,7 +7,9 @@ uniform sampler2D texColorAndDepth;
 uniform mat4 matInverseProjection;
 uniform mat4 matInverseView;
 uniform vec3 cameraPosition;
-uniform float time;
+
+uniform float screenWarpTime;
+uniform vec3 atmosphereColor;
 
 uniform float zNear;
 uniform float zFar;
@@ -19,28 +21,12 @@ layout (location = 0) out vec3 out_color;
 #include "utils/random.glsl";
 #include "utils/conversion.glsl";
 
-/**
- * Applies a noise filter to colors to reduce banding
- * artifacts, strengthening the effect in darker ranges
- * where banding is more apparent.
- */
-vec3 deband(vec3 color) {
-  float brightness = max(color.r, 0) + max(color.g, 0) + max(color.b, 0);
-  float divisor = brightness * 150.0;
-
-  if (divisor == 0.0) {
-    return vec3(0);
-  }
-
-  return color * (1.0 + random(0.0, 1.0) / divisor);
-}
-
 void main() {
   // @todo cleanup
   float aspect_ratio = 1920.0 / 1080.0;
   vec2 frag_uv_ratio = vec2(1.0, 1 / aspect_ratio);
   float radius = length(fragUv * frag_uv_ratio - vec2(0.5, 0.5) * frag_uv_ratio);
-  float offset = min(1.0, distance(radius, time));
+  float offset = min(1.0, distance(radius, screenWarpTime));
   float displacement = pow(1.0 - offset, 30);
   vec2 adjusted_uv = (fragUv - 0.5) * (1.0 - displacement * 0.1) + 0.5;
   vec4 frag_color_and_depth = texture(texColorAndDepth, adjusted_uv);
@@ -90,8 +76,6 @@ void main() {
   vec2 horizon_direction_2d = normalize(vec2(zFar, -altitude_above_horizon));
   vec2 sky_direction_2d = normalize(vec2(length(sky_direction.xz), sky_direction.y));
 
-  // @todo make configurable
-  vec3 atmosphere_color = vec3(1.0, 0.8, 1.0);
   float depth_divisor = frag_color_and_depth.w == 1.0 ? zFar : zFar * 0.9;
   float atmosphere_factor = getLinearizedDepth(frag_color_and_depth.w, zNear, zFar) / depth_divisor;
 
@@ -99,7 +83,7 @@ void main() {
   atmosphere_factor = atmosphere_factor > 1 ? 1 : atmosphere_factor;
   atmosphere_factor = isnan(atmosphere_factor) ? 0 : atmosphere_factor;
 
-  out_color = mix(out_color, atmosphere_color, atmosphere_factor);
+  out_color = mix(out_color, atmosphereColor, atmosphere_factor);
 
   // @todo gamma correction/tone-mapping
   // out_color = pow(out_color, vec3(1 / 2.2)) - 0.2;

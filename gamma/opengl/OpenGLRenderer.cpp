@@ -771,8 +771,8 @@ namespace Gamma {
     shader.setVec3f("cameraPosition", ctx.activeCamera->position);
     shader.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
     shader.setMatrix4f("matInverseView", ctx.matInverseView);
-    shader.setVec3f("sunDirection", gmContext->scene.sunDirection);
-    shader.setVec3f("sunColor", gmContext->scene.sunColor);
+    shader.setVec3f("sunDirection", gmContext->scene.sky.sunDirection);
+    shader.setVec3f("sunColor", gmContext->scene.sky.sunColor);
 
     OpenGLScreenQuad::render();
   }
@@ -1040,6 +1040,8 @@ namespace Gamma {
   void OpenGLRenderer::renderSkybox() {
     glStencilFunc(GL_EQUAL, MeshType::SKYBOX, 0xFF);
 
+    auto& scene = gmContext->scene;
+
     if (ctx.cloudsTexture != nullptr) {
       ctx.cloudsTexture->bind();
     }
@@ -1050,9 +1052,9 @@ namespace Gamma {
     shaders.skybox.setVec3f("cameraPosition", ctx.activeCamera->position);
     shaders.skybox.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
     shaders.skybox.setMatrix4f("matInverseView", ctx.matInverseView);
-    shaders.skybox.setFloat("time", gmContext->scene.runningTime);
-    shaders.skybox.setVec3f("sunDirection", gmContext->scene.sunDirection);
-    shaders.skybox.setVec3f("sunColor", gmContext->scene.sunColor);
+    shaders.skybox.setFloat("time", scene.runningTime);
+    shaders.skybox.setVec3f("sunDirection", scene.sky.sunDirection);
+    shaders.skybox.setVec3f("sunColor", scene.sky.sunColor);
 
     OpenGLScreenQuad::render();
   }
@@ -1234,8 +1236,8 @@ namespace Gamma {
     shaders.refractiveGeometry.setMatrix4f("matView", ctx.matView);
     shaders.refractiveGeometry.setMatrix4f("matInverseView", ctx.matInverseView);
     shaders.refractiveGeometry.setVec3f("cameraPosition", camera.position);
-    shaders.refractiveGeometry.setVec3f("sunDirection", gmContext->scene.sunDirection);
-    shaders.refractiveGeometry.setVec3f("sunColor", gmContext->scene.sunColor);
+    shaders.refractiveGeometry.setVec3f("sunDirection", gmContext->scene.sky.sunDirection);
+    shaders.refractiveGeometry.setVec3f("sunColor", gmContext->scene.sky.sunColor);
 
     for (auto* glMesh : glMeshes) {
       if (glMesh->isMeshType(MeshType::REFRACTIVE)) {
@@ -1310,8 +1312,8 @@ namespace Gamma {
     shaders.water.setMatrix4f("matView", ctx.matView);
     shaders.water.setMatrix4f("matInverseView", ctx.matInverseView);
     shaders.water.setVec3f("cameraPosition", camera.position);
-    shaders.water.setVec3f("sunDirection", gmContext->scene.sunDirection);
-    shaders.water.setVec3f("sunColor", gmContext->scene.sunColor);
+    shaders.water.setVec3f("sunDirection", gmContext->scene.sky.sunDirection);
+    shaders.water.setVec3f("sunColor", gmContext->scene.sky.sunColor);
     shaders.water.setFloat("time", gmContext->scene.runningTime);
     shaders.water.setFloat("zNear", gmContext->scene.zNear);
     shaders.water.setFloat("zFar", gmContext->scene.zFar);
@@ -1396,7 +1398,8 @@ namespace Gamma {
     shaders.post.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
     shaders.post.setMatrix4f("matInverseView", ctx.matInverseView);
     shaders.post.setVec3f("cameraPosition", ctx.activeCamera->position);
-    shaders.post.setFloat("time", scene.runningTime - scene.fx.screenWarpTime);
+    shaders.post.setFloat("screenWarpTime", scene.runningTime - scene.fx.screenWarpTime);
+    shaders.post.setVec3f("atmosphereColor", scene.sky.atmosphereColor);
     shaders.post.setFloat("zNear", scene.zNear);
     shaders.post.setFloat("zFar", scene.zFar);
 
