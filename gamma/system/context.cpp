@@ -54,6 +54,8 @@ static void Gm_DisplayDevtools(GmContext* context) {
       auto resolutionLabel = "Resolution: " + String(resolution.width) + " x " + String(resolution.height);
       auto vertsLabel = "Verts: " + String(sceneStats.verts);
       auto trisLabel = "Tris: " + String(sceneStats.tris);
+      auto totalLightsLabel = "Lights: " + String(sceneStats.totalLights);
+      auto totalMeshesLabel = "Meshes: " + String(sceneStats.totalMeshes);
       auto memoryLabel = "GPU Memory: " + String(renderStats.gpuMemoryUsed) + "MB / " + String(renderStats.gpuMemoryTotal) + "MB";
 
       renderer.renderText(font_sm, fpsLabel.c_str(), 25, 25);
@@ -61,7 +63,9 @@ static void Gm_DisplayDevtools(GmContext* context) {
       renderer.renderText(font_sm, resolutionLabel.c_str(), 25, 75);
       renderer.renderText(font_sm, vertsLabel.c_str(), 25, 100);
       renderer.renderText(font_sm, trisLabel.c_str(), 25, 125);
-      renderer.renderText(font_sm, memoryLabel.c_str(), 25, 150);
+      renderer.renderText(font_sm, totalLightsLabel.c_str(), 25, 150);
+      renderer.renderText(font_sm, totalMeshesLabel.c_str(), 25, 175);
+      renderer.renderText(font_sm, memoryLabel.c_str(), 25, 200);
     }
 
     // Render user-defined debug messages

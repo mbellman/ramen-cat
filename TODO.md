@@ -1,6 +1,5 @@
 EDITOR
 ------
-* count # of active meshes
 
 BUGS
 ----

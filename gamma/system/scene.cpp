@@ -14,7 +14,7 @@ const GmSceneStats Gm_GetSceneStats(GmContext* context) {
   GmSceneStats stats;
 
   for (auto* mesh : context->scene.meshes) {
-    if (mesh->disabled) {
+    if (mesh->disabled || mesh->objects.totalVisible() == 0) {
       continue;
     }
 
@@ -27,7 +27,11 @@ const GmSceneStats Gm_GetSceneStats(GmContext* context) {
       stats.verts += mesh->vertices.size() * mesh->objects.totalVisible();
       stats.tris += (mesh->faceElements.size() / 3) * mesh->objects.totalVisible();
     }
+
+    stats.totalMeshes++;
   }
+
+  stats.totalLights = context->scene.lights.size();
 
   return stats;
 }

@@ -46,6 +46,8 @@ struct GmContext;
 struct GmSceneStats {
   u32 verts = 0;
   u32 tris = 0;
+  u32 totalLights = 0;
+  u32 totalMeshes = 0;
 };
 
 struct RenderSurface {
