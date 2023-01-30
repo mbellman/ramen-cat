@@ -67,6 +67,7 @@ struct GameState {
 
   bool isOnSolidGround = false;
   bool isMovingPlayerThisFrame = false;
+  bool isDashing = false;
   bool isRepositioningCamera = false;
 
   bool canPerformWallKick = false;

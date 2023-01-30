@@ -241,16 +241,17 @@ namespace MovementSystem {
     // Limit horizontal speed on ground
     {
       Vec3f horizontalVelocity = state.velocity.xz();
+      float speedLimit = state.isDashing ? MAXIMUM_HORIZONTAL_GROUND_SPEED_WHILE_DASHING : MAXIMUM_HORIZONTAL_GROUND_SPEED;
 
-      if (state.isOnSolidGround && horizontalVelocity.magnitude() > MAXIMUM_HORIZONTAL_GROUND_SPEED) {
-        Vec3f limitedHorizontalVelocity = horizontalVelocity.unit() * MAXIMUM_HORIZONTAL_GROUND_SPEED;
+      if (state.isOnSolidGround && horizontalVelocity.magnitude() > speedLimit) {
+        Vec3f limitedHorizontalVelocity = horizontalVelocity.unit() * speedLimit;
 
         state.velocity.x = limitedHorizontalVelocity.x;
         state.velocity.z = limitedHorizontalVelocity.z;
       }
     }
 
-    // Handle jump/wall kick actions
+    // Handle jump/wall kick/air dash actions
     {
       if (input.didPressKey(Key::SPACE)) {
         if (state.isOnSolidGround) {
@@ -289,13 +290,20 @@ namespace MovementSystem {
 
           state.canPerformAirDash = false;
           state.canPerformWallKick = true;
+          state.isDashing = true;
 
           context->scene.fx.screenWarpTime = state.frameStartTime;
         }
       }
     }
 
+    // Flag resets
     {
+      if (state.isDashing && state.isOnSolidGround && !state.isMovingPlayerThisFrame) {
+        // Stop dashing when we cease movement while dashing along the ground
+        state.isDashing = false;
+      }
+
       if (state.isOnSolidGround && state.velocity.xz().magnitude() > 1.f) {
         // If we were on solid ground, but any movement
         // occurs along the xz plane, all bets are off!

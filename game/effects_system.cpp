@@ -60,9 +60,7 @@ internal void handlePlayerParticles(GmContext* context, GameState& state, float 
         particle.scale.x == 0.f &&
         time_since(state.lastAirParticleSpawnTime) > AIR_PARTICLE_SPAWN_DELAY
       ) {
-        if (state.isOnSolidGround || state.canPerformAirDash) {
-          particle.scale = Vec3f(0.f);
-        } else {
+        if (state.isDashing) {
           #define fractf(v) (v - float(int(v)))
 
           Vec3f randomPositionWithinUnitSphere = Vec3f(Gm_Randomf(-1.f, 1.f), Gm_Randomf(-1.f, 1.f), Gm_Randomf(-1.f, 1.f)).unit();
@@ -82,6 +80,8 @@ internal void handlePlayerParticles(GmContext* context, GameState& state, float 
           particle.position = state.previousPlayerPosition + randomPositionWithinUnitSphere * PLAYER_RADIUS;
           particle.scale = Vec3f(2.f);
           particle.color = Vec3f(r, g, b);
+        } else {
+          particle.scale = Vec3f(0.f);
         }
 
         state.lastAirParticleSpawnTime = state.frameStartTime;
