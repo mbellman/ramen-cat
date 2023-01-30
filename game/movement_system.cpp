@@ -238,7 +238,10 @@ namespace MovementSystem {
     // Limit horizontal speed on ground
     {
       Vec3f horizontalVelocity = state.velocity.xz();
-      float speedLimit = state.isDashing ? MAXIMUM_HORIZONTAL_GROUND_SPEED_WHILE_DASHING : MAXIMUM_HORIZONTAL_GROUND_SPEED;
+      float speedLimit =
+        state.dashLevel == 2 ? MAXIMUM_HORIZONTAL_GROUND_SPEED_DASH_LEVEL_2 :
+        state.dashLevel == 1 ? MAXIMUM_HORIZONTAL_GROUND_SPEED_DASH_LEVEL_1 :
+        MAXIMUM_HORIZONTAL_GROUND_SPEED;
 
       if (state.isOnSolidGround && horizontalVelocity.magnitude() > speedLimit) {
         Vec3f limitedHorizontalVelocity = horizontalVelocity.unit() * speedLimit;
@@ -287,7 +290,11 @@ namespace MovementSystem {
 
           state.canPerformAirDash = false;
           state.canPerformWallKick = true;
-          state.isDashing = true;
+
+          // @todo configure upper limit
+          if (state.dashLevel < 2) {
+            state.dashLevel++;
+          }
 
           context->scene.fx.screenWarpTime = state.frameStartTime;
         }
@@ -296,9 +303,9 @@ namespace MovementSystem {
 
     // Flag resets
     {
-      if (state.isDashing && state.isOnSolidGround && !state.isMovingPlayerThisFrame) {
+      if (state.dashLevel > 0 && state.isOnSolidGround && !state.isMovingPlayerThisFrame) {
         // Stop dashing when we cease movement while dashing along the ground
-        state.isDashing = false;
+        state.dashLevel = 0;
       }
 
       if (state.isOnSolidGround && state.velocity.xz().magnitude() > 1.f) {

@@ -60,22 +60,39 @@ internal void handlePlayerParticles(GmContext* context, GameState& state, float 
         particle.scale.x == 0.f &&
         time_since(state.lastAirParticleSpawnTime) > AIR_PARTICLE_SPAWN_DELAY
       ) {
-        if (state.isDashing) {
+        if (state.dashLevel > 0) {
           #define fractf(v) (v - float(int(v)))
 
           Vec3f randomPositionWithinUnitSphere = Vec3f(Gm_Randomf(-1.f, 1.f), Gm_Randomf(-1.f, 1.f), Gm_Randomf(-1.f, 1.f)).unit();
+          float r, g, b;
 
-          float r = fractf(state.frameStartTime);
-          r *= 2.f;
-          if (r > 1.f) r = 2.f - r;
+          switch (state.dashLevel) {
+            // Dash level 1
+            default:
+            case 1: {
+              r = 1.f;
+              g = 0.75f;
+              b = 0.85f;
 
-          float g = fractf(state.frameStartTime + 0.33f);
-          g *= 2.f;
-          if (g > 1.f) g = 2.f - g;
+              break;
+            }
+            // Dash level 2
+            case 2: {
+              r = fractf(state.frameStartTime);
+              r *= 2.f;
+              if (r > 1.f) r = 2.f - r;
 
-          float b = fractf(state.frameStartTime + 0.66f);
-          b *= 2.f;
-          if (b > 1.f) b = 2.f - b;
+              g = fractf(state.frameStartTime + 0.33f);
+              g *= 2.f;
+              if (g > 1.f) g = 2.f - g;
+
+              b = fractf(state.frameStartTime + 0.66f);
+              b *= 2.f;
+              if (b > 1.f) b = 2.f - b;
+
+              break;
+            }
+          }
 
           particle.position = state.previousPlayerPosition + randomPositionWithinUnitSphere * PLAYER_RADIUS;
           particle.scale = Vec3f(2.f);

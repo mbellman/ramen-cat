@@ -67,11 +67,12 @@ struct GameState {
 
   bool isOnSolidGround = false;
   bool isMovingPlayerThisFrame = false;
-  bool isDashing = false;
   bool isRepositioningCamera = false;
 
   bool canPerformWallKick = false;
   bool canPerformAirDash = false;
+
+  u8 dashLevel = 0;
 
   // NPC handling
   NonPlayerCharacter* activeNpc = nullptr;
