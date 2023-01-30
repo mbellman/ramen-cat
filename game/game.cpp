@@ -124,8 +124,18 @@ void updateGame(GmContext* context, GameState& state, float dt) {
 
   // @temporary
   {
-    if (state.gameStartTime == 0.f && get_input().didPressKey(Key::SPACE)) {
-      state.gameStartTime = state.frameStartTime;
+    if (state.gameStartTime == 0.f) {
+      auto& input = get_input();
+
+      if (input.didPressKey(Key::SPACE)) {
+        state.gameStartTime = state.frameStartTime;
+      }
+
+      #if GAMMA_DEVELOPER_MODE
+        if (input.didPressKey(Key::ENTER)) {
+          state.gameStartTime = state.frameStartTime - 2.9f;
+        }
+      #endif
     }
   }
 
