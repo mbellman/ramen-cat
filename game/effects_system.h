@@ -6,4 +6,5 @@
 namespace EffectsSystem {
   void initializeGameEffects(GmContext* context, GameState& state);
   void handleGameEffects(GmContext* context, GameState& state, float dt);
+  void updateDayNightCycleLighting(GmContext* context, GameState& state);
 }

@@ -125,19 +125,7 @@ internal void handleDayNightCycle(GmContext* context, GameState& state, float dt
     state.dayNightCycleTime = Gm_Modf(state.dayNightCycleTime, Gm_PI);
   }
 
-  auto& scene = context->scene;
-  auto& light = light("day-night-light");
-  float daytimeFactor = sqrt(sinf(state.dayNightCycleTime));
-
-  light.direction.y = 0.05f + -1.f * (0.5f + 0.5f * sinf(state.dayNightCycleTime * 2.f - Gm_HALF_PI));
-  light.direction.z = cosf(state.dayNightCycleTime);
-  light.power = daytimeFactor;
-  light.color.y = daytimeFactor;
-  light.color.z = daytimeFactor;
-
-  scene.sky.sunDirection = light.direction.invert().unit();
-  scene.sky.sunColor = light.color * Vec3f(1.f, 0.95f, 0.4f);
-  scene.sky.atmosphereColor = Vec3f::lerp(Vec3f(1.f, 0.5f, 0.9f), Vec3f(1.f), daytimeFactor);
+  EffectsSystem::updateDayNightCycleLighting(context, state);
 }
 
 void EffectsSystem::initializeGameEffects(GmContext* context, GameState& state) {
@@ -154,4 +142,20 @@ void EffectsSystem::handleGameEffects(GmContext* context, GameState& state, floa
   handleDayNightCycle(context, state, dt);
 
   LOG_TIME();
+}
+
+void EffectsSystem::updateDayNightCycleLighting(GmContext* context, GameState& state) {
+  auto& scene = context->scene;
+  auto& sceneLight = light("scene-light");
+  float daytimeFactor = sqrt(sinf(state.dayNightCycleTime));
+
+  sceneLight.direction.y = 0.05f + -1.f * (0.5f + 0.5f * sinf(state.dayNightCycleTime * 2.f - Gm_HALF_PI));
+  sceneLight.direction.z = cosf(state.dayNightCycleTime);
+  sceneLight.power = daytimeFactor;
+  sceneLight.color.y = daytimeFactor;
+  sceneLight.color.z = daytimeFactor;
+
+  scene.sky.sunDirection = sceneLight.direction.invert().unit();
+  scene.sky.sunColor = sceneLight.color * Vec3f(1.f, 0.95f, 0.4f);
+  scene.sky.atmosphereColor = Vec3f::lerp(Vec3f(1.f, 0.5f, 0.9f), Vec3f(1.f), daytimeFactor);
 }

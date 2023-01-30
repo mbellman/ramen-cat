@@ -1,6 +1,5 @@
 EDITOR
 ------
-* allow changing time of day in editor
 * count # of active meshes
 
 BUGS

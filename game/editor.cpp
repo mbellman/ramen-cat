@@ -5,6 +5,7 @@
 #include "editor.h"
 #include "world.h"
 #include "collisions.h"
+#include "effects_system.h"
 #include "macros.h"
 
 using namespace Gamma;
@@ -802,11 +803,13 @@ internal void handlePowerCommand(const std::string& command) {
   }
 }
 
-internal void handleTimeCommand(GameState& state, const std::string& command) {
+internal void handleTimeCommand(GmContext* context, GameState& state, const std::string& command) {
   auto parts = Gm_SplitString(command, " ");
   float time = stof(parts[1]);
 
   state.dayNightCycleTime = time;
+
+  EffectsSystem::updateDayNightCycleLighting(context, state);
 }
 
 internal void saveCollisionPlanesData(GmContext* context) {
@@ -985,7 +988,7 @@ namespace Editor {
       }
 
       if (Gm_StringStartsWith(command, "time")) {
-        handleTimeCommand(state, command);
+        handleTimeCommand(context, state, command);
       }
     });
 
