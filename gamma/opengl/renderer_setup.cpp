@@ -71,10 +71,15 @@ namespace Gamma {
     shaders.probeReflector.fragment("./gamma/opengl/shaders/probe-reflector.frag.glsl");
     shaders.probeReflector.link();
 
-    shaders.particles.init();
-    shaders.particles.vertex("./gamma/opengl/shaders/particle-system.vert.glsl");
-    shaders.particles.fragment("./gamma/opengl/shaders/particle-system.frag.glsl");
-    shaders.particles.link();
+    shaders.particle.init();
+    shaders.particle.vertex("./gamma/opengl/shaders/particle.vert.glsl");
+    shaders.particle.fragment("./gamma/opengl/shaders/particle.frag.glsl");
+    shaders.particle.link();
+
+    shaders.gpuParticle.init();
+    shaders.gpuParticle.vertex("./gamma/opengl/shaders/gpu-particle.vert.glsl");
+    shaders.gpuParticle.fragment("./gamma/opengl/shaders/particle.frag.glsl");
+    shaders.gpuParticle.link();
 
     shaders.lightingPrepass.init();
     shaders.lightingPrepass.vertex("./gamma/opengl/shaders/quad.vert.glsl");
@@ -201,7 +206,7 @@ namespace Gamma {
 
     shaders.geometry.destroy();
     shaders.probeReflector.destroy();
-    shaders.particles.destroy();
+    shaders.gpuParticle.destroy();
     shaders.lightingPrepass.destroy();
     shaders.directionalLight.destroy();
     shaders.spotLight.destroy();

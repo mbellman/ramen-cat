@@ -417,7 +417,7 @@ namespace Gamma {
   Mesh* Mesh::Particles() {
     auto* mesh = new Mesh();
 
-    mesh->type = MeshType::PARTICLE_SYSTEM;
+    mesh->type = MeshType::PARTICLES;
 
     mesh->vertices.push_back(Vertex());
 

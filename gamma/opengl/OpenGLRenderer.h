@@ -30,7 +30,8 @@ namespace Gamma {
     OpenGLShader geometry;
     OpenGLShader foliage;
     OpenGLShader probeReflector;
-    OpenGLShader particles;
+    OpenGLShader gpuParticle;
+    OpenGLShader particle;
     OpenGLShader lightingPrepass;
     OpenGLShader directionalLight;
     OpenGLShader spotLight;
@@ -136,7 +137,7 @@ namespace Gamma {
     void copyEmissiveObjects();
     void renderIndirectLight();
     void renderSkybox();
-    void renderParticleSystems();
+    void renderParticles();
     void renderReflections();
     void renderRefractiveGeometry();
     void renderWater();

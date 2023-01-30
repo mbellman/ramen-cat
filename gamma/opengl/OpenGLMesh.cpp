@@ -154,14 +154,19 @@ namespace Gamma {
       glBufferData(GL_ARRAY_BUFFER, transformedVertices.size() * sizeof(Vertex), transformedVertices.data(), GL_DYNAMIC_DRAW);
     }
 
-    if (
+    bool shouldBufferInstances = (
+      // Buffer instances if we haven't created the buffers at all yet
       !hasCreatedInstanceBuffers ||
-      (mesh.type != MeshType::PARTICLE_SYSTEM && mesh.objects.changed)
-    ) {
-      // Buffer instance colors/matrices
+      // Buffer instances for non-GPU particle meshes when any objects are changed
+      ((mesh.type != MeshType::PARTICLES || !mesh.particles.useGpuParticles) && mesh.objects.changed)
+    );
+
+    if (shouldBufferInstances) {
+      // Buffer colors
       glBindBuffer(GL_ARRAY_BUFFER, buffers[GLBuffer::COLOR]);
       glBufferData(GL_ARRAY_BUFFER, mesh.objects.totalVisible() * sizeof(pVec4), mesh.objects.getColors(), GL_DYNAMIC_DRAW);
 
+      // Buffer matrices
       glBindBuffer(GL_ARRAY_BUFFER, buffers[GLBuffer::MATRIX]);
       glBufferData(GL_ARRAY_BUFFER, mesh.objects.totalVisible() * sizeof(Matrix4f), mesh.objects.getMatrices(), GL_DYNAMIC_DRAW);
 
@@ -206,7 +211,7 @@ namespace Gamma {
 
         delete[] commands;
       }
-    } else if (mesh.type == MeshType::PARTICLE_SYSTEM) {
+    } else if (mesh.type == MeshType::PARTICLES) {
       // @todo description
       glBindBuffer(GL_ARRAY_BUFFER, buffers[GLBuffer::VERTEX]);
 

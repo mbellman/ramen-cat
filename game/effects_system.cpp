@@ -8,9 +8,7 @@ internal void initializePlayerParticles(GmContext* context) {
   add_mesh("ground-particle", TOTAL_GROUND_PARTICLES, Mesh::Sphere(6));
   mesh("ground-particle")->emissivity = 0.5f;
 
-  add_mesh("air-particle", TOTAL_AIR_PARTICLES, Mesh::Sphere(5));
-  mesh("air-particle")->emissivity = 0.8f;
-  mesh("air-particle")->canCastShadows = false;
+  add_mesh("dash-particle", TOTAL_DASH_PARTICLES, Mesh::Particles());
 
   for (u8 i = 0; i < TOTAL_GROUND_PARTICLES; i++) {
     auto& particle = create_object_from("ground-particle");
@@ -20,8 +18,8 @@ internal void initializePlayerParticles(GmContext* context) {
     commit(particle);
   }
 
-  for (u8 i = 0; i < TOTAL_AIR_PARTICLES; i++) {
-    auto& particle = create_object_from("air-particle");
+  for (u8 i = 0; i < TOTAL_DASH_PARTICLES; i++) {
+    auto& particle = create_object_from("dash-particle");
 
     particle.scale = Vec3f(0.f);
 
@@ -55,10 +53,10 @@ internal void handlePlayerParticles(GmContext* context, GameState& state, float 
       }
     }
 
-    for (auto& particle : objects("air-particle")) {
+    for (auto& particle : objects("dash-particle")) {
       if (
         particle.scale.x == 0.f &&
-        time_since(state.lastAirParticleSpawnTime) > AIR_PARTICLE_SPAWN_DELAY
+        time_since(state.lastAirParticleSpawnTime) > DASH_PARTICLE_SPAWN_DELAY
       ) {
         if (state.dashLevel > 0) {
           #define fractf(v) (v - float(int(v)))
@@ -71,8 +69,8 @@ internal void handlePlayerParticles(GmContext* context, GameState& state, float 
             default:
             case 1: {
               r = 1.f;
-              g = 0.75f;
-              b = 0.85f;
+              g = 0.5f;
+              b = 0.8f;
 
               break;
             }
@@ -95,7 +93,7 @@ internal void handlePlayerParticles(GmContext* context, GameState& state, float 
           }
 
           particle.position = state.previousPlayerPosition + randomPositionWithinUnitSphere * PLAYER_RADIUS;
-          particle.scale = Vec3f(2.f);
+          particle.scale = Vec3f(DASH_PARTICLE_SIZE);
           particle.color = Vec3f(r, g, b);
         } else {
           particle.scale = Vec3f(0.f);
@@ -124,8 +122,8 @@ internal void handlePlayerParticles(GmContext* context, GameState& state, float 
       commit(particle);
     }
 
-    for (auto& particle : objects("air-particle")) {
-      particle.scale -= Vec3f(2.f * dt);
+    for (auto& particle : objects("dash-particle")) {
+      particle.scale -= Vec3f(DASH_PARTICLE_SIZE * dt);
 
       if (particle.scale.x < 0.f) {
         particle.scale = Vec3f(0.f);

@@ -95,10 +95,10 @@ namespace Gamma {
      */
     EMISSIVE = 0x50,
     /**
-     * Defines a set of GPU-accelerated particles, with custom
-     * parameters for controlling particle behavior.
+     * Defines translucent particles, rendered as points with
+     * radial gradients.
      */
-    PARTICLE_SYSTEM = 0xA0,
+    PARTICLES = 0xA0,
     /**
      * Defines translucent Meshes which refract and lens the
      * objects and geometry behind them.
@@ -162,12 +162,12 @@ namespace Gamma {
   };
 
   /**
-   * ParticleSystem
-   * --------------
+   * Particles
+   * ---------
    *
    * @todo description
    */
-  struct ParticleSystem {
+  struct Particles {
     Vec3f spawn;
     float spread = 100.f;
     float minimumRadius = 1.f;
@@ -177,6 +177,7 @@ namespace Gamma {
     float sizeVariation = 0.f;
     float deviation = 0.f;
     std::vector<Vec3f> path;
+    bool useGpuParticles = false;
     bool isCircuit = true;
   };
 
@@ -240,9 +241,9 @@ namespace Gamma {
      */
     bool canCastShadows = true;
     /**
-     * Configuration for particle system meshes.
+     * Configuration for particle meshes.
      */
-    ParticleSystem particleSystem;
+    Particles particles;
     /**
      * Configuration for foliage meshes.
      */

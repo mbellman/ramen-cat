@@ -56,8 +56,10 @@ constexpr static float CAMERA_FOV_SPEED_INTERVAL = 500.f;
  * -----------------
  */
 constexpr static u16 TOTAL_GROUND_PARTICLES = 30;
-constexpr static u16 TOTAL_AIR_PARTICLES = 100;
+constexpr static u16 TOTAL_DASH_PARTICLES = 100;
 constexpr static float GROUND_PARTICLE_SPAWN_DELAY = 1.f / float(TOTAL_GROUND_PARTICLES);
-constexpr static float AIR_PARTICLE_SPAWN_DELAY = 1.f / float(TOTAL_AIR_PARTICLES);
+constexpr static float DASH_PARTICLE_SPAWN_DELAY = 1.f / float(TOTAL_DASH_PARTICLES);
+
+constexpr static float DASH_PARTICLE_SIZE = 3.5f;
 
 constexpr static float INITIAL_DAY_NIGHT_CYCLE_TIME = 2.f;

@@ -450,8 +450,8 @@ namespace Gamma {
 
     renderSkybox();
 
-    // @todo if (ctx.hasParticleSystems)
-    renderParticleSystems();
+    // @todo if (ctx.hasgpuParticles)
+    renderParticles();
 
     if (ctx.hasReflectiveObjects && Gm_IsFlagEnabled(GammaFlags::RENDER_REFLECTIONS)) {
       renderReflections();
@@ -622,15 +622,20 @@ namespace Gamma {
         // @todo glMultiDrawElementsIndirect for static world geometry
         // (will require a handful of other changes to mesh organization/data buffering)
         for (auto* glMesh : glMeshes) {
-          auto* sourceMesh = glMesh->getSourceMesh();
-          auto& foliage = sourceMesh->foliage;
+          auto& mesh = *glMesh->getSourceMesh();
+
+          if (mesh.type == MeshType::PARTICLES) {
+            continue;
+          }
+
+          auto& foliage = mesh.foliage;
 
           shader.setInt("foliage.type", foliage.type);
           shader.setFloat("foliage.speed", foliage.speed);
           shader.setFloat("foliage.factor", foliage.factor);
           shader.setBool("hasTexture", glMesh->hasTexture());
 
-          if (sourceMesh->canCastShadows && sourceMesh->maxCascade >= (cascade + 1)) {
+          if (mesh.canCastShadows && mesh.maxCascade >= (cascade + 1)) {
             glMesh->render(ctx.primitiveMode, true);
           }
         }
@@ -753,7 +758,7 @@ namespace Gamma {
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glEnable(GL_STENCIL_TEST);
-    glStencilFunc(GL_LESS, MeshType::PARTICLE_SYSTEM, 0xFF);
+    glStencilFunc(GL_LESS, MeshType::PARTICLES, 0xFF);
     glStencilMask(0x00);
   }
 
@@ -950,7 +955,7 @@ namespace Gamma {
 
     // Restore the lighting stencil function, since we
     // may render indirect lighting after this
-    glStencilFunc(GL_LESS, MeshType::PARTICLE_SYSTEM, 0xFF);
+    glStencilFunc(GL_LESS, MeshType::PARTICLES, 0xFF);
   }
 
   /**
@@ -1062,49 +1067,70 @@ namespace Gamma {
   /**
    * @todo description
    */
-  void OpenGLRenderer::renderParticleSystems() {
+  void OpenGLRenderer::renderParticles() {
     glEnable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
-    glStencilFunc(GL_ALWAYS, MeshType::PARTICLE_SYSTEM, 0xFF);
+    glStencilFunc(GL_ALWAYS, MeshType::PARTICLES, 0xFF);
     glStencilMask(0xFF);
 
-    shaders.particles.use();
-    shaders.particles.setMatrix4f("matProjection", ctx.matProjection);
-    shaders.particles.setMatrix4f("matView", ctx.matView);
-    shaders.particles.setFloat("time", gmContext->scene.runningTime);
+    // Render GPU particles
+    {
+      shaders.gpuParticle.use();
+      shaders.gpuParticle.setMatrix4f("matProjection", ctx.matProjection);
+      shaders.gpuParticle.setMatrix4f("matView", ctx.matView);
+      shaders.gpuParticle.setFloat("time", gmContext->scene.runningTime);
 
-    for (auto& glMesh : glMeshes) {
-      if (glMesh->isMeshType(MeshType::PARTICLE_SYSTEM)) {
-        auto& particles = glMesh->getSourceMesh()->particleSystem;
+      for (auto& glMesh : glMeshes) {        
+        auto& mesh = *glMesh->getSourceMesh();
 
-        // @optimize it would be preferable to use a UBO for particle systems,
-        // and simply set the particle system ID uniform here. we're doing
-        // too many uniform updates as things currently stand.
+        if (mesh.type == MeshType::PARTICLES && mesh.particles.useGpuParticles) {
+          auto& particles = mesh.particles;
 
-        // Set particle system parameters
-        shaders.particles.setInt("particles.total", glMesh->getObjectCount());
-        shaders.particles.setVec3f("particles.spawn", particles.spawn);
-        shaders.particles.setFloat("particles.spread", particles.spread);
-        shaders.particles.setFloat("particles.minimum_radius", particles.minimumRadius);
-        shaders.particles.setFloat("particles.median_speed", particles.medianSpeed);
-        shaders.particles.setFloat("particles.speed_variation", particles.speedVariation);
-        shaders.particles.setFloat("particles.median_size", particles.medianSize);
-        shaders.particles.setFloat("particles.size_variation", particles.sizeVariation);
-        shaders.particles.setFloat("particles.deviation", particles.deviation);
+          // @optimize it would be preferable to use a UBO for particle systems,
+          // and simply set the particle system ID uniform here. we're doing
+          // too many uniform updates as things currently stand.
 
-        // Set particle path parameters
-        constexpr static u32 MAX_PATH_POINTS = 10;
-        u32 totalPathPoints = std::min((u32)particles.path.size(), (u32)MAX_PATH_POINTS);
+          // Set particle system parameters
+          shaders.gpuParticle.setInt("particles.total", glMesh->getObjectCount());
+          shaders.gpuParticle.setVec3f("particles.spawn", particles.spawn);
+          shaders.gpuParticle.setFloat("particles.spread", particles.spread);
+          shaders.gpuParticle.setFloat("particles.minimum_radius", particles.minimumRadius);
+          shaders.gpuParticle.setFloat("particles.median_speed", particles.medianSpeed);
+          shaders.gpuParticle.setFloat("particles.speed_variation", particles.speedVariation);
+          shaders.gpuParticle.setFloat("particles.median_size", particles.medianSize);
+          shaders.gpuParticle.setFloat("particles.size_variation", particles.sizeVariation);
+          shaders.gpuParticle.setFloat("particles.deviation", particles.deviation);
 
-        for (u8 i = 0; i < totalPathPoints; i++) {
-          shaders.particles.setVec3f("path.points[" + std::to_string(i) + "]", particles.path[i]);
+          // Set particle path parameters
+          constexpr static u32 MAX_PATH_POINTS = 10;
+          u32 totalPathPoints = std::min((u32)particles.path.size(), (u32)MAX_PATH_POINTS);
+
+          for (u8 i = 0; i < totalPathPoints; i++) {
+            shaders.gpuParticle.setVec3f("path.points[" + std::to_string(i) + "]", particles.path[i]);
+          }
+
+          shaders.gpuParticle.setInt("path.total", totalPathPoints);
+          shaders.gpuParticle.setBool("path.is_circuit", particles.isCircuit);
+
+          glMesh->render(ctx.primitiveMode);
         }
+      }
+    }
 
-        shaders.particles.setInt("path.total", totalPathPoints);
-        shaders.particles.setBool("path.is_circuit", particles.isCircuit);
+    // Render instanced particle meshes
+    {
+      shaders.particle.use();
 
-        glMesh->render(ctx.primitiveMode);
+      shaders.particle.setMatrix4f("matProjection", ctx.matProjection);
+      shaders.particle.setMatrix4f("matView", ctx.matView);
+
+      for (auto& glMesh : glMeshes) {
+        auto& mesh = *glMesh->getSourceMesh();
+
+        if (mesh.type == MeshType::PARTICLES && !mesh.particles.useGpuParticles) {
+          glMesh->render(ctx.primitiveMode);
+        }
       }
     }
 

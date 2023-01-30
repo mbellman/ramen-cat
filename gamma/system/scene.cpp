@@ -46,7 +46,7 @@ void Gm_AddMesh(GmContext* context, const std::string& meshName, u16 maxInstance
   meshMap.emplace(meshName, mesh);
   meshes.push_back(mesh);
 
-  if (mesh->type == MeshType::PARTICLE_SYSTEM) {
+  if (mesh->type == MeshType::PARTICLES && mesh->particles.useGpuParticles) {
     for (u16 i = 0; i < maxInstances; i++) {
       Gm_CreateObjectFrom(context, meshName);
     }
