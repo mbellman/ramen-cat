@@ -4,7 +4,6 @@ EDITOR
 
 BUGS
 ----
-* prevent crashes on commands without args
 * fix flying off downward slopes
 * imported models are inverted along X
 * rotated collision plane wall kick height

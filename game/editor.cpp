@@ -752,15 +752,23 @@ internal void handleColorCommand(GmContext* context, const std::string& command)
   // @todo allow color edits to be undone
   using namespace std;
 
-  auto colorString = Gm_SplitString(command, " ")[1];
-  auto parts = Gm_SplitString(colorString, ",");
+  Vec3f color;
 
-  // @todo put this in Gm_ParseVec3f, use that here
-  while (parts.size() < 3) {
-    parts.push_back(parts.back());
+  try {
+    auto colorString = Gm_SplitString(command, " ")[1];
+    auto parts = Gm_SplitString(colorString, ",");
+
+    // @todo put this in Gm_ParseVec3f, use that here
+    while (parts.size() < 3) {
+      parts.push_back(parts.back());
+    }
+
+    color = Vec3f(stof(parts[0]), stof(parts[1]), stof(parts[2]));
+  } catch (const std::exception& e) {
+    Console::warn("Invalid color specified");
+
+    return;
   }
-
-  auto color = Vec3f(stof(parts[0]), stof(parts[1]), stof(parts[2]));
 
   if (editor.isObjectSelected) {
     auto* liveSelectedObject = get_object_by_record(editor.selectedObject._record);
@@ -776,9 +784,24 @@ internal void handleColorCommand(GmContext* context, const std::string& command)
   }
 }
 
-internal void handleMeshCommand(const std::string& command) {
-  auto parts = Gm_SplitString(command, " ");
-  auto searchTerm = parts[1];
+internal void handleMeshCommand(GmContext* context, const std::string& command) {
+  std::string searchTerm;
+
+  try {
+    auto parts = Gm_SplitString(command, " ");
+
+    if (parts.size() == 1) {
+      Console::warn("Invalid mesh command");
+
+      return;
+    }
+
+    searchTerm = parts[1];
+  } catch (const std::exception& e) {
+    Console::warn("Invalid mesh command");
+
+    return;
+  }
 
   for (u8 i = 0; i < World::meshAssets.size(); i++) {
     auto& asset = World::meshAssets[i];
@@ -786,7 +809,13 @@ internal void handleMeshCommand(const std::string& command) {
     if (Gm_StringContains(asset.name, searchTerm)) {
       editor.mode = EditorMode::OBJECTS;
       editor.currentSelectedMeshIndex = i;
-      editor.isObjectSelected = false;
+
+      if (editor.isObjectSelected) {
+        restoreObject(context, editor.selectedObject);
+
+        editor.isObjectSelected = false;
+      }
+
       editor.selectedLight = nullptr;
 
       break;
@@ -796,16 +825,34 @@ internal void handleMeshCommand(const std::string& command) {
 
 internal void handlePowerCommand(const std::string& command) {
   if (editor.mode == EditorMode::LIGHTS && editor.selectedLight != nullptr) {
-    auto parts = Gm_SplitString(command, " ");
-    float power = stof(parts[1]);
+    float power;
+
+    try {
+      auto parts = Gm_SplitString(command, " ");
+
+      power = stof(parts[1]);
+    } catch (const std::exception& e) {
+      Console::warn("Invalid power command");
+
+      return;
+    }
 
     editor.selectedLight->power = power;
   }
 }
 
 internal void handleTimeCommand(GmContext* context, GameState& state, const std::string& command) {
-  auto parts = Gm_SplitString(command, " ");
-  float time = stof(parts[1]);
+  float time;
+
+  try {
+    auto parts = Gm_SplitString(command, " ");
+
+    time = stof(parts[1]);
+  } catch (const std::exception& e) {
+    Console::warn("Invalid time command");
+
+    return;
+  }
 
   state.dayNightCycleTime = time;
 
@@ -978,10 +1025,10 @@ namespace Editor {
 
     context->commander.on<std::string>("command", [&state, context](std::string command) {
       if (state.isEditorEnabled) {
-        if (Gm_StringStartsWith(command, "color ")) {
+        if (Gm_StringStartsWith(command, "color")) {
           handleColorCommand(context, command);
         } else if (Gm_StringStartsWith(command, "mesh")) {
-          handleMeshCommand(command);
+          handleMeshCommand(context, command);
         } else if (Gm_StringStartsWith(command, "power")) {
           handlePowerCommand(command);
         }
