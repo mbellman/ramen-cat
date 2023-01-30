@@ -1,6 +1,6 @@
 EDITOR
 ------
-* SHIFT + mousedrag should center on the collision point
+* allow changing time of day in editor
 * count # of active meshes
 
 BUGS

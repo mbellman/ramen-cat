@@ -940,7 +940,12 @@ namespace Editor {
 
         if (state.isEditorEnabled) {
           editor.currentActionType = ActionType::POSITION;
-          editor.isObjectSelected = false;
+
+          if (editor.isObjectSelected) {
+            restoreObject(context, editor.selectedObject);
+
+            editor.isObjectSelected = false;
+          }
 
           if (mesh("platform")->disabled) {
             editor.mode = EditorMode::OBJECTS;
