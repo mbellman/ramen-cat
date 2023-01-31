@@ -23,6 +23,7 @@ ASSETS
 
 GAME
 ----
+* turn camera after wall kicks
 * area titles
 * npc model improvements/highlight when nearby
 * collectibles

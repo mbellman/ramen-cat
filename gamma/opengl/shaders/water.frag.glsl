@@ -77,9 +77,9 @@ vec3 getNormal(vec3 world_position) {
   n += createDirectionalWave(wx, wz, vec2(0.2, 1), 1, 0.03, 0.5);
   n += createDirectionalWave(wx, wz, vec2(1, 0.6), 0.7, 0.03, 0.2);
 
-  n += vec2(simplex_noise(vec2(t * 0.1 + wx * 0.001, t * 0.1 + wz * 0.001))) * 0.6;
-  n += vec2(simplex_noise(vec2(t * 0.1 - wx * 0.003, t * 0.1 + wz * 0.003))) * 0.4;
-  n += vec2(simplex_noise(vec2(t * 0.1 + wx * 0.007, t * 0.1 - wz * 0.007))) * 0.3;
+  n += vec2(simplex_noise(vec2(t * 0.03 + wx * 0.0005, t * 0.03 + wz * 0.0005))) * 0.2;
+  n += vec2(simplex_noise(vec2(t * 0.1 - wx * 0.001, t * 0.1 + wz * 0.001))) * 0.3;
+  n += vec2(simplex_noise(vec2(t * 0.1 + wx * 0.007, t * 0.1 - wz * 0.007))) * 0.2;
 
   n *= 0.15;
 
@@ -143,11 +143,12 @@ void main() {
   }
 
   vec4 refracted_color_and_depth = texture(texColorAndDepth, refracted_color_coords);
+  vec3 refraction_color = refracted_color_and_depth.rgb;
   vec3 water_color = vec3(0);
   
   if (refracted_color_and_depth.w < gl_FragCoord.z) {
     // Don't refract geometry in front of the water surface
-    refracted_color_and_depth.rgb = sample_color_and_depth.rgb;
+    refraction_color = sample_color_and_depth.rgb;
   }
 
   // Reflection
@@ -187,20 +188,20 @@ void main() {
   }
 
   // @todo make configurable
-  const vec3 BASE_WATER_COLOR = vec3(0, 0.1, 0.2);
+  const vec3 BASE_WATER_COLOR = vec3(0, 0.25, 0.4);
 
+  // Diminish reflections based on sky intensity
   reflection_color = mix(BASE_WATER_COLOR, reflection_color, sky_intensity);
 
-  water_color = mix(reflection_color, refracted_color_and_depth.rgb, fresnel_factor);
-  water_color *= fragColor;
-
-  // @todo make water color configurable
-  float plane_fresnel = dot(normalize(fragNormal), normalized_fragment_to_camera);
-
-  // @hack Add in the base water color, proportional to fresnel
+  water_color = mix(refraction_color, reflection_color, (1.0 - fresnel_factor));
   water_color += BASE_WATER_COLOR;
+
   // @hack Fade to aquamarine at grazing angles
-  water_color += vec3(0, 1, 1) * pow(1.0 - plane_fresnel, 15);
+  {
+    float plane_fresnel = dot(normalize(fragNormal), normalized_fragment_to_camera);
+
+    water_color += vec3(0, 1, 1) * pow(1.0 - plane_fresnel, 15);
+  }
 
   out_color_and_depth = vec4(water_color, gl_FragCoord.z);
 }

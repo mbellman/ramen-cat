@@ -21,7 +21,7 @@ vec4 getSkyColor(vec3 sky_direction, vec3 sun_direction, vec3 sun_color, vec3 at
   vec3 atmosphere = atmosphere_color * pow(cos_y, 100);
 
   vec3 sky_color = daylight + atmosphere + sunlight;
-  float sky_brightness = (0.3 + pow(max(0.0, sun_radius_factor), 50)) / 1.3;
+  float sky_brightness = (0.1 + pow(max(0.0, sun_radius_factor), 50)) / 1.1;
 
   return vec4(sky_color, sky_brightness);
 }

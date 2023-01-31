@@ -1370,8 +1370,8 @@ namespace Gamma {
 
     // Now that the current target accumulation buffer contains
     // the rendered refractive geometry, swap the buffers so we
-    // can write refractions back into the original target
-    // accumulation buffer
+    // can write water back into the original target accumulation
+    // buffer
     swapAccumulationBuffers();
 
     ctx.accumulationSource->read();
