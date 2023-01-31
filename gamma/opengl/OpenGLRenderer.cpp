@@ -450,9 +450,6 @@ namespace Gamma {
 
     renderSkybox();
 
-    // @todo if (ctx.hasgpuParticles)
-    renderParticles();
-
     if (ctx.hasReflectiveObjects && Gm_IsFlagEnabled(GammaFlags::RENDER_REFLECTIONS)) {
       renderReflections();
     }
@@ -464,6 +461,9 @@ namespace Gamma {
     if (ctx.hasWaterObjects) {
       renderWater();
     }
+
+    // @todo if (ctx.hasgpuParticles)
+    renderParticles();
 
     if (ctx.hasSilhouetteObjects) {
       renderSilhouettes();
@@ -1078,6 +1078,7 @@ namespace Gamma {
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
     glStencilFunc(GL_ALWAYS, MeshType::PARTICLES, 0xFF);
+    glBlendFuncSeparate(GL_ONE, GL_ONE, GL_ZERO, GL_ONE);
     glStencilMask(0xFF);
 
     // Render GPU particles

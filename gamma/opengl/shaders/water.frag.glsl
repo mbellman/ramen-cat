@@ -187,7 +187,7 @@ void main() {
   }
 
   // @todo make configurable
-  const vec3 BASE_WATER_COLOR = vec3(0, 0.3, 0.5);
+  const vec3 BASE_WATER_COLOR = vec3(0, 0.1, 0.2);
 
   reflection_color = mix(BASE_WATER_COLOR, reflection_color, sky_intensity);
 
@@ -198,7 +198,7 @@ void main() {
   float plane_fresnel = dot(normalize(fragNormal), normalized_fragment_to_camera);
 
   // @hack Add in the base water color, proportional to fresnel
-  water_color += BASE_WATER_COLOR * fresnel_factor;
+  water_color += BASE_WATER_COLOR;
   // @hack Fade to aquamarine at grazing angles
   water_color += vec3(0, 1, 1) * pow(1.0 - plane_fresnel, 15);
 

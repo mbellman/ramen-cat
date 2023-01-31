@@ -22,11 +22,8 @@ layout (location = 0) out vec4 out_color_and_depth;
 
 const vec3 sky_sample_offsets[] = {
   vec3(1, 0, 0),
-  vec3(-1, 0, 0),
+  normalize(vec3(5, 1, 0)),
   vec3(0, 1, 0),
-  vec3(0, -1, 0),
-  vec3(0, 0, 1),
-  vec3(0, 0, -1)
 };
 
 vec3 getIndirectSkyLightContribution(vec3 fragment_position, vec3 fragment_normal, float roughness) {
@@ -34,19 +31,20 @@ vec3 getIndirectSkyLightContribution(vec3 fragment_position, vec3 fragment_norma
   const float indirect_sky_light_intensity = 0.5;
   vec3 diffuse_contribution = vec3(0);
 
-  for (int i = 0; i < 6; i++) {
+  for (int i = 0; i < 3; i++) {
     vec3 sky_direction = sky_sample_offsets[i];
 
     diffuse_contribution += getSkyColor(sky_direction, sunDirection, sunColor, atmosphereColor, altitude).rgb * indirect_sky_light_intensity;
   }
 
-  diffuse_contribution /= 6.0;
+  diffuse_contribution /= 3.0;
 
   vec3 camera_to_fragment = fragment_position - cameraPosition;
   vec3 reflection_vector = normalize(reflect(camera_to_fragment, fragment_normal));
   vec3 specular_contribution = getSkyColor(reflection_vector, sunDirection, sunColor, atmosphereColor, altitude).rgb;
+  float alpha = pow(1.0 - roughness, 5);
 
-  return mix(diffuse_contribution, specular_contribution, pow(1.0 - roughness, 3));
+  return mix(diffuse_contribution, specular_contribution, alpha);
 }
 
 void main() {
