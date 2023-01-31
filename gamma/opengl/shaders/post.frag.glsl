@@ -62,11 +62,6 @@ void main() {
   #endif
 
   // @todo make atmospherics optional via a flag
-  // @bug This produces an outline on geometry near the horizon line due to
-  // accumulation buffer texture filtering. If we disable that, the general
-  // visual quality is notably worse until we add FXAA or similar. We can
-  // also do an atmosphere pass in the skybox shader, and then add a remaining
-  // depth/height-based atmospheric scattering effect here.
   vec3 sky_position = getWorldPosition(1.0, adjusted_uv, matInverseProjection, matInverseView) - cameraPosition;
   vec3 sky_direction = normalize(sky_position);
 
@@ -76,14 +71,16 @@ void main() {
   vec2 horizon_direction_2d = normalize(vec2(zFar, -altitude_above_horizon));
   vec2 sky_direction_2d = normalize(vec2(length(sky_direction.xz), sky_direction.y));
 
-  float depth_divisor = frag_color_and_depth.w == 1.0 ? zFar : zFar * 0.9;
+  float depth_divisor = frag_color_and_depth.w == 1.0 ? zFar : zFar * 0.85;
   float atmosphere_factor = getLinearizedDepth(frag_color_and_depth.w, zNear, zFar) / depth_divisor;
 
   atmosphere_factor *= pow(dot(sky_direction_2d, horizon_direction_2d), 100);
   atmosphere_factor = atmosphere_factor > 1 ? 1 : atmosphere_factor;
   atmosphere_factor = isnan(atmosphere_factor) ? 0 : atmosphere_factor;
 
-  out_color = mix(out_color, atmosphereColor, atmosphere_factor);
+  vec3 atmosphere_color = mix(atmosphereColor, vec3(1), 0.5);
+
+  out_color = mix(out_color, atmosphere_color, atmosphere_factor);
 
   // @todo gamma correction/tone-mapping
   // out_color = pow(out_color, vec3(1 / 2.2)) - 0.2;

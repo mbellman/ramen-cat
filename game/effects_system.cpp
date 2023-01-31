@@ -173,6 +173,6 @@ void EffectsSystem::updateDayNightCycleLighting(GmContext* context, GameState& s
 
   scene.sky.sunDirection = sceneLight.direction.invert().unit();
   scene.sky.sunColor = sceneLight.color * Vec3f(1.f, 0.95f, 0.4f);
-  scene.sky.atmosphereColor = Vec3f::lerp(Vec3f(1.f, 0.5f, 0.9f), Vec3f(1.f), daytimeFactor);
+  scene.sky.atmosphereColor = Vec3f::lerp(Vec3f(1.f, 0.1f, 0.5f), Vec3f(1.f), daytimeFactor);
   scene.sky.altitude = camera.position.y - -2000.f;
 }

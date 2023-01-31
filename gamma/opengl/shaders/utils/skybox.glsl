@@ -1,7 +1,7 @@
 const float CLOUD_MOVEMENT_RATE = 0.001;
 
 vec4 getSkyColor(vec3 sky_direction, vec3 sun_direction, vec3 sun_color, vec3 atmosphere_color, float altitude) {
-  float sun_brightness = 2.0;
+  float sun_brightness = 1.5;
   float altitude_y_offset = altitude / 50000.0;
 
   float y = sky_direction.y + altitude_y_offset;
@@ -18,7 +18,7 @@ vec4 getSkyColor(vec3 sky_direction, vec3 sun_direction, vec3 sun_color, vec3 at
   float sun_radius_factor = dot(sky_direction, sun_direction);
   vec3 sunlight = sun_color * sun_brightness * pow(max(sun_radius_factor, 0.0), 100);
 
-  vec3 atmosphere = atmosphere_color * pow(cos(y), 100);
+  vec3 atmosphere = atmosphere_color * pow(cos_y, 100);
 
   vec3 sky_color = daylight + atmosphere + sunlight;
   float sky_brightness = (0.3 + pow(max(0.0, sun_radius_factor), 50)) / 1.3;

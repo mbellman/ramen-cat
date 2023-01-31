@@ -20,8 +20,10 @@ layout (location = 0) out vec4 out_color_and_depth;
 #include "utils/skybox.glsl";
 #include "utils/conversion.glsl";
 
+// @todo use a lobe of samples based on roughness
 const vec3 sky_sample_offsets[] = {
   vec3(1, 0, 0),
+  vec3(-1, 0, 0),
   normalize(vec3(5, 1, 0)),
   vec3(0, 1, 0),
 };
@@ -31,13 +33,13 @@ vec3 getIndirectSkyLightContribution(vec3 fragment_position, vec3 fragment_norma
   const float indirect_sky_light_intensity = 0.5;
   vec3 diffuse_contribution = vec3(0);
 
-  for (int i = 0; i < 3; i++) {
+  for (int i = 0; i < 4; i++) {
     vec3 sky_direction = sky_sample_offsets[i];
 
     diffuse_contribution += getSkyColor(sky_direction, sunDirection, sunColor, atmosphereColor, altitude).rgb * indirect_sky_light_intensity;
   }
 
-  diffuse_contribution /= 3.0;
+  diffuse_contribution /= 4.0;
 
   vec3 camera_to_fragment = fragment_position - cameraPosition;
   vec3 reflection_vector = normalize(reflect(camera_to_fragment, fragment_normal));
