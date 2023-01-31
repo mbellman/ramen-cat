@@ -9,8 +9,11 @@ uniform mat4 matView;
 uniform mat4 matInverseProjection;
 uniform mat4 matInverseView;
 uniform vec3 cameraPosition;
+
 uniform vec3 sunDirection;
 uniform vec3 sunColor;
+uniform vec3 atmosphereColor;
+uniform float altitude;
 
 flat in vec3 fragColor;
 in vec3 fragNormal;
@@ -82,9 +85,9 @@ void main() {
 
   if (refracted_color_and_depth.w == 1.0) {
     // Skybox
-    vec3 direction = normalize(world_refraction_ray - cameraPosition);
+    vec3 sky_direction = normalize(world_refraction_ray - cameraPosition);
 
-    refracted_color_and_depth.rgb = getSkyColor(direction, sunDirection, sunColor).rgb;
+    refracted_color_and_depth.rgb = getSkyColor(sky_direction, sunDirection, sunColor, atmosphereColor, altitude).rgb;
   }
 
   // Slightly darken fragments facing the camera more directly

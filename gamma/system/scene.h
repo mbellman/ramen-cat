@@ -91,6 +91,7 @@ struct GmScene {
     Gamma::Vec3f sunDirection;
     Gamma::Vec3f sunColor;
     Gamma::Vec3f atmosphereColor;
+    float altitude;
   } sky;
 
   struct Fx {

@@ -768,6 +768,7 @@ namespace Gamma {
    */
   void OpenGLRenderer::renderLightingPrepass() {
     auto& shader = shaders.lightingPrepass;
+    auto& scene = gmContext->scene;
 
     shader.use();
     shader.setVec4f("transform", FULL_SCREEN_TRANSFORM);
@@ -776,8 +777,11 @@ namespace Gamma {
     shader.setVec3f("cameraPosition", ctx.activeCamera->position);
     shader.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
     shader.setMatrix4f("matInverseView", ctx.matInverseView);
-    shader.setVec3f("sunDirection", gmContext->scene.sky.sunDirection);
-    shader.setVec3f("sunColor", gmContext->scene.sky.sunColor);
+
+    shader.setVec3f("sunDirection", scene.sky.sunDirection);
+    shader.setVec3f("sunColor", scene.sky.sunColor);
+    shader.setVec3f("atmosphereColor", scene.sky.atmosphereColor);
+    shader.setFloat("altitude", scene.sky.altitude);
 
     OpenGLScreenQuad::render();
   }
@@ -1060,6 +1064,8 @@ namespace Gamma {
     shaders.skybox.setFloat("time", scene.runningTime);
     shaders.skybox.setVec3f("sunDirection", scene.sky.sunDirection);
     shaders.skybox.setVec3f("sunColor", scene.sky.sunColor);
+    shaders.skybox.setVec3f("atmosphereColor", scene.sky.atmosphereColor);
+    shaders.skybox.setFloat("altitude", scene.sky.altitude);
 
     OpenGLScreenQuad::render();
   }
@@ -1227,6 +1233,7 @@ namespace Gamma {
    */
   void OpenGLRenderer::renderRefractiveGeometry() {
     auto& camera = *ctx.activeCamera;
+    auto& scene = gmContext->scene;
 
     // Swap buffers so we can temporarily render the
     // refracted geometry to the second accumulation
@@ -1262,8 +1269,11 @@ namespace Gamma {
     shaders.refractiveGeometry.setMatrix4f("matView", ctx.matView);
     shaders.refractiveGeometry.setMatrix4f("matInverseView", ctx.matInverseView);
     shaders.refractiveGeometry.setVec3f("cameraPosition", camera.position);
-    shaders.refractiveGeometry.setVec3f("sunDirection", gmContext->scene.sky.sunDirection);
-    shaders.refractiveGeometry.setVec3f("sunColor", gmContext->scene.sky.sunColor);
+
+    shaders.refractiveGeometry.setVec3f("sunDirection", scene.sky.sunDirection);
+    shaders.refractiveGeometry.setVec3f("sunColor", scene.sky.sunColor);
+    shaders.refractiveGeometry.setVec3f("atmosphereColor", scene.sky.atmosphereColor);
+    shaders.refractiveGeometry.setFloat("altitude", scene.sky.altitude);
 
     for (auto* glMesh : glMeshes) {
       if (glMesh->isMeshType(MeshType::REFRACTIVE)) {
@@ -1299,6 +1309,7 @@ namespace Gamma {
    */
   void OpenGLRenderer::renderWater() {
     auto& camera = *ctx.activeCamera;
+    auto& scene = gmContext->scene;
 
     // Swap buffers so we can temporarily render the
     // refracted geometry to the second accumulation
@@ -1338,11 +1349,14 @@ namespace Gamma {
     shaders.water.setMatrix4f("matView", ctx.matView);
     shaders.water.setMatrix4f("matInverseView", ctx.matInverseView);
     shaders.water.setVec3f("cameraPosition", camera.position);
-    shaders.water.setVec3f("sunDirection", gmContext->scene.sky.sunDirection);
-    shaders.water.setVec3f("sunColor", gmContext->scene.sky.sunColor);
-    shaders.water.setFloat("time", gmContext->scene.runningTime);
-    shaders.water.setFloat("zNear", gmContext->scene.zNear);
-    shaders.water.setFloat("zFar", gmContext->scene.zFar);
+    shaders.water.setFloat("time", scene.runningTime);
+    shaders.water.setFloat("zNear", scene.zNear);
+    shaders.water.setFloat("zFar", scene.zFar);
+
+    shaders.water.setVec3f("sunDirection", scene.sky.sunDirection);
+    shaders.water.setVec3f("sunColor", scene.sky.sunColor);
+    shaders.water.setVec3f("atmosphereColor", scene.sky.atmosphereColor);
+    shaders.water.setFloat("altitude", scene.sky.altitude);
 
     for (auto* glMesh : glMeshes) {
       if (glMesh->isMeshType(MeshType::WATER)) {

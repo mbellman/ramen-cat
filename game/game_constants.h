@@ -55,6 +55,8 @@ constexpr static float CAMERA_FOV_SPEED_INTERVAL = 500.f;
  * Effects constants
  * -----------------
  */
+constexpr static float OCEAN_PLANE_Y_POSITION = -2000.f;
+
 constexpr static u16 TOTAL_GROUND_PARTICLES = 30;
 constexpr static u16 TOTAL_DASH_PARTICLES = 100;
 constexpr static float GROUND_PARTICLE_SPAWN_DELAY = 1.f / float(TOTAL_GROUND_PARTICLES);

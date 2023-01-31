@@ -186,6 +186,8 @@ void main() {
   Reflection reflection = getReflection(frag_view_position.xyz, normalized_view_reflection_ray, march_step_size);
   vec3 baseColor = frag_color_and_depth.rgb * (1.0 - reflection_factor);
   vec3 reflectionColor = reflection.color * reflection.screen_edge_visibility * reflection_factor;
+
+  // @bug FIX THIS!!!!!
   vec3 skyColor = getSkyColor(world_reflection_vector).rgb * reflection_factor * (1.0 - reflection.screen_edge_visibility);
 
   out_color_and_depth = vec4(baseColor + reflectionColor + skyColor, frag_color_and_depth.w);

@@ -2,20 +2,21 @@
 
 uniform vec2 screenSize;
 uniform sampler2D texColorAndDepth;
+uniform sampler2D texClouds;
 uniform mat4 matProjection;
 uniform mat4 matView;
 uniform mat4 matInverseProjection;
 uniform mat4 matInverseView;
 uniform vec3 cameraPosition;
-uniform vec3 sunDirection;
-uniform vec3 sunColor;
+
 uniform float time;
-
-// @temporary
-uniform sampler2D texClouds;
-
 uniform float zNear;
 uniform float zFar;
+
+uniform vec3 sunDirection;
+uniform vec3 sunColor;
+uniform vec3 atmosphereColor;
+uniform float altitude;
 
 flat in vec3 fragColor;
 in vec3 fragNormal;
@@ -154,7 +155,7 @@ void main() {
   vec3 view_reflection_ray = glVec3(matView * glVec4(world_position + reflection_ray * 5.0));
   vec2 reflected_color_coords = getScreenCoordinates(view_reflection_ray, matProjection);
   vec4 reflection_color_and_depth = texture(texColorAndDepth, reflected_color_coords);
-  vec4 sky = getSkyColor(reflection_ray, sunDirection, sunColor);
+  vec4 sky = getSkyColor(reflection_ray, sunDirection, sunColor, atmosphereColor, altitude);
   vec3 sky_color = sky.rgb;
   float sky_intensity = sky.w;
   vec3 reflection_color = vec3(0);

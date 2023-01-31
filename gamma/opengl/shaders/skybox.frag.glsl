@@ -3,9 +3,12 @@
 uniform vec3 cameraPosition;
 uniform mat4 matInverseProjection;
 uniform mat4 matInverseView;
+uniform float time;
+
 uniform vec3 sunDirection;
 uniform vec3 sunColor;
-uniform float time;
+uniform vec3 atmosphereColor;
+uniform float altitude;
 
 // @temporary
 uniform sampler2D texClouds;
@@ -25,7 +28,7 @@ void main() {
   // from camera direction + fragUv
   vec3 position = getWorldPosition(1.0, fragUv, matInverseProjection, matInverseView) - cameraPosition;
   vec3 direction = normalize(position);
-  vec3 sky_color = getSkyColor(direction, sunDirection, sunColor).rgb;
+  vec3 sky_color = getSkyColor(direction, sunDirection, sunColor, atmosphereColor, altitude).rgb;
 
   vec2 cloudsUv = vec2(
     -(atan(direction.z, direction.x) + PI) / TAU + time * CLOUD_MOVEMENT_RATE,

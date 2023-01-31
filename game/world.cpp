@@ -1,5 +1,6 @@
 #include "world.h"
 #include "collisions.h"
+#include "game_constants.h"
 #include "macros.h"
 
 using namespace Gamma;
@@ -702,14 +703,14 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
 
   auto& ocean = create_object_from("ocean");
 
-  ocean.position = Vec3f(0, -2000.f, 0);
+  ocean.position = Vec3f(0, OCEAN_PLANE_Y_POSITION, 0);
   ocean.scale = Vec3f(50000.f, 1.f, 50000.f);
 
   commit(ocean);
 
   auto& oceanFloor = create_object_from("ocean-floor");
 
-  oceanFloor.position = Vec3f(0, -2500.f, 0);
+  oceanFloor.position = Vec3f(0, OCEAN_PLANE_Y_POSITION - 500.f, 0);
   oceanFloor.scale = Vec3f(50000.f, 1.f, 50000.f);
   oceanFloor.color = Vec3f(0.3f, 0.7f, 0.9f);
 
