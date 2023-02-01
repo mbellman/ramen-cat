@@ -6,6 +6,10 @@
 using namespace Gamma;
 
 std::vector<MeshAsset> World::meshAssets = {
+  /**
+   * Lights
+   * ------
+   */
   {
     .name = "lamp",
     .create = []() {
@@ -40,6 +44,21 @@ std::vector<MeshAsset> World::meshAssets = {
       .emissivity = 1.f
     }
   },
+  {
+    .name = "japanese-lamppost",
+    .hitboxScale = Vec3f(0.4f, 1.f, 0.25f),
+    .create = []() {
+      return Mesh::Model("./game/assets/japanese-lamppost.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/japanese-lamppost.png"
+    }
+  },
+
+  /**
+   * Plants
+   * ------
+   */
   {
     .name = "weeds",
     .hitboxScale = Vec3f(1.f, 1.f, 0.2f),
@@ -99,6 +118,7 @@ std::vector<MeshAsset> World::meshAssets = {
       .roughness = 0.8f
     }
   },
+
   {
     .name = "concrete-slab",
     .defaultColor = Vec3f(0.5f),
@@ -499,6 +519,17 @@ std::vector<MeshAsset> World::dynamicMeshPieces = {
     .create = []() {
       return Mesh::Cube();
     }
+  },
+  {
+    .name = "japanese-lamppost-light",
+    .defaultColor = Vec3f(1.f),
+    .maxInstances = 1000,
+    .create = []() {
+      return Mesh::Model("./game/assets/japanese-lamppost-light.obj");
+    },
+    .attributes = {
+      .emissivity = 1.f
+    }
   }
 };
 
@@ -756,7 +787,19 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
     for (auto& asset : World::dynamicMeshPieces) {
       add_mesh(asset.name, asset.maxInstances, asset.create());
 
+      auto& mesh = *mesh(asset.name);
+      auto& attributes = asset.attributes;
+
       // @todo handle all mesh attributes
+      mesh.type = attributes.type;
+      mesh.foliage = attributes.foliage;
+      mesh.texture = attributes.texture;
+      mesh.normals = attributes.normals;
+      mesh.maxCascade = attributes.maxCascade;
+      mesh.canCastShadows = attributes.canCastShadows;
+      mesh.emissivity = attributes.emissivity;
+      mesh.roughness = attributes.roughness;
+      mesh.silhouette = attributes.silhouette;
     }
   }
 
@@ -779,4 +822,20 @@ void World::rebuildDynamicMeshes(GmContext* context) {
   }
 
   rebuildDynamicStaircases(context);
+
+  // Position lamppost lights
+  {
+    objects("japanese-lamppost-light").reset();
+
+    for (auto& post : objects("japanese-lamppost")) {
+      auto& light = create_object_from("japanese-lamppost-light");
+
+      light.position = post.position + Vec3f(0, 0.78f, 0) * post.scale.y;
+      light.scale = post.scale;
+      light.rotation = post.rotation;
+      light.color = Vec3f(1.f, 0.9f, 0.75f);
+
+      commit(light);
+    }
+  }
 }

@@ -58,22 +58,28 @@ static void Gm_DisplayDevtools(GmContext* context) {
       auto totalMeshesLabel = "Meshes: " + String(sceneStats.totalMeshes);
       auto memoryLabel = "GPU Memory: " + String(renderStats.gpuMemoryUsed) + "MB / " + String(renderStats.gpuMemoryTotal) + "MB";
 
-      renderer.renderText(font_sm, fpsLabel.c_str(), 25, 25);
-      renderer.renderText(font_sm, frameTimeLabel.c_str(), 25, 50);
-      renderer.renderText(font_sm, resolutionLabel.c_str(), 25, 75);
-      renderer.renderText(font_sm, vertsLabel.c_str(), 25, 100);
-      renderer.renderText(font_sm, trisLabel.c_str(), 25, 125);
-      renderer.renderText(font_sm, totalLightsLabel.c_str(), 25, 150);
-      renderer.renderText(font_sm, totalMeshesLabel.c_str(), 25, 175);
-      renderer.renderText(font_sm, memoryLabel.c_str(), 25, 200);
+      const Vec3f TEXT_COLOR = Vec3f(1.f);
+      const Vec4f BACKGROUND_COLOR = Vec4f(0.5f, 0, 0, 0.5f);
+
+      renderer.renderText(font_sm, fpsLabel.c_str(), 25, 25, TEXT_COLOR, BACKGROUND_COLOR);
+      renderer.renderText(font_sm, frameTimeLabel.c_str(), 25, 50, TEXT_COLOR, BACKGROUND_COLOR);
+      renderer.renderText(font_sm, resolutionLabel.c_str(), 25, 75, TEXT_COLOR, BACKGROUND_COLOR);
+      renderer.renderText(font_sm, vertsLabel.c_str(), 25, 100, TEXT_COLOR, BACKGROUND_COLOR);
+      renderer.renderText(font_sm, trisLabel.c_str(), 25, 125, TEXT_COLOR, BACKGROUND_COLOR);
+      renderer.renderText(font_sm, totalLightsLabel.c_str(), 25, 150, TEXT_COLOR, BACKGROUND_COLOR);
+      renderer.renderText(font_sm, totalMeshesLabel.c_str(), 25, 175, TEXT_COLOR, BACKGROUND_COLOR);
+      renderer.renderText(font_sm, memoryLabel.c_str(), 25, 200, TEXT_COLOR, BACKGROUND_COLOR);
     }
 
     // Render user-defined debug messages
     {
+      const Vec3f TEXT_COLOR = Vec3f(1.f);
+      const Vec4f BACKGROUND_COLOR = Vec4f(0.0f, 0, 0, 0.8f);
+
       u8 index = 0;
 
       for (auto& message : context->debugMessages) {
-        renderer.renderText(font_sm, message.c_str(), 25, 200 + index++ * 25, Vec3f(1.f), Vec4f(0.f, 0.f, 0.f, 0.8f));
+        renderer.renderText(font_sm, message.c_str(), 25, 250 + index++ * 25, TEXT_COLOR, BACKGROUND_COLOR);
       }
     }
 

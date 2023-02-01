@@ -130,8 +130,8 @@ namespace Gamma {
 
       disc.offset = Vec2f(screenLightPosition.x, screenLightPosition.y);
       // @todo use 1 + log(light.power) or similar for scaling term
-      disc.scale.x = 1.5f * light.radius / localLightPosition.z;
-      disc.scale.y = 1.5f * light.radius / localLightPosition.z * resolutionAspectRatio;
+      disc.scale.x = 3.f * light.radius / localLightPosition.z;
+      disc.scale.y = 3.f * light.radius / localLightPosition.z * resolutionAspectRatio;
     } else {
       // Light source behind the camera; scale to cover
       // screen when within range, and scale to 0 when

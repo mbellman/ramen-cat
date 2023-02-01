@@ -1,9 +1,12 @@
 EDITOR
 ------
+* keep LIGHTS mode when re-enabling editor
 
 BUGS
 ----
-* fix flying off downward slopes
+* fix flying off downward slopes (more accurate snap-to-ground behavior)
+* don't snap to ground for a brief duration after jumps
+
 * imported models are inverted along X
 * rotated collision plane wall kick height
 * avoid phasing through corners
@@ -23,6 +26,9 @@ ASSETS
 
 GAME
 ----
+* poles/wires
+* signs/neon stuff
+
 * turn camera after wall kicks
 * area titles
 * npc model improvements/highlight when nearby
