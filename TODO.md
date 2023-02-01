@@ -6,6 +6,7 @@ BUGS
 ----
 * fix flying off downward slopes (more accurate snap-to-ground behavior)
 * don't snap to ground for a brief duration after jumps
+* tiered air-dash speed
 
 * imported models are inverted along X
 * rotated collision plane wall kick height
@@ -28,6 +29,7 @@ GAME
 ----
 * poles/wires
 * signs/neon stuff
+* slingshot velocity affected by dashing tier
 
 * turn camera after wall kicks
 * area titles
