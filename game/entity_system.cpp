@@ -6,13 +6,10 @@
 #include "easing.h"
 #include "game_constants.h"
 
-#define set_active_mesh(meshName) u16 __activeMeshIndex = context->scene.meshMap.at(meshName)->index
-#define is_active_mesh(object) object._record.meshIndex == __activeMeshIndex
-
 #define for_moving_objects(meshName, code)\
-  set_active_mesh(meshName);\
+  u16 __activeMeshIndex = context->scene.meshMap.at(meshName)->index;\
   for (auto& initial : state.initialMovingObjects) {\
-    if (is_active_mesh(initial)) {\
+    if (initial._record.meshIndex == __activeMeshIndex) {\
       auto* __object = get_object_by_record(initial._record);\
       if (__object != nullptr) {\
         auto& object = *__object;\
@@ -381,13 +378,26 @@ internal void handleHotAirBalloons(GmContext* context, GameState& state, float d
 }
 
 internal void handleOnigiri(GmContext* context, GameState& state, float dt) {
+  auto& player = get_player();
   float alpha = 2.f * state.frameStartTime;
 
+  // @todo generalize collectible behavior, store special entities for collectibles to determine appropriate handling
   for_moving_objects("onigiri", {
-    float yOffset = sinf(alpha + float(object._record.id) * 0.5f);
+    if (object.scale.x < 0.1f) {
+      object.scale = Vec3f(0.f);
+    } else if (object.position.x != initial.position.x || object.position.z != initial.position.z) {
+      object.position = Vec3f::lerp(object.position, player.position, 20.f * dt);
+      object.scale *= (1.f - 10.f * dt);
+    } else {
+      float yOffset = sinf(alpha + float(object._record.id) * 0.5f);
 
-    object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), state.frameStartTime);
-    object.position = initial.position + Vec3f(0, yOffset, 0) * 10.f;
+      object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), state.frameStartTime);
+      object.position = initial.position + Vec3f(0, yOffset, 0) * 10.f;
+
+      if ((object.position - player.position).magnitude() < 100.f) {
+        object.position = Vec3f::lerp(object.position, player.position, 10.f * dt);
+      }
+    }
 
     commit(object);
   });
