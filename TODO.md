@@ -30,9 +30,14 @@ GAME
 * poles/wires
 * signs/neon stuff
 * slingshot velocity affected by dashing tier
-
+* proper nighttime handling
+* seagulls
 * turn camera after wall kicks
+* increased FoV in tiered dash modes
+* killplane below level only
+
 * area titles
+* train station model updates
 * npc model improvements/highlight when nearby
 * collectibles
 * hot-reloading NPCs/entities data
