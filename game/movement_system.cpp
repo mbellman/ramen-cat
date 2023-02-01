@@ -238,10 +238,12 @@ namespace MovementSystem {
     // Limit horizontal speed on ground
     {
       Vec3f horizontalVelocity = state.velocity.xz();
-      float speedLimit =
-        state.dashLevel == 2 ? MAXIMUM_HORIZONTAL_GROUND_SPEED_DASH_LEVEL_2 :
-        state.dashLevel == 1 ? MAXIMUM_HORIZONTAL_GROUND_SPEED_DASH_LEVEL_1 :
-        MAXIMUM_HORIZONTAL_GROUND_SPEED;
+
+      float speedLimit = MAXIMUM_HORIZONTAL_GROUND_SPEED * (
+        state.dashLevel == 1 ? DASH_LEVEL_1_SPEED_FACTOR :
+        state.dashLevel == 2 ? DASH_LEVEL_2_SPEED_FACTOR :
+        1.f
+      );
 
       if (state.isOnSolidGround && horizontalVelocity.magnitude() > speedLimit) {
         Vec3f limitedHorizontalVelocity = horizontalVelocity.unit() * speedLimit;
@@ -286,7 +288,14 @@ namespace MovementSystem {
             airDashDirection = (airDashDirection * Vec3f(2.f, 1.f, 2.f)).unit();
           }
 
-          state.velocity = airDashDirection * 1000.f;
+          state.velocity = airDashDirection * MAXIMUM_HORIZONTAL_GROUND_SPEED * (
+            // Start dashing at level 1 speed
+            state.dashLevel == 0 ? DASH_LEVEL_1_SPEED_FACTOR :
+            // Start dashing at level 2 speed
+            state.dashLevel == 1 ? DASH_LEVEL_2_SPEED_FACTOR :
+            // Cap at speed level 2
+            DASH_LEVEL_2_SPEED_FACTOR
+          );
 
           state.canPerformAirDash = false;
           state.canPerformWallKick = true;
