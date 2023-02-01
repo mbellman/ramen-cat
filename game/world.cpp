@@ -198,6 +198,7 @@ std::vector<MeshAsset> World::meshAssets = {
   },
   {
     .name = "metal-guard",
+    .defaultColor = Vec3f(0.333f),
     .hitboxScale = Vec3f(1.f, 0.2f, 0.05f),
     .create = []() {
       return Mesh::Model("./game/assets/metal-guard.obj");
