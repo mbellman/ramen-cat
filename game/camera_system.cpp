@@ -61,6 +61,10 @@ internal Vec3f getIntermediateLookAtPosition(const GameState& state, const Vec3f
 
   tweenRate += 35.f * (speed / (speed + 2000.f));
 
+  if (!state.isOnSolidGround) {
+    tweenRate = 50.f;
+  }
+
   return Vec3f::lerp(state.previousLookAtPosition, lookAtPosition, tweenRate * dt);
 }
 

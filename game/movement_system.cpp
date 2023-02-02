@@ -67,6 +67,7 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
   auto& player = get_player();
   bool isFalling = state.previousPlayerPosition.y - player.position.y > 0.f;
   bool wasRecentlyOnSolidGround = time_since(state.lastTimeOnSolidGround) < 0.2f;
+  bool didJustAirDash = time_since(state.lastAirDashTime) < 0.1f;
   bool didCollideWithSolidGround = false;
 
   // @todo implement world chunks + only consider collision planes local to the player
@@ -90,7 +91,12 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
       if (collision.plane.nDotU > 0.7f) {
         didCollideWithSolidGround = true;
       }
-    } else if (isFalling && wasRecentlyOnSolidGround && plane.nDotU > 0.6f) {
+    } else if (
+      isFalling &&
+      wasRecentlyOnSolidGround &&
+      !didJustAirDash &&
+      plane.nDotU > 0.6f
+    ) {
       Vec3f fallCollisionLineEnd = player.position - plane.normal * 200.f;
       auto fallCollision = Collisions::getLinePlaneCollision(player.position, fallCollisionLineEnd, plane);
 
@@ -298,6 +304,7 @@ namespace MovementSystem {
             state.dashLevel++;
           }
 
+          state.lastAirDashTime = state.frameStartTime;
           context->scene.fx.screenWarpTime = state.frameStartTime;
         }
       }
