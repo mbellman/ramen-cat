@@ -1,6 +1,5 @@
 EDITOR
 ------
-* only show light spheres in LIGHTS mode
 * spot lights
 
 BUGS

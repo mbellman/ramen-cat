@@ -272,8 +272,8 @@ internal void cycleEditorMode(GmContext* context, s8 delta) {
   editor.mode = *(modeOrder.begin() + cycleIndex);
   editor.isObjectSelected = false;
 
-  // When exiting LIGHTS mode, deselect the selected light
   if (editor.mode != EditorMode::LIGHTS) {
+    // When exiting LIGHTS mode, deselect the selected light
     editor.selectedLight = nullptr;
   }
 
@@ -281,6 +281,9 @@ internal void cycleEditorMode(GmContext* context, s8 delta) {
   if (editor.mode == EditorMode::COLLISION_PLANES) {
     mesh("platform")->disabled = false;
   }
+
+  // Disable light spheres when not in LIGHTS mode
+  mesh("light-sphere")->disabled = editor.mode != EditorMode::LIGHTS;
 }
 
 internal void cycleActionType(GmContext* context, s8 delta) {
@@ -923,7 +926,7 @@ namespace Editor {
         }
       }
 
-      mesh("light-sphere")->disabled = false;
+      mesh("light-sphere")->disabled = editor.mode != EditorMode::LIGHTS;
     }
 
     // If collision planes are hidden when re-enabling the editor in COLLISION_PLANES mode,
