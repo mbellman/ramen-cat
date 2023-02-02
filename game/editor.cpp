@@ -926,10 +926,10 @@ namespace Editor {
       mesh("light-sphere")->disabled = false;
     }
 
-    // Default to OBJECTS mode when enabling the editor without visible collision planes
-    if (mesh("platform")->disabled) {
+    // If collision planes are hidden when re-enabling the editor in COLLISION_PLANES mode,
+    // default to OBJECTS mode
+    if (mesh("platform")->disabled && editor.mode == EditorMode::COLLISION_PLANES) {
       editor.mode = EditorMode::OBJECTS;
-      editor.isObjectSelected = false;
     }
 
     Gm_EnableFlags(GammaFlags::ENABLE_DEV_TOOLS);
