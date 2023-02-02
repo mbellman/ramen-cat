@@ -55,6 +55,8 @@ struct GameState {
   Gamma::Vec3f lastWallBumpNormal;
   Gamma::Vec3f lastWallBumpVelocity;
 
+  Gamma::Vec3f previousLookAtPosition;
+
   CameraMode cameraMode = CameraMode::NORMAL;
 
   float frameStartTime = 0.f;
@@ -66,6 +68,7 @@ struct GameState {
   float dayNightCycleTime = 0.f;
 
   bool isOnSolidGround = false;
+  bool wasOnSolidGroundLastFrame = false;
   bool isMovingPlayerThisFrame = false;
   bool isRepositioningCamera = false;
 

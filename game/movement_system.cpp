@@ -10,14 +10,7 @@ using namespace Gamma;
 internal void resolveNewPositionFromCollision(const Collision& collision, Object& player, float dt) {
   auto resetPosition = collision.point + collision.plane.normal * PLAYER_RADIUS;
 
-  if (collision.plane.nDotU > 0.985f) {
-    float alpha = 30.f * dt;
-    alpha = alpha > 1.f ? 1.f : alpha;
-
-    player.position = Vec3f::lerp(player.position, resetPosition, alpha);    
-  } else {
-    player.position = resetPosition;
-  }
+  player.position = resetPosition;
 }
 
 internal void resolveSingleCollision(GmContext* context, GameState& state, const Collision& collision, float dt) {
@@ -73,7 +66,8 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
 
   auto& player = get_player();
   bool isFalling = state.previousPlayerPosition.y - player.position.y > 0.f;
-  bool didHitSolidGround = false;
+  bool wasRecentlyOnSolidGround = time_since(state.lastTimeOnSolidGround) < 0.2f;
+  bool didCollideWithSolidGround = false;
 
   // @todo implement world chunks + only consider collision planes local to the player
   for (auto& plane : state.collisionPlanes) {
@@ -94,11 +88,10 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
       resolveSingleCollision(context, state, collision, dt);
 
       if (collision.plane.nDotU > 0.7f) {
-        didHitSolidGround = true;
+        didCollideWithSolidGround = true;
       }
-    } else if (isFalling && plane.nDotU > 0.6f) {
-      // @todo description
-      Vec3f fallCollisionLineEnd = player.position - plane.normal * (PLAYER_RADIUS + 5.f);
+    } else if (isFalling && wasRecentlyOnSolidGround && plane.nDotU > 0.6f) {
+      Vec3f fallCollisionLineEnd = player.position - plane.normal * 200.f;
       auto fallCollision = Collisions::getLinePlaneCollision(player.position, fallCollisionLineEnd, plane);
 
       if (fallCollision.hit) {
@@ -108,7 +101,7 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
         state.lastSolidGroundPosition = player.position;
         state.lastTimeOnSolidGround = state.frameStartTime;
 
-        didHitSolidGround = true;
+        didCollideWithSolidGround = true;
       }
     }
   }
@@ -117,7 +110,7 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
   // Setting it at ground collision resolution time can cause
   // subsequent ground collisions to trigger previous-position
   // reset behavior, causing the player to get stuck.
-  state.isOnSolidGround = didHitSolidGround;
+  state.isOnSolidGround = didCollideWithSolidGround;
 
   LOG_TIME();
 }
@@ -310,7 +303,7 @@ namespace MovementSystem {
       }
     }
 
-    // Flag resets
+    // Movement state resets
     {
       if (state.dashLevel > 0 && state.isOnSolidGround && !state.isMovingPlayerThisFrame) {
         // Stop dashing when we cease movement while dashing along the ground

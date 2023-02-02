@@ -4,14 +4,10 @@ EDITOR
 
 BUGS
 ----
-* fix flying off downward slopes (more accurate snap-to-ground behavior)
-* don't snap to ground for a brief duration after jumps
 * falling down when maximimizing the window on startup (???)
 
 * imported models are inverted along X
-* rotated collision plane wall kick height
 * avoid phasing through corners
-* collision plane gaps/discontinuities
 
 ASSETS
 ------

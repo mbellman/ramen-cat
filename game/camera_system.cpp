@@ -55,6 +55,15 @@ internal Vec3f getLookAtTargetPosition(GmContext* context, GameState& state) {
   return Vec3f::lerp(tweenStart, tweenEnd, easeOutQuint(t));
 }
 
+internal Vec3f getIntermediateLookAtPosition(const GameState& state, const Vec3f& lookAtPosition, float dt) {
+  float tweenRate = 15.f;
+  float speed = state.velocity.magnitude();
+
+  tweenRate += 35.f * (speed / (speed + 2000.f));
+
+  return Vec3f::lerp(state.previousLookAtPosition, lookAtPosition, tweenRate * dt);
+}
+
 internal void handleCameraOverride(GmContext* context, GameState& state) {
   float t = time_since(state.cameraOverrideStartTime) / state.cameraOverrideDuration;
 
@@ -101,7 +110,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
 
   auto& input = get_input();
   auto& player = get_player();
-  auto lookAtPosition = getLookAtTargetPosition(context, state);
+  auto lookAtPosition = getIntermediateLookAtPosition(state, getLookAtTargetPosition(context, state), dt);
   auto targetCameraPosition = lookAtPosition + state.camera3p.calculatePosition();
 
   // Handle camera control inputs
@@ -239,6 +248,8 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
       camera.orientation.pitch = Gm_Lerpf(0.f, 0.1f, alpha);
       camera.rotation = camera.orientation.toQuaternion();
     }
+
+    state.previousLookAtPosition = lookAtPosition;
   }
 
   // Adjust the FOV when moving at higher speeds
