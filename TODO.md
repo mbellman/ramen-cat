@@ -15,27 +15,28 @@ BUGS
 
 ASSETS
 ------
+* define outside of world.cpp
+
 * flowers
 * update mini rooves to look more japanese
 * staircase step improvements
 * stars
 * murals/paintings
-* stars
 * weeds LoD
 * lamp LoD
 * curved building structures
 
 GAME
 ----
-* poles/wires
-* signs/neon stuff
+* wires
 * slingshot velocity affected by dashing tier
 * proper nighttime handling
-* seagulls
 * turn camera after wall kicks
 * increased FoV in tiered dash modes
 * killplane below level only
 
+* signs/neon stuff
+* seagulls
 * area titles
 * train station model updates
 * npc model improvements/highlight when nearby

@@ -478,6 +478,19 @@ std::vector<MeshAsset> World::meshAssets = {
     }
   },
   {
+    .name = "electrical-pole",
+    .defaultScale = Vec3f(275.f),
+    .hitboxScale = Vec3f(0.05f, 1.f, 0.15f),
+    .create = []() {
+      return Mesh::Model("./game/assets/electrical-pole.obj");
+    }
+  },
+
+  /**
+   * Characters
+   * ----------
+   */
+  {
     .name = "person",
     .moving = true,
     .defaultScale = Vec3f(65.f),
@@ -487,6 +500,10 @@ std::vector<MeshAsset> World::meshAssets = {
     }
   },
 
+  /**
+   * Collectibles
+   * ------------
+   */
   {
     .name = "onigiri",
     .moving = true,
