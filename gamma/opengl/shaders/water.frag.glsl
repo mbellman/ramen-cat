@@ -93,10 +93,7 @@ vec3 getNormal(vec3 world_position) {
     n_normal
   );
 
-  // @todo make configurable
-  float flatness = 1.0;
-
-  vec3 tangent_normal = vec3(n.x, n.y, flatness);
+  vec3 tangent_normal = vec3(n.x, n.y, 1.0);
 
   return normalize(tbn_matrix * tangent_normal);
 }

@@ -96,7 +96,11 @@ namespace Gamma {
       float deltaU2 = v3.uv.x - v1.uv.x;
       float deltaV2 = v3.uv.y - v1.uv.y;
 
-      float f = 1.0f / (deltaU1 * deltaV2 - deltaU2 * deltaV1);
+      float d = (deltaU1 * deltaV2 - deltaU2 * deltaV1);
+
+      // Prevent division by zero when vertices are in identical positions,
+      // and there is no delta between uv coordinates
+      float f = 1.0f / (d == 0.f ? 0.001f : d);
 
       Vec3f tangent = {
         f * (deltaV2 * e1.x - deltaV1 * e2.x),
