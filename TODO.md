@@ -1,6 +1,8 @@
 EDITOR
 ------
 * keep LIGHTS mode when re-enabling editor
+* only show light spheres in LIGHTS mode
+* spot lights
 
 BUGS
 ----
