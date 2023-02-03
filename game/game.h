@@ -55,8 +55,6 @@ struct GameState {
   Gamma::Vec3f lastWallBumpNormal;
   Gamma::Vec3f lastWallBumpVelocity;
 
-  Gamma::Vec3f previousLookAtPosition;
-
   CameraMode cameraMode = CameraMode::NORMAL;
 
   float frameStartTime = 0.f;
