@@ -4,6 +4,7 @@ EDITOR
 BUGS
 ----
 * falling down when maximimizing the window on startup (???)
+* fix onigiri texture
 
 * imported models are inverted along X
 * avoid phasing through corners
@@ -26,12 +27,15 @@ GAME
 * wires
 * slingshot velocity affected by dashing tier
 * proper nighttime handling
+* lights dimming during daytime
 * turn camera after wall kicks
 * increased FoV in tiered dash modes
 * killplane below level only
+* signs/neon
+* other food collectibles
 
-* signs/neon stuff
 * seagulls
+* jetstreams
 * area titles
 * train station model updates
 * npc model improvements/highlight when nearby
@@ -53,8 +57,9 @@ ENGINE
 ------
 * cache textures
 * atmospheric scattering improvements
-* sound
+* area lights
+* skylight contribution gradation/probe-based GI
 * planar reflections
 * infinite particles
-* skylight contribution gradation/probe-based GI
+* sound
 * Mesh::MeshPack() ?
