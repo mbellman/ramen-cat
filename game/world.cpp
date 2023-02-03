@@ -531,7 +531,7 @@ std::vector<MeshAsset> World::meshAssets = {
 std::vector<MeshAsset> World::dynamicMeshPieces = {
   {
     .name = "stair-step",
-    .defaultColor = Vec3f(0.f),
+    .defaultColor = Vec3f(1.f),
     .maxInstances = 10000,
     .create = []() {
       return Mesh::Cube();
