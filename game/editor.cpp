@@ -179,6 +179,7 @@ internal void syncLightWithObject(Light& light, const Object& object) {
   light.position = object.position;
   light.radius = 10.f * object.scale.x;
   light.color = object.color.toVec3f();
+  light.direction = object.rotation.getDirection();
 }
 
 internal void updateCollisionPlanes(GmContext* context, GameState& state) {
@@ -844,6 +845,47 @@ internal void handlePowerCommand(const std::string& command) {
   }
 }
 
+internal void handleFovCommand(const std::string& command) {
+  if (editor.mode == EditorMode::LIGHTS && editor.selectedLight != nullptr) {
+    float fov;
+
+    try {
+      auto parts = Gm_SplitString(command, " ");
+
+      fov = stof(parts[1]);
+    } catch (const std::exception& e) {
+      Console::warn("Invalid field-of-view command");
+
+      return;
+    }
+
+    editor.selectedLight->fov = fov;
+  }
+}
+
+// @todo support shadow light types
+internal void handleTypeCommand(GmContext* context, const std::string& command) {
+  if (editor.mode == EditorMode::LIGHTS && editor.selectedLight != nullptr) {
+    LightType type;
+
+    try {
+      auto parts = Gm_SplitString(command, " ");
+
+      type = (
+        parts[1] == "point" ? LightType::POINT :
+        parts[1] == "spot" ? LightType::SPOT :
+        LightType::POINT
+      );
+    } catch (const std::exception& e) {
+      Console::warn("Invalid type command");
+
+      return;
+    }
+
+    editor.selectedLight->type = type;
+  }
+}
+
 internal void handleTimeCommand(GmContext* context, GameState& state, const std::string& command) {
   float time;
 
@@ -901,10 +943,13 @@ internal void saveLightsData(GmContext* context) {
 
   for (auto* light : context->scene.lights) {
     if (light->serializable) {
+      data += std::to_string(light->type) + ",";
       data += Gm_ToString(light->position) + ",";
       data += std::to_string(light->radius) + ",";
       data += Gm_ToString(light->color) + ",";
-      data += std::to_string(light->power) + "\n";
+      data += std::to_string(light->power) + ",";
+      data += Gm_ToString(light->direction) + ",";
+      data += std::to_string(light->fov) + "\n";
     }
   }
 
@@ -1034,6 +1079,10 @@ namespace Editor {
           handleMeshCommand(context, command);
         } else if (Gm_StringStartsWith(command, "power")) {
           handlePowerCommand(command);
+        } else if (Gm_StringContains(command, "fov")) {
+          handleFovCommand(command);
+        } else if (Gm_StringStartsWith(command, "type")) {
+          handleTypeCommand(context, command);
         }
       }
 
@@ -1058,6 +1107,18 @@ namespace Editor {
         sphere.position = light->position;
         sphere.scale = Vec3f(light->radius / 10.f);
         sphere.color = light->color;
+
+        Orientation direction;
+
+        Vec3f right = Vec3f::cross(light->direction, Vec3f(0, 1.f, 0));
+        Vec3f up = Vec3f::cross(light->direction, right);
+
+        direction.face(light->direction, up);
+        direction.yaw += Gm_HALF_PI;
+
+        // @bug the resolved rotation is just a smidge off; investigate and see if this
+        // can be fixed another approach.
+        sphere.rotation = direction.toQuaternion();
 
         commit(sphere);
       }

@@ -1,6 +1,5 @@
 EDITOR
 ------
-* spot lights
 
 BUGS
 ----

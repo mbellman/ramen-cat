@@ -1512,43 +1512,27 @@ namespace Gamma {
   }
 
   void OpenGLRenderer::destroyShadowMap(Light* light) {
-    // @todo reduce the repetition between cases here
+    #define clear_light_from(shadowMaps, light) \
+      for (auto& shadowMap : shadowMaps) {\
+        if (shadowMap->light == light) {\
+          shadowMap->buffer.destroy();\
+          Gm_VectorRemove(shadowMaps, shadowMap);\
+          break;\
+        }\
+      }\
+
     // @todo test this to make sure it works!
     switch (light->type) {
       case DIRECTIONAL_SHADOWCASTER:
-        for (auto& shadowMap : glDirectionalShadowMaps) {
-          if (shadowMap->light == light) {
-            shadowMap->buffer.destroy();
-
-            Gm_VectorRemove(glDirectionalShadowMaps, shadowMap);
-
-            break;
-          }
-        }
+        clear_light_from(glDirectionalShadowMaps, light);
 
         break;
       case POINT_SHADOWCASTER:
-        for (auto& shadowMap : glPointShadowMaps) {
-          if (shadowMap->light == light) {
-            shadowMap->buffer.destroy();
-
-            Gm_VectorRemove(glPointShadowMaps, shadowMap);
-
-            break;
-          }
-        }
+        clear_light_from(glPointShadowMaps, light);
 
         break;
       case SPOT_SHADOWCASTER:
-        for (auto& shadowMap : glSpotShadowMaps) {
-          if (shadowMap->light == light) {
-            shadowMap->buffer.destroy();
-
-            Gm_VectorRemove(glSpotShadowMaps, shadowMap);
-
-            break;
-          }
-        }
+        clear_light_from(glSpotShadowMaps, light);
 
         break;
     }

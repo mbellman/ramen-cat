@@ -18,8 +18,13 @@ float fragment_alignment = dot(normalized_surface_to_light * -1, normalize(light
 float cone_edge_alignment = 1.0 - (light.fov / 180.0);
 
 if (fragment_alignment < cone_edge_alignment) {
-  // Discard any fragments outside of the light cone
-  discard;
+  #if USE_DEV_LIGHT_DISCS == 0
+    // Discard any fragments outside of the light cone
+    discard;
+  #else
+    fragment_alignment = 0.0;
+    cone_edge_alignment = 0.0;
+  #endif
 }
 
 vec4 frag_normal_and_material = texture(texNormalAndMaterial, fragUv);
@@ -33,7 +38,7 @@ float roughness = fract(material);
 
 float cone_edge_range = 1.0 - cone_edge_alignment;
 float cone_edge_proximity = fragment_alignment - cone_edge_alignment;
-float spot_factor = sqrt(cone_edge_proximity / cone_edge_range);
+float spot_factor = pow(cone_edge_proximity / cone_edge_range, 0.7);
 
 vec3 normalized_surface_to_camera = normalize(cameraPosition - position);
 vec3 half_vector = normalize(normalized_surface_to_light + normalized_surface_to_camera);

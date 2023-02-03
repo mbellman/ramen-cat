@@ -642,14 +642,16 @@ internal void loadLights(GmContext* context) {
     }
 
     auto parts = Gm_SplitString(line, ",");
-    auto& light = create_light(LightType::POINT);
+    auto& light = create_light((LightType)stoi(parts[0]));
 
     #define df(n) stof(parts[n])
 
-    light.position = Vec3f(df(0), df(1), df(2));
-    light.radius = df(3);
-    light.color = Vec3f(df(4), df(5), df(6));
-    light.power = df(7);
+    light.position = Vec3f(df(1), df(2), df(3));
+    light.radius = df(4);
+    light.color = Vec3f(df(5), df(6), df(7));
+    light.power = df(8);
+    light.direction = Vec3f(df(9), df(10), df(11));
+    light.fov = df(12);
   }
 
   Console::log("Loaded lights in", Gm_GetMicroseconds() - start, "us");
