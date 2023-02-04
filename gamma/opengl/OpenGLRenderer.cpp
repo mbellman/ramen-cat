@@ -140,10 +140,10 @@ namespace Gamma {
     }
 
     #if GAMMA_DEVELOPER_MODE
-      if (scene.runningTime - lastShaderHotReloadCheckTime > 1.f) {
+      if (gmContext->contextTime - lastShaderHotReloadCheckTime > 1.f) {
         Gm_CheckAndHotReloadShaders();
 
-        lastShaderHotReloadCheckTime = scene.runningTime;
+        lastShaderHotReloadCheckTime = gmContext->contextTime;
       }
     #endif
 
@@ -541,7 +541,7 @@ namespace Gamma {
     shaders.foliage.setMatrix4f("matView", ctx.matView);
     shaders.foliage.setInt("meshTexture", 0);
     shaders.foliage.setInt("meshNormalMap", 1);
-    shaders.foliage.setFloat("time", gmContext->scene.runningTime);
+    shaders.foliage.setFloat("time", gmContext->contextTime);
 
     for (auto* glMesh : glMeshes) {
       if (glMesh->isMeshType(MeshType::FOLIAGE)) {
@@ -602,7 +602,7 @@ namespace Gamma {
     auto& shader = shaders.shadowLightView;
 
     shader.use();
-    shader.setFloat("time", gmContext->scene.runningTime);
+    shader.setFloat("time", gmContext->contextTime);
     shader.setInt("meshTexture", 0);
 
     for (u32 mapIndex = 0; mapIndex < glDirectionalShadowMaps.size(); mapIndex++) {
@@ -883,7 +883,7 @@ namespace Gamma {
     shader.setVec3f("cameraPosition", camera.position);
     shader.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
     shader.setMatrix4f("matInverseView", ctx.matInverseView);
-    shader.setFloat("time", gmContext->scene.runningTime);
+    shader.setFloat("time", gmContext->contextTime);
 
     for (u32 i = 0; i < ctx.spotShadowcasters.size(); i++) {
       auto& glShadowMap = *glSpotShadowMaps[i];
@@ -1061,7 +1061,7 @@ namespace Gamma {
     shaders.skybox.setVec3f("cameraPosition", ctx.activeCamera->position);
     shaders.skybox.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
     shaders.skybox.setMatrix4f("matInverseView", ctx.matInverseView);
-    shaders.skybox.setFloat("time", scene.runningTime);
+    shaders.skybox.setFloat("time", scene.sceneTime);
     shaders.skybox.setVec3f("sunDirection", scene.sky.sunDirection);
     shaders.skybox.setVec3f("sunColor", scene.sky.sunColor);
     shaders.skybox.setVec3f("atmosphereColor", scene.sky.atmosphereColor);
@@ -1086,7 +1086,7 @@ namespace Gamma {
       shaders.gpuParticle.use();
       shaders.gpuParticle.setMatrix4f("matProjection", ctx.matProjection);
       shaders.gpuParticle.setMatrix4f("matView", ctx.matView);
-      shaders.gpuParticle.setFloat("time", gmContext->scene.runningTime);
+      shaders.gpuParticle.setFloat("time", gmContext->scene.sceneTime);
 
       for (auto& glMesh : glMeshes) {        
         auto& mesh = *glMesh->getSourceMesh();
@@ -1350,7 +1350,7 @@ namespace Gamma {
     shaders.water.setMatrix4f("matView", ctx.matView);
     shaders.water.setMatrix4f("matInverseView", ctx.matInverseView);
     shaders.water.setVec3f("cameraPosition", camera.position);
-    shaders.water.setFloat("time", scene.runningTime);
+    shaders.water.setFloat("time", gmContext->contextTime);
     shaders.water.setFloat("zNear", scene.zNear);
     shaders.water.setFloat("zFar", scene.zFar);
 
@@ -1439,7 +1439,7 @@ namespace Gamma {
     shaders.post.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
     shaders.post.setMatrix4f("matInverseView", ctx.matInverseView);
     shaders.post.setVec3f("cameraPosition", ctx.activeCamera->position);
-    shaders.post.setFloat("screenWarpTime", scene.runningTime - scene.fx.screenWarpTime);
+    shaders.post.setFloat("screenWarpTime", scene.sceneTime - scene.fx.screenWarpTime);
     shaders.post.setVec3f("atmosphereColor", scene.sky.atmosphereColor);
     shaders.post.setFloat("zNear", scene.zNear);
     shaders.post.setFloat("zFar", scene.zFar);

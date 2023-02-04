@@ -36,8 +36,8 @@
 
 #define get_input() context->scene.input
 #define get_camera() context->scene.camera
-#define get_running_time() context->scene.runningTime
-#define time_since(time) (context->scene.runningTime - time)
+#define get_running_time() context->scene.sceneTime
+#define time_since(time) (context->scene.sceneTime - time)
 
 #define add_debug_message(message) context->debugMessages.push_back(message)
 
@@ -82,7 +82,7 @@ struct GmScene {
   std::map<std::string, Gamma::Light*> lightStore;
   Gamma::Vec3f freeCameraVelocity = Gamma::Vec3f(0.0f);
   u32 frame = 0;
-  float runningTime = 0.0f;
+  float sceneTime = 0.0f;
   std::string clouds;
   float zNear = 1.f;
   float zFar = 10000.f;
@@ -95,7 +95,7 @@ struct GmScene {
   } sky;
 
   struct Fx {
-    float screenWarpTime = 0.f;
+    float screenWarpTime = -1.f;
   } fx;
 
   struct GmUI {

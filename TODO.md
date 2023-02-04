@@ -1,6 +1,5 @@
 EDITOR
 ------
-* stop gpu particles in editor mode
 
 BUGS
 ----

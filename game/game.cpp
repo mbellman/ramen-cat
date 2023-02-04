@@ -197,6 +197,8 @@ void updateGame(GmContext* context, GameState& state, float dt) {
 
     state.previousPlayerPosition = player.position;
     state.wasOnSolidGroundLastFrame = state.isOnSolidGround;
+
+    context->scene.sceneTime += dt;
   }
 
   LOG_TIME();

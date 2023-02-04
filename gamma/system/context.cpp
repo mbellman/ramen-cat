@@ -256,12 +256,10 @@ void Gm_HandleFrameEnd(GmContext* context) {
 
   context->fpsAverager.add(fps);
   context->frameTimeAverager.add(frameTimeInMicroseconds);
+  context->contextTime += frameTimeInMicroseconds / 1000000.0f;
 
-  context->scene.runningTime += frameTimeInMicroseconds / 1000000.0f;
   context->scene.frame++;
-
   context->scene.input.resetPerFrameState();
-
   context->scene.ui.surfaces.clear();
   context->scene.ui.texts.clear();
 
