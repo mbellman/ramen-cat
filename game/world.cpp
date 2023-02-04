@@ -531,7 +531,6 @@ std::vector<MeshAsset> World::meshAssets = {
 std::vector<MeshAsset> World::dynamicMeshPieces = {
   {
     .name = "stair-step",
-    .defaultColor = Vec3f(1.f),
     .maxInstances = 10000,
     .create = []() {
       return Mesh::Cube();
@@ -539,13 +538,20 @@ std::vector<MeshAsset> World::dynamicMeshPieces = {
   },
   {
     .name = "japanese-lamppost-light",
-    .defaultColor = Vec3f(1.f),
-    .maxInstances = 1000,
     .create = []() {
       return Mesh::Model("./game/assets/japanese-lamppost-light.obj");
     },
     .attributes = {
       .emissivity = 1.f
+    }
+  },
+  {
+    .name = "wire",
+    .create = []() {
+      return Mesh::Cube();
+    },
+    .attributes = {
+      .roughness = 0.3f
     }
   }
 };
@@ -730,9 +736,106 @@ internal void rebuildDynamicStaircases(GmContext* context) {
     }
   }
 
-  u16 totalStairSteps = objects("stair-step").totalActive();
+  #if GAMMA_DEVELOPER_MODE
+    u16 totalStairSteps = objects("stair-step").totalActive();
 
-  Console::log("Generated", std::to_string(totalStairSteps), "stair steps");
+    Console::log("Generated", std::to_string(totalStairSteps), "stair steps");
+  #endif
+}
+
+internal void rebuildLamppostLights(GmContext* context) {
+  objects("japanese-lamppost-light").reset();
+
+  for (auto& post : objects("japanese-lamppost")) {
+    auto& light = create_object_from("japanese-lamppost-light");
+
+    light.position = post.position + Vec3f(0, 0.78f, 0) * post.scale.y;
+    light.scale = post.scale;
+    light.rotation = post.rotation;
+    light.color = Vec3f(1.f, 0.9f, 0.75f);
+
+    commit(light);
+  }
+
+  #if GAMMA_DEVELOPER_MODE
+    u16 totalLights = objects("japanese-lamppost-light").totalActive();
+
+    Console::log("Generated", std::to_string(totalLights), "lamppost lights");
+  #endif
+}
+
+internal void rebuildElectricalPoleWires(GmContext* context) {
+  objects("wire").reset();
+
+  for (auto& pole : objects("electrical-pole")) {
+    for (auto& p : objects("electrical-pole")) {
+      if (
+        p._record.id == pole._record.id &&
+        p._record.generation == pole._record.generation
+      ) {
+        continue;
+      }
+
+      float distance = (pole.position - p.position).magnitude();
+      float yDistance = pole.position.y - p.position.y;
+
+      // Only generate wires for poles close enough to one another,
+      // and within a certain y distance threshold
+      if (distance < 2000.f && yDistance > 0.f && yDistance < 500.f) {
+        u8 totalWirePieces = 10;
+        Vec3f start = pole.position + Vec3f(0, pole.scale.y, 0);
+        Vec3f end = p.position + Vec3f(0, p.scale.y, 0);
+        float sagDistance = distance / 10.f;
+
+        std::vector<Vec3f> points;
+
+        // Define a discrete set of points forming the wire curve
+        for (u8 i = 0; i <= totalWirePieces; i++) {
+          float alpha = float(i) / float(totalWirePieces);
+          float sag = (1.f - powf(alpha * 2.f - 1.f, 2)) * sagDistance;
+          Vec3f point = Vec3f::lerp(start, end, alpha) - Vec3f(0, sag, 0);
+
+          points.push_back(point);
+        }
+
+        // Create wire segments connecting the wire points
+        for (u8 i = 0; i < points.size() - 1; i++) {
+          auto& currentPoint = points[i];
+          auto& nextPoint = points[i + 1];
+          Vec3f path = nextPoint - currentPoint;
+          float distance = path.magnitude();
+
+          // Calculate the wire rotation (pitch + yaw)
+          float yaw = atan2f(path.x, path.z);
+
+          // Rotate the path onto the y/z plane so we can
+          // calculate the pitch as a function of y/z
+          path.z = path.x * sinf(yaw) + path.z * cosf(yaw);
+
+          float pitch = atan2f(path.y, path.z);
+
+          // Create the individual wire segment
+          {
+            auto& wire = create_object_from("wire");
+
+            wire.position = (currentPoint + nextPoint) / 2.f;
+            wire.scale = Vec3f(3.f, 3.f, distance / 2.f);
+            wire.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), yaw);
+            wire.rotation *= Quaternion::fromAxisAngle(wire.rotation.getLeftDirection(), pitch);
+            wire.color = Vec3f(0.1f);
+
+            commit(wire);
+          }
+        }
+      }
+    }
+  }
+
+  #if GAMMA_DEVELOPER_MODE
+    u16 totalWires = objects("wire").totalActive();
+
+    Console::log("Generated", std::to_string(totalWires), "wire pieces");
+  #endif
 }
 
 void World::initializeGameWorld(GmContext* context, GameState& state) {
@@ -841,20 +944,6 @@ void World::rebuildDynamicMeshes(GmContext* context) {
   }
 
   rebuildDynamicStaircases(context);
-
-  // Position lamppost lights
-  {
-    objects("japanese-lamppost-light").reset();
-
-    for (auto& post : objects("japanese-lamppost")) {
-      auto& light = create_object_from("japanese-lamppost-light");
-
-      light.position = post.position + Vec3f(0, 0.78f, 0) * post.scale.y;
-      light.scale = post.scale;
-      light.rotation = post.rotation;
-      light.color = Vec3f(1.f, 0.9f, 0.75f);
-
-      commit(light);
-    }
-  }
+  rebuildLamppostLights(context);
+  rebuildElectricalPoleWires(context);
 }

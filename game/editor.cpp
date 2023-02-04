@@ -118,7 +118,7 @@ internal void highlightObject(GmContext* context, const Object& object, const Ve
   }
 
   Vec3f originalColor = object.color.toVec3f();
-  float alpha = 0.7f + std::sinf(get_running_time() * 3.f) * 0.3f;
+  float alpha = 0.7f + std::sinf(get_context_time() * 3.f) * 0.3f;
 
   liveObject->color = Vec3f::lerp(originalColor, highlightColor, alpha);
 
@@ -749,7 +749,7 @@ internal void respawnPlayer(GmContext* context, GameState& state) {
 
   // Prevent respawning in a lower area from erroneously
   // triggering fall position reset behavior
-  state.lastTimeOnSolidGround = get_running_time();
+  state.lastTimeOnSolidGround = get_context_time();
 }
 
 internal void handleColorCommand(GmContext* context, const std::string& command) {
@@ -1200,7 +1200,7 @@ namespace Editor {
       }
 
       if (input.didClickMouse()) {
-        editor.lastClickTime = get_running_time();
+        editor.lastClickTime = get_context_time();
 
         if (editor.isObservingObject || editor.isObjectSelected) {
           if (input.didRightClickMouse()) {
@@ -1263,7 +1263,7 @@ namespace Editor {
         input.isMouseHeld() &&
         !input.isKeyHeld(Key::SHIFT) &&
         editor.isObjectSelected &&
-        time_since(editor.lastClickTime) > 0.1f
+        context_time_since(editor.lastClickTime) > 0.1f
       ) {
         float dx = (float)mouseDelta.x;
         float dy = (float)mouseDelta.y;

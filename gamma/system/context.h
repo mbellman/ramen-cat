@@ -12,6 +12,9 @@
 
 #define _ctx GmContext* context
 
+#define get_context_time() context->contextTime
+#define context_time_since(time) (context->contextTime - time)
+
 enum GmRenderMode {
   OPENGL,
   VULKAN
