@@ -180,7 +180,8 @@ internal void addJetstream(GmContext* context, GameState& state, const std::vect
 
   // Entity
   {
-    const float TOTAL_POINTS = 100;
+    // @todo pass as a parameter
+    const float TOTAL_POINTS = 50;
 
     Jetstream stream;
 
