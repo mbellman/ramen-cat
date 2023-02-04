@@ -511,6 +511,12 @@ internal void handleJetstreams(GmContext* context, GameState& state, float dt) {
     }
 
     if (closestDistance < stream.radius) {
+      if (time_since(state.lastAirDashTime) > 1.f) {
+        // Reset active air dashes when inside the stream for sufficiently long
+        state.dashLevel = 0;
+        state.canPerformAirDash = true;
+      }
+
       float alpha = sqrtf(1.f - closestDistance / stream.radius);
       Vec3f streamDirection = (nextPoint - player.position).unit();
       float speed;
