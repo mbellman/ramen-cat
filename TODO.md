@@ -1,5 +1,6 @@
 EDITOR
 ------
+* stop gpu particles in editor mode
 
 BUGS
 ----
@@ -35,7 +36,6 @@ GAME
 * other food collectibles
 
 * seagulls
-* jetstreams
 * area titles
 * train station model updates
 * npc model improvements/highlight when nearby

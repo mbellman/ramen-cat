@@ -116,12 +116,12 @@ vec3 getInitialParticlePosition() {
 /**
  * @todo description
  */
-vec3 getPathParticlePosition() {
+vec3 getPathParticlePosition(float speed_factor) {
   if (path.total == 0) {
     return vec3(0);
   }
 
-  float particle_speed = getParticleSpeed();
+  float particle_speed = getParticleSpeed() * speed_factor;
   float path_progress = fract(random(0, 1, particle_id * 1.1) + time * (particle_speed / path.total));
 
   float path_position = path.is_circuit
@@ -158,7 +158,11 @@ vec3 getParticleDeviation() {
  * Returns the particle's current position as a function of time.
  */
 vec3 getParticlePosition() {
-  return particles.spawn + getInitialParticlePosition() + getPathParticlePosition() + getParticleDeviation();
+  vec3 initial_position = getInitialParticlePosition();
+  // @todo make configurable
+  float path_speed_factor = 0.5 + 2.0 * (1.0 - length(initial_position) / particles.spread);
+
+  return particles.spawn + initial_position + getPathParticlePosition(path_speed_factor) + getParticleDeviation();
 }
 
 void main() {
@@ -170,7 +174,7 @@ void main() {
 
   // @hack invert Z
   gl_Position = matProjection * matView * glVec4(position);
-  gl_PointSize = 50.0 * scale / gl_Position.z;
+  gl_PointSize = 5000.0 * scale / gl_Position.z;
 
   fragUv = vertexUv;
   // @todo make color configurable

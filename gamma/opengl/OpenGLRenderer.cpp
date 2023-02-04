@@ -462,7 +462,7 @@ namespace Gamma {
       renderWater();
     }
 
-    // @todo if (ctx.hasgpuParticles)
+    // @todo if (ctx.hasParticles)
     renderParticles();
 
     if (ctx.hasSilhouetteObjects) {

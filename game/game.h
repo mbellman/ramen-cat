@@ -32,6 +32,12 @@ struct Slingshot {
   float initialRotation = 0.f;
 };
 
+// @todo move to entity_system.h
+struct Jetstream {
+  std::vector<Gamma::Vec3f> points;
+  float radius = 500.f;
+};
+
 struct CameraState {
   Gamma::ThirdPersonCamera camera3p;
   Gamma::Vec3f lookAtTarget;
@@ -101,6 +107,8 @@ struct GameState {
   Gamma::Vec3f slingshotVelocity;
   float startingSlingshotAngle = 0.f;
   float targetSlingshotAngle = 0.f;
+
+  std::vector<Jetstream> jetstreams;
 
   std::vector<Gamma::Object> initialMovingObjects;
 
