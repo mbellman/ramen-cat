@@ -184,21 +184,18 @@ void main() {
     reflection_color = mix(reflection_color_and_depth.rgb, sky_color + clouds_color, alpha);
   }
 
+  float plane_fresnel = dot(normalize(fragNormal), normalized_fragment_to_camera);
+
   // @todo make configurable
-  const vec3 BASE_WATER_COLOR = vec3(0, 0.25, 0.4);
+  const vec3 BASE_WATER_COLOR = vec3(0, 0.4 - 0.2 * (1.0 - plane_fresnel), 0.5);
 
   // Diminish reflections based on sky intensity
   reflection_color = mix(BASE_WATER_COLOR, reflection_color, sky_intensity);
 
-  water_color = mix(refraction_color, reflection_color, (1.0 - fresnel_factor));
-  water_color += BASE_WATER_COLOR;
+  water_color = mix(refraction_color, reflection_color, 1.0 - plane_fresnel);
 
   // @hack Fade to aquamarine at grazing angles
-  {
-    float plane_fresnel = dot(normalize(fragNormal), normalized_fragment_to_camera);
-
-    water_color += vec3(0, 1, 1) * pow(1.0 - plane_fresnel, 15);
-  }
+  water_color += vec3(0, 1, 1) * pow(1.0 - plane_fresnel, 8);
 
   out_color_and_depth = vec4(water_color, gl_FragCoord.z);
 }

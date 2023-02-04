@@ -29,7 +29,7 @@ const vec3 sky_sample_offsets[] = {
 
 vec3 getIndirectSkyLightContribution(vec3 fragment_position, vec3 fragment_normal, float roughness) {
   // @todo pass in as a uniform
-  const float indirect_sky_light_intensity = 0.6;
+  const float indirect_sky_light_intensity = 0.9;
   vec3 diffuse_contribution = vec3(0);
 
   for (int i = 0; i < 4; i++) {
@@ -46,7 +46,10 @@ vec3 getIndirectSkyLightContribution(vec3 fragment_position, vec3 fragment_norma
   vec3 specular_contribution = getSkyColor(reflection_vector, sunDirection, sunColor, atmosphereColor, altitude).rgb;
   float alpha = pow(1.0 - roughness, 5);
 
-  return mix(diffuse_contribution, specular_contribution, alpha);
+  float up_factor = dot(fragment_normal, vec3(0, 1, 0)) * 0.5 + 0.5;
+  float intensity_factor = 0.4 + 0.6 * up_factor;
+
+  return mix(diffuse_contribution, specular_contribution, alpha) * intensity_factor;
 }
 
 void main() {
