@@ -418,10 +418,11 @@ namespace Gamma {
    *
    * @todo description
    */
-  Mesh* Mesh::Particles() {
+  Mesh* Mesh::Particles(bool useGpuParticles) {
     auto* mesh = new Mesh();
 
     mesh->type = MeshType::PARTICLES;
+    mesh->particles.useGpuParticles = useGpuParticles;
 
     mesh->vertices.push_back(Vertex());
 

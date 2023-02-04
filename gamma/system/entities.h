@@ -331,7 +331,7 @@ namespace Gamma {
     static Mesh* Sphere(u8 divisions = 5);
     static Mesh* Model(const char* path);
     static Mesh* Model(const std::vector<std::string>& paths);
-    static Mesh* Particles();
+    static Mesh* Particles(bool useGpuParticles = false);
     static Mesh* Plane(u32 size, bool useLoopingTexture = false);
     static Mesh* Disc(u32 slices);
     // @todo Cylinder(u32 divisions)

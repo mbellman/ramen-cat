@@ -20,6 +20,40 @@
 
 using namespace Gamma;
 
+/**
+ * Adapted from http://paulbourke.net/miscellaneous/interpolation/
+ *
+ * Performs cubic spline interpolation.
+ */
+internal float interpolateCubicSpline(float a, float b, float c, float d, float alpha) {
+  float m = alpha * alpha;
+
+  float a0 = d - c - a + b;
+  float a1 = a - b - a0;
+  float a2 = c - a;
+  float a3 = b;
+  
+  return (a0 * alpha * m) + (a1 * m) + (a2 * alpha) + a3;
+}
+
+internal Vec3f interpolateCubicSpline(const Vec3f& a, const Vec3f& b, const Vec3f& c, const Vec3f& d, float alpha) {
+  return Vec3f(
+    interpolateCubicSpline(a.x, b.x, c.x, d.x, alpha),
+    interpolateCubicSpline(a.y, b.y, c.y, d.y, alpha),
+    interpolateCubicSpline(a.z, b.z, c.z, d.z, alpha)
+  );
+}
+
+internal u32 getWrappedIndex(s32 index, u32 total) {
+  if (index < 0) {
+    return u32(total + index);
+  } else if (index >= total) {
+    return u32(index % total);
+  }
+
+  return u32(index);
+}
+
 internal void loadNpcData(GmContext* context, GameState& state) {
   // @todo eventually store as binary data
   auto npcDataContents = Gm_LoadFileContents("./game/data_npcs.txt");
@@ -125,51 +159,10 @@ internal void loadEntityData(GmContext* context, GameState& state) {
   }
 }
 
-// @todo move to game_math.cpp
-
-/**
- * Adapted from http://paulbourke.net/miscellaneous/interpolation/
- *
- * Performs cubic spline interpolation.
- */
-internal float interpolateCubicSpline(float a, float b, float c, float d, float alpha) {
-  float m = alpha * alpha;
-
-  float a0 = d - c - a + b;
-  float a1 = a - b - a0;
-  float a2 = c - a;
-  float a3 = b;
-  
-  return (a0 * alpha * m) + (a1 * m) + (a2 * alpha) + a3;
-}
-
-internal Vec3f interpolateCubicSpline(const Vec3f& a, const Vec3f& b, const Vec3f& c, const Vec3f& d, float alpha) {
-  return Vec3f(
-    interpolateCubicSpline(a.x, b.x, c.x, d.x, alpha),
-    interpolateCubicSpline(a.y, b.y, c.y, d.y, alpha),
-    interpolateCubicSpline(a.z, b.z, c.z, d.z, alpha)
-  );
-}
-
-internal u32 getWrappedIndex(s32 index, u32 total) {
-  if (index < 0) {
-    return u32(total + index);
-  } else if (index >= total) {
-    return u32(index % total);
-  }
-
-  return u32(index);
-}
-
 internal void addJetstream(GmContext* context, GameState& state, const std::vector<Vec3f>& points) {
   // Particles
   {
-    // @todo make this cleaner to write
-    auto* jetstream = Mesh::Particles();
-
-    jetstream->particles.useGpuParticles = true;
-
-    add_mesh("jetstream", 5000, jetstream);
+    add_mesh("jetstream", 5000, Mesh::Particles(true));
 
     auto& particles = mesh("jetstream")->particles;
 
