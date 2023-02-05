@@ -24,7 +24,6 @@ ASSETS
 
 GAME
 ----
-* wires
 * slingshot velocity affected by dashing tier
 * proper nighttime handling
 * lights dimming during daytime
