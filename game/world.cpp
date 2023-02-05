@@ -932,17 +932,17 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
     loadLights(context);
 
     World::rebuildDynamicMeshes(context);
+
+    // Hide dynamic mesh placeholders
+    for (auto& asset : World::meshAssets) {
+      if (asset.dynamic) {
+        mesh(asset.name)->disabled = true;
+      }
+    }
   }
 }
 
 void World::rebuildDynamicMeshes(GmContext* context) {
-  // Hide dynamic mesh placeholders
-  for (auto& asset : World::meshAssets) {
-    if (asset.dynamic) {
-      mesh(asset.name)->disabled = true;
-    }
-  }
-
   rebuildDynamicStaircases(context);
   rebuildLamppostLights(context);
   rebuildElectricalPoleWires(context);

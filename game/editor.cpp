@@ -215,11 +215,6 @@ internal void showDynamicMeshPlaceholders(GmContext* context) {
       mesh(asset.name)->disabled = false;
     }
   }
-
-  // Hide dynamic pieces
-  for (auto& asset : World::dynamicMeshPieces) {
-    mesh(asset.name)->disabled = true;
-  }
 }
 
 internal void resetMovingObjects(GmContext* context, GameState& state) {
@@ -507,6 +502,7 @@ internal void undoLastHistoryAction(GmContext* context, GameState& state) {
       editor.isObjectSelected = false;
 
       updateCollisionPlanes(context, state);
+      World::rebuildDynamicMeshes(context);
 
       break;
     }
@@ -525,6 +521,7 @@ internal void undoLastHistoryAction(GmContext* context, GameState& state) {
       editor.isObjectSelected = true;
 
       updateCollisionPlanes(context, state);
+      World::rebuildDynamicMeshes(context);
 
       // When restoring deleted objects using undo, we need to update
       // older references to that object in the history as referring
@@ -573,6 +570,7 @@ internal void undoLastHistoryAction(GmContext* context, GameState& state) {
         editor.isObjectSelected = true;
 
         updateCollisionPlanes(context, state);
+        World::rebuildDynamicMeshes(context);
       }
     }
   }
@@ -1370,6 +1368,7 @@ namespace Editor {
 
       if (input.didReleaseMouse() && editor.isObjectSelected) {
         updateCollisionPlanes(context, state);
+        World::rebuildDynamicMeshes(context);
       }
     }
 
