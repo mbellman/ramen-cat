@@ -5,6 +5,8 @@
 
 #include "Gamma.h"
 
+#include "animation_system.h"
+
 struct Plane {
   Gamma::Vec3f p1, p2, p3, p4;
   Gamma::Vec3f t1, t2, t3, t4;
@@ -81,6 +83,10 @@ struct GameState {
   bool canPerformAirDash = false;
 
   u8 dashLevel = 0;
+
+  struct Animations {
+    AnimationRig player;
+  } animations;
 
   // NPC handling
   NonPlayerCharacter* activeNpc = nullptr;

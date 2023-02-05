@@ -69,6 +69,7 @@ void initializeGame(GmContext* context, GameState& state) {
   initializeInputHandlers(context, state);
 
   World::initializeGameWorld(context, state);
+  AnimationSystem::initializeAnimations(context, state);
   CameraSystem::initializeGameCamera(context, state);
   EntitySystem::initializeGameEntities(context, state);
   EffectsSystem::initializeGameEffects(context, state);
