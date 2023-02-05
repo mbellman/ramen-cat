@@ -5,6 +5,7 @@
 #include "game.h"
 #include "world.h"
 #include "movement_system.h"
+#include "animation_system.h"
 #include "camera_system.h"
 #include "entity_system.h"
 #include "effects_system.h"
@@ -117,6 +118,7 @@ void updateGame(GmContext* context, GameState& state, float dt) {
   EntitySystem::handleGameEntities(context, state, dt);
   MovementSystem::handlePlayerMovementInput(context, state, dt);
   MovementSystem::handlePlayerMovementPhysics(context, state, dt);
+  AnimationSystem::handleAnimations(context, state, dt);
   CameraSystem::handleGameCamera(context, state, dt);
   CameraSystem::handleVisibilityCullingAndLevelsOfDetail(context, state);
   EffectsSystem::handleGameEffects(context, state, dt);
@@ -180,8 +182,8 @@ void updateGame(GmContext* context, GameState& state, float dt) {
         state.lastSolidGroundPositions.size() > 0
       ) {
         player.position = state.lastSolidGroundPositions.back();
-        state.velocity = Vec3f(0.f);
 
+        state.velocity = Vec3f(0.f);
         state.lastSolidGroundPositions.pop_back();
       }
     }
@@ -200,6 +202,9 @@ void updateGame(GmContext* context, GameState& state, float dt) {
 
     context->scene.sceneTime += dt;
   }
+
+  // Commit any changes to the player object
+  commit(player);
 
   LOG_TIME();
 }

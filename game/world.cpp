@@ -845,10 +845,10 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   add_mesh("ocean", 1, Mesh::Disc(12));
   add_mesh("ocean-floor", 1, Mesh::Disc(12));
   add_mesh("platform", 1000, Mesh::Cube());
-  add_mesh("sphere", 1, Mesh::Sphere(18));
 
-  mesh("sphere")->roughness = 0.9f;
-  // mesh("sphere")->silhouette = true;
+  add_mesh("player", 1, Mesh::Model("./game/assets/cat.obj"));
+  mesh("player")->roughness = 0.9f;
+  // mesh("player")->silhouette = true;
 
   mesh("ocean")->type = MeshType::WATER;
   mesh("ocean")->canCastShadows = false;
@@ -870,11 +870,13 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
 
   commit(oceanFloor);
 
-  auto& player = create_object_from("sphere");
+  auto& player = create_object_from("player");
 
   player.scale = Vec3f(20.0f);
-  player.position = Vec3f(-30.f, 400.f, 2200.f);
+  player.position = Vec3f(-30.f, 243.f, 2200.f);
   player.color = Vec3f(1.f, 0.4f, 0.4f);
+
+  state.direction = Vec3f(0, 0, -1.f);
 
   commit(player);
 

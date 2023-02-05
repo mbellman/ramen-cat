@@ -3,9 +3,8 @@ EDITOR
 
 BUGS
 ----
-* falling down when maximimizing the window on startup (???)
+* when enabling the editor in OBJECTS mode with only collision planes enabled, don't show dynamic meshes
 * fix onigiri texture
-
 * imported models are inverted along X
 * avoid phasing through corners
 
@@ -24,6 +23,7 @@ ASSETS
 
 GAME
 ----
+* rotate character more based on intended motion
 * slingshot velocity affected by dashing tier
 * proper nighttime handling
 * lights dimming during daytime
@@ -32,7 +32,6 @@ GAME
 * killplane below level only
 * signs/neon
 * other food collectibles
-
 * seagulls
 * area titles
 * train station model updates
@@ -53,6 +52,7 @@ GAME
 
 ENGINE
 ------
+* increase directional shadow range
 * cache textures
 * atmospheric scattering improvements
 * area lights

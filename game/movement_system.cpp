@@ -142,8 +142,6 @@ internal void resolveAllNpcCollisions(GmContext* context, GameState& state) {
     ) {
       player.position = npcTop + npcTopToPlayer.unit() * distanceThreshold;
 
-      commit(player);
-
       break;
     } else if (
       xzDistance < distanceThreshold &&
@@ -153,8 +151,6 @@ internal void resolveAllNpcCollisions(GmContext* context, GameState& state) {
       Vec3f xzNpcPosition = Vec3f(npc.position.x, player.position.y, npc.position.z);
 
       player.position = xzNpcPosition + xzNpcToPlayer.unit() * distanceThreshold;
-
-      commit(player);
 
       break;
     }
@@ -176,8 +172,6 @@ internal void resolveAllHotAirBalloonCollisions(GmContext* context, GameState& s
       Vec3f normalizedBalloonToPlayer = balloonToPlayer.unit();
 
       player.position = balloon.position + normalizedBalloonToPlayer * (balloonRadius + PLAYER_RADIUS);
-
-      commit(player);
 
       state.velocity = Vec3f::reflect(state.velocity, normalizedBalloonToPlayer) * 1.2f;
       state.canPerformAirDash = true;
@@ -381,7 +375,5 @@ namespace MovementSystem {
         state.velocity.z *= (1.0f - 5.f * dt);
       }
     }
-
-    commit(player);
   }
 }

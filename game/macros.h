@@ -1,7 +1,7 @@
 #pragma once
 
 #define internal static inline
-#define get_player() objects("sphere")[0]
+#define get_player() objects("player")[0]
 
 #define START_TIMING(label) \
   u64 __start = Gm_GetMicroseconds();\
