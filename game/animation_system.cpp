@@ -113,20 +113,62 @@ void AnimationSystem::initializeAnimations(GmContext* context, GameState& state)
       // @todo use vertex index instead
       a_vertex.vertex = vertex;
 
-      for (auto& joint : rig.joints) {
+      // @todo this does not take into account joint connections
+      float closest = Gm_FLOAT_MAX;
+      u32 closestIndex = 0;
+      float closest2 = Gm_FLOAT_MAX;
+      u32 closest2Index = 0;
+      float closest3 = Gm_FLOAT_MAX;
+      u32 closest3Index = 0;
+
+      for (u32 i = 0; i < rig.joints.size(); i++) {
+        auto& joint = rig.joints[i];
         float distance = (vertex.position - joint.position).magnitude();
 
-        if (distance < 0.5f) {
-          float weight = 2.f * (0.5f - distance);
-
-          WeightedAnimationJoint w_joint;
-
-          w_joint.joint = &joint;
-          w_joint.weight = weight;
-
-          a_vertex.joints.push_back(w_joint);
+        if (distance < closest) {
+          closest = distance;
+          closestIndex = i;
         }
       }
+
+
+      for (u32 i = 0; i < rig.joints.size(); i++) {
+        auto& joint = rig.joints[i];
+        float distance = (vertex.position - joint.position).magnitude();
+
+        if (distance < closest2 && distance > closest) {
+          closest2 = distance;
+          closest2Index = i;
+        }
+      }
+
+
+      for (u32 i = 0; i < rig.joints.size(); i++) {
+        auto& joint = rig.joints[i];
+        float distance = (vertex.position - joint.position).magnitude();
+
+        if (distance < closest3 && distance > closest2) {
+          closest3 = distance;
+          closest3Index = i;
+        }
+      }
+
+      WeightedAnimationJoint w_joint1;
+      WeightedAnimationJoint w_joint2;
+      WeightedAnimationJoint w_joint3;
+
+      w_joint1.joint = &rig.joints[closestIndex];
+      w_joint1.weight = 1.f;
+
+      w_joint2.joint = &rig.joints[closest2Index];
+      w_joint2.weight = 0.3f;
+
+      w_joint3.joint = &rig.joints[closest3Index];
+      w_joint3.weight = 0.1f;
+
+      a_vertex.joints.push_back(w_joint1);
+      a_vertex.joints.push_back(w_joint2);
+      a_vertex.joints.push_back(w_joint3);
 
       rig.vertices.push_back(a_vertex);
     }
@@ -149,7 +191,6 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
     player.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), rotation);
 
     // @temporary
-    state.animations.player.joints[0].offset = Vec3f(0, 0.3f, 0) * sinf(get_running_time());
     state.animations.player.joints[5].offset = Vec3f(0, 0, 0.5f) * cosf(get_running_time() * 2.f);
     state.animations.player.joints[8].offset = Vec3f(0, 0, 0.5f) * sinf(get_running_time() * 2.f);
     state.animations.player.joints[12].offset = Vec3f(0, 0, 0.5f) * cosf(get_running_time() * 2.f);
