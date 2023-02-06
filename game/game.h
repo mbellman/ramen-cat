@@ -88,9 +88,9 @@ struct GameState {
   float currentYaw = 0.f;
   float currentPitch = 0.f;
 
-  struct Animations {
-    AnimationRig player;
-  } animations;
+  struct Animation {
+    AnimationRig playerRig;
+  } animation;
 
   // NPC handling
   NonPlayerCharacter* activeNpc = nullptr;

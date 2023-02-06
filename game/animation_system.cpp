@@ -5,99 +5,106 @@
 
 using namespace Gamma;
 
-// @todo cleanup
-internal void updatePlayerAnimationRig(GmContext* context, GameState& state, float dt) {
-  auto& rig = state.animations.player;
+internal void handlePlayerTrottingAnimation(GameState& state, float dt) {
+  auto& rig = state.animation.playerRig;
 
-  if (state.isOnSolidGround) {
-    float speed = state.velocity.xz().magnitude();
-    float speedRatio = speed / (speed + MAXIMUM_HORIZONTAL_GROUND_SPEED);
-    float alpha = state.totalDistanceTraveled * 0.075f;
+  float speed = state.velocity.xz().magnitude();
+  float speedRatio = speed / (speed + MAXIMUM_HORIZONTAL_GROUND_SPEED);
+  float alpha = state.totalDistanceTraveled * 0.075f;
 
-    float s_alpha = sinf(alpha);
-    float s_alpha_m = sinf(alpha * 0.75f);
-    float c_alpha = cosf(alpha);
-    float c_alpha_m = cosf(alpha * 0.75f);
+  float s_alpha = sinf(alpha);
+  float s_alpha_m = sinf(alpha * 0.75f);
+  float c_alpha = cosf(alpha);
+  float c_alpha_m = cosf(alpha * 0.75f);
 
-    // Head/neck
-    rig.joints[0].offset = Vec3f(0, 0.05f, 0) * speedRatio * s_alpha_m;
-    rig.joints[1].offset = Vec3f(0, 0.15f, 0) * speedRatio * s_alpha_m;
+  // Head/neck
+  rig.joints[0].offset = Vec3f(0, 0.05f, 0) * speedRatio * s_alpha_m;
+  rig.joints[1].offset = Vec3f(0, 0.15f, 0) * speedRatio * s_alpha_m;
 
-    // Torso
-    rig.joints[2].offset = Vec3f(0, 0.05f, 0) * speedRatio * sinf(alpha);
+  // Torso
+  rig.joints[2].offset = Vec3f(0, 0.05f, 0) * speedRatio * sinf(alpha);
 
-    // Spine
-    rig.joints[3].offset = Vec3f(0, 0.1f, 0) * speedRatio * sinf(alpha + 1.f);
+  // Spine
+  rig.joints[3].offset = Vec3f(0, 0.1f, 0) * speedRatio * sinf(alpha + 1.f);
 
-    // Front legs
-    rig.joints[5].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * s_alpha;
-    rig.joints[6].offset = Vec3f(0, 0, 0.2f) * speedRatio * sinf(alpha + 0.5f);
-    rig.joints[7].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * sinf(alpha + 1.f);
+  // Front legs
+  rig.joints[5].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * s_alpha;
+  rig.joints[6].offset = Vec3f(0, 0, 0.2f) * speedRatio * sinf(alpha + 0.5f);
+  rig.joints[7].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * sinf(alpha + 1.f);
 
-    rig.joints[8].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * c_alpha;
-    rig.joints[9].offset = Vec3f(0, 0, 0.2f) * speedRatio * cosf(alpha + 0.5f);
-    rig.joints[10].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * cosf(alpha + 1.f);
+  rig.joints[8].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * c_alpha;
+  rig.joints[9].offset = Vec3f(0, 0, 0.2f) * speedRatio * cosf(alpha + 0.5f);
+  rig.joints[10].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * cosf(alpha + 1.f);
 
-    // Back legs
-    rig.joints[11].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * sinf(alpha - 0.5f);
-    rig.joints[12].offset = Vec3f(0, 0, 0.2f) * speedRatio * sinf(alpha);
-    rig.joints[12].rotation = Quaternion(1.f, 0, 0, 0);
-    rig.joints[13].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * sinf(alpha + 0.5f);
-    rig.joints[13].rotation = Quaternion(1.f, 0, 0, 0);
+  // Back legs
+  rig.joints[11].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * sinf(alpha - 0.5f);
+  rig.joints[12].offset = Vec3f(0, 0, 0.2f) * speedRatio * sinf(alpha);
+  rig.joints[12].rotation = Quaternion(1.f, 0, 0, 0);
+  rig.joints[13].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * sinf(alpha + 0.5f);
+  rig.joints[13].rotation = Quaternion(1.f, 0, 0, 0);
 
-    rig.joints[14].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * cosf(alpha - 0.5f);
-    rig.joints[15].offset = Vec3f(0, 0, 0.2f) * speedRatio * c_alpha;
-    rig.joints[15].rotation = Quaternion(1.f, 0, 0, 0);
-    rig.joints[16].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * cosf(alpha + 0.5f);
-    rig.joints[16].rotation = Quaternion(1.f, 0, 0, 0);
+  rig.joints[14].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * cosf(alpha - 0.5f);
+  rig.joints[15].offset = Vec3f(0, 0, 0.2f) * speedRatio * c_alpha;
+  rig.joints[15].rotation = Quaternion(1.f, 0, 0, 0);
+  rig.joints[16].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * cosf(alpha + 0.5f);
+  rig.joints[16].rotation = Quaternion(1.f, 0, 0, 0);
 
-    // @todo create a method for this
-    for (auto& joint : rig.joints) {
-      joint.r_matrix = joint.rotation.toMatrix4f();
-    }
-  } else {
-    // Animate in mid-air
-
-    // Head/neck
-    rig.joints[0].offset = Vec3f(0);
-    rig.joints[1].offset = Vec3f(0);
-
-    // Torso
-    rig.joints[2].offset = Vec3f(0);
-
-    // Spine
-    rig.joints[3].offset = Vec3f(0);
-
-    // Front legs
-    rig.joints[5].offset = Vec3f(0);
-    rig.joints[6].offset = Vec3f(0, 0, -0.3f);
-    rig.joints[7].offset = Vec3f(0, 0, -0.5f);
-
-    rig.joints[8].offset = Vec3f(0);
-    rig.joints[9].offset = Vec3f(0, 0, -0.3f);
-    rig.joints[10].offset = Vec3f(0, 0, -0.5f);
-
-    // Back legs
-    rig.joints[11].offset = Vec3f(0);
-    rig.joints[12].offset = Vec3f(0, 0, 0.2f);
-    rig.joints[12].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.8f);
-    rig.joints[13].offset = Vec3f(0, 0.3f, 1.f);
-    rig.joints[13].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI);
-
-    rig.joints[14].offset = Vec3f(0);
-    rig.joints[15].offset = Vec3f(0, 0, 0.2f);
-    rig.joints[15].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.8f);
-    rig.joints[16].offset = Vec3f(0, 0.3f, 1.f);
-    rig.joints[16].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI);
-
-    // @todo create a method for this
-    for (auto& joint : rig.joints) {
-      joint.r_matrix = joint.rotation.toMatrix4f();
-    }
+  // @todo create a method for this
+  for (auto& joint : rig.joints) {
+    joint.r_matrix = joint.rotation.toMatrix4f();
   }
 }
 
-internal void playRiggedMeshAnimation(Mesh& mesh, AnimationRig& rig) {
+internal void handlePlayerMidairAnimation(GameState& state, float dt) {
+  auto& rig = state.animation.playerRig;
+
+  // Head/neck
+  rig.joints[0].offset = Vec3f(0);
+  rig.joints[1].offset = Vec3f(0);
+
+  // Torso
+  rig.joints[2].offset = Vec3f(0);
+
+  // Spine
+  rig.joints[3].offset = Vec3f(0);
+
+  // Front legs
+  rig.joints[5].offset = Vec3f(0);
+  rig.joints[6].offset = Vec3f(0, 0, -0.3f);
+  rig.joints[7].offset = Vec3f(0, 0, -0.5f);
+
+  rig.joints[8].offset = Vec3f(0);
+  rig.joints[9].offset = Vec3f(0, 0, -0.3f);
+  rig.joints[10].offset = Vec3f(0, 0, -0.5f);
+
+  // Back legs
+  rig.joints[11].offset = Vec3f(0);
+  rig.joints[12].offset = Vec3f(0, 0, 0.2f);
+  rig.joints[12].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.8f);
+  rig.joints[13].offset = Vec3f(0, 0.3f, 1.f);
+  rig.joints[13].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI);
+
+  rig.joints[14].offset = Vec3f(0);
+  rig.joints[15].offset = Vec3f(0, 0, 0.2f);
+  rig.joints[15].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.8f);
+  rig.joints[16].offset = Vec3f(0, 0.3f, 1.f);
+  rig.joints[16].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI);
+
+  // @todo create a method for this
+  for (auto& joint : rig.joints) {
+    joint.r_matrix = joint.rotation.toMatrix4f();
+  }
+}
+
+internal void handlePlayerAnimation(GmContext* context, GameState& state, float dt) {
+  if (state.isOnSolidGround) {
+    handlePlayerTrottingAnimation(state, dt);
+  } else {
+    handlePlayerMidairAnimation(state, dt);
+  }
+}
+
+internal void handleMeshWithAnimationRig(Mesh& mesh, AnimationRig& rig) {
   for (u32 i = 0; i < rig.vertices.size(); i++) {
     auto& animatedVertex = rig.vertices[i];
 
@@ -120,7 +127,7 @@ void AnimationSystem::initializeAnimations(GmContext* context, GameState& state)
   // Initialize  player rig
   // @todo store joints in a file
   {
-    auto& rig = state.animations.player;
+    auto& rig = state.animation.playerRig;
 
     // Head [0]
     rig.joints.push_back({
@@ -328,8 +335,8 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
     player.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), yaw);
     player.rotation *= Quaternion::fromAxisAngle(player.rotation.getLeftDirection(), pitch);
 
-    updatePlayerAnimationRig(context, state, dt);
-    playRiggedMeshAnimation(*mesh("player"), state.animations.player);
+    handlePlayerAnimation(context, state, dt);
+    handleMeshWithAnimationRig(*mesh("player"), state.animation.playerRig);
 
     state.currentYaw = yaw;
     state.currentPitch = pitch;
