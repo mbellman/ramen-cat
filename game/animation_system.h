@@ -8,6 +8,7 @@ struct AnimationJoint {
   Gamma::Vec3f position;
   Gamma::Vec3f offset;
   Gamma::Quaternion rotation;
+  Gamma::Matrix4f r_matrix;
 };
 
 struct WeightedAnimationJoint {

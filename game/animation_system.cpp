@@ -50,6 +50,11 @@ internal void updatePlayerAnimationRig(GmContext* context, GameState& state, flo
     rig.joints[15].rotation = Quaternion(1.f, 0, 0, 0);
     rig.joints[16].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * cosf(alpha + 0.5f);
     rig.joints[16].rotation = Quaternion(1.f, 0, 0, 0);
+
+    // @todo create a method for this
+    for (auto& joint : rig.joints) {
+      joint.r_matrix = joint.rotation.toMatrix4f();
+    }
   } else {
     // Animate in mid-air
 
@@ -84,6 +89,11 @@ internal void updatePlayerAnimationRig(GmContext* context, GameState& state, flo
     rig.joints[15].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.8f);
     rig.joints[16].offset = Vec3f(0, 0.3f, 1.f);
     rig.joints[16].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI);
+
+    // @todo create a method for this
+    for (auto& joint : rig.joints) {
+      joint.r_matrix = joint.rotation.toMatrix4f();
+    }
   }
 }
 
@@ -93,17 +103,13 @@ internal void playRiggedMeshAnimation(Mesh& mesh, AnimationRig& rig) {
 
     animatedVertex.vertex = mesh.vertices[i];
 
-    for (auto& weightedJoint : animatedVertex.joints) {
-      auto& joint = *weightedJoint.joint;
+    for (auto& [ joint, weight ] : animatedVertex.joints) {
       Vec3f vertexPosition = animatedVertex.vertex.position;
-      Vec3f jointToVertex = vertexPosition - joint.position;
-      // @optimize don't recalculate the rotation matrix for each joint, for each vertex!
-      // Just recalculate it once per joint (where necessary) beforehand. Optionally, store
-      // matrices instead of quaternions.
-      Vec3f rotatedJointToVertex = joint.rotation.toMatrix4f().transformVec3f(jointToVertex);
-      Vec3f targetPosition = joint.position + joint.offset + rotatedJointToVertex;
+      Vec3f jointToVertex = vertexPosition - joint->position;
+      Vec3f rotatedJointToVertex = joint->r_matrix.transformVec3f(jointToVertex);
+      Vec3f targetPosition = joint->position + joint->offset + rotatedJointToVertex;
 
-      animatedVertex.vertex.position = Vec3f::lerp(vertexPosition, targetPosition, weightedJoint.weight);
+      animatedVertex.vertex.position = Vec3f::lerp(vertexPosition, targetPosition, weight);
     }
 
     mesh.transformedVertices[i] = animatedVertex.vertex;
