@@ -120,13 +120,13 @@ namespace Gamma {
   }
 
   void OpenGLLightDisc::configureDisc(Disc& disc, const Light& light, const Matrix4f& matProjection, const Matrix4f& matView, float resolutionAspectRatio) {
-    Vec3f localLightPosition = (matView * light.position).toVec3f();
+    Vec3f localLightPosition = matView.transformVec3f(light.position);
 
     disc.light = light;
 
     if (localLightPosition.z > 0.1f) {
       // Light source in front of the camera
-      Vec3f screenLightPosition = (matProjection * localLightPosition).toVec3f() / localLightPosition.z;
+      Vec3f screenLightPosition = matProjection.transformVec3f(localLightPosition) / localLightPosition.z;
 
       disc.offset = Vec2f(screenLightPosition.x, screenLightPosition.y);
       // @todo use 1 + log(light.power) or similar for scaling term

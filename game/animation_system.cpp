@@ -100,8 +100,7 @@ internal void playRiggedMeshAnimation(Mesh& mesh, AnimationRig& rig) {
       // @optimize don't recalculate the rotation matrix for each joint, for each vertex!
       // Just recalculate it once per joint (where necessary) beforehand. Optionally, store
       // matrices instead of quaternions.
-      // @optimize only calculate the x/y/z transform - we throw away the w component when calling toVec3f()!
-      Vec3f rotatedJointToVertex = (joint.rotation.toMatrix4f() * jointToVertex).toVec3f();
+      Vec3f rotatedJointToVertex = joint.rotation.toMatrix4f().transformVec3f(jointToVertex);
       Vec3f targetPosition = joint.position + joint.offset + rotatedJointToVertex;
 
       animatedVertex.vertex.position = Vec3f::lerp(vertexPosition, targetPosition, weightedJoint.weight);

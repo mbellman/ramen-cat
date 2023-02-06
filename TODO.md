@@ -57,7 +57,6 @@ GAME
 ENGINE
 ------
 * increase directional shadow range
-* define an optimized Matrix4f * Vec3f operation that skips the w component
 * cache textures
 * atmospheric scattering improvements
 * area lights

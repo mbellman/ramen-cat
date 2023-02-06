@@ -187,7 +187,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
         auto& scale = collisionPlatform.scale;
         auto matInverseRotation = collisionPlatform.rotation.toMatrix4f().inverse();
         auto collisionPlatformToTargetCamera = targetCameraPosition - collisionPlatform.position;
-        auto target = (matInverseRotation * collisionPlatformToTargetCamera).toVec3f();
+        auto target = matInverseRotation.transformVec3f(collisionPlatformToTargetCamera);
 
         if (
           // Check to see that the camera isn't currently being repositioned

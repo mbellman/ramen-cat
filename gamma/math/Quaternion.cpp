@@ -116,19 +116,19 @@ namespace Gamma {
   Vec3f Quaternion::getDirection() const {
     const static Vec3f forward = Vec3f(0, 0, 1.f);
 
-    return (toMatrix4f() * forward).toVec3f();
+    return toMatrix4f().transformVec3f(forward);
   }
 
   Vec3f Quaternion::getUpDirection() const {
     const static Vec3f up = Vec3f(0, 1.f, 0);
 
-    return (toMatrix4f() * up).toVec3f();
+    return toMatrix4f().transformVec3f(up);
   }
 
   Vec3f Quaternion::getLeftDirection() const {
     const static Vec3f left = Vec3f(-1.f, 0, 0);
 
-    return (toMatrix4f() * left).toVec3f();
+    return toMatrix4f().transformVec3f(left);
   }
 
   Matrix4f Quaternion::toMatrix4f() const {

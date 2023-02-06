@@ -11,6 +11,36 @@ namespace Gamma {
    * Matrix4f
    * -------
    */
+  Matrix4f Matrix4f::operator*(const Matrix4f& matrix) const {
+    Matrix4f product;
+
+    for (int r = 0; r < 4; r++) {
+      for (int c = 0; c < 4; c++) {
+        float& value = product.m[r * 4 + c] = 0;
+
+        for (int n = 0; n < 4; n++) {
+          value += m[r * 4 + n] * matrix.m[n * 4 + c];
+        }
+      }
+    }
+
+    return product;
+  }
+
+  Vec4f Matrix4f::operator*(const Vec3f& vector) const {
+    float x = vector.x;
+    float y = vector.y;
+    float z = vector.z;
+    float w = 1.0f;
+
+    return Vec4f(
+      x * m[0] + y * m[1] + z * m[2] + w * m[3],
+      x * m[4] + y * m[5] + z * m[6] + w * m[7],
+      x * m[8] + y * m[9] + z * m[10] + w * m[11],
+      x * m[12] + y * m[13] + z * m[14] + w * m[15]
+    );
+  }
+
   Matrix4f Matrix4f::glPerspective(const Area<u32>& area, float fov, float near, float far) {
     float f = 1.0f / tanf(fov / 2.0f * DEGREES_TO_RADIANS);
     float aspectRatio = (float)area.width / (float)area.height;
@@ -175,6 +205,18 @@ namespace Gamma {
     return m_transform;
   }
 
+  Vec3f Matrix4f::transformVec3f(const Vec3f& vector) const {
+    float x = vector.x;
+    float y = vector.y;
+    float z = vector.z;
+
+    return Vec3f(
+      x * m[0] + y * m[1] + z * m[2] + m[3],
+      x * m[4] + y * m[5] + z * m[6] + m[7],
+      x * m[8] + y * m[9] + z * m[10] + m[11]
+    );
+  }
+
   Matrix4f Matrix4f::translation(const Vec3f& translation) {
     return {
       1.0f, 0.0f, 0.0f, translation.x,
@@ -199,35 +241,5 @@ namespace Gamma {
     }
 
     printf("\n");
-  }
-
-  Matrix4f Matrix4f::operator*(const Matrix4f& matrix) const {
-    Matrix4f product;
-
-    for (int r = 0; r < 4; r++) {
-      for (int c = 0; c < 4; c++) {
-        float& value = product.m[r * 4 + c] = 0;
-
-        for (int n = 0; n < 4; n++) {
-          value += m[r * 4 + n] * matrix.m[n * 4 + c];
-        }
-      }
-    }
-
-    return product;
-  }
-
-  Vec4f Matrix4f::operator*(const Vec3f& vector) const {
-    float x = vector.x;
-    float y = vector.y;
-    float z = vector.z;
-    float w = 1.0f;
-
-    return Vec4f(
-      x * m[0] + y * m[1] + z * m[2] + w * m[3],
-      x * m[4] + y * m[5] + z * m[6] + w * m[7],
-      x * m[8] + y * m[9] + z * m[10] + w * m[11],
-      x * m[12] + y * m[13] + z * m[14] + w * m[15]
-    );
   }
 }

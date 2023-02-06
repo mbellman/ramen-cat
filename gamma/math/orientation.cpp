@@ -30,7 +30,7 @@ namespace Gamma {
     q.y = cosp * siny * cosr + sinp * cosy * sinr;
     q.z = cosp * cosy * sinr - sinp * siny * cosr;
 
-    return (q.toMatrix4f() * forward).toVec3f();
+    return q.toMatrix4f().transformVec3f(forward);
   }
 
   Vec3f Orientation::getLeftDirection() const {
