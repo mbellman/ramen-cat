@@ -23,7 +23,9 @@ ASSETS
 
 GAME
 ----
+* time slowdown in dev mode
 * rotate character more based on intended motion
+
 * slingshot velocity affected by dashing tier
 * proper nighttime handling
 * lights dimming during daytime
