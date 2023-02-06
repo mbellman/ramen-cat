@@ -5,6 +5,96 @@
 
 using namespace Gamma;
 
+internal void updatePlayerAnimationRig(GmContext* context, GameState& state, float dt) {
+  auto& rig = state.animations.player;
+
+  if (state.isOnSolidGround) {
+    float speed = state.velocity.xz().magnitude();
+    float speedRatio = speed / (speed + MAXIMUM_HORIZONTAL_GROUND_SPEED);
+    float alpha = state.totalDistanceTraveled * 0.075f;
+
+    float s_alpha = sinf(alpha);
+    float s_alpha_m = sinf(alpha * 0.75f);
+    float c_alpha = cosf(alpha);
+    float c_alpha_m = cosf(alpha * 0.75f);
+
+    // Head/neck
+    rig.joints[0].offset = Vec3f(0, 0.05f, 0) * speedRatio * s_alpha_m;
+    rig.joints[1].offset = Vec3f(0, 0.15f, 0) * speedRatio * s_alpha_m;
+
+    // Torso
+    rig.joints[2].offset = Vec3f(0, 0.05f, 0) * speedRatio * sinf(alpha);
+
+    // Spine
+    rig.joints[3].offset = Vec3f(0, 0.1f, 0) * speedRatio * sinf(alpha + 1.f);
+
+    // Front legs
+    rig.joints[5].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * s_alpha;
+    rig.joints[6].offset = Vec3f(0, 0, 0.2f) * speedRatio * sinf(alpha + 0.5f);
+    rig.joints[7].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * sinf(alpha + 1.f);
+
+    rig.joints[8].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * c_alpha;
+    rig.joints[9].offset = Vec3f(0, 0, 0.2f) * speedRatio * cosf(alpha + 0.5f);
+    rig.joints[10].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * cosf(alpha + 1.f);
+
+    // Back legs
+    rig.joints[11].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * sinf(alpha - 0.5f);
+    rig.joints[12].offset = Vec3f(0, 0, 0.2f) * speedRatio * sinf(alpha);
+    rig.joints[13].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * sinf(alpha + 0.5f);
+
+    rig.joints[14].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * cosf(alpha - 0.5f);
+    rig.joints[15].offset = Vec3f(0, 0, 0.2f) * speedRatio * c_alpha;
+    rig.joints[16].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * cosf(alpha + 0.5f);
+  } else {
+    // Animate in mid-air
+
+    // Head/neck
+    rig.joints[0].offset = Vec3f(0);
+    rig.joints[1].offset = Vec3f(0);
+
+    // Torso
+    rig.joints[2].offset = Vec3f(0);
+
+    // Spine
+    rig.joints[3].offset = Vec3f(0);
+
+    // Front legs
+    rig.joints[5].offset = Vec3f(0);
+    rig.joints[6].offset = Vec3f(0, 0, -0.3f);
+    rig.joints[7].offset = Vec3f(0, 0, -0.5f);
+
+    rig.joints[8].offset = Vec3f(0);
+    rig.joints[9].offset = Vec3f(0, 0, -0.3f);
+    rig.joints[10].offset = Vec3f(0, 0, -0.5f);
+
+    // Back legs
+    rig.joints[11].offset = Vec3f(0);
+    rig.joints[12].offset = Vec3f(0, 0, 0.2f);
+    rig.joints[13].offset = Vec3f(0, 0.3f, 1.f);
+
+    rig.joints[14].offset = Vec3f(0);
+    rig.joints[15].offset = Vec3f(0, 0, 0.2f);
+    rig.joints[16].offset = Vec3f(0, 0.3f, 1.f);
+  }
+}
+
+internal void playRiggedMeshAnimation(Mesh& mesh, AnimationRig& rig) {
+  for (u32 i = 0; i < rig.vertices.size(); i++) {
+    auto& a_vertex = rig.vertices[i];
+
+    a_vertex.vertex = mesh.vertices[i];
+
+    for (auto& w_joint : a_vertex.joints) {
+      // @todo factor in rotation
+      Vec3f offset = a_vertex.vertex.position + w_joint.joint->offset;
+
+      a_vertex.vertex.position = Vec3f::lerp(a_vertex.vertex.position, offset, w_joint.weight);
+    }
+
+    mesh.transformedVertices[i] = a_vertex.vertex;
+  }
+}
+
 void AnimationSystem::initializeAnimations(GmContext* context, GameState& state) {
   // Initialize  player rig
   // @todo store joints in a file
@@ -191,67 +281,22 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
 
   // Player character animation
   {
-    auto& mesh = mesh("player");
     auto& player = get_player();
-    float rotation = atan2f(state.direction.x, state.direction.z) + Gm_PI;
+    float yaw = atan2f(state.direction.x, state.direction.z) + Gm_PI;
 
-    player.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), rotation);
+    Vec3f motion = player.position - state.previousPlayerPosition;
 
-    // @temporary
-    float speed = state.velocity.xz().magnitude();
-    float speedRatio = speed / (speed + MAXIMUM_HORIZONTAL_GROUND_SPEED);
-    float alpha = state.totalDistanceTraveled * 0.075f;
+    float pitch = -1.f * atan2f(motion.y, motion.xz().magnitude());
 
-    float s_alpha = sinf(alpha);
-    float s_alpha_m = sinf(alpha * 0.75f);
-    float c_alpha = cosf(alpha);
-    float c_alpha_m = cosf(alpha * 0.75f);
-
-    // Head/neck
-    state.animations.player.joints[0].offset = Vec3f(0, 0.05f, 0) * speedRatio * s_alpha_m;
-    state.animations.player.joints[1].offset = Vec3f(0, 0.15f, 0) * speedRatio * s_alpha_m;
-
-    // Torso
-    state.animations.player.joints[2].offset = Vec3f(0, 0.05f, 0) * speedRatio * sinf(alpha);
-
-    // Spine
-    state.animations.player.joints[3].offset = Vec3f(0, 0.1f, 0) * speedRatio * sinf(alpha + 1.f);
-
-    // Tailbone
-    state.animations.player.joints[4].offset = Vec3f(0, 0.05f, 0) * speedRatio * sinf(alpha + 2.f);
-
-    // Front legs
-    state.animations.player.joints[5].offset = Vec3f(0, 0.2f, 0.05f) * speedRatio * s_alpha;
-    state.animations.player.joints[6].offset = Vec3f(0, 0, 0.2f) * speedRatio * sinf(alpha + 0.5f);
-    state.animations.player.joints[7].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * sinf(alpha + 1.f);
-
-    state.animations.player.joints[8].offset = Vec3f(0, 0.2f, 0.05f) * speedRatio * c_alpha;
-    state.animations.player.joints[9].offset = Vec3f(0, 0, 0.2f) * speedRatio * cosf(alpha + 0.5f);
-    state.animations.player.joints[10].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * cosf(alpha + 1.f);
-
-    // Back legs
-    state.animations.player.joints[11].offset = Vec3f(0, 0.2f, 0.05f) * speedRatio * sinf(alpha - 0.5f);
-    state.animations.player.joints[12].offset = Vec3f(0, 0, 0.2f) * speedRatio * sinf(alpha);
-    state.animations.player.joints[13].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * sinf(alpha + 0.5f);
-
-    state.animations.player.joints[14].offset = Vec3f(0, 0.2f, 0.05f) * speedRatio * cosf(alpha - 0.5f);
-    state.animations.player.joints[15].offset = Vec3f(0, 0, 0.2f) * speedRatio * c_alpha;
-    state.animations.player.joints[16].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * cosf(alpha + 0.5f);
-
-    for (u32 i = 0; i < state.animations.player.vertices.size(); i++) {
-      auto& a_vertex = state.animations.player.vertices[i];
-
-      a_vertex.vertex = mesh->vertices[i];
-
-      for (auto& w_joint : a_vertex.joints) {
-        // @todo factor in rotation
-        Vec3f offset = a_vertex.vertex.position + w_joint.joint->offset;
-
-        a_vertex.vertex.position = Vec3f::lerp(a_vertex.vertex.position, offset, w_joint.weight);
-      }
-
-      mesh->transformedVertices[i] = a_vertex.vertex;
+    if (!state.isOnSolidGround) {
+      pitch *= 0.2f;
     }
+
+    player.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), yaw);
+    player.rotation *= Quaternion::fromAxisAngle(player.rotation.getLeftDirection(), pitch);
+
+    updatePlayerAnimationRig(context, state, dt);
+    playRiggedMeshAnimation(*mesh("player"), state.animations.player);
   }
 
   LOG_TIME();
