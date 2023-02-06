@@ -31,7 +31,7 @@ void AnimationSystem::initializeAnimations(GmContext* context, GameState& state)
 
     // Spine [3]
     rig.joints.push_back({
-      .position = Vec3f(0, -0.115f, -0.05f),
+      .position = Vec3f(0, 0.1f, -0.05f),
       .rotation = Quaternion(1.f, 0, 0, 0)
     });
 
@@ -168,10 +168,10 @@ void AnimationSystem::initializeAnimations(GmContext* context, GameState& state)
       w_joint1.weight = 1.f;
 
       w_joint2.joint = &rig.joints[closest2Index];
-      w_joint2.weight = 0.3f;
+      w_joint2.weight = 0.5f;
 
       w_joint3.joint = &rig.joints[closest3Index];
-      w_joint2.weight = 0.1f;
+      w_joint2.weight = 0.25f;
 
       a_vertex.joints.push_back(w_joint1);
       a_vertex.joints.push_back(w_joint2);
@@ -205,35 +205,38 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
     float s_alpha = sinf(alpha);
     float s_alpha_m = sinf(alpha * 0.75f);
     float c_alpha = cosf(alpha);
+    float c_alpha_m = cosf(alpha * 0.75f);
 
     // Head/neck
     state.animations.player.joints[0].offset = Vec3f(0, 0.05f, 0) * speedRatio * s_alpha_m;
     state.animations.player.joints[1].offset = Vec3f(0, 0.15f, 0) * speedRatio * s_alpha_m;
 
     // Torso
-    state.animations.player.joints[2].offset = Vec3f(0, 0.2f, 0) * speedRatio * s_alpha_m;
+    state.animations.player.joints[2].offset = Vec3f(0, 0.05f, 0) * speedRatio * sinf(alpha);
 
     // Spine
-    state.animations.player.joints[3].offset = Vec3f(0, 0.25f, 0) * speedRatio * c_alpha;
+    state.animations.player.joints[3].offset = Vec3f(0, 0.1f, 0) * speedRatio * sinf(alpha + 1.f);
 
     // Tailbone
-    state.animations.player.joints[4].offset = Vec3f(0, 0.2f, 0) * speedRatio * s_alpha_m;
+    state.animations.player.joints[4].offset = Vec3f(0, 0.05f, 0) * speedRatio * sinf(alpha + 2.f);
 
     // Front legs
-    state.animations.player.joints[6].offset = Vec3f(0, -0.2f, 0) * speedRatio * s_alpha;
-    state.animations.player.joints[7].offset = Vec3f(0, 0, 0.8f) * speedRatio * s_alpha;
+    state.animations.player.joints[5].offset = Vec3f(0, 0.2f, 0.05f) * speedRatio * s_alpha;
+    state.animations.player.joints[6].offset = Vec3f(0, 0, 0.2f) * speedRatio * sinf(alpha + 0.5f);
+    state.animations.player.joints[7].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * sinf(alpha + 1.f);
 
-    state.animations.player.joints[9].offset = Vec3f(0, -0.2f, 0) * speedRatio * c_alpha;
-    state.animations.player.joints[10].offset = Vec3f(0, 0, 0.8f) * speedRatio * c_alpha;
+    state.animations.player.joints[8].offset = Vec3f(0, 0.2f, 0.05f) * speedRatio * c_alpha;
+    state.animations.player.joints[9].offset = Vec3f(0, 0, 0.2f) * speedRatio * cosf(alpha + 0.5f);
+    state.animations.player.joints[10].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * cosf(alpha + 1.f);
 
     // Back legs
-    state.animations.player.joints[11].offset = Vec3f(0, 0.1f, 0) * speedRatio * s_alpha;
-    state.animations.player.joints[12].offset = Vec3f(0, 0.1f, 0) * speedRatio * s_alpha;
-    state.animations.player.joints[13].offset = Vec3f(0, 0, 0.8f) * speedRatio * s_alpha;
+    state.animations.player.joints[11].offset = Vec3f(0, 0.2f, 0.05f) * speedRatio * sinf(alpha - 0.5f);
+    state.animations.player.joints[12].offset = Vec3f(0, 0, 0.2f) * speedRatio * sinf(alpha);
+    state.animations.player.joints[13].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * sinf(alpha + 0.5f);
 
-    state.animations.player.joints[14].offset = Vec3f(0, 0.1f, 0) * speedRatio * c_alpha;
-    state.animations.player.joints[15].offset = Vec3f(0, 0.1f, 0) * speedRatio * c_alpha;
-    state.animations.player.joints[16].offset = Vec3f(0, 0, 0.8f) * speedRatio * c_alpha;
+    state.animations.player.joints[14].offset = Vec3f(0, 0.2f, 0.05f) * speedRatio * cosf(alpha - 0.5f);
+    state.animations.player.joints[15].offset = Vec3f(0, 0, 0.2f) * speedRatio * c_alpha;
+    state.animations.player.joints[16].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * cosf(alpha + 0.5f);
 
     for (u32 i = 0; i < state.animations.player.vertices.size(); i++) {
       auto& a_vertex = state.animations.player.vertices[i];

@@ -220,7 +220,12 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
     auto& camera = get_camera();
 
     if (context->scene.frame > 0) {
-      float alpha = 15.f * (dt / state.gameSpeed);
+      #if GAMMA_DEVELOPER_MODE
+        // Allow camera panning to behave at full speed, irrespective of game speed
+        float alpha = 15.f * (dt / state.gameSpeed);
+      #else
+        float alpha = 15.f * dt;
+      #endif
 
       camera.position = Vec3f::lerp(camera.position, targetCameraPosition, alpha);
     } else {

@@ -371,8 +371,8 @@ namespace MovementSystem {
         state.velocity.z *= 0.25f;
       } else {
         // Gradually slow down along solid ground
-        state.velocity.x *= (1.0f - 5.f * dt);
-        state.velocity.z *= (1.0f - 5.f * dt);
+        state.velocity.x *= (1.0f - 7.f * dt);
+        state.velocity.z *= (1.0f - 7.f * dt);
       }
     }
   }

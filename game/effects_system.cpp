@@ -38,7 +38,7 @@ internal void handlePlayerParticles(GmContext* context, GameState& state, float 
         time_since(state.lastGroundParticleSpawnTime) > GROUND_PARTICLE_SPAWN_DELAY
       ) {
         if (state.isOnSolidGround) {
-          particle.position = player.position - Vec3f(0, player.scale.y * 0.5f, 0);
+          particle.position = player.position - Vec3f(0, PLAYER_RADIUS * 0.8f, 0);
           particle.scale = Vec3f(3.f);
           particle.color = Vec3f(0.5f);
         } else {
