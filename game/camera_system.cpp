@@ -220,7 +220,9 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
     auto& camera = get_camera();
 
     if (context->scene.frame > 0) {
-      camera.position = Vec3f::lerp(camera.position, targetCameraPosition, 15.f * dt);
+      float alpha = 15.f * (dt / state.gameSpeed);
+
+      camera.position = Vec3f::lerp(camera.position, targetCameraPosition, alpha);
     } else {
       camera.position = targetCameraPosition;
     }

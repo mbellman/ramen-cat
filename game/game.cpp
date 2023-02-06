@@ -101,12 +101,17 @@ void updateGame(GmContext* context, GameState& state, float dt) {
 
   auto& player = get_player();
 
-  // Show debug info
-  {
-    add_debug_message("Player position: " + Gm_ToString(player.position));
-    add_debug_message("Player velocity: " + Gm_ToString(state.velocity));
-    add_debug_message("Day/Night cycle time: " + std::to_string(state.dayNightCycleTime));
-  }
+  #if GAMMA_DEVELOPER_MODE
+    dt *= state.gameSpeed;
+
+    // Show debug info
+    {
+      add_debug_message("Player position: " + Gm_ToString(player.position));
+      add_debug_message("Player velocity: " + Gm_ToString(state.velocity));
+      add_debug_message("Day/Night cycle time: " + std::to_string(state.dayNightCycleTime));
+      add_debug_message("Game speed: " + std::to_string(state.gameSpeed));
+    }
+  #endif
 
   START_TIMING("updateGame");
 
@@ -161,6 +166,8 @@ void updateGame(GmContext* context, GameState& state, float dt) {
   }
 
   #if GAMMA_DEVELOPER_MODE == 1
+    auto& input = get_input();
+
     // Keep track of our last solid ground positions so we can undo movements
     {
       if (
@@ -175,8 +182,6 @@ void updateGame(GmContext* context, GameState& state, float dt) {
 
     // Allow CTRL-Z to 'rewind' through our last solid ground positions
     {
-      auto& input = get_input();
-
       if (
         input.isKeyHeld(Key::CONTROL) &&
         input.didPressKey(Key::Z) &&
@@ -186,6 +191,21 @@ void updateGame(GmContext* context, GameState& state, float dt) {
 
         state.velocity = Vec3f(0.f);
         state.lastSolidGroundPositions.pop_back();
+      }
+    }
+
+    // Allow LEFT/RIGHT to adjust the game speed
+    {
+      if (input.didPressKey(Key::ARROW_LEFT)) {
+        state.gameSpeed *= 0.5f;
+
+        Console::log("Reduced game speed to", state.gameSpeed);
+      }
+
+      if (input.didPressKey(Key::ARROW_RIGHT)) {
+        state.gameSpeed *= 2.f;
+
+        Console::log("Increased game speed to", state.gameSpeed);
       }
     }
   #endif
