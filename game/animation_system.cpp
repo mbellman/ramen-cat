@@ -1,5 +1,6 @@
 #include "animation_system.h"
 #include "game.h"
+#include "game_constants.h"
 #include "macros.h"
 
 using namespace Gamma;
@@ -191,12 +192,34 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
     player.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), rotation);
 
     // @temporary
-    state.animations.player.joints[5].offset = Vec3f(0, 0, 0.5f) * cosf(get_running_time() * 2.f);
-    state.animations.player.joints[8].offset = Vec3f(0, 0, 0.5f) * sinf(get_running_time() * 2.f);
-    state.animations.player.joints[12].offset = Vec3f(0, 0, 0.5f) * cosf(get_running_time() * 2.f);
-    state.animations.player.joints[15].offset = Vec3f(0, 0, 0.5f) * sinf(get_running_time() * 2.f);
+    float speed = state.velocity.xz().magnitude();
+    float speedRatio = speed / (speed + MAXIMUM_HORIZONTAL_GROUND_SPEED);
+    float alpha = state.totalDistanceTraveled * 0.1f;
 
-    // @temporary
+    // Head/neck/torso
+    state.animations.player.joints[0].offset = Vec3f(0, 0.025f, 0) * speedRatio * sinf(alpha * 0.75f);
+    state.animations.player.joints[1].offset = Vec3f(0, 0.15f, 0) * speedRatio * sinf(alpha * 0.75f);
+    state.animations.player.joints[2].offset = Vec3f(0, 0.1f, 0) * speedRatio * sinf(alpha * 0.75f);
+
+    // Front legs
+    state.animations.player.joints[4].offset = Vec3f(0, -0.2f, 0) * speedRatio * sinf(alpha);
+    state.animations.player.joints[5].offset = Vec3f(0, 0, 0.5f) * speedRatio * sinf(alpha);
+
+    state.animations.player.joints[7].offset = Vec3f(0, -0.2f, 0) * speedRatio * sinf(alpha);
+    state.animations.player.joints[8].offset = Vec3f(0, 0, 0.5f) * speedRatio * sinf(alpha);
+
+    // Tailbone
+    state.animations.player.joints[9].offset = Vec3f(0, 0.5f, 0) * speedRatio * cosf(alpha);
+
+    // Back legs
+    state.animations.player.joints[10].offset = Vec3f(0, 0.1f, 0) * speedRatio * cosf(alpha);
+    state.animations.player.joints[11].offset = Vec3f(0, 0.1f, 0) * speedRatio * cosf(alpha);
+    state.animations.player.joints[12].offset = Vec3f(0, 0, 0.5f) * speedRatio * cosf(alpha);
+
+    state.animations.player.joints[14].offset = Vec3f(0, 0.1f, 0) * speedRatio * cosf(alpha);
+    state.animations.player.joints[14].offset = Vec3f(0, 0.1f, 0) * speedRatio * cosf(alpha);
+    state.animations.player.joints[15].offset = Vec3f(0, 0, 0.5f) * speedRatio * cosf(alpha);
+
     for (u32 i = 0; i < state.animations.player.vertices.size(); i++) {
       auto& a_vertex = state.animations.player.vertices[i];
 

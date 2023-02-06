@@ -200,6 +200,7 @@ void updateGame(GmContext* context, GameState& state, float dt) {
 
     state.previousPlayerPosition = player.position;
     state.wasOnSolidGroundLastFrame = state.isOnSolidGround;
+    state.totalDistanceTraveled += state.velocity.xz().magnitude() * dt;
 
     context->scene.sceneTime += dt;
   }
