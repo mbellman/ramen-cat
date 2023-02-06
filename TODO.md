@@ -24,7 +24,10 @@ ASSETS
 GAME
 ----
 * rotate character more based on intended motion
+* use character yaw/pitch tweening
 
+* jumping animation
+* sitting animation
 * slingshot velocity affected by dashing tier
 * proper nighttime handling
 * lights dimming during daytime
@@ -45,8 +48,6 @@ GAME
 * capes/gliding
 * npc movement paths
 * controller support
-* compound entities
-* animated cat behavior (scaled spheres as appendages for now)
 * catnip power up + screen-warp effect
 * dialogue events/camera changes during dialogue
 * cylinder collision refactor
@@ -54,6 +55,7 @@ GAME
 ENGINE
 ------
 * increase directional shadow range
+* define an optimized Matrix4f * Vec3f operation that skips the w component
 * cache textures
 * atmospheric scattering improvements
 * area lights

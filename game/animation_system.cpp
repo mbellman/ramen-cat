@@ -5,6 +5,7 @@
 
 using namespace Gamma;
 
+// @todo cleanup
 internal void updatePlayerAnimationRig(GmContext* context, GameState& state, float dt) {
   auto& rig = state.animations.player;
 
@@ -40,11 +41,15 @@ internal void updatePlayerAnimationRig(GmContext* context, GameState& state, flo
     // Back legs
     rig.joints[11].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * sinf(alpha - 0.5f);
     rig.joints[12].offset = Vec3f(0, 0, 0.2f) * speedRatio * sinf(alpha);
+    rig.joints[12].rotation = Quaternion(1.f, 0, 0, 0);
     rig.joints[13].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * sinf(alpha + 0.5f);
+    rig.joints[13].rotation = Quaternion(1.f, 0, 0, 0);
 
     rig.joints[14].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * cosf(alpha - 0.5f);
     rig.joints[15].offset = Vec3f(0, 0, 0.2f) * speedRatio * c_alpha;
+    rig.joints[15].rotation = Quaternion(1.f, 0, 0, 0);
     rig.joints[16].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * cosf(alpha + 0.5f);
+    rig.joints[16].rotation = Quaternion(1.f, 0, 0, 0);
   } else {
     // Animate in mid-air
 
@@ -70,28 +75,39 @@ internal void updatePlayerAnimationRig(GmContext* context, GameState& state, flo
     // Back legs
     rig.joints[11].offset = Vec3f(0);
     rig.joints[12].offset = Vec3f(0, 0, 0.2f);
+    rig.joints[12].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.8f);
     rig.joints[13].offset = Vec3f(0, 0.3f, 1.f);
+    rig.joints[13].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI);
 
     rig.joints[14].offset = Vec3f(0);
     rig.joints[15].offset = Vec3f(0, 0, 0.2f);
+    rig.joints[15].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.8f);
     rig.joints[16].offset = Vec3f(0, 0.3f, 1.f);
+    rig.joints[16].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI);
   }
 }
 
 internal void playRiggedMeshAnimation(Mesh& mesh, AnimationRig& rig) {
   for (u32 i = 0; i < rig.vertices.size(); i++) {
-    auto& a_vertex = rig.vertices[i];
+    auto& animatedVertex = rig.vertices[i];
 
-    a_vertex.vertex = mesh.vertices[i];
+    animatedVertex.vertex = mesh.vertices[i];
 
-    for (auto& w_joint : a_vertex.joints) {
-      // @todo factor in rotation
-      Vec3f offset = a_vertex.vertex.position + w_joint.joint->offset;
+    for (auto& weightedJoint : animatedVertex.joints) {
+      auto& joint = *weightedJoint.joint;
+      Vec3f vertexPosition = animatedVertex.vertex.position;
+      Vec3f jointToVertex = vertexPosition - joint.position;
+      // @optimize don't recalculate the rotation matrix for each joint, for each vertex!
+      // Just recalculate it once per joint (where necessary) beforehand. Optionally, store
+      // matrices instead of quaternions.
+      // @optimize only calculate the x/y/z transform - we throw away the w component when calling toVec3f()!
+      Vec3f rotatedJointToVertex = (joint.rotation.toMatrix4f() * jointToVertex).toVec3f();
+      Vec3f targetPosition = joint.position + joint.offset + rotatedJointToVertex;
 
-      a_vertex.vertex.position = Vec3f::lerp(a_vertex.vertex.position, offset, w_joint.weight);
+      animatedVertex.vertex.position = Vec3f::lerp(vertexPosition, targetPosition, weightedJoint.weight);
     }
 
-    mesh.transformedVertices[i] = a_vertex.vertex;
+    mesh.transformedVertices[i] = animatedVertex.vertex;
   }
 }
 
