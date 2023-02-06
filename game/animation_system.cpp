@@ -298,21 +298,36 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
   // Player character animation
   {
     auto& player = get_player();
-    float yaw = atan2f(state.direction.x, state.direction.z) + Gm_PI;
-
+    float yaw = state.currentYaw;
+    float pitch = state.currentPitch;
     Vec3f motion = player.position - state.previousPlayerPosition;
 
-    float pitch = -1.f * atan2f(motion.y, motion.xz().magnitude());
+    if (
+      // Only calculate yaw/pitch when we've actually moved
+      player.position != state.previousPlayerPosition &&
+      // @hack Skip the first frame, since we fall for a single
+      // frame at startup, which will confuse the calculation
+      context->scene.frame != 0
+    ) {
+      yaw = atan2f(motion.x, motion.z) + Gm_PI;
+      pitch = -1.f * atan2f(motion.y, motion.xz().magnitude());
+    }
 
     if (!state.isOnSolidGround) {
       pitch *= 0.2f;
     }
+
+    yaw = Gm_LerpCircularf(state.currentYaw, yaw, 10.f * dt, Gm_PI);
+    pitch = Gm_Lerpf(state.currentPitch, pitch, 10.f * dt);
 
     player.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), yaw);
     player.rotation *= Quaternion::fromAxisAngle(player.rotation.getLeftDirection(), pitch);
 
     updatePlayerAnimationRig(context, state, dt);
     playRiggedMeshAnimation(*mesh("player"), state.animations.player);
+
+    state.currentYaw = yaw;
+    state.currentPitch = pitch;
   }
 
   LOG_TIME();

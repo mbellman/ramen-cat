@@ -85,6 +85,8 @@ struct GameState {
   u8 dashLevel = 0;
 
   float totalDistanceTraveled = 0.f;
+  float currentYaw = 0.f;
+  float currentPitch = 0.f;
 
   struct Animations {
     AnimationRig player;

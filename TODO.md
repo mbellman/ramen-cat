@@ -24,7 +24,6 @@ ASSETS
 GAME
 ----
 * rotate character more based on intended motion
-* use character yaw/pitch tweening
 
 * trotting vs. running animation
 * dashing animation

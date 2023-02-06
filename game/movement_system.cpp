@@ -204,6 +204,7 @@ namespace MovementSystem {
 
     Vec3f forward = camera.orientation.getDirection().xz().unit();
     Vec3f left = camera.orientation.getLeftDirection().xz().unit();
+    Vec3f acceleration = Vec3f(0);
 
     if (state.velocity.y != 0.f) {
       // Reduce movement rate in midair
@@ -211,21 +212,22 @@ namespace MovementSystem {
     }
 
     if (input.isKeyHeld(Key::W)) {
-      state.velocity += forward * rate;
+      acceleration = forward * rate;
     }
 
     if (input.isKeyHeld(Key::S)) {
-      state.velocity += forward.invert() * rate;
+      acceleration = forward.invert() * rate;
     }
 
     if (input.isKeyHeld(Key::A)) {
-      state.velocity += left * rate;
+      acceleration = left * rate;
     }
 
     if (input.isKeyHeld(Key::D)) {
-      state.velocity += left.invert() * rate;
+      acceleration = left.invert() * rate;
     }
 
+    state.velocity += acceleration;
     state.isMovingPlayerThisFrame = state.velocity != initialVelocity;
 
     // Limit horizontal speed on ground
