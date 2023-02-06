@@ -26,8 +26,11 @@ GAME
 * rotate character more based on intended motion
 * use character yaw/pitch tweening
 
+* trotting vs. running animation
+* dashing animation
 * jumping animation
 * sitting animation
+
 * slingshot velocity affected by dashing tier
 * proper nighttime handling
 * lights dimming during daytime
