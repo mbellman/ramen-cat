@@ -2,22 +2,20 @@
 #include "ui_system.h"
 #include "entity_system.h"
 #include "collisions.h"
-#include "macros.h"
 #include "game_constants.h"
+#include "macros.h"
 
 using namespace Gamma;
 
-internal void resolveNewPositionFromCollision(const Collision& collision, Object& player, float dt) {
-  auto resetPosition = collision.point + collision.plane.normal * PLAYER_RADIUS;
-
-  player.position = resetPosition;
+internal void resolveNewPositionFromCollision(const Collision& collision, Object& player) {
+  player.position = collision.point + collision.plane.normal * PLAYER_RADIUS;
 }
 
 internal void resolveSingleCollision(GmContext* context, GameState& state, const Collision& collision, float dt) {
   auto& player = get_player();
   auto& plane = collision.plane;
 
-  resolveNewPositionFromCollision(collision, player, dt);
+  resolveNewPositionFromCollision(collision, player);
 
   if (plane.nDotU > 0.7f) {
     // If the collision plane normal points sufficiently upward,
@@ -30,6 +28,22 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
       // Otherwise, the player gradually slides down
       // angled slopes, even without user input.
       player.position = state.previousPlayerPosition;
+    }
+
+    // Ensure that the current pitch is accurate when standing on
+    // upward-facing planes.
+    //
+    // We recalculate player yaw/pitch based on motion, but when
+    // jumping straight up, and then landing on a surface and stopping
+    // immediately, pitch is not correctly reset based on the relationship
+    // between the player direction and plane normal. Thus, we have to
+    // perform this correction here.
+    {
+      // @hack invert() accounts for the z-inversion of the player model.
+      // Perhaps this should be fixed!
+      float dot = Vec3f::dot(player.rotation.getDirection().xz().invert(), plane.normal);
+
+      state.currentPitch = Gm_Lerpf(state.currentPitch, dot, 10.f * dt);
     }
 
     state.velocity.y = 0.f;
@@ -101,7 +115,7 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
       auto fallCollision = Collisions::getLinePlaneCollision(player.position, fallCollisionLineEnd, plane);
 
       if (fallCollision.hit) {
-        resolveNewPositionFromCollision(fallCollision, player, dt);
+        resolveNewPositionFromCollision(fallCollision, player);
 
         state.velocity.y = 0.f;
         state.lastSolidGroundPosition = player.position;
@@ -212,21 +226,22 @@ namespace MovementSystem {
     }
 
     if (input.isKeyHeld(Key::W)) {
-      acceleration = forward * rate;
+      acceleration += forward * rate;
     }
 
     if (input.isKeyHeld(Key::S)) {
-      acceleration = forward.invert() * rate;
+      acceleration += forward.invert() * rate;
     }
 
     if (input.isKeyHeld(Key::A)) {
-      acceleration = left * rate;
+      acceleration += left * rate;
     }
 
     if (input.isKeyHeld(Key::D)) {
-      acceleration = left.invert() * rate;
+      acceleration += left.invert() * rate;
     }
 
+    state.intendedDirection = Vec3f::lerp(state.intendedDirection, acceleration, 0.5f);
     state.velocity += acceleration;
     state.isMovingPlayerThisFrame = state.velocity != initialVelocity;
 

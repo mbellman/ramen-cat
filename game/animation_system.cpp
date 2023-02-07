@@ -12,14 +12,9 @@ internal void handlePlayerTrottingAnimation(GameState& state, float dt) {
   float speedRatio = speed / (speed + MAXIMUM_HORIZONTAL_GROUND_SPEED);
   float alpha = state.totalDistanceTraveled * 0.075f;
 
-  float s_alpha = sinf(alpha);
-  float s_alpha_m = sinf(alpha * 0.75f);
-  float c_alpha = cosf(alpha);
-  float c_alpha_m = cosf(alpha * 0.75f);
-
   // Head/neck
-  rig.joints[0].offset = Vec3f(0, 0.05f, 0) * speedRatio * s_alpha_m;
-  rig.joints[1].offset = Vec3f(0, 0.15f, 0) * speedRatio * s_alpha_m;
+  rig.joints[0].offset = Vec3f(0, 0.05f, 0) * speedRatio * sinf(alpha * 0.75f);
+  rig.joints[1].offset = Vec3f(0, 0.15f, 0) * speedRatio * sinf(alpha * 0.75f);
 
   // Torso
   rig.joints[2].offset = Vec3f(0, 0.05f, 0) * speedRatio * sinf(alpha);
@@ -28,79 +23,72 @@ internal void handlePlayerTrottingAnimation(GameState& state, float dt) {
   rig.joints[3].offset = Vec3f(0, 0.1f, 0) * speedRatio * sinf(alpha + 1.f);
 
   // Front legs
-  rig.joints[5].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * s_alpha;
+  rig.joints[5].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * sinf(alpha);
   rig.joints[6].offset = Vec3f(0, 0, 0.2f) * speedRatio * sinf(alpha + 0.5f);
   rig.joints[7].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * sinf(alpha + 1.f);
 
-  rig.joints[8].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * c_alpha;
+  rig.joints[8].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * cosf(alpha);
   rig.joints[9].offset = Vec3f(0, 0, 0.2f) * speedRatio * cosf(alpha + 0.5f);
   rig.joints[10].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * cosf(alpha + 1.f);
 
   // Back legs
   rig.joints[11].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * sinf(alpha - 0.5f);
   rig.joints[12].offset = Vec3f(0, 0, 0.2f) * speedRatio * sinf(alpha);
-  rig.joints[12].rotation = Quaternion(1.f, 0, 0, 0);
   rig.joints[13].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * sinf(alpha + 0.5f);
-  rig.joints[13].rotation = Quaternion(1.f, 0, 0, 0);
 
   rig.joints[14].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * cosf(alpha - 0.5f);
-  rig.joints[15].offset = Vec3f(0, 0, 0.2f) * speedRatio * c_alpha;
-  rig.joints[15].rotation = Quaternion(1.f, 0, 0, 0);
+  rig.joints[15].offset = Vec3f(0, 0, 0.2f) * speedRatio * cosf(alpha);
   rig.joints[16].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * cosf(alpha + 0.5f);
-  rig.joints[16].rotation = Quaternion(1.f, 0, 0, 0);
-
-  // @todo create a method for this
-  for (auto& joint : rig.joints) {
-    joint.r_matrix = joint.rotation.toMatrix4f();
-  }
 }
 
-internal void handlePlayerMidairAnimation(GameState& state, float dt) {
+internal void handlePlayerMidairAnimation(GmContext* context, GameState& state, float dt) {
   auto& rig = state.animation.playerRig;
-
-  // Head/neck
-  rig.joints[0].offset = Vec3f(0);
-  rig.joints[1].offset = Vec3f(0);
-
-  // Torso
-  rig.joints[2].offset = Vec3f(0);
-
-  // Spine
-  rig.joints[3].offset = Vec3f(0);
+  float airTime = time_since(state.lastTimeOnSolidGround);
+  float jumpTimeFactor = airTime / (airTime + 0.5f);
 
   // Front legs
-  rig.joints[5].offset = Vec3f(0);
-  rig.joints[6].offset = Vec3f(0, 0, -0.3f);
-  rig.joints[7].offset = Vec3f(0, 0, -0.5f);
+  rig.joints[6].offset = Vec3f(0, 0.5f, -0.3f) * jumpTimeFactor;
+  rig.joints[6].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * 0.8f * jumpTimeFactor);
+  rig.joints[7].offset = Vec3f(0, 0.2f, -1.f) * jumpTimeFactor;
+  rig.joints[7].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * jumpTimeFactor);
 
-  rig.joints[8].offset = Vec3f(0);
-  rig.joints[9].offset = Vec3f(0, 0, -0.3f);
-  rig.joints[10].offset = Vec3f(0, 0, -0.5f);
+  rig.joints[9].offset = Vec3f(0, 0.5f, -0.3f) * jumpTimeFactor;
+  rig.joints[9].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * 0.8f * jumpTimeFactor);
+  rig.joints[10].offset = Vec3f(0, 0.2f, -1.f) * jumpTimeFactor;
+  rig.joints[10].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * jumpTimeFactor);
 
   // Back legs
-  rig.joints[11].offset = Vec3f(0);
-  rig.joints[12].offset = Vec3f(0, 0, 0.2f);
-  rig.joints[12].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.8f);
-  rig.joints[13].offset = Vec3f(0, 0.3f, 1.f);
-  rig.joints[13].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI);
+  rig.joints[12].offset = Vec3f(0, 0, 0.2f) * jumpTimeFactor;
+  rig.joints[12].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.8f * jumpTimeFactor);
+  rig.joints[13].offset = Vec3f(0, 0.3f, 1.f) * jumpTimeFactor;
+  rig.joints[13].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * jumpTimeFactor);
 
-  rig.joints[14].offset = Vec3f(0);
-  rig.joints[15].offset = Vec3f(0, 0, 0.2f);
-  rig.joints[15].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.8f);
-  rig.joints[16].offset = Vec3f(0, 0.3f, 1.f);
-  rig.joints[16].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI);
-
-  // @todo create a method for this
-  for (auto& joint : rig.joints) {
-    joint.r_matrix = joint.rotation.toMatrix4f();
-  }
+  rig.joints[15].offset = Vec3f(0, 0, 0.2f) * jumpTimeFactor;
+  rig.joints[15].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.8f * jumpTimeFactor);
+  rig.joints[16].offset = Vec3f(0, 0.3f, 1.f) * jumpTimeFactor;
+  rig.joints[16].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * jumpTimeFactor);
 }
 
 internal void handlePlayerAnimation(GmContext* context, GameState& state, float dt) {
+  // Reset joints every time so they can be calculated cleanly
+  {
+    for (auto& joint : state.animation.playerRig.joints) {
+      joint.offset = Vec3f(0);
+      joint.rotation = Quaternion(1.f, 0, 0, 0);
+    }
+  }
+
   if (state.isOnSolidGround) {
     handlePlayerTrottingAnimation(state, dt);
   } else {
-    handlePlayerMidairAnimation(state, dt);
+    handlePlayerMidairAnimation(context, state, dt);
+  }
+
+  // Recalculate joint rotation matrices
+  {
+    for (auto& joint : state.animation.playerRig.joints) {
+      joint.r_matrix = joint.rotation.toMatrix4f();
+    }
   }
 }
 
@@ -312,21 +300,15 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
     auto& player = get_player();
     float yaw = state.currentYaw;
     float pitch = state.currentPitch;
-    Vec3f motion = player.position - state.previousPlayerPosition;
+    Vec3f movement = player.position - state.previousPlayerPosition;
 
-    if (
-      // Only calculate yaw/pitch when we've actually moved
-      player.position != state.previousPlayerPosition &&
-      // @hack Skip the first frame, since we fall for a single
-      // frame at startup, which will confuse the calculation
-      context->scene.frame != 0
-    ) {
-      yaw = atan2f(motion.x, motion.z) + Gm_PI;
-      pitch = -1.f * atan2f(motion.y, motion.xz().magnitude());
+    if (state.velocity.magnitude() > 20.f) {
+      yaw = atan2f(movement.x, movement.z) + Gm_PI;
+      pitch = -1.f * atan2f(movement.y, movement.xz().magnitude());
     }
 
     if (!state.isOnSolidGround) {
-      pitch *= 0.2f;
+      pitch *= 1.f / (1.f + time_since(state.lastTimeOnSolidGround));
     }
 
     yaw = Gm_LerpCircularf(state.currentYaw, yaw, 10.f * dt, Gm_PI);
