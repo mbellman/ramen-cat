@@ -872,7 +872,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
 
   auto& player = create_object_from("player");
 
-  player.scale = Vec3f(20.0f);
+  player.scale = Vec3f(PLAYER_RADIUS);
   player.position = Vec3f(-30.f, 243.f, 2200.f);
   player.color = Vec3f(1.f, 0.4f, 0.4f);
 

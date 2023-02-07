@@ -86,10 +86,9 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
 
   // @todo implement world chunks + only consider collision planes local to the player
   for (auto& plane : state.collisionPlanes) {
-    // @todo see if 20.f is a robust enough buffer for early out
     if (
-      player.position.y > plane.maxY + 20.f ||
-      player.position.y < plane.minY - 20.f
+      player.position.y > plane.maxY + PLAYER_RADIUS ||
+      player.position.y < plane.minY - PLAYER_RADIUS
     ) {
       // Early out for collision planes not local to the player y position
       continue;

@@ -6,7 +6,7 @@
  * Entity constants
  * ----------------
  */
-constexpr static float PLAYER_RADIUS = 20.f;
+constexpr static float PLAYER_RADIUS = 25.f;
 
 constexpr static float NPC_RADIUS = 20.f;
 constexpr static float NPC_HEIGHT = 70.f;

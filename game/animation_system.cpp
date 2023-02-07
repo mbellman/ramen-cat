@@ -41,12 +41,13 @@ internal void handlePlayerTrottingAnimation(GameState& state, float dt) {
   rig.joints[16].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * cosf(alpha + 0.5f);
 }
 
-internal void handlePlayerDashingAnimation(GameState& state, float dt) {
+internal void handlePlayerDashingAnimation(GmContext* context, GameState& state, float dt) {
   auto& rig = state.animation.playerRig;
-
   float speed = state.velocity.xz().magnitude();
   float speedRatio = speed / (speed + MAXIMUM_HORIZONTAL_GROUND_SPEED);
   float alpha = state.totalDistanceTraveled * 0.025f;
+
+  get_player().scale.z = PLAYER_RADIUS + 5.f * (sinf(alpha) * 0.5f + 0.5f);
 
   // Head/neck
   rig.joints[0].offset = Vec3f(0, 0.05f, 0) * speedRatio * sinf(alpha * 0.75f);
@@ -120,8 +121,10 @@ internal void handlePlayerMidairAnimation(GmContext* context, GameState& state, 
 }
 
 internal void handlePlayerAnimation(GmContext* context, GameState& state, float dt) {
-  // Reset joints every time so they can be calculated cleanly
+  // Reset player scale/joints every time so they can be calculated cleanly
   {
+    get_player().scale = Vec3f(PLAYER_RADIUS);
+
     for (auto& joint : state.animation.playerRig.joints) {
       joint.offset = Vec3f(0);
       joint.rotation = Quaternion(1.f, 0, 0, 0);
@@ -132,7 +135,7 @@ internal void handlePlayerAnimation(GmContext* context, GameState& state, float 
     if (state.dashLevel == 0) {
       handlePlayerTrottingAnimation(state, dt);
     } else {
-      handlePlayerDashingAnimation(state, dt);
+      handlePlayerDashingAnimation(context, state, dt);
     }
   } else {
     handlePlayerMidairAnimation(context, state, dt);

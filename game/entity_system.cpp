@@ -47,7 +47,7 @@ internal Vec3f interpolateCubicSpline(const Vec3f& a, const Vec3f& b, const Vec3
 internal u32 getWrappedIndex(s32 index, u32 total) {
   if (index < 0) {
     return u32(total + index);
-  } else if (index >= total) {
+  } else if (u32(index) >= total) {
     return u32(index % total);
   }
 
