@@ -25,8 +25,6 @@ GAME
 ----
 * rotate character more based on intended motion
 
-* trotting vs. running animation
-* dashing animation
 * jumping animation
 * sitting animation
 
