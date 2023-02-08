@@ -91,33 +91,40 @@ internal void handlePlayerDashingAnimation(GmContext* context, GameState& state,
 
 internal void handlePlayerMidairAnimation(GmContext* context, GameState& state, float dt) {
   auto& rig = state.animation.playerRig;
-  float airTime = time_since(state.lastTimeOnSolidGround);
-  float jumpTimeFactor = airTime / (airTime + 0.5f);
+  float jumpTime = time_since(state.lastTimeOnSolidGround);
+  float dashTime = time_since(state.lastAirDashTime);
+  float airTime = jumpTime < dashTime ? jumpTime : dashTime;
+  float airTimeFactor = airTime / (airTime + 0.5f);
 
   float s_alpha = sinf(airTime * 5.f);
   float c_alpha = cosf(airTime * 5.f);
 
-  // Front legs
-  rig.joints[6].offset = Vec3f(0, 0.5f, -0.3f) * jumpTimeFactor;
-  rig.joints[6].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), 0.2f);
-  rig.joints[7].offset = Vec3f(0, 0.5f, -1.3f) * jumpTimeFactor;
-  rig.joints[7].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * jumpTimeFactor);
+  // Spine
+  rig.joints[3].offset = Vec3f(0, -0.1f, 0) * airTimeFactor;
 
-  rig.joints[9].offset = Vec3f(0, 0.5f, -0.3f) * jumpTimeFactor;
-  rig.joints[9].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), 0.2f);
-  rig.joints[10].offset = Vec3f(0, 0.5f, -1.3f) * jumpTimeFactor;
-  rig.joints[10].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * jumpTimeFactor);
+  // Front legs
+  rig.joints[5].offset = Vec3f(0, 0.1f, 0.f) * airTimeFactor;
+  rig.joints[6].offset = Vec3f(0, 0.2f, -0.3f) * airTimeFactor;
+  rig.joints[6].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), 0.5f);
+  rig.joints[7].offset = Vec3f(0, 0.6f, -1.3f) * airTimeFactor;
+  rig.joints[7].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * airTimeFactor);
+
+  rig.joints[8].offset = Vec3f(0, 0.1f, 0.f) * airTimeFactor;
+  rig.joints[9].offset = Vec3f(0, 0.2f, -0.3f) * airTimeFactor;
+  rig.joints[9].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), 0.5f);
+  rig.joints[10].offset = Vec3f(0, 0.6f, -1.3f) * airTimeFactor;
+  rig.joints[10].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * airTimeFactor);
 
   // Back legs
-  rig.joints[12].offset = Vec3f(0, 0, 0.5f) * jumpTimeFactor;
-  rig.joints[12].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.25f * jumpTimeFactor);
-  rig.joints[13].offset = Vec3f(0, -0.1f * jumpTimeFactor, 0.5f - 0.5f * jumpTimeFactor);
-  rig.joints[13].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * 0.5f* jumpTimeFactor);
+  rig.joints[12].offset = Vec3f(0, 0, 0.5f - 0.5f * airTimeFactor);
+  rig.joints[12].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.25f * airTimeFactor);
+  rig.joints[13].offset = Vec3f(0, -0.1f * airTimeFactor, 1.f - 1.5f * airTimeFactor);
+  rig.joints[13].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * 0.5f* airTimeFactor);
 
-  rig.joints[15].offset = Vec3f(0, 0, 0.5f) * jumpTimeFactor;
-  rig.joints[15].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.25f * jumpTimeFactor);
-  rig.joints[16].offset = Vec3f(0, -0.1f * jumpTimeFactor, 0.5f - 0.5f * jumpTimeFactor);
-  rig.joints[16].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * 0.5f * jumpTimeFactor);
+  rig.joints[15].offset = Vec3f(0, 0, 0.5f - 0.5f * airTimeFactor);
+  rig.joints[15].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.25f * airTimeFactor);
+  rig.joints[16].offset = Vec3f(0, -0.1f * airTimeFactor, 1.f - 1.5f * airTimeFactor);
+  rig.joints[16].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * 0.5f * airTimeFactor);
 }
 
 internal void handlePlayerAnimation(GmContext* context, GameState& state, float dt) {
@@ -138,7 +145,11 @@ internal void handlePlayerAnimation(GmContext* context, GameState& state, float 
       handlePlayerDashingAnimation(context, state, dt);
     }
   } else {
-    handlePlayerMidairAnimation(context, state, dt);
+    if (time_since(state.lastWallBumpTime) < WALL_KICK_WINDOW_DURATION) {
+      // @todo
+    } else {
+      handlePlayerMidairAnimation(context, state, dt);
+    }
   }
 
   // Recalculate joint rotation matrices
@@ -359,13 +370,17 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
     float pitch = state.currentPitch;
     Vec3f movement = player.position - state.previousPlayerPosition;
 
-    if (state.velocity.magnitude() > 20.f) {
-      yaw = atan2f(movement.x, movement.z) + Gm_PI;
-      pitch = -1.f * atan2f(movement.y, movement.xz().magnitude());
-    }
+    // Only turn the player character when not winding up a wall kick.
+    // Wall kick wind-ups use a custom rotation animation.
+    if (time_since(state.lastWallBumpTime) > WALL_KICK_WINDOW_DURATION) {
+      if (state.velocity.magnitude() > 20.f) {
+        yaw = atan2f(movement.x, movement.z) + Gm_PI;
+        pitch = -1.f * atan2f(movement.y, movement.xz().magnitude());
+      }
 
-    if (!state.isOnSolidGround) {
-      pitch *= 1.f / (1.f + time_since(state.lastTimeOnSolidGround));
+      if (!state.isOnSolidGround) {
+        pitch *= 1.f / (1.f + time_since(state.lastTimeOnSolidGround));
+      }
     }
 
     yaw = Gm_LerpCircularf(state.currentYaw, yaw, 10.f * dt, Gm_PI);

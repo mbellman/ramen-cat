@@ -25,8 +25,8 @@ GAME
 ----
 * rotate character more based on intended motion
 
-* jumping animation
 * sitting animation
+* wall-kick animation
 
 * slingshot velocity affected by dashing tier
 * proper nighttime handling

@@ -280,7 +280,7 @@ namespace MovementSystem {
         } else if (state.canPerformWallKick && time_since(state.lastWallBumpTime) < WALL_KICK_WINDOW_DURATION) {
           // Wall kick
           Vec3f wallPlaneVelocity = state.lastWallBumpVelocity.alignToPlane(state.lastWallBumpNormal);
-          Vec3f kickDirection = (state.lastWallBumpNormal + Vec3f(0, 3.f, 0)).unit();
+          Vec3f kickDirection = (state.lastWallBumpNormal + Vec3f(0, 1.f, 0)).unit();
 
           state.velocity = wallPlaneVelocity + kickDirection * state.lastWallBumpVelocity.magnitude();
           state.lastWallBumpTime = 0.f;
