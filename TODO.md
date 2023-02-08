@@ -31,19 +31,21 @@ GAME
 * wall-kick animation
 * air dash animation
 
-* slingshot velocity affected by dashing tier
 * proper nighttime handling
-* lights dimming during daytime
-* turn camera after wall kicks
-* increased FoV in tiered dash modes
 * killplane below level only
 * signs/neon
 * other food collectibles
 * seagulls
+* lights dimming during daytime
+* increased FoV in tiered dash modes/dash fx
+
+* separate area handling/storage
+
+* slingshot velocity affected by dashing tier
+* turn camera after wall kicks
 * area titles
 * train station model updates
 * npc model improvements/highlight when nearby
-* collectibles
 * hot-reloading NPCs/entities data
 * avoid running off edges without input
 * food carts
