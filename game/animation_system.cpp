@@ -102,29 +102,34 @@ internal void handlePlayerMidairAnimation(GmContext* context, GameState& state, 
   // Spine
   rig.joints[3].offset = Vec3f(0, -0.1f, 0) * airTimeFactor;
 
+  // Tailbone
+  rig.joints[4].offset = Vec3f(0, 0, 0.5f * airTimeFactor);
+
   // Front legs
   rig.joints[5].offset = Vec3f(0, 0.1f, 0.f) * airTimeFactor;
   rig.joints[6].offset = Vec3f(0, 0.2f, -0.3f) * airTimeFactor;
   rig.joints[6].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), 0.5f);
-  rig.joints[7].offset = Vec3f(0, 0.6f, -1.3f) * airTimeFactor;
+  rig.joints[7].offset = Vec3f(0, 0.6f + 0.2f * sinf(airTime * 3.f), -1.3f) * airTimeFactor;
   rig.joints[7].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * airTimeFactor);
 
   rig.joints[8].offset = Vec3f(0, 0.1f, 0.f) * airTimeFactor;
   rig.joints[9].offset = Vec3f(0, 0.2f, -0.3f) * airTimeFactor;
   rig.joints[9].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), 0.5f);
-  rig.joints[10].offset = Vec3f(0, 0.6f, -1.3f) * airTimeFactor;
+  rig.joints[10].offset = Vec3f(0, 0.6f + 0.2f * cosf(airTime * 3.f), -1.3f) * airTimeFactor;
   rig.joints[10].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * airTimeFactor);
 
   // Back legs
-  rig.joints[12].offset = Vec3f(0, 0, 0.5f - 0.5f * airTimeFactor);
+  rig.joints[11].offset = Vec3f(0, 0, 0.5f * airTimeFactor);
+  rig.joints[12].offset = Vec3f(0, 0, 1.f * airTimeFactor);
   rig.joints[12].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.25f * airTimeFactor);
-  rig.joints[13].offset = Vec3f(0, -0.1f * airTimeFactor, 1.f - 1.5f * airTimeFactor);
-  rig.joints[13].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * 0.5f* airTimeFactor);
+  rig.joints[13].offset = Vec3f(0, -0.1f + 0.1f * sinf(airTime * 3.f), 1.5f) * airTimeFactor;
+  rig.joints[13].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.5f* airTimeFactor);
 
-  rig.joints[15].offset = Vec3f(0, 0, 0.5f - 0.5f * airTimeFactor);
+  rig.joints[14].offset = Vec3f(0, 0, 0.5f * airTimeFactor);
+  rig.joints[15].offset = Vec3f(0, 0, 1.f * airTimeFactor);
   rig.joints[15].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.25f * airTimeFactor);
-  rig.joints[16].offset = Vec3f(0, -0.1f * airTimeFactor, 1.f - 1.5f * airTimeFactor);
-  rig.joints[16].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * 0.5f * airTimeFactor);
+  rig.joints[16].offset = Vec3f(0, -0.1f + 0.1f * cosf(airTime * 3.f), 1.5f) * airTimeFactor;
+  rig.joints[16].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.5f * airTimeFactor);
 }
 
 internal void handlePlayerAnimation(GmContext* context, GameState& state, float dt) {
