@@ -1,6 +1,7 @@
 #include "animation_system.h"
 #include "game.h"
 #include "game_constants.h"
+#include "easing.h"
 #include "macros.h"
 
 using namespace Gamma;
@@ -386,6 +387,14 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
       if (!state.isOnSolidGround) {
         pitch *= 1.f / (1.f + time_since(state.lastTimeOnSolidGround));
       }
+    }
+
+    if (state.lastAirDashTime != 0.f && time_since(state.lastAirDashTime) < 0.5f) {
+      // Spin when doing an air dash
+      // @bug this doesn't always do a complete spin
+      float alpha = easeOutQuint(time_since(state.lastAirDashTime) * 2.f);
+
+      yaw += alpha * Gm_TAU;
     }
 
     yaw = Gm_LerpCircularf(state.currentYaw, yaw, 10.f * dt, Gm_PI);
