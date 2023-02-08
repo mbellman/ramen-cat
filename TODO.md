@@ -28,8 +28,6 @@ GAME
 * rotate character more based on intended motion
 
 * sitting animation
-* wall-kick animation
-* air dash animation
 
 * proper nighttime handling
 * killplane below level only

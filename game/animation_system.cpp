@@ -90,6 +90,57 @@ internal void handlePlayerDashingAnimation(GmContext* context, GameState& state,
   rig.joints[16].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -cosf(alpha + 0.5f));
 }
 
+internal void handlePlayerWallKickAnimation(GmContext* context, GameState& state, float dt) {
+  auto& player = get_player();
+  auto& rig = state.animation.playerRig;
+  float windUpTime = time_since(state.lastWallBumpTime);
+  float timeFactor = windUpTime / WALL_KICK_WINDOW_DURATION;
+  float compression = 0.5f * timeFactor;
+
+  Vec3f wallPlaneVelocity = state.lastWallBumpVelocity.alignToPlane(state.lastWallBumpNormal);
+  float kickDot = Vec3f::dot(wallPlaneVelocity, player.rotation.getLeftDirection());
+  float headTurn = timeFactor * Gm_Signf(kickDot);
+
+  // Head/neck
+  rig.joints[0].rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), headTurn);
+  rig.joints[1].rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), headTurn * 0.5f);
+
+  // Torso
+  rig.joints[2].rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), headTurn * 0.25f);
+
+  // Spine
+  rig.joints[3].offset = Vec3f(0, -0.1f, -0.3f * timeFactor);
+
+  // Tailbone
+  rig.joints[4].offset = Vec3f(0, 0, 0.5f - compression);
+
+  // Front legs
+  rig.joints[5].offset = Vec3f(0, 0.1f, 0.f);
+  rig.joints[6].offset = Vec3f(0, 0.2f, -0.3f + compression * 0.5f);
+  rig.joints[6].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), 0.5f);
+  rig.joints[7].offset = Vec3f(0, 0.5f, -1.3f + compression);
+  rig.joints[7].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI);
+
+  rig.joints[8].offset = Vec3f(0, 0.1f, 0.f);
+  rig.joints[9].offset = Vec3f(0, 0.2f, -0.3f + compression * 0.5f);
+  rig.joints[9].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), 0.5f);
+  rig.joints[10].offset = Vec3f(0, 0.5f, -1.3f + compression);
+  rig.joints[10].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI);
+
+  // Back legs
+  rig.joints[11].offset = Vec3f(0, 0, 0.5f - compression);
+  rig.joints[12].offset = Vec3f(0, 0, 1.f - compression * 1.2f);
+  rig.joints[12].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.25f);
+  rig.joints[13].offset = Vec3f(0, -0.1f + 0.1f, 1.5f - compression * 1.4f);
+  rig.joints[13].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.5);
+
+  rig.joints[14].offset = Vec3f(0, 0, 0.5f - compression);
+  rig.joints[15].offset = Vec3f(0, 0, 1.f - compression * 1.2f);
+  rig.joints[15].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.25f);
+  rig.joints[16].offset = Vec3f(0, 0, 1.5f - compression * 1.4f);
+  rig.joints[16].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.5f);
+}
+
 internal void handlePlayerMidairAnimation(GmContext* context, GameState& state, float dt) {
   auto& rig = state.animation.playerRig;
   float jumpTime = time_since(state.lastTimeOnSolidGround);
@@ -101,7 +152,7 @@ internal void handlePlayerMidairAnimation(GmContext* context, GameState& state, 
   float c_alpha = cosf(airTime * 5.f);
 
   // Spine
-  rig.joints[3].offset = Vec3f(0, -0.1f, 0) * airTimeFactor;
+  rig.joints[3].offset = Vec3f(0, -0.1f * airTimeFactor, 0);
 
   // Tailbone
   rig.joints[4].offset = Vec3f(0, 0, 0.5f * airTimeFactor);
@@ -152,7 +203,7 @@ internal void handlePlayerAnimation(GmContext* context, GameState& state, float 
     }
   } else {
     if (time_since(state.lastWallBumpTime) < WALL_KICK_WINDOW_DURATION) {
-      // @todo
+      handlePlayerWallKickAnimation(context, state, dt);
     } else {
       handlePlayerMidairAnimation(context, state, dt);
     }
@@ -395,6 +446,12 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
       float alpha = easeOutQuint(time_since(state.lastAirDashTime) * 2.f);
 
       yaw += alpha * Gm_TAU;
+    }
+
+    if (state.lastWallBumpTime != 0.f && time_since(state.lastWallBumpTime) < WALL_KICK_WINDOW_DURATION) {
+      float alpha = time_since(state.lastWallBumpTime) / WALL_KICK_WINDOW_DURATION;
+
+      pitch -= alpha * 0.25f;
     }
 
     yaw = Gm_LerpCircularf(state.currentYaw, yaw, 10.f * dt, Gm_PI);

@@ -23,6 +23,10 @@ inline float Gm_Modf(float value, float m) {
   return value - m * floorf(value / m);
 }
 
+inline float Gm_Signf(float value) {
+  return value < 0.f ? -1.f : 1.f;
+}
+
 /**
  * @todo description
  */
