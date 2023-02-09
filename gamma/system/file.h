@@ -4,8 +4,8 @@
 #include <string>
 
 namespace Gamma {
-  std::string Gm_LoadFileContents(const char* path);
-  void Gm_WriteFileContents(const char* path, const std::string& contents);
-  void Gm_WatchFile(const char* path, const std::function<void()>& handler);
+  std::string Gm_LoadFileContents(const std::string& path);
+  void Gm_WriteFileContents(const std::string& path, const std::string& contents);
+  void Gm_WatchFile(const std::string& path, const std::function<void()>& handler);
   void Gm_HandleWatchedFiles();
 }

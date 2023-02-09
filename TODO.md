@@ -36,7 +36,7 @@ GAME
 * lights dimming during daytime
 * increased FoV in tiered dash modes/dash fx
 
-* separate area handling/storage
+* level unloading
 
 * slingshot velocity affected by dashing tier
 * turn camera after wall kicks

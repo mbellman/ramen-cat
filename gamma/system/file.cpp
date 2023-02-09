@@ -16,7 +16,7 @@ namespace Gamma {
 
   static std::vector<FileWatcher> fileWatchers;
 
-  std::string Gm_LoadFileContents(const char* path) {
+  std::string Gm_LoadFileContents(const std::string& path) {
     std::string source;
     std::ifstream file(path);
 
@@ -33,7 +33,7 @@ namespace Gamma {
     return source;
   }
 
-  void Gm_WriteFileContents(const char* path, const std::string& contents) {
+  void Gm_WriteFileContents(const std::string& path, const std::string& contents) {
     // Ensure the directory exists
     auto pathSegments = Gm_SplitString(path, "/");
 
@@ -50,7 +50,7 @@ namespace Gamma {
     file.flush();
   }
 
-  void Gm_WatchFile(const char* path, const std::function<void()>& handler) {
+  void Gm_WatchFile(const std::string& path, const std::function<void()>& handler) {
     FileWatcher watcher;
 
     watcher.absolutePath = std::filesystem::current_path() / path;

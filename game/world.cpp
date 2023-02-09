@@ -564,11 +564,11 @@ struct Platform {
   Vec3f color;
 };
 
-internal void loadCollisionPlanes(GmContext* context, GameState& state) {
+internal void loadCollisionPlanes(GmContext* context, GameState& state, const std::string& levelName) {
   u64 start = Gm_GetMicroseconds();
 
   // @todo eventually store as binary data
-  auto worldData = Gm_LoadFileContents("./game/data_collision_planes.txt");
+  auto worldData = Gm_LoadFileContents("./game/levels/" + levelName + "/data_collision_planes.txt");
   auto lines = Gm_SplitString(worldData, "\n");
 
   state.collisionPlanes.clear();
@@ -598,11 +598,11 @@ internal void loadCollisionPlanes(GmContext* context, GameState& state) {
   Console::log("Loaded collision planes in", Gm_GetMicroseconds() - start, "us");
 }
 
-internal void loadWorldObjects(GmContext* context) {
+internal void loadWorldObjects(GmContext* context, const std::string& levelName) {
   u64 start = Gm_GetMicroseconds();
 
   // @todo eventually store as binary data
-  auto worldData = Gm_LoadFileContents("./game/data_world_objects.txt");
+  auto worldData = Gm_LoadFileContents("./game/levels/" + levelName + "/data_world_objects.txt");
   auto lines = Gm_SplitString(worldData, "\n");
 
   std::string meshName;
@@ -635,11 +635,11 @@ internal void loadWorldObjects(GmContext* context) {
   Console::log("Loaded world objects in", Gm_GetMicroseconds() - start, "us");
 }
 
-internal void loadLights(GmContext* context) {
+internal void loadLights(GmContext* context, const std::string& levelName) {
   u64 start = Gm_GetMicroseconds();
 
   // @todo eventually store as binary data
-  auto worldData = Gm_LoadFileContents("./game/data_lights.txt");
+  auto worldData = Gm_LoadFileContents("./game/levels/" + levelName + "/data_lights.txt");
   auto lines = Gm_SplitString(worldData, "\n");
 
   for (auto& line : lines) {
@@ -661,6 +661,127 @@ internal void loadLights(GmContext* context) {
   }
 
   Console::log("Loaded lights in", Gm_GetMicroseconds() - start, "us");
+}
+
+internal void loadNpcData(GmContext* context, GameState& state, const std::string& levelName) {
+  // @todo eventually store as binary data
+  auto npcDataContents = Gm_LoadFileContents("./game/levels/" + levelName + "/data_npcs.txt");
+  auto lines = Gm_SplitString(npcDataContents, "\n");
+
+  // @temporary
+  u32 i = 0;
+
+  // @temporary
+  while (i < lines.size()) {
+    if (lines[i][0] == '@') {
+      NonPlayerCharacter npc;
+
+      // @todo parse NPC @type
+
+      i++;
+
+      npc.position = Gm_ParseVec3f(lines[i]);
+
+      i++;
+  
+      std::string dialogueLine;
+
+      while (i < lines.size() && lines[i][0] != '@') {
+        auto line = lines[i++];
+
+        if (line[0] == '-') {
+          npc.dialogue.push_back(dialogueLine);
+
+          dialogueLine = "";
+
+          continue;
+        }
+
+        if (dialogueLine.size() > 0) {
+          dialogueLine += '\n';
+        }
+
+        dialogueLine += line;
+      }
+
+      state.npcs.push_back(npc);
+    }
+  }
+
+  // @temporary
+  for (auto& npc : state.npcs) {
+    auto& object = create_object_from("npc");
+
+    object.position = npc.position;
+    object.color = Vec3f(1.f, 0, 1.f);
+    object.scale = Vec3f(NPC_RADIUS, NPC_HEIGHT, NPC_RADIUS);
+
+    commit(object);
+  }
+}
+
+internal void loadEntityData(GmContext* context, GameState& state, const std::string& levelName) {
+  // @todo eventually store as binary data
+  auto entityDataContents = Gm_LoadFileContents("./game/levels/" + levelName + "/data_entities.txt");
+  auto lines = Gm_SplitString(entityDataContents, "\n");
+
+  // @temporary
+  std::string entityName;
+
+  // @temporary
+  for (u32 i = 0; i < lines.size(); i++) {
+    auto& line = lines[i];
+
+    if (line.size() == 0) {
+      continue;
+    }
+
+    if (line[0] == '@') {
+      entityName = line.substr(1);
+    } else if (entityName == "slingshot") {
+      auto parts = Gm_SplitString(line, ",");
+
+      Vec3f position = Vec3f(stof(parts[0]), stof(parts[1]), stof(parts[2]));
+      float xzVelocity = stof(parts[3]);
+      float yVelocity = stof(parts[4]);
+      float initialRotation = stof(parts[5]);
+
+      state.slingshots.push_back({
+        .position = position,
+        .xzVelocity = xzVelocity,
+        .yVelocity = yVelocity,
+        .initialRotation = initialRotation
+      });
+    }
+  }
+
+  // @temporary
+  for (auto& slingshot : state.slingshots) {
+    auto& object = create_object_from("slingshot");
+
+    object.position = slingshot.position;
+    object.scale = Vec3f(60.f);
+    object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), slingshot.initialRotation);
+    object.color = DEFAULT_SLINGSHOT_COLOR;
+
+    commit(object);
+  }
+}
+
+internal void unloadCurrentLevel(GmContext* context, GameState& state) {
+  // @todo
+}
+
+internal void loadLevel(GmContext* context, GameState& state, const std::string& levelName) {
+  unloadCurrentLevel(context, state);
+
+  loadCollisionPlanes(context, state, levelName);
+  loadWorldObjects(context, levelName);
+  loadLights(context, levelName);
+  loadNpcData(context, state, levelName);
+  loadEntityData(context, state, levelName);
+
+  World::rebuildDynamicMeshes(context);
 }
 
 internal void rebuildDynamicStaircases(GmContext* context) {
@@ -842,18 +963,26 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   context->scene.zNear = 5.f;
   context->scene.zFar = 50000.f;
 
-  add_mesh("ocean", 1, Mesh::Disc(12));
-  add_mesh("ocean-floor", 1, Mesh::Disc(12));
-  add_mesh("platform", 1000, Mesh::Cube());
+  // Global meshes
+  {
+    add_mesh("platform", 1000, Mesh::Cube());
+    mesh("platform")->disabled = true;
 
-  add_mesh("player", 1, Mesh::Model("./game/assets/cat.obj"));
-  mesh("player")->roughness = 0.9f;
-  // mesh("player")->silhouette = true;
+    add_mesh("player", 1, Mesh::Model("./game/assets/cat.obj"));
+    mesh("player")->roughness = 0.9f;
 
-  mesh("ocean")->type = MeshType::WATER;
-  mesh("ocean")->canCastShadows = false;
-  mesh("ocean-floor")->canCastShadows = false;
-  mesh("platform")->disabled = true;
+    add_mesh("ocean", 1, Mesh::Disc(12));
+    add_mesh("ocean-floor", 1, Mesh::Disc(12));
+
+    mesh("ocean")->type = MeshType::WATER;
+    mesh("ocean")->canCastShadows = false;
+    mesh("ocean-floor")->canCastShadows = false;
+
+    add_mesh("npc", 100, Mesh::Cube());
+
+    add_mesh("slingshot", 100, Mesh::Model("./game/assets/slingshot.obj"));
+    mesh("slingshot")->roughness = 0.9f;
+  }
 
   auto& ocean = create_object_from("ocean");
 
@@ -929,11 +1058,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
 
   // Load world data
   {
-    loadCollisionPlanes(context, state);
-    loadWorldObjects(context);
-    loadLights(context);
-
-    World::rebuildDynamicMeshes(context);
+    loadLevel(context, state, "umimura-alpha");
 
     // Hide dynamic mesh placeholders
     for (auto& asset : World::meshAssets) {
