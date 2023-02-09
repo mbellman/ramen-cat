@@ -6,6 +6,24 @@
 
 using namespace Gamma;
 
+#define PLAYER_HEAD 0
+#define PLAYER_NECK 1
+#define PLAYER_TORSO 2
+#define PLAYER_SPINE 3
+#define PLAYER_TAILBONE 4
+#define PLAYER_FRONT_RIGHT_LEG_TOP 5
+#define PLAYER_FRONT_RIGHT_LEG_KNEE 6
+#define PLAYER_FRONT_RIGHT_LEG_FOOT 7
+#define PLAYER_FRONT_LEFT_LEG_TOP 8
+#define PLAYER_FRONT_LEFT_LEG_KNEE 9
+#define PLAYER_FRONT_LEFT_LEG_FOOT 10
+#define PLAYER_BACK_RIGHT_LEG_TOP 11
+#define PLAYER_BACK_RIGHT_LEG_KNEE 12
+#define PLAYER_BACK_RIGHT_LEG_FOOT 13
+#define PLAYER_BACK_LEFT_LEG_TOP 14
+#define PLAYER_BACK_LEFT_LEG_KNEE 15
+#define PLAYER_BACK_LEFT_LEG_FOOT 16
+
 internal void handlePlayerTrottingAnimation(GameState& state, float dt) {
   auto& rig = state.animation.playerRig;
 
@@ -13,33 +31,27 @@ internal void handlePlayerTrottingAnimation(GameState& state, float dt) {
   float speedRatio = speed / (speed + MAXIMUM_HORIZONTAL_GROUND_SPEED);
   float alpha = state.totalDistanceTraveled * 0.06f;
 
-  // Head/neck
-  rig.joints[0].offset = Vec3f(0, 0.05f, 0) * speedRatio * sinf(alpha * 0.75f);
-  rig.joints[1].offset = Vec3f(0, 0.15f, 0) * speedRatio * sinf(alpha * 0.75f);
+  rig.joints[PLAYER_HEAD].offset = Vec3f(0, 0.05f, 0) * speedRatio * sinf(alpha * 0.75f);
+  rig.joints[PLAYER_NECK].offset = Vec3f(0, 0.15f, 0) * speedRatio * sinf(alpha * 0.75f);
 
-  // Torso
-  rig.joints[2].offset = Vec3f(0, 0.05f, 0) * speedRatio * sinf(alpha);
+  rig.joints[PLAYER_TORSO].offset = Vec3f(0, 0.05f, 0) * speedRatio * sinf(alpha);
+  rig.joints[PLAYER_SPINE].offset = Vec3f(0, 0.1f, 0) * speedRatio * sinf(alpha + 1.f);
 
-  // Spine
-  rig.joints[3].offset = Vec3f(0, 0.1f, 0) * speedRatio * sinf(alpha + 1.f);
+  rig.joints[PLAYER_FRONT_RIGHT_LEG_TOP].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * sinf(alpha);
+  rig.joints[PLAYER_FRONT_RIGHT_LEG_KNEE].offset = Vec3f(0, 0, 0.2f) * speedRatio * sinf(alpha + 0.5f);
+  rig.joints[PLAYER_FRONT_RIGHT_LEG_FOOT].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * sinf(alpha + 1.f);
 
-  // Front legs
-  rig.joints[5].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * sinf(alpha);
-  rig.joints[6].offset = Vec3f(0, 0, 0.2f) * speedRatio * sinf(alpha + 0.5f);
-  rig.joints[7].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * sinf(alpha + 1.f);
+  rig.joints[PLAYER_FRONT_LEFT_LEG_TOP].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * cosf(alpha);
+  rig.joints[PLAYER_FRONT_LEFT_LEG_KNEE].offset = Vec3f(0, 0, 0.2f) * speedRatio * cosf(alpha + 0.5f);
+  rig.joints[PLAYER_FRONT_LEFT_LEG_FOOT].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * cosf(alpha + 1.f);
 
-  rig.joints[8].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * cosf(alpha);
-  rig.joints[9].offset = Vec3f(0, 0, 0.2f) * speedRatio * cosf(alpha + 0.5f);
-  rig.joints[10].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * cosf(alpha + 1.f);
+  rig.joints[PLAYER_BACK_RIGHT_LEG_TOP].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * sinf(alpha - 0.5f);
+  rig.joints[PLAYER_BACK_RIGHT_LEG_KNEE].offset = Vec3f(0, 0, 0.2f) * speedRatio * sinf(alpha);
+  rig.joints[PLAYER_BACK_RIGHT_LEG_FOOT].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * sinf(alpha + 0.5f);
 
-  // Back legs
-  rig.joints[11].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * sinf(alpha - 0.5f);
-  rig.joints[12].offset = Vec3f(0, 0, 0.2f) * speedRatio * sinf(alpha);
-  rig.joints[13].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * sinf(alpha + 0.5f);
-
-  rig.joints[14].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * cosf(alpha - 0.5f);
-  rig.joints[15].offset = Vec3f(0, 0, 0.2f) * speedRatio * cosf(alpha);
-  rig.joints[16].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * cosf(alpha + 0.5f);
+  rig.joints[PLAYER_BACK_LEFT_LEG_TOP].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * cosf(alpha - 0.5f);
+  rig.joints[PLAYER_BACK_LEFT_LEG_KNEE].offset = Vec3f(0, 0, 0.2f) * speedRatio * cosf(alpha);
+  rig.joints[PLAYER_BACK_LEFT_LEG_FOOT].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * cosf(alpha + 0.5f);
 }
 
 internal void handlePlayerDashingAnimation(GmContext* context, GameState& state, float dt) {
@@ -50,44 +62,36 @@ internal void handlePlayerDashingAnimation(GmContext* context, GameState& state,
 
   get_player().scale.z = PLAYER_RADIUS + 5.f * (sinf(alpha) * 0.5f + 0.5f);
 
-  // Head/neck
-  rig.joints[0].offset = Vec3f(0, 0.05f, 0) * speedRatio * sinf(alpha * 0.75f);
-  rig.joints[1].offset = Vec3f(0, 0.15f, 0) * speedRatio * sinf(alpha * 0.75f);
+  rig.joints[PLAYER_HEAD].offset = Vec3f(0, 0.05f, 0) * speedRatio * sinf(alpha * 0.75f);
+  rig.joints[PLAYER_NECK].offset = Vec3f(0, 0.15f, 0) * speedRatio * sinf(alpha * 0.75f);
 
-  // Torso
-  rig.joints[2].offset = Vec3f(0, 0.05f, 0) * speedRatio * sinf(alpha);
+  rig.joints[PLAYER_TORSO].offset = Vec3f(0, 0.05f, 0) * speedRatio * sinf(alpha);
+  rig.joints[PLAYER_SPINE].offset = Vec3f(0, 0.2f, 0) * speedRatio * sinf(alpha - 1.f);
+  rig.joints[PLAYER_TAILBONE].offset = Vec3f(0, 0.4f, 0) * speedRatio * sinf(alpha - 0.5f);
 
-  // Spine
-  rig.joints[3].offset = Vec3f(0, 0.2f, 0) * speedRatio * sinf(alpha - 1.f);
+  rig.joints[PLAYER_FRONT_RIGHT_LEG_TOP].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * sinf(alpha);
+  rig.joints[PLAYER_FRONT_RIGHT_LEG_KNEE].offset = Vec3f(0, 0, 0.5f) * speedRatio * sinf(alpha + 0.5f);
+  rig.joints[PLAYER_FRONT_RIGHT_LEG_KNEE].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -sinf(alpha + 0.5f) * 0.5f);
+  rig.joints[PLAYER_FRONT_RIGHT_LEG_FOOT].offset = Vec3f(0, 0.4f, 1.f) * speedRatio * sinf(alpha + 1.f);
+  rig.joints[PLAYER_FRONT_RIGHT_LEG_FOOT].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -sinf(alpha + 0.5f));
 
-  // Tailbone
-  rig.joints[4].offset = Vec3f(0, 0.4f, 0) * speedRatio * sinf(alpha - 0.5f);
+  rig.joints[PLAYER_FRONT_LEFT_LEG_TOP].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * sinf(alpha);
+  rig.joints[PLAYER_FRONT_LEFT_LEG_KNEE].offset = Vec3f(0, 0, 0.5f) * speedRatio * sinf(alpha + 0.5f);
+  rig.joints[PLAYER_FRONT_LEFT_LEG_KNEE].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -sinf(alpha + 0.5f) * 0.5f);
+  rig.joints[PLAYER_FRONT_LEFT_LEG_FOOT].offset = Vec3f(0, 0.4f, 1.f) * speedRatio * sinf(alpha + 1.f);
+  rig.joints[PLAYER_FRONT_LEFT_LEG_FOOT].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -sinf(alpha + 0.5f));
 
-  // Front legs
-  rig.joints[5].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * sinf(alpha);
-  rig.joints[6].offset = Vec3f(0, 0, 0.5f) * speedRatio * sinf(alpha + 0.5f);
-  rig.joints[6].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -sinf(alpha + 0.5f) * 0.5f);
-  rig.joints[7].offset = Vec3f(0, 0.4f, 1.f) * speedRatio * sinf(alpha + 1.f);
-  rig.joints[7].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -sinf(alpha + 0.5f));
+  rig.joints[PLAYER_BACK_RIGHT_LEG_TOP].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * cosf(alpha - 0.5f);
+  rig.joints[PLAYER_BACK_RIGHT_LEG_KNEE].offset = Vec3f(0, 0, 0.5f) * speedRatio * cosf(alpha);
+  rig.joints[PLAYER_BACK_RIGHT_LEG_KNEE].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -cosf(alpha + 0.5f) * 0.5f);
+  rig.joints[PLAYER_BACK_RIGHT_LEG_FOOT].offset = Vec3f(0, 0.4f, 1.f) * speedRatio * cosf(alpha + 0.5f);
+  rig.joints[PLAYER_BACK_RIGHT_LEG_FOOT].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -cosf(alpha + 0.5f));
 
-  rig.joints[8].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * sinf(alpha);
-  rig.joints[9].offset = Vec3f(0, 0, 0.5f) * speedRatio * sinf(alpha + 0.5f);
-  rig.joints[9].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -sinf(alpha + 0.5f) * 0.5f);
-  rig.joints[10].offset = Vec3f(0, 0.4f, 1.f) * speedRatio * sinf(alpha + 1.f);
-  rig.joints[10].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -sinf(alpha + 0.5f));
-
-  // Back legs
-  rig.joints[11].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * cosf(alpha - 0.5f);
-  rig.joints[12].offset = Vec3f(0, 0, 0.5f) * speedRatio * cosf(alpha);
-  rig.joints[12].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -cosf(alpha + 0.5f) * 0.5f);
-  rig.joints[13].offset = Vec3f(0, 0.4f, 1.f) * speedRatio * cosf(alpha + 0.5f);
-  rig.joints[13].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -cosf(alpha + 0.5f));
-
-  rig.joints[14].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * cosf(alpha - 0.5f);
-  rig.joints[15].offset = Vec3f(0, 0, 0.5f) * speedRatio * cosf(alpha);
-  rig.joints[15].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -cosf(alpha + 0.5f) * 0.5f);
-  rig.joints[16].offset = Vec3f(0, 0.4f, 1.f) * speedRatio * cosf(alpha + 0.5f);
-  rig.joints[16].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -cosf(alpha + 0.5f));
+  rig.joints[PLAYER_BACK_LEFT_LEG_TOP].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * cosf(alpha - 0.5f);
+  rig.joints[PLAYER_BACK_LEFT_LEG_KNEE].offset = Vec3f(0, 0, 0.5f) * speedRatio * cosf(alpha);
+  rig.joints[PLAYER_BACK_LEFT_LEG_KNEE].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -cosf(alpha + 0.5f) * 0.5f);
+  rig.joints[PLAYER_BACK_LEFT_LEG_FOOT].offset = Vec3f(0, 0.4f, 1.f) * speedRatio * cosf(alpha + 0.5f);
+  rig.joints[PLAYER_BACK_LEFT_LEG_FOOT].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -cosf(alpha + 0.5f));
 }
 
 internal void handlePlayerWallKickAnimation(GmContext* context, GameState& state, float dt) {
@@ -101,44 +105,36 @@ internal void handlePlayerWallKickAnimation(GmContext* context, GameState& state
   float kickDot = Vec3f::dot(wallPlaneVelocity, player.rotation.getLeftDirection());
   float headTurn = timeFactor * Gm_Signf(kickDot);
 
-  // Head/neck
-  rig.joints[0].rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), headTurn);
-  rig.joints[1].rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), headTurn * 0.5f);
+  rig.joints[PLAYER_HEAD].rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), headTurn);
+  rig.joints[PLAYER_NECK].rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), headTurn * 0.5f);
 
-  // Torso
-  rig.joints[2].rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), headTurn * 0.25f);
+  rig.joints[PLAYER_TORSO].rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), headTurn * 0.25f);
+  rig.joints[PLAYER_SPINE].offset = Vec3f(0, -0.1f, -0.3f * timeFactor);
+  rig.joints[PLAYER_TAILBONE].offset = Vec3f(0, 0, 0.5f - compression);
 
-  // Spine
-  rig.joints[3].offset = Vec3f(0, -0.1f, -0.3f * timeFactor);
+  rig.joints[PLAYER_FRONT_RIGHT_LEG_TOP].offset = Vec3f(0, 0.1f, 0.f);
+  rig.joints[PLAYER_FRONT_RIGHT_LEG_KNEE].offset = Vec3f(0, 0.2f, -0.3f + compression * 0.5f);
+  rig.joints[PLAYER_FRONT_RIGHT_LEG_KNEE].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), 0.5f);
+  rig.joints[PLAYER_FRONT_RIGHT_LEG_FOOT].offset = Vec3f(0, 0.5f, -1.3f + compression);
+  rig.joints[PLAYER_FRONT_RIGHT_LEG_FOOT].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI);
 
-  // Tailbone
-  rig.joints[4].offset = Vec3f(0, 0, 0.5f - compression);
+  rig.joints[PLAYER_FRONT_LEFT_LEG_TOP].offset = Vec3f(0, 0.1f, 0.f);
+  rig.joints[PLAYER_FRONT_LEFT_LEG_KNEE].offset = Vec3f(0, 0.2f, -0.3f + compression * 0.5f);
+  rig.joints[PLAYER_FRONT_LEFT_LEG_KNEE].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), 0.5f);
+  rig.joints[PLAYER_FRONT_LEFT_LEG_FOOT].offset = Vec3f(0, 0.5f, -1.3f + compression);
+  rig.joints[PLAYER_FRONT_LEFT_LEG_FOOT].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI);
 
-  // Front legs
-  rig.joints[5].offset = Vec3f(0, 0.1f, 0.f);
-  rig.joints[6].offset = Vec3f(0, 0.2f, -0.3f + compression * 0.5f);
-  rig.joints[6].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), 0.5f);
-  rig.joints[7].offset = Vec3f(0, 0.5f, -1.3f + compression);
-  rig.joints[7].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI);
+  rig.joints[PLAYER_BACK_RIGHT_LEG_TOP].offset = Vec3f(0, 0, 0.5f - compression);
+  rig.joints[PLAYER_BACK_RIGHT_LEG_KNEE].offset = Vec3f(0, 0, 1.f - compression * 1.2f);
+  rig.joints[PLAYER_BACK_RIGHT_LEG_KNEE].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.25f);
+  rig.joints[PLAYER_BACK_RIGHT_LEG_FOOT].offset = Vec3f(0, -0.1f + 0.1f, 1.5f - compression * 1.4f);
+  rig.joints[PLAYER_BACK_RIGHT_LEG_FOOT].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.5);
 
-  rig.joints[8].offset = Vec3f(0, 0.1f, 0.f);
-  rig.joints[9].offset = Vec3f(0, 0.2f, -0.3f + compression * 0.5f);
-  rig.joints[9].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), 0.5f);
-  rig.joints[10].offset = Vec3f(0, 0.5f, -1.3f + compression);
-  rig.joints[10].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI);
-
-  // Back legs
-  rig.joints[11].offset = Vec3f(0, 0, 0.5f - compression);
-  rig.joints[12].offset = Vec3f(0, 0, 1.f - compression * 1.2f);
-  rig.joints[12].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.25f);
-  rig.joints[13].offset = Vec3f(0, -0.1f + 0.1f, 1.5f - compression * 1.4f);
-  rig.joints[13].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.5);
-
-  rig.joints[14].offset = Vec3f(0, 0, 0.5f - compression);
-  rig.joints[15].offset = Vec3f(0, 0, 1.f - compression * 1.2f);
-  rig.joints[15].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.25f);
-  rig.joints[16].offset = Vec3f(0, 0, 1.5f - compression * 1.4f);
-  rig.joints[16].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.5f);
+  rig.joints[PLAYER_BACK_LEFT_LEG_TOP].offset = Vec3f(0, 0, 0.5f - compression);
+  rig.joints[PLAYER_BACK_LEFT_LEG_KNEE].offset = Vec3f(0, 0, 1.f - compression * 1.2f);
+  rig.joints[PLAYER_BACK_LEFT_LEG_KNEE].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.25f);
+  rig.joints[PLAYER_BACK_LEFT_LEG_FOOT].offset = Vec3f(0, 0, 1.5f - compression * 1.4f);
+  rig.joints[PLAYER_BACK_LEFT_LEG_FOOT].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.5f);
 }
 
 internal void handlePlayerMidairAnimation(GmContext* context, GameState& state, float dt) {
@@ -151,37 +147,32 @@ internal void handlePlayerMidairAnimation(GmContext* context, GameState& state, 
   float s_alpha = sinf(airTime * 5.f);
   float c_alpha = cosf(airTime * 5.f);
 
-  // Spine
-  rig.joints[3].offset = Vec3f(0, -0.1f * airTimeFactor, 0);
+  rig.joints[PLAYER_SPINE].offset = Vec3f(0, -0.1f * airTimeFactor, 0);
+  rig.joints[PLAYER_TAILBONE].offset = Vec3f(0, 0, 0.5f * airTimeFactor);
 
-  // Tailbone
-  rig.joints[4].offset = Vec3f(0, 0, 0.5f * airTimeFactor);
+  rig.joints[PLAYER_FRONT_RIGHT_LEG_TOP].offset = Vec3f(0, 0.1f, 0.f) * airTimeFactor;
+  rig.joints[PLAYER_FRONT_RIGHT_LEG_KNEE].offset = Vec3f(0, 0.2f, -0.3f) * airTimeFactor;
+  rig.joints[PLAYER_FRONT_RIGHT_LEG_KNEE].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), 0.5f);
+  rig.joints[PLAYER_FRONT_RIGHT_LEG_FOOT].offset = Vec3f(0, 0.6f + 0.2f * sinf(airTime * 3.f), -1.3f) * airTimeFactor;
+  rig.joints[PLAYER_FRONT_RIGHT_LEG_FOOT].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * airTimeFactor);
 
-  // Front legs
-  rig.joints[5].offset = Vec3f(0, 0.1f, 0.f) * airTimeFactor;
-  rig.joints[6].offset = Vec3f(0, 0.2f, -0.3f) * airTimeFactor;
-  rig.joints[6].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), 0.5f);
-  rig.joints[7].offset = Vec3f(0, 0.6f + 0.2f * sinf(airTime * 3.f), -1.3f) * airTimeFactor;
-  rig.joints[7].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * airTimeFactor);
+  rig.joints[PLAYER_FRONT_LEFT_LEG_TOP].offset = Vec3f(0, 0.1f, 0.f) * airTimeFactor;
+  rig.joints[PLAYER_FRONT_LEFT_LEG_KNEE].offset = Vec3f(0, 0.2f, -0.3f) * airTimeFactor;
+  rig.joints[PLAYER_FRONT_LEFT_LEG_KNEE].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), 0.5f);
+  rig.joints[PLAYER_FRONT_LEFT_LEG_FOOT].offset = Vec3f(0, 0.6f + 0.2f * cosf(airTime * 3.f), -1.3f) * airTimeFactor;
+  rig.joints[PLAYER_FRONT_LEFT_LEG_FOOT].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * airTimeFactor);
 
-  rig.joints[8].offset = Vec3f(0, 0.1f, 0.f) * airTimeFactor;
-  rig.joints[9].offset = Vec3f(0, 0.2f, -0.3f) * airTimeFactor;
-  rig.joints[9].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), 0.5f);
-  rig.joints[10].offset = Vec3f(0, 0.6f + 0.2f * cosf(airTime * 3.f), -1.3f) * airTimeFactor;
-  rig.joints[10].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * airTimeFactor);
+  rig.joints[PLAYER_BACK_RIGHT_LEG_TOP].offset = Vec3f(0, 0, 0.5f * airTimeFactor);
+  rig.joints[PLAYER_BACK_RIGHT_LEG_KNEE].offset = Vec3f(0, 0, 1.f * airTimeFactor);
+  rig.joints[PLAYER_BACK_RIGHT_LEG_KNEE].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.25f * airTimeFactor);
+  rig.joints[PLAYER_BACK_RIGHT_LEG_FOOT].offset = Vec3f(0, -0.1f + 0.1f * sinf(airTime * 3.f), 1.5f) * airTimeFactor;
+  rig.joints[PLAYER_BACK_RIGHT_LEG_FOOT].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.5f* airTimeFactor);
 
-  // Back legs
-  rig.joints[11].offset = Vec3f(0, 0, 0.5f * airTimeFactor);
-  rig.joints[12].offset = Vec3f(0, 0, 1.f * airTimeFactor);
-  rig.joints[12].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.25f * airTimeFactor);
-  rig.joints[13].offset = Vec3f(0, -0.1f + 0.1f * sinf(airTime * 3.f), 1.5f) * airTimeFactor;
-  rig.joints[13].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.5f* airTimeFactor);
-
-  rig.joints[14].offset = Vec3f(0, 0, 0.5f * airTimeFactor);
-  rig.joints[15].offset = Vec3f(0, 0, 1.f * airTimeFactor);
-  rig.joints[15].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.25f * airTimeFactor);
-  rig.joints[16].offset = Vec3f(0, -0.1f + 0.1f * cosf(airTime * 3.f), 1.5f) * airTimeFactor;
-  rig.joints[16].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.5f * airTimeFactor);
+  rig.joints[PLAYER_BACK_LEFT_LEG_TOP].offset = Vec3f(0, 0, 0.5f * airTimeFactor);
+  rig.joints[PLAYER_BACK_LEFT_LEG_KNEE].offset = Vec3f(0, 0, 1.f * airTimeFactor);
+  rig.joints[PLAYER_BACK_LEFT_LEG_KNEE].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.25f * airTimeFactor);
+  rig.joints[PLAYER_BACK_LEFT_LEG_FOOT].offset = Vec3f(0, -0.1f + 0.1f * cosf(airTime * 3.f), 1.5f) * airTimeFactor;
+  rig.joints[PLAYER_BACK_LEFT_LEG_FOOT].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.5f * airTimeFactor);
 }
 
 internal void handlePlayerAnimation(GmContext* context, GameState& state, float dt) {
@@ -320,7 +311,7 @@ void AnimationSystem::initializeAnimations(GmContext* context, GameState& state)
       .rotation = Quaternion(1.f, 0, 0, 0)
     });
 
-    // Rear right leg bottom [13]
+    // Rear right leg bottom [12]
     rig.joints.push_back({
       .position = Vec3f(-0.28f, -0.88f, 0.394f),
       .rotation = Quaternion(1.f, 0, 0, 0)
