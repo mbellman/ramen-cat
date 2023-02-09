@@ -456,6 +456,10 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
 
     state.currentYaw = yaw;
     state.currentPitch = pitch;
+
+    // Normalize yaw to within the range [-Gm_PI, Gm_PI]
+    if (state.currentYaw < -Gm_PI) state.currentYaw += Gm_TAU;
+    if (state.currentYaw > Gm_PI) state.currentYaw -= Gm_TAU;
   }
 
   LOG_TIME();
