@@ -26,7 +26,11 @@ internal void updateThirdPersonCameraRadius(GmContext* context, GameState& state
     state.camera3p.radius += 100.f * dt;
   }
 
-  if (state.lastWallBumpTime != 0.f && time_since(state.lastWallBumpTime) <= WALL_KICK_WINDOW_DURATION) {
+  if (
+    state.canPerformWallKick &&
+    state.lastWallBumpTime != 0.f &&
+    time_since(state.lastWallBumpTime) <= WALL_KICK_WINDOW_DURATION
+  ) {
     // Zoom in to the player when winding up a potential wall kick
     float calculatedRadius = state.camera3p.radius;
     float alpha = time_since(state.lastWallBumpTime) / WALL_KICK_WINDOW_DURATION;

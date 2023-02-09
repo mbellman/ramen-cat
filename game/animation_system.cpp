@@ -193,7 +193,7 @@ internal void handlePlayerAnimation(GmContext* context, GameState& state, float 
       handlePlayerDashingAnimation(context, state, dt);
     }
   } else {
-    if (time_since(state.lastWallBumpTime) < WALL_KICK_WINDOW_DURATION) {
+    if (state.canPerformWallKick && time_since(state.lastWallBumpTime) < WALL_KICK_WINDOW_DURATION) {
       handlePlayerWallKickAnimation(context, state, dt);
     } else {
       handlePlayerMidairAnimation(context, state, dt);

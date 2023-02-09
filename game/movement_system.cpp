@@ -65,12 +65,24 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
 
     if (
       !state.isOnSolidGround &&
-      state.canPerformWallKick &&
       time_since(state.lastWallBumpTime) > WALL_KICK_WINDOW_DURATION
     ) {
+      if (
+        state.lastWallBumpTime < state.lastTimeOnSolidGround &&
+        Gm_Absf(player.position.y - state.lastSolidGroundPosition.y) > PLAYER_RADIUS * 4.f
+      ) {
+        // Only explicitly enable wall kicks when bumping a wall for the first time
+        // after a ground jump, if the y delta is above a certain threshold. We don't
+        // necessarily set this to false otherwise; if this variable is already true,
+        // it will remain true. We just don't want to flip it to true without the
+        // aforementioned conditions being met. (For example, performing a wall kick
+        // immediately allows more wall kicks to be performed, regardless of last solid
+        // ground time or y delta values).
+        state.canPerformWallKick = true;
+      }
+
       state.lastWallBumpTime = state.frameStartTime;
       state.lastWallBumpVelocity = state.velocity;
-      state.velocity = Vec3f(0.f);
     }
   }
 }
@@ -271,7 +283,6 @@ namespace MovementSystem {
 
           state.isOnSolidGround = false;
           state.canPerformAirDash = true;
-          state.canPerformWallKick = true;
 
           // Make sure the player is off the ground plane
           // at the start of the jump to avoid a next-frame
