@@ -286,6 +286,37 @@ void Gm_RemoveLight(GmContext* context, Gamma::Light* light) {
   delete light;
 }
 
+// @incomplete
+void Gm_ResetScene(GmContext* context) {
+  auto& scene = context->scene;
+
+  for (auto* mesh : scene.meshes) {
+    context->renderer->destroyMesh(mesh);
+
+    mesh->objects.free();
+    mesh->objects.reset();
+  }
+
+  for (auto* light : scene.lights) {
+    if (
+      light->type == LightType::DIRECTIONAL_SHADOWCASTER ||
+      light->type == LightType::POINT_SHADOWCASTER ||
+      light->type == LightType::SPOT_SHADOWCASTER
+    ) {
+      context->renderer->destroyShadowMap(light);
+    }
+  }
+
+  scene.meshes.clear();
+  scene.meshMap.clear();
+  scene.lightStore.clear();
+  scene.objectStore.clear();
+  // @todo delete probes
+
+  scene.frame = 0;
+  scene.sceneTime = 0.f;
+}
+
 void Gm_PointCameraAt(GmContext* context, const Gamma::Object& object, bool upsideDown) {
   Gm_PointCameraAt(context, object.position, upsideDown);
 }

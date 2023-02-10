@@ -1507,7 +1507,20 @@ namespace Gamma {
   }
 
   void OpenGLRenderer::destroyMesh(Mesh* mesh) {
-    // @todo
+    OpenGLMesh* targetGlMesh = nullptr;
+
+    for (auto* glMesh : glMeshes) {
+      if (glMesh->getSourceMesh() == mesh) {
+        targetGlMesh = glMesh;
+
+        break;
+      }
+    }
+
+    Gm_VectorRemove(glMeshes, targetGlMesh);
+
+    delete targetGlMesh;
+
     Console::log("[Gamma] Mesh destroyed!");
   }
 

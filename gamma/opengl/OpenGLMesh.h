@@ -34,7 +34,6 @@ namespace Gamma {
     GLuint ebo;
     OpenGLTexture* glTexture = nullptr;
     OpenGLTexture* glNormalMap = nullptr;
-    OpenGLTexture* glSpecularityMap = nullptr;
     bool hasCreatedInstanceBuffers = false;
 
     void checkAndLoadTexture(const std::string& path, OpenGLTexture*& texture, GLenum unit);

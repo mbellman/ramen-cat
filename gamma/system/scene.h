@@ -122,6 +122,8 @@ Gamma::Object* Gm_GetObjectByRecord(GmContext* context, const Gamma::ObjectRecor
 Gamma::Light& Gm_GetLight(GmContext* context, const std::string& lightName);
 void Gm_RemoveObject(GmContext* context, const Gamma::Object& object);
 void Gm_RemoveLight(GmContext* context, Gamma::Light* light);
+void Gm_ResetScene(GmContext* context);
+
 void Gm_PointCameraAt(GmContext* context, const Gamma::Object& object, bool upsideDown = false);
 void Gm_PointCameraAt(GmContext* context, const Gamma::Vec3f& position, bool upsideDown = false);
 void Gm_HandleFreeCameraMode(GmContext* context, float speed, float dt);

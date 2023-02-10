@@ -902,7 +902,7 @@ internal void handleTimeCommand(GmContext* context, GameState& state, const std:
   EffectsSystem::updateDayNightCycleLighting(context, state);
 }
 
-internal void saveCollisionPlanesData(GmContext* context) {
+internal void saveCollisionPlanesData(GmContext* context, GameState& state) {
   std::string data;
 
   for (auto& platform : objects("platform")) {
@@ -912,10 +912,10 @@ internal void saveCollisionPlanesData(GmContext* context) {
     data += Gm_ToString(platform.color) + "\n";
   }
 
-  Gm_WriteFileContents("./game/data_collision_planes.txt", data);
+  Gm_WriteFileContents("./game/levels/" + state.currentLevelName + "/data_collision_planes.txt", data);
 }
 
-internal void saveWorldObjectsData(GmContext* context) {
+internal void saveWorldObjectsData(GmContext* context, GameState& state) {
   std::string data;
 
   for (auto& asset : World::meshAssets) {
@@ -933,10 +933,10 @@ internal void saveWorldObjectsData(GmContext* context) {
     }
   }
 
-  Gm_WriteFileContents("./game/data_world_objects.txt", data);
+  Gm_WriteFileContents("./game/levels/" + state.currentLevelName + "/data_world_objects.txt", data);
 }
 
-internal void saveLightsData(GmContext* context) {
+internal void saveLightsData(GmContext* context, GameState& state) {
   std::string data;
 
   for (auto* light : context->scene.lights) {
@@ -951,7 +951,7 @@ internal void saveLightsData(GmContext* context) {
     }
   }
 
-  Gm_WriteFileContents("./game/data_lights.txt", data);
+  Gm_WriteFileContents("./game/levels/" + state.currentLevelName + "/data_lights.txt", data);
 }
 
 namespace Editor {
@@ -996,9 +996,9 @@ namespace Editor {
 
     state.isEditorEnabled = false;
 
-    saveCollisionPlanesData(context);
-    saveWorldObjectsData(context);
-    saveLightsData(context);
+    saveCollisionPlanesData(context, state);
+    saveWorldObjectsData(context, state);
+    saveLightsData(context, state);
 
     updateInitialMovingObjects(context, state);
     updateCollisionPlanes(context, state);

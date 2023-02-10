@@ -55,6 +55,8 @@ struct GameState {
   // @temporary
   float gameStartTime = 0.f;
 
+  std::string currentLevelName;
+
   Gamma::ThirdPersonCamera camera3p;
   Gamma::Vec3f velocity;
   Gamma::Vec3f direction = Gamma::Vec3f(0, 0, 1.f);

@@ -73,7 +73,17 @@ namespace Gamma {
   }
 
   OpenGLMesh::~OpenGLMesh() {
-    // @todo
+    glDeleteVertexArrays(1, &vao);
+    glDeleteBuffers(3, &buffers[0]);
+    glDeleteBuffers(1, &ebo);
+
+    if (glTexture != nullptr) {
+      delete glTexture;
+    }
+
+    if (glNormalMap != nullptr) {
+      delete glNormalMap;
+    }
   }
 
   void OpenGLMesh::checkAndLoadTexture(const std::string& path, OpenGLTexture*& texture, GLenum unit) {
