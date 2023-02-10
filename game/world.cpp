@@ -221,34 +221,7 @@ internal void loadEntityData(GmContext* context, GameState& state, const std::st
 }
 
 internal void unloadCurrentLevel(GmContext* context, GameState& state) {
-  for (auto& asset : GameMeshes::meshAssets) {
-    mesh(asset.name)->objects.free();
-    mesh(asset.name)->objects.reset();
-
-    context->renderer->destroyMesh(mesh(asset.name));
-  }
-
-  for (auto& asset : GameMeshes::dynamicMeshPieces) {
-    mesh(asset.name)->objects.free();
-    mesh(asset.name)->objects.reset();
-
-    context->renderer->destroyMesh(mesh(asset.name));
-  }
-
-  for (auto* light : context->scene.lights) {
-    if (
-      light->type == LightType::DIRECTIONAL_SHADOWCASTER ||
-      light->type == LightType::POINT_SHADOWCASTER ||
-      light->type == LightType::SPOT_SHADOWCASTER
-    ) {
-      context->renderer->destroyShadowMap(light);
-    }
-
-    delete light;
-  }
-
-  context->scene.lights.clear();
-  context->scene.lightStore.clear();
+  Gm_ResetScene(context);
 
   // @todo properly reset all game state
   state.collisionPlanes.clear();

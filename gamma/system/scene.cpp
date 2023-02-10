@@ -286,7 +286,7 @@ void Gm_RemoveLight(GmContext* context, Gamma::Light* light) {
   delete light;
 }
 
-// @incomplete
+// @incomplete (needs testing)
 void Gm_ResetScene(GmContext* context) {
   auto& scene = context->scene;
 
@@ -294,7 +294,8 @@ void Gm_ResetScene(GmContext* context) {
     context->renderer->destroyMesh(mesh);
 
     mesh->objects.free();
-    mesh->objects.reset();
+
+    delete mesh;
   }
 
   for (auto* light : scene.lights) {
@@ -305,13 +306,20 @@ void Gm_ResetScene(GmContext* context) {
     ) {
       context->renderer->destroyShadowMap(light);
     }
+
+    delete light;
+  }
+
+  for (auto& [ name, position ] : scene.probeMap) {
+    context->renderer->destroyProbe(name);
   }
 
   scene.meshes.clear();
   scene.meshMap.clear();
+  scene.lights.clear();
   scene.lightStore.clear();
   scene.objectStore.clear();
-  // @todo delete probes
+  scene.probeMap.clear();
 
   scene.frame = 0;
   scene.sceneTime = 0.f;

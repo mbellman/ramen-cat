@@ -38,6 +38,7 @@ namespace Gamma {
     virtual void createShadowMap(Light* light) {};
     virtual void destroyMesh(Mesh* mesh) {};
     virtual void destroyShadowMap(Light* light) {};
+    virtual void destroyProbe(const std::string& name) {};
 
     virtual Area<u32>& getInternalResolution() final {
       return internalResolution;

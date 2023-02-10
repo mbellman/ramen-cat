@@ -1553,6 +1553,16 @@ namespace Gamma {
     Console::log("[Gamma] Shadowcaster destroyed!");
   }
 
+  void OpenGLRenderer::destroyProbe(const std::string& name) {
+    auto* cubeMap = glProbes.at(name);
+
+    cubeMap->destroy();
+
+    delete cubeMap;
+
+    glProbes.erase(name);
+  }
+
   const RenderStats& OpenGLRenderer::getRenderStats() {
     GLint total = 0;
     GLint available = 0;
