@@ -2,6 +2,7 @@
 #include "camera_system.h"
 #include "ui_system.h"
 #include "world.h"
+#include "game_meshes.h"
 #include "macros.h"
 #include "easing.h"
 #include "game_constants.h"
@@ -456,7 +457,7 @@ void EntitySystem::initializeGameEntities(GmContext* context, GameState& state) 
 
   // Save initial reference copies of moving objects
   {
-    for (auto& asset : World::meshAssets) {
+    for (auto& asset : GameMeshes::meshAssets) {
       if (asset.moving) {
         for (auto& object : objects(asset.name)) {
           state.initialMovingObjects.push_back(object);

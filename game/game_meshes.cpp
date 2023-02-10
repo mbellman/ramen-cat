@@ -1,0 +1,554 @@
+#include "game_meshes.h"
+
+using namespace Gamma;
+
+std::vector<MeshAsset> GameMeshes::meshAssets = {
+  /**
+   * Lights
+   * ------
+   */
+  {
+    .name = "lamp",
+    .create = []() {
+      return Mesh::Model("./game/assets/lamp.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/lamp.png",
+      .maxCascade = 2,
+      .emissivity = 1.f
+    }
+  },
+  {
+    .name = "lantern",
+    .moving = true,
+    .create = []() {
+      return Mesh::Model("./game/assets/lantern.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/lantern.png",
+      .emissivity = 0.5f
+    }
+  },
+  {
+    .name = "small-light",
+    .defaultColor = Vec3f(1.f, 0.9f, 0.7f),
+    .hitboxScale = Vec3f(1.5f),
+    .create = []() {
+      return Mesh::Model("./game/assets/small-light.obj");
+    },
+    .attributes = {
+      .maxCascade = 2,
+      .emissivity = 1.f
+    }
+  },
+  {
+    .name = "japanese-lamppost",
+    .hitboxScale = Vec3f(0.4f, 1.f, 0.25f),
+    .create = []() {
+      return Mesh::Model("./game/assets/japanese-lamppost.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/japanese-lamppost.png"
+    }
+  },
+
+  /**
+   * Plants
+   * ------
+   */
+  {
+    .name = "weeds",
+    .hitboxScale = Vec3f(1.f, 1.f, 0.2f),
+    .create = []() {
+      return Mesh::Model("./game/assets/weeds.obj");
+    },
+    .attributes = {
+      .type = MeshType::FOLIAGE,
+      .texture = "./game/assets/weeds.png",
+      .maxCascade = 2,
+      .foliage = {
+        .type = FoliageType::FLOWER
+      },
+      .emissivity = 0.1f,
+      .roughness = 1.f
+    }
+  },
+  {
+    .name = "bush",
+    .create = []() {
+      return Mesh::Model("./game/assets/bush.obj");
+    },
+    .attributes = {
+      .type = MeshType::FOLIAGE,
+      .texture = "./game/assets/bush.png",
+      .foliage = {
+        .type = FoliageType::FLOWER,
+        .factor = 5.f
+      }
+    }
+  },
+  {
+    .name = "palm-trunk",
+    .hitboxScale = Vec3f(0.1f, 1.f, 0.1f),
+    .create = []() {
+      return Mesh::Model("./game/assets/palm-trunk.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/palm-trunk.png",
+      .roughness = 0.8f
+    }
+  },
+  {
+    .name = "palm-leaf",
+    .defaultRotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI),
+    .hitboxScale = Vec3f(0.2f, 0.5f, 0.2f),
+    .hitboxOffset = Vec3f(0, 1.f, 0.9),
+    .create = []() {
+      return Mesh::Model("./game/assets/palm-leaf.obj");
+    },
+    .attributes = {
+      .type = MeshType::FOLIAGE,
+      .texture = "./game/assets/palm-leaf.png",
+      .foliage = {
+        .type = FoliageType::LEAF
+      },
+      .roughness = 0.8f
+    }
+  },
+
+  {
+    .name = "concrete-slab",
+    .defaultColor = Vec3f(0.5f),
+    .maxInstances = 10000,
+    .create = []() {
+      return Mesh::Cube();
+    },
+    .attributes = {
+      .roughness = 0.9f
+    }
+  },
+  {
+    .name = "concrete-half-arch",
+    .defaultColor = Vec3f(0.8f),
+    .maxInstances = 1000,
+    .create = []() {
+      return Mesh::Model("./game/assets/concrete-half-arch.obj");
+    },
+    .attributes = {
+      .roughness = 0.9f
+    }
+  },
+  {
+    .name = "japanese-roof",
+    .defaultColor = Vec3f(0.2f,0.5f,0.3f),
+    .defaultScale = Vec3f(100.f),
+    .hitboxScale = Vec3f(1.f, 0.05f, 1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/japanese-roof.obj");
+    },
+    .attributes = {
+      .roughness = 0.6f
+    }
+  },
+  {
+    .name = "bathhouse-roof-segment",
+    .defaultColor = Vec3f(0.43f,0.08f,0.08f),
+    .defaultScale = Vec3f(100.f),
+    .hitboxScale = Vec3f(1.f, 0.3f, 0.8f),
+    .create = []() {
+      return Mesh::Model("./game/assets/bathhouse-roof-segment.obj");
+    },
+    .attributes = {
+      .normals = "./game/assets/metal-guard-normals.png",
+      .roughness = 0.8f
+    }
+  },
+  {
+    .name = "bathhouse-roof-corner",
+    .defaultColor = Vec3f(0.43f,0.08f,0.08f),
+    .defaultScale = Vec3f(100.f),
+    .hitboxScale = Vec3f(0.7f, 0.25f, 0.7f),
+    .create = []() {
+      return Mesh::Model("./game/assets/bathhouse-roof-corner.obj");
+    },
+    .attributes = {
+      .normals = "./game/assets/metal-guard-normals.png",
+      .roughness = 0.8f
+    }
+  },
+  {
+    .name = "bathhouse-roof-spire",
+    .defaultColor = Vec3f(0.8f,0.6f,0.2f),
+    .defaultScale = Vec3f(100.f),
+    .hitboxScale = Vec3f(1.f, 2.f, 1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/bathhouse-roof-spire.obj");
+    },
+    .attributes = {
+      .normals = "./game/assets/metal-guard-normals.png",
+      .roughness = 0.8f
+    }
+  },
+  {
+    .name = "metal-panel",
+    .create = []() {
+      return Mesh::Cube();
+    },
+    .attributes = {
+      .texture = "./game/assets/metal-panel.png",
+      .normals = "./game/assets/metal-panel-normals.png",
+      .roughness = 0.4f
+    }
+  },
+  {
+    .name = "metal-grate",
+    .defaultScale = Vec3f(100.f),
+    .hitboxScale = Vec3f(1.f, 0.0f, 1.f),
+    .create = []() {
+      return Mesh::Plane(2);
+    },
+    .attributes = {
+      .texture = "./game/assets/metal-grate.png",
+      .normals = "./game/assets/metal-grate-normals.png",
+      .roughness = 0.1f
+    }
+  },
+  {
+    .name = "metal-guard",
+    .defaultColor = Vec3f(0.333f),
+    .hitboxScale = Vec3f(1.f, 0.2f, 0.05f),
+    .create = []() {
+      return Mesh::Model("./game/assets/metal-guard.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/metal-guard.png",
+      .normals = "./game/assets/metal-guard-normals.png",
+      .roughness = 0.1f
+    }
+  },
+  {
+    .name = "ladder",
+    .hitboxScale = Vec3f(0.45f, 1.f, 0.2f),
+    .create = []() {
+      return Mesh::Model("./game/assets/ladder.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/metal-guard.png",
+      .normals = "./game/assets/metal-guard-normals.png",
+      .roughness = 0.1f
+    }
+  },
+  {
+    .name = "wood-beam",
+    .hitboxScale = Vec3f(1.f, 0.025f, 0.1f),
+    .create = []() {
+      return Mesh::Model("./game/assets/wood-beam.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/wood-beam.png",
+      .roughness = 0.5f
+    }
+  },
+  {
+    .name = "wood-supports",
+    .hitboxScale = Vec3f(0.5f, 1.7f, 0.15f),
+    .create = []() {
+      return Mesh::Model("./game/assets/wood-supports.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/wood-beam.png",
+      .roughness = 0.5f
+    }
+  },
+  {
+    .name = "windmill-wheel",
+    .moving = true,
+    .defaultScale = Vec3f(75.f),
+    .hitboxScale = Vec3f(1.f, 1.f, 0.1f),
+    .create = []() {
+      return Mesh::Model("./game/assets/windmill-wheel.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/wood-beam.png",
+      .roughness = 0.6f
+    }
+  },
+  {
+    .name = "floor-1",
+    .create = []() {
+      return Mesh::Model("./game/assets/texture-cube.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/floor-1.png",
+      .normals = "./game/assets/floor-1-normals.png"
+    }
+  },
+  {
+    .name = "tiles-1",
+    .create = []() {
+      return Mesh::Model("./game/assets/texture-cube.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/tiles-1.png",
+      .normals = "./game/assets/tiles-1-normals.png"
+    }
+  },
+  {
+    .name = "wall-1",
+    .scalingFactor = Vec3f(1.f, 0, 1.f),
+    .create = []() {
+      return Mesh::Plane(2);
+    },
+    .attributes = {
+      // .texture = "./game/assets/wall-1.png",
+      // .normals = "./game/assets/wall-1-normals.png",
+      .roughness = 0.1f
+    }
+  },
+  {
+    .name = "metal-sheet",
+    .hitboxScale = Vec3f(0.5f, 0.6f, 0.025f),
+    .create = []() {
+      return Mesh::Model("./game/assets/metal-sheet.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/metal-sheet.png",
+      .normals = "./game/assets/metal-sheet-normals.png",
+      .roughness = 0.1f
+    }
+  },
+  {
+    .name = "ac-unit",
+    .hitboxScale = Vec3f(1.f, 0.6f, 0.5f),
+    .create = []() {
+      return Mesh::Model("./game/assets/ac-unit.obj");
+    },
+    .attributes = {
+      .roughness = 0.4f
+    }
+  },
+  {
+    .name = "ac-fan",
+    .moving = true,
+    .defaultColor = Vec3f(0.1f),
+    .hitboxScale = Vec3f(1.f, 1.f, 0.1f),
+    .create = []() {
+      return Mesh::Model("./game/assets/ac-fan.obj");
+    },
+    .attributes = {
+      .roughness = 0.2f
+    }
+  },
+  {
+    .name = "kick-sign",
+    .hitboxScale = Vec3f(1.f, 1.1f, 0.15f),
+    .create = []() {
+      return Mesh::Model("./game/assets/kick-sign.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/kick-sign.png",
+      .emissivity = 0.2f,
+      .roughness = 0.4f
+    }
+  },
+  {
+    .name = "sign-1",
+    .hitboxScale = Vec3f(0.1f, 0.5f, 1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/sign-1.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/sign-1.png",
+      .emissivity = 0.5f
+    }
+  },
+  {
+    .name = "door-1",
+    .hitboxScale = Vec3f(0.5f, 1.f, 0.1f),
+    .create = []() {
+      return Mesh::Model("./game/assets/door-1.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/door-1.png",
+      .emissivity = 0.25f
+    }
+  },
+  {
+    .name = "windows-1",
+    .hitboxScale = Vec3f(1.f, 0.4f, 0.05f),
+    .create = []() {
+      return Mesh::Model("./game/assets/windows-1.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/windows-1.png",
+      .emissivity = 0.25f
+    }
+  },
+  {
+    .name = "glass-window",
+    .defaultColor = Vec3f(1.f),
+    .maxInstances = 1000,
+    .create = []() {
+      return Mesh::Cube();
+    },
+    .attributes = {
+      .type = MeshType::REFRACTIVE,
+      .normals = "./game/assets/glass-normals.png",
+      .roughness = 0.9f
+    } 
+  },
+  {
+    .name = "balcony-1",
+    .hitboxScale = Vec3f(1.f, 0.4f, 0.4f),
+    .create = []() {
+      return Mesh::Model("./game/assets/balcony-1.obj");
+    }
+  },
+  {
+    .name = "pipe-1",
+    .hitboxScale = Vec3f(0.3f, 1.f, 0.3f),
+    .create = []() {
+      return Mesh::Model("./game/assets/pipe-1.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/pipe-1.png",
+      .normals = "./game/assets/pipe-1-normals.png",
+      .roughness = 0.1f
+    }
+  },
+  {
+    .name = "pipe-curve",
+    .hitboxScale = Vec3f(0.3f, 0.5f, 0.6f),
+    .create = []() {
+      return Mesh::Model("./game/assets/pipe-curve.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/pipe-1.png",
+      .normals = "./game/assets/pipe-1-normals.png",
+      .roughness = 0.1f
+    }
+  },
+  {
+    .name = "roof",
+    .hitboxScale = Vec3f(1.f, 0.5f, 0.8f),
+    .create = []() {
+      return Mesh::Model("./game/assets/roof.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/roof.png"
+    }
+  },
+  {
+    .name = "shop-1",
+    .hitboxScale = Vec3f(1.f, 0.3f, 1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/shop-1.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/shop-1.png"
+    }
+  },
+  {
+    .name = "ramen-bowl",
+    .hitboxScale = Vec3f(1.f, 0.4f, 1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/ramen-bowl.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/ramen-bowl.png",
+      .roughness = 0.4f
+    }
+  },
+  {
+    .name = "hot-air-balloon",
+    .moving = true,
+    .defaultScale = Vec3f(200.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/hot-air-balloon.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/hot-air-balloon.png",
+      .normals = "./game/assets/hot-air-balloon-normals.png",
+      .canCastShadows = false,
+      .emissivity = 0.3f,
+      .roughness = 0.7f
+    }
+  },
+  {
+    .name = "electrical-pole",
+    .defaultScale = Vec3f(275.f),
+    .hitboxScale = Vec3f(0.05f, 1.f, 0.15f),
+    .create = []() {
+      return Mesh::Model("./game/assets/electrical-pole.obj");
+    }
+  },
+
+  /**
+   * Characters
+   * ----------
+   */
+  {
+    .name = "person",
+    .moving = true,
+    .defaultScale = Vec3f(65.f),
+    .hitboxScale = Vec3f(0.6f, 1.4f, 0.2f),
+    .create = []() {
+      return Mesh::Model("./game/assets/person.obj");
+    }
+  },
+
+  /**
+   * Collectibles
+   * ------------
+   */
+  {
+    .name = "onigiri",
+    .moving = true,
+    .defaultScale = Vec3f(40.f),
+    .hitboxScale = Vec3f(0.7f, 1.f, 0.5f),
+    .create = []() {
+      return Mesh::Model("./game/assets/onigiri.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/onigiri.png",
+      .emissivity = 0.2f
+    }
+  },
+  
+  {
+    .name = "staircase",
+    .dynamic = true,
+    .defaultColor = Vec3f(0, 1.f, 0),
+    .create = []() {
+      return Mesh::Cube();
+    }
+  }
+};
+
+std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
+  {
+    .name = "stair-step",
+    .maxInstances = 10000,
+    .create = []() {
+      return Mesh::Cube();
+    }
+  },
+  {
+    .name = "japanese-lamppost-light",
+    .create = []() {
+      return Mesh::Model("./game/assets/japanese-lamppost-light.obj");
+    },
+    .attributes = {
+      .emissivity = 1.f
+    }
+  },
+  {
+    .name = "wire",
+    .create = []() {
+      return Mesh::Cube();
+    },
+    .attributes = {
+      .roughness = 0.3f
+    }
+  }
+};

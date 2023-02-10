@@ -4,6 +4,7 @@
 
 #include "editor.h"
 #include "world.h"
+#include "game_meshes.h"
 #include "collisions.h"
 #include "effects_system.h"
 #include "macros.h"
@@ -161,8 +162,8 @@ internal void selectObject(GmContext* context, Object& object) {
       u16 meshIndex = editor.selectedObject._record.meshIndex;
       auto& mesh = *context->scene.meshes[meshIndex];
 
-      for (u8 i = 0; i < World::meshAssets.size(); i++) {
-        if (mesh.name == World::meshAssets[i].name) {
+      for (u8 i = 0; i < GameMeshes::meshAssets.size(); i++) {
+        if (mesh.name == GameMeshes::meshAssets[i].name) {
           editor.currentSelectedMeshIndex = i;
 
           break;
@@ -193,7 +194,7 @@ internal void updateCollisionPlanes(GmContext* context, GameState& state) {
     Collisions::addObjectCollisionPlanes(platform, state.collisionPlanes);
   }
 
-  for (auto& asset : World::meshAssets) {
+  for (auto& asset : GameMeshes::meshAssets) {
     for (auto& object : mesh(asset.name)->objects) {
       Collisions::addObjectCollisionPlanes(object, editor.objectCollisionPlanes, asset.hitboxScale, asset.hitboxOffset);
     }
@@ -210,7 +211,7 @@ internal void updateCollisionPlanes(GmContext* context, GameState& state) {
 
 internal void showDynamicMeshPlaceholders(GmContext* context) {
   // Show placeholders
-  for (auto& asset : World::meshAssets) {
+  for (auto& asset : GameMeshes::meshAssets) {
     if (asset.dynamic) {
       mesh(asset.name)->disabled = false;
     }
@@ -232,7 +233,7 @@ internal void resetMovingObjects(GmContext* context, GameState& state) {
 internal void updateInitialMovingObjects(GmContext* context, GameState& state) {
   state.initialMovingObjects.clear();
 
-  for (auto& asset : World::meshAssets) {
+  for (auto& asset : GameMeshes::meshAssets) {
     if (asset.moving) {
       for (auto& object : objects(asset.name)) {
         state.initialMovingObjects.push_back(object);
@@ -398,7 +399,7 @@ internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mo
 
       if (editor.mode == EditorMode::OBJECTS) {
         // @todo description
-        axis *= World::meshAssets[editor.currentSelectedMeshIndex].scalingFactor;
+        axis *= GameMeshes::meshAssets[editor.currentSelectedMeshIndex].scalingFactor;
       }
 
       break;
@@ -651,7 +652,7 @@ internal void createNewObject(GmContext* context, GameState& state) {
 
     selectObject(context, object);
   } else if (editor.mode == EditorMode::OBJECTS) {
-    auto& asset = World::meshAssets[editor.currentSelectedMeshIndex];
+    auto& asset = GameMeshes::meshAssets[editor.currentSelectedMeshIndex];
 
     auto& object = createNewObjectFromMesh(context, asset.name, {
       .position = spawnPosition,
@@ -805,8 +806,8 @@ internal void handleMeshCommand(GmContext* context, const std::string& command) 
     return;
   }
 
-  for (u8 i = 0; i < World::meshAssets.size(); i++) {
-    auto& asset = World::meshAssets[i];
+  for (u8 i = 0; i < GameMeshes::meshAssets.size(); i++) {
+    auto& asset = GameMeshes::meshAssets[i];
 
     if (Gm_StringContains(asset.name, searchTerm)) {
       editor.mode = EditorMode::OBJECTS;
@@ -918,7 +919,7 @@ internal void saveCollisionPlanesData(GmContext* context, GameState& state) {
 internal void saveWorldObjectsData(GmContext* context, GameState& state) {
   std::string data;
 
-  for (auto& asset : World::meshAssets) {
+  for (auto& asset : GameMeshes::meshAssets) {
     data += "@" + asset.name + "\n";
 
     for (u16 i = 0; i < objects(asset.name).getHighestId(); i++) {
@@ -963,7 +964,7 @@ namespace Editor {
 
     // Force certain meshes to be enabled/disabled
     {
-      for (auto& asset : World::meshAssets) {
+      for (auto& asset : GameMeshes::meshAssets) {
         if (!asset.dynamic) {
           mesh(asset.name)->objects.showAll();
         }
@@ -1007,11 +1008,11 @@ namespace Editor {
 
     // Force certain meshes to be enabled/disabled
     {
-      for (auto& asset : World::meshAssets) {
+      for (auto& asset : GameMeshes::meshAssets) {
         mesh(asset.name)->disabled = asset.dynamic;
       }
 
-      for (auto& asset : World::dynamicMeshPieces) {
+      for (auto& asset : GameMeshes::dynamicMeshPieces) {
         mesh(asset.name)->disabled = false;
       }
 
@@ -1053,7 +1054,7 @@ namespace Editor {
 
       // Toggle objects
       if (key == Key::O) {
-        for (auto& asset : World::meshAssets) {
+        for (auto& asset : GameMeshes::meshAssets) {
           if (asset.dynamic && state.isEditorEnabled) {
             toggle_mesh(asset.name);
           }
@@ -1063,7 +1064,7 @@ namespace Editor {
           }
         }
 
-        for (auto& asset : World::dynamicMeshPieces) {
+        for (auto& asset : GameMeshes::dynamicMeshPieces) {
           mesh(asset.name)->disabled = !mesh(asset.name)->disabled || state.isEditorEnabled;
         }
       }
@@ -1244,13 +1245,13 @@ namespace Editor {
         // @todo cycleCurrentObject
         editor.currentSelectedMeshIndex++;
 
-        if (editor.currentSelectedMeshIndex > World::meshAssets.size() - 1) {
+        if (editor.currentSelectedMeshIndex > GameMeshes::meshAssets.size() - 1) {
           editor.currentSelectedMeshIndex = 0;
         }
       } else if (input.didPressKey(Key::ARROW_DOWN)) {
         // @todo cycleCurrentObject
         if (editor.currentSelectedMeshIndex == 0) {
-          editor.currentSelectedMeshIndex = (u8)World::meshAssets.size() - 1;
+          editor.currentSelectedMeshIndex = (u8)GameMeshes::meshAssets.size() - 1;
         } else {
           editor.currentSelectedMeshIndex--;
         }
@@ -1266,7 +1267,7 @@ namespace Editor {
         float dx = (float)mouseDelta.x;
         float dy = (float)mouseDelta.y;
         auto& originalObject = *get_object_by_record(editor.selectedObject._record);
-        auto& asset = World::meshAssets[editor.currentSelectedMeshIndex];
+        auto& asset = GameMeshes::meshAssets[editor.currentSelectedMeshIndex];
         Vec3f actionDelta = getCurrentActionDelta(context, dx, dy, dt);
 
         if (input.isKeyHeld(Key::CONTROL)) {
@@ -1392,7 +1393,7 @@ namespace Editor {
       add_debug_message("Action: " + getActionTypeName(editor.currentActionType));
 
       if (editor.mode == EditorMode::OBJECTS) {
-        auto& meshName = World::meshAssets[editor.currentSelectedMeshIndex].name;
+        auto& meshName = GameMeshes::meshAssets[editor.currentSelectedMeshIndex].name;
         auto* mesh = mesh(meshName);
         u32 verticesPerMesh = mesh->vertices.size();
         u16 totalInstances = mesh->objects.totalActive();

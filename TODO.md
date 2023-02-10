@@ -11,8 +11,6 @@ BUGS
 
 ASSETS
 ------
-* define outside of world.cpp
-
 * flowers
 * update mini rooves to look more japanese
 * staircase step improvements
@@ -36,7 +34,7 @@ GAME
 * lights dimming during daytime
 * increased FoV in tiered dash modes/dash fx
 
-* level unloading
+* level unloading (in progress)
 
 * slingshot velocity affected by dashing tier
 * turn camera after wall kicks
