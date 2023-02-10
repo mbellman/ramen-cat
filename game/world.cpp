@@ -155,6 +155,8 @@ internal void loadNpcData(GmContext* context, GameState& state, const std::strin
       }
 
       state.npcs.push_back(npc);
+    } else {
+      i++;
     }
   }
 

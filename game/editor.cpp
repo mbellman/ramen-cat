@@ -920,10 +920,16 @@ internal void saveWorldObjectsData(GmContext* context, GameState& state) {
   std::string data;
 
   for (auto& asset : GameMeshes::meshAssets) {
+    auto& meshObjects = objects(asset.name);
+
+    if (meshObjects.totalActive() == 0) {
+      continue;
+    }
+
     data += "@" + asset.name + "\n";
 
-    for (u16 i = 0; i < objects(asset.name).getHighestId(); i++) {
-      auto* object = objects(asset.name).getById(i);
+    for (u16 i = 0; i < meshObjects.getHighestId(); i++) {
+      auto* object = meshObjects.getById(i);
 
       if (object != nullptr) {
         data += Gm_ToString(object->position) + ",";

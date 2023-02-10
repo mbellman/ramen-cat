@@ -445,14 +445,14 @@ internal void handleOcean(GmContext* context) {
 void EntitySystem::initializeGameEntities(GmContext* context, GameState& state) {
   // @temporary
   {
-    addJetstream(context, state, {
-      Vec3f(475.f, 2785.f, 3550.f),
-      Vec3f(2100.f, 2050.f, 1700.f),
-      Vec3f(1985.f, 2360.f, -875.f),
-      Vec3f(-1000.f, 2850.f, -2250.f),
-      Vec3f(-2300.f, 3500.f, -350.f),
-      Vec3f(-1500.f, 2600.f, 2600.f)
-    });
+    // addJetstream(context, state, {
+    //   Vec3f(475.f, 2785.f, 3550.f),
+    //   Vec3f(2100.f, 2050.f, 1700.f),
+    //   Vec3f(1985.f, 2360.f, -875.f),
+    //   Vec3f(-1000.f, 2850.f, -2250.f),
+    //   Vec3f(-2300.f, 3500.f, -350.f),
+    //   Vec3f(-1500.f, 2600.f, 2600.f)
+    // });
   }
 
   // Save initial reference copies of moving objects

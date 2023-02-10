@@ -4,6 +4,7 @@ EDITOR
 BUGS
 ----
 * air dash complete spin
+* wall kicking at same y coordinate as last solid ground position
 * when enabling the editor in OBJECTS mode with only collision planes enabled, don't show dynamic meshes
 * fix onigiri texture
 * imported models are inverted along X
