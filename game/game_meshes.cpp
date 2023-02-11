@@ -116,6 +116,10 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
 
+  /**
+   * Structures
+   * ----------
+   */
   {
     .name = "concrete-slab",
     .defaultColor = Vec3f(0.5f),

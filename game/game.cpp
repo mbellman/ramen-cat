@@ -147,16 +147,15 @@ void updateGame(GmContext* context, GameState& state, float dt) {
     }
   }
 
-  // Reset the player position after falling longer than 2 seconds
+  // Reset the player position when falling past the killplane
   {
     if (
-      state.frameStartTime - state.lastTimeOnSolidGround > 2.f &&
-      state.lastSolidGroundPosition.y - player.position.y > 1000.f
+      player.position.y < -1000.f
     ) {
+      player.position = state.lastSolidGroundPosition;
+
       state.velocity = Vec3f(0.f);
       state.lastTimeOnSolidGround = state.frameStartTime;
-
-      player.position = state.lastSolidGroundPosition;
 
       UISystem::showDialogue(context, state, "You fell down.\nPlease be careful next time.", {
         .duration = 3.f,

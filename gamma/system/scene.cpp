@@ -315,11 +315,11 @@ void Gm_ResetScene(GmContext* context) {
   }
 
   scene.meshes.clear();
-  scene.meshMap.clear();
   scene.lights.clear();
-  scene.lightStore.clear();
-  scene.objectStore.clear();
+  scene.meshMap.clear();
   scene.probeMap.clear();
+  scene.objectStore.clear();
+  scene.lightStore.clear();
 
   scene.frame = 0;
   scene.sceneTime = 0.f;

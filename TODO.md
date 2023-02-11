@@ -28,7 +28,6 @@ GAME
 * sitting animation
 
 * proper nighttime handling
-* killplane below level only
 * signs/neon
 * other food collectibles
 * seagulls

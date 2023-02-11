@@ -517,7 +517,14 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   auto& player = create_object_from("player");
 
   player.scale = Vec3f(PLAYER_RADIUS);
-  player.position = Vec3f(-30.f, 243.f, 2200.f);
+
+  // @todo make spawn position/direction configurable based on level
+  // umimura-alpha
+  // player.position = Vec3f(-30.f, 243.f, 2200.f);
+
+  // umimura
+  player.position = Vec3f(-670.f, 4375.f, 2575.f);
+
   player.color = Vec3f(1.f, 0.4f, 0.4f);
 
   state.direction = Vec3f(0, 0, -1.f);
@@ -527,7 +534,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   // Load world data
   {
     // unloadCurrentLevel(context, state);
-    loadLevel(context, state, "umimura-alpha");
+    loadLevel(context, state, "umimura");
 
     // Hide dynamic mesh placeholders
     for (auto& asset : GameMeshes::meshAssets) {

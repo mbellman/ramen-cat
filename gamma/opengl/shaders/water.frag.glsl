@@ -150,7 +150,7 @@ void main() {
 
   // Reflection
   vec3 reflection_ray = reflect(normalized_fragment_to_camera * -1, normal);
-  vec3 view_reflection_ray = glVec3(matView * glVec4(world_position + reflection_ray * 5.0));
+  vec3 view_reflection_ray = glVec3(matView * glVec4(world_position + reflection_ray * 20.0));
   vec2 reflected_color_coords = getScreenCoordinates(view_reflection_ray, matProjection);
   vec4 reflection_color_and_depth = texture(texColorAndDepth, reflected_color_coords);
   vec4 sky = getSkyColor(reflection_ray, sunDirection, sunColor, atmosphereColor, altitude);
