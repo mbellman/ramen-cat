@@ -518,13 +518,28 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .emissivity = 0.2f
     }
   },
-  
+
+  /**
+   * Stairs
+   * ------
+   */
   {
     .name = "staircase",
     .dynamic = true,
     .defaultColor = Vec3f(0, 1.f, 0),
     .create = []() {
       return Mesh::Cube();
+    }
+  },
+  {
+    .name = "stairs-1",
+    .create = []() {
+      return Mesh::Model("./game/assets/stairs-1.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/stairs-1.png",
+      .normals = "./game/assets/stairs-1-normals.png",
+      .roughness = 0.3f
     }
   }
 };
