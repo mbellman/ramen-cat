@@ -131,6 +131,18 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .roughness = 0.9f
     }
   },
+
+  {
+    .name = "building-1",
+    .maxInstances = 1000,
+    .create = []() {
+      return Mesh::Model("./game/assets/building-1.obj");
+    },
+    .attributes = {
+      .roughness = 0.9f
+    }
+  },
+
   {
     .name = "concrete-half-arch",
     .defaultColor = Vec3f(0.8f),
