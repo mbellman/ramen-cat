@@ -474,6 +474,29 @@ internal void rebuildElectricalPoleWires(GmContext* context) {
   #endif
 }
 
+internal void rebuildDynamicBuildings(GmContext* context) {
+  objects("building-1-body").reset();
+  objects("building-1-frame").reset();
+
+  for (auto& reference : objects("building-1")) {
+    auto& body = create_object_from("building-1-body");
+    auto& frame = create_object_from("building-1-frame");
+
+    body.position = reference.position;
+    body.scale = reference.scale;
+    body.rotation = reference.rotation;
+    body.color = reference.color;
+
+    frame.position = reference.position;
+    frame.scale = reference.scale;
+    frame.rotation = reference.rotation;
+    frame.color = Vec3f(1.f);
+
+    commit(body);
+    commit(frame);
+  }
+}
+
 void World::initializeGameWorld(GmContext* context, GameState& state) {
   context->scene.zNear = 5.f;
   context->scene.zFar = 50000.f;
@@ -549,4 +572,5 @@ void World::rebuildDynamicMeshes(GmContext* context) {
   rebuildDynamicStaircases(context);
   rebuildLamppostLights(context);
   rebuildElectricalPoleWires(context);
+  rebuildDynamicBuildings(context);
 }

@@ -134,6 +134,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
 
   {
     .name = "building-1",
+    .dynamic = true,
     .maxInstances = 1000,
     .create = []() {
       return Mesh::Model("./game/assets/building-1.obj");
@@ -580,6 +581,22 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
     },
     .attributes = {
       .roughness = 0.3f
+    }
+  },
+
+  {
+    .name = "building-1-body",
+    .create = []() {
+      return Mesh::Cube();
+    }
+  },
+  {
+    .name = "building-1-frame",
+    .create = []() {
+      return Mesh::Model("./game/assets/building-1-frame.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/building-1-frame.png"
     }
   }
 };
