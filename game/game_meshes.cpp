@@ -152,6 +152,16 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .roughness = 0.7f
     }
   },
+  {
+    .name = "wood-structure",
+    .create = []() {
+      return Mesh::Model("./game/assets/wood-structure.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/wood-beam.png",
+      .roughness = 0.5f,
+    }
+  },
 
   {
     .name = "concrete-half-arch",
