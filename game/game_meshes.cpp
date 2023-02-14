@@ -135,7 +135,6 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
   {
     .name = "building-1",
     .dynamic = true,
-    .maxInstances = 1000,
     .create = []() {
       return Mesh::Model("./game/assets/building-1.obj");
     },
@@ -143,11 +142,20 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .roughness = 0.9f
     }
   },
+  {
+    .name = "building-arch",
+    .hitboxScale = Vec3f(1.f, 1.f, 0.1f),
+    .create = []() {
+      return Mesh::Model("./game/assets/building-arch.obj");
+    },
+    .attributes = {
+      .roughness = 0.7f
+    }
+  },
 
   {
     .name = "concrete-half-arch",
     .defaultColor = Vec3f(0.8f),
-    .maxInstances = 1000,
     .create = []() {
       return Mesh::Model("./game/assets/concrete-half-arch.obj");
     },
