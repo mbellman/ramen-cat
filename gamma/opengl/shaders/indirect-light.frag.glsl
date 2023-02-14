@@ -65,10 +65,9 @@ vec2 rotatedVogelDisc(int samples, int index) {
 
 float getScreenSpaceAmbientOcclusionContribution(float fragment_depth, vec3 fragment_position, vec3 fragment_normal) {
   const int TOTAL_SAMPLES = 16;
-  // @todo make configurable
-  const float radius = 16.0;
-  vec3 contribution = vec3(0);
   float linearized_fragment_depth = getLinearizedDepth(fragment_depth, zNear, zFar);
+  float radius_depth_ratio = saturate(linearized_fragment_depth / (zFar * 0.1));
+  float radius = mix(16.0, 500.0, radius_depth_ratio);
   float occlusion = 0.0;
 
   #if USE_DENOISING == 1
@@ -172,7 +171,7 @@ void main() {
     ambient_occlusion = getScreenSpaceAmbientOcclusionContribution(frag_color_and_depth.w, fragment_position, fragment_normal);
   #endif
 
-  out_gi_and_ao = vec4(global_illumination * 0.75, ambient_occlusion * 0.5);
+  out_gi_and_ao = vec4(global_illumination * 0.75, ambient_occlusion);
 
   #if USE_DENOISING == 1
     vec3 view_fragment_position_t1 = glVec3(matViewT1 * glVec4(fragment_position));
