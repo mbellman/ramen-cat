@@ -162,6 +162,27 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .roughness = 0.5f,
     }
   },
+  {
+    .name = "corrugated-roof",
+    .create = []() {
+      return Mesh::Model("./game/assets/corrugated-roof.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/corrugated-roof.png",
+      .normals = "./game/assets/corrugated-roof-normals.png",
+      .roughness = 0.2f,
+    }
+  },
+  {
+    .name = "bridge-arch",
+    .hitboxScale = Vec3f(1.f, 1.f, 0.2f),
+    .create = []() {
+      return Mesh::Model("./game/assets/bridge-arch.obj");
+    },
+    .attributes = {
+      .roughness = 0.8f,
+    }
+  },
 
   {
     .name = "concrete-half-arch",
