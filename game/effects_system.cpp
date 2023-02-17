@@ -129,7 +129,22 @@ internal void handlePlayerParticles(GmContext* context, GameState& state, float 
         particle.scale = Vec3f(0.f);
       }
 
+      // Apply a visual-only scaling factor to the particle so that
+      // particles spawn smaller, grow to full size, and then continue
+      // shrinking until they vanish. We use the current absolute scale
+      // of the particle to determine where it is in its current cycle,
+      // proportionally adjust its scale, and then reset it.
+      float currentScale = particle.scale.x;
+      float alpha = 1.f - currentScale / DASH_PARTICLE_SIZE;
+      float scalingFactor = alpha < 0.1f ? 0.5f + 0.5f * alpha / 0.1f : 1.f - alpha;
+
+      particle.scale *= scalingFactor;
+
       commit(particle);
+
+      // Reset the particle scale so that the next time we operate on it,
+      // we're starting from its proper transitioned scale
+      particle.scale = Vec3f(currentScale);
     }
   }
 }
