@@ -187,7 +187,7 @@ void main() {
   float plane_fresnel = dot(normalize(fragNormal), normalized_fragment_to_camera);
 
   // @todo make configurable
-  const vec3 BASE_WATER_COLOR = vec3(0, 0.4 - 0.2 * (1.0 - plane_fresnel), 0.5);
+  const vec3 BASE_WATER_COLOR = vec3(0, 0.4 - 0.2 * (1.0 - plane_fresnel), 1.0);
 
   // Diminish reflections based on sky intensity
   reflection_color = mix(BASE_WATER_COLOR, reflection_color, sky_intensity);

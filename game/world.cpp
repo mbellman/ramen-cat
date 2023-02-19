@@ -478,18 +478,18 @@ internal void rebuildDynamicBuildings(GmContext* context) {
   objects("building-1-body").reset();
   objects("building-1-frame").reset();
 
-  for (auto& reference : objects("building-1")) {
+  for (auto& building : objects("building-1")) {
     auto& body = create_object_from("building-1-body");
     auto& frame = create_object_from("building-1-frame");
 
-    body.position = reference.position;
-    body.scale = reference.scale;
-    body.rotation = reference.rotation;
-    body.color = reference.color;
+    body.position = building.position;
+    body.scale = building.scale;
+    body.rotation = building.rotation;
+    body.color = building.color;
 
-    frame.position = reference.position;
-    frame.scale = reference.scale;
-    frame.rotation = reference.rotation;
+    frame.position = building.position;
+    frame.scale = building.scale;
+    frame.rotation = building.rotation;
     frame.color = Vec3f(1.f);
 
     commit(body);

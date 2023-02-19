@@ -74,7 +74,7 @@ void main() {
   float depth_divisor = frag_color_and_depth.w == 1.0 ? zFar : zFar * 0.85;
   float atmosphere_factor = getLinearizedDepth(frag_color_and_depth.w, zNear, zFar) / depth_divisor;
 
-  atmosphere_factor *= pow(dot(sky_direction_2d, horizon_direction_2d), 100);
+  atmosphere_factor *= sky_direction_2d.y < horizon_direction_2d.y ? 1.0 : pow(dot(sky_direction_2d, horizon_direction_2d), 100);
   atmosphere_factor = atmosphere_factor > 1 ? 1 : atmosphere_factor;
   atmosphere_factor = isnan(atmosphere_factor) ? 0 : atmosphere_factor;
 
