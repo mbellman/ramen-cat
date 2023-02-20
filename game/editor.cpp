@@ -1351,16 +1351,18 @@ namespace Editor {
 
           if (input.didPressKey(Key::C)) {
             // Create a new collision plane aligned with the selected object
-            mesh("platform")->disabled = false;
+            Vec3f hitboxScale = GameMeshes::meshAssets[editor.currentSelectedMeshIndex].hitboxScale;
 
             createNewObjectFromMesh(context, "platform", {
               .position = selectedObject.position + Vec3f(0, 0.5f, 0),
-              .scale = selectedObject.scale,
+              .scale = selectedObject.scale * hitboxScale,
               .rotation = selectedObject.rotation,
               .color = Vec3f(0, 0, 1.f)
             });
 
             updateCollisionPlanes(context, state);
+
+            mesh("platform")->disabled = false;
           }
         } else {
           // Handle WASD inputs

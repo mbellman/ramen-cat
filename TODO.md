@@ -3,8 +3,6 @@ EDITOR
 
 BUGS
 ----
-* post fx ordering
-* SHIFT-C should consider mesh hitbox scale when generating collision planes
 * air dash complete spin (somersault instead?)
 * wall kicking at same y coordinate as last solid ground position
 * when enabling the editor in OBJECTS mode with only collision planes enabled, don't show dynamic meshes
