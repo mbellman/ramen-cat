@@ -317,6 +317,17 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
+    .name = "windmill-base",
+    .hitboxScale = Vec3f(0.5f, 1.f, 0.5f),
+    .create = []() {
+      return Mesh::Model("./game/assets/windmill-base.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/wood-beam.png",
+      .roughness = 0.7f
+    }
+  },
+  {
     .name = "windmill-wheel",
     .moving = true,
     .defaultScale = Vec3f(75.f),
@@ -325,8 +336,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       return Mesh::Model("./game/assets/windmill-wheel.obj");
     },
     .attributes = {
-      .texture = "./game/assets/wood-beam.png",
-      .roughness = 0.6f
+      .texture = "./game/assets/wood-beam.png"
     }
   },
   {
