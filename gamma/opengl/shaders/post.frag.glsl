@@ -20,6 +20,7 @@ layout (location = 0) out vec3 out_color;
 
 #include "utils/random.glsl";
 #include "utils/conversion.glsl";
+#include "utils/helpers.glsl";
 
 void main() {
   // @todo cleanup
@@ -102,13 +103,14 @@ void main() {
   // @todo @bug fix buggy 'outline' darkening on flat surfaces at grazing angles.
   // We'll likely have to check normals as well.
   if (
-    linear_frag_depth < zFar * 0.7 && (
-      depth1 - linear_frag_depth > threshold ||
-      depth2 - linear_frag_depth > threshold ||
-      depth3 - linear_frag_depth > threshold ||
-      depth4 - linear_frag_depth > threshold
-  )) {
-    out_color = mix(vec3(0), out_color, 0.5);
+    depth1 - linear_frag_depth > threshold ||
+    depth2 - linear_frag_depth > threshold ||
+    depth3 - linear_frag_depth > threshold ||
+    depth4 - linear_frag_depth > threshold
+  ) {
+    float alpha = saturate((linear_frag_depth + zFar * 0.5) / zFar);
+
+    out_color = mix(vec3(0), out_color, alpha);
   }
 
   // @todo gamma correction/tone-mapping
