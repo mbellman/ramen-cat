@@ -117,8 +117,6 @@ void main() {
 
   #if USE_DEPTH_OF_FIELD == 1
     out_color = getDepthOfFieldColor(out_color, screen_warp_uv, linear_frag_depth);
-  #else
-    out_color = frag_color_and_depth.rgb;
   #endif
 
   // @todo make atmospherics optional via a flag
