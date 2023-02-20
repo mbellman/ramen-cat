@@ -3,7 +3,8 @@ EDITOR
 
 BUGS
 ----
-* air dash complete spin
+* post fx ordering
+* air dash complete spin (somersault instead?)
 * wall kicking at same y coordinate as last solid ground position
 * when enabling the editor in OBJECTS mode with only collision planes enabled, don't show dynamic meshes
 * fix onigiri texture
@@ -23,19 +24,16 @@ ASSETS
 
 GAME
 ----
+* jumps proportional to key held time
 * rotate character more based on intended motion
-
+* level unloading (in progress)
 * sitting animation
-
 * proper nighttime handling
+* increased FoV in tiered dash modes/dash fx
 * signs/neon
 * other food collectibles
 * seagulls
 * lights dimming during daytime
-* increased FoV in tiered dash modes/dash fx
-
-* level unloading (in progress)
-
 * slingshot velocity affected by dashing tier
 * turn camera after wall kicks
 * area titles

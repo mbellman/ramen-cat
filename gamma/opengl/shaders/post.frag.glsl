@@ -33,31 +33,33 @@ void main() {
   vec4 warped_frag_color_and_depth = texture(texColorAndDepth, adjusted_uv);
 
   #if USE_DEPTH_OF_FIELD == 1
-    const int MIP_LEVEL = 1;
-    const float MAX_DEPTH = 3000.0;
+    {
+      const int MIP_LEVEL = 1;
+      const float MAX_DEPTH = 3000.0;
 
-    vec2 texel_size = 1.0 / textureSize(texColorAndDepth, MIP_LEVEL);
-    vec3 depth_of_field_color = vec3(0.0);
+      vec2 texel_size = 1.0 / textureSize(texColorAndDepth, MIP_LEVEL);
+      vec3 depth_of_field_color = vec3(0.0);
 
-    vec2 uv1 = adjusted_uv + vec2(-1.0, 0.0) * texel_size;
-    vec2 uv2 = adjusted_uv + vec2(1.0, 0.0) * texel_size;
-    vec2 uv3 = adjusted_uv + vec2(0.0, -1.0) * texel_size;
-    vec2 uv4 = adjusted_uv + vec2(0.0, 1.0) * texel_size;
+      vec2 uv1 = adjusted_uv + vec2(-1.0, 0.0) * texel_size;
+      vec2 uv2 = adjusted_uv + vec2(1.0, 0.0) * texel_size;
+      vec2 uv3 = adjusted_uv + vec2(0.0, -1.0) * texel_size;
+      vec2 uv4 = adjusted_uv + vec2(0.0, 1.0) * texel_size;
 
-    depth_of_field_color += textureLod(texColorAndDepth, adjusted_uv, MIP_LEVEL).rgb;
-    depth_of_field_color += textureLod(texColorAndDepth, uv1, MIP_LEVEL).rgb;
-    depth_of_field_color += textureLod(texColorAndDepth, uv2, MIP_LEVEL).rgb;
-    depth_of_field_color += textureLod(texColorAndDepth, uv3, MIP_LEVEL).rgb;
-    depth_of_field_color += textureLod(texColorAndDepth, uv4, MIP_LEVEL).rgb;
-    depth_of_field_color /= 5.0;
+      depth_of_field_color += textureLod(texColorAndDepth, adjusted_uv, MIP_LEVEL).rgb;
+      depth_of_field_color += textureLod(texColorAndDepth, uv1, MIP_LEVEL).rgb;
+      depth_of_field_color += textureLod(texColorAndDepth, uv2, MIP_LEVEL).rgb;
+      depth_of_field_color += textureLod(texColorAndDepth, uv3, MIP_LEVEL).rgb;
+      depth_of_field_color += textureLod(texColorAndDepth, uv4, MIP_LEVEL).rgb;
+      depth_of_field_color /= 5.0;
 
-    float depth_factor = getLinearizedDepth(base_frag_color_and_depth.w, zNear, zFar) / MAX_DEPTH;
+      float depth_factor = getLinearizedDepth(base_frag_color_and_depth.w, zNear, zFar) / MAX_DEPTH;
 
-    if (depth_factor > 1.0) depth_factor = 1.0;
+      if (depth_factor > 1.0) depth_factor = 1.0;
 
-    depth_factor *= depth_factor;
+      depth_factor *= depth_factor;
 
-    out_color = mix(warped_frag_color_and_depth.rgb, depth_of_field_color, depth_factor);
+      out_color = mix(warped_frag_color_and_depth.rgb, depth_of_field_color, depth_factor);
+    }
   #else
     out_color = warped_frag_color_and_depth.rgb;
   #endif
@@ -85,7 +87,7 @@ void main() {
   out_color = mix(out_color, atmosphere_color, atmosphere_factor);
 
   // @todo make optional
-  float spread = 1.0;
+  float spread = 1.5;
   vec2 texel_size = 1.0 / textureSize(texColorAndDepth, 0);
   vec2 uv1 = fragUv + texel_size * vec2(-1.0, 0) * spread;
   vec2 uv2 = fragUv + texel_size * vec2(1.0, 0) * spread;
@@ -97,16 +99,18 @@ void main() {
   float depth4 = getLinearizedDepth(texture(texColorAndDepth, uv4).w, zNear, zFar);
   float threshold = 1000.0 * (linear_frag_depth / zFar);
 
+  // @todo @bug fix buggy 'outline' darkening on flat surfaces at grazing angles.
+  // We'll likely have to check normals as well.
   if (
     linear_frag_depth < zFar * 0.7 && (
-      distance(linear_frag_depth, depth1) > threshold ||
-      distance(linear_frag_depth, depth2) > threshold ||
-      distance(linear_frag_depth, depth3) > threshold ||
-      distance(linear_frag_depth, depth4) > threshold
+      depth1 - linear_frag_depth > threshold ||
+      depth2 - linear_frag_depth > threshold ||
+      depth3 - linear_frag_depth > threshold ||
+      depth4 - linear_frag_depth > threshold
   )) {
-    out_color = mix(vec3(0), out_color, 0.6);
+    out_color = mix(vec3(0), out_color, 0.5);
   }
 
   // @todo gamma correction/tone-mapping
-  // out_color = pow(out_color, vec3(1 / 2.2)) - 0.2;
+  // out_color = pow(out_color, vec3(1 / 2.2));
 }
