@@ -23,7 +23,6 @@ ASSETS
 
 GAME
 ----
-* jumps proportional to key held time
 * rotate character more based on intended motion
 * level unloading (in progress)
 * sitting animation

@@ -32,7 +32,7 @@ constexpr static float MAXIMUM_HORIZONTAL_GROUND_SPEED = 650.f;
 constexpr static float BASE_AIR_DASH_SPEED = 1000.f;
 constexpr static float DASH_LEVEL_1_SPEED_FACTOR = 1.6f;
 constexpr static float DASH_LEVEL_2_SPEED_FACTOR = 2.3f;
-constexpr static float JUMP_Y_VELOCITY = 500.f;
+constexpr static float DEFAULT_JUMP_Y_VELOCITY = 500.f;
 
 constexpr static float WALL_KICK_WINDOW_DURATION = 0.3f;
 

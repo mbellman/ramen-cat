@@ -279,7 +279,11 @@ namespace MovementSystem {
       if (input.didPressKey(Key::SPACE)) {
         if (state.isOnSolidGround) {
           // Regular jump
-          state.velocity.y = JUMP_Y_VELOCITY;
+          float xzSpeed = state.velocity.xz().magnitude();
+          float jumpFactor = 1.f + xzSpeed / (xzSpeed + MAXIMUM_HORIZONTAL_GROUND_SPEED);
+
+          state.velocity.y = DEFAULT_JUMP_Y_VELOCITY * jumpFactor;
+          state.lastJumpTime = get_running_time();
 
           state.isOnSolidGround = false;
           state.canPerformAirDash = true;
@@ -349,8 +353,9 @@ namespace MovementSystem {
   }
 
   void handlePlayerMovementPhysics(GmContext* context, GameState& state, float dt) {
+    auto& input = get_input();
     auto& player = get_player();
-    const float gravity = FORCE_GRAVITY * dt;
+    float gravity = FORCE_GRAVITY * dt;
 
     // Handle gravity/velocity
     {
@@ -358,6 +363,17 @@ namespace MovementSystem {
 
       // Only apply gravity/velocity if we're not winding up a wall kick
       if (!isWindingUpWallKick) {
+        if (
+          time_since(state.lastJumpTime) < 1.f &&
+          !input.isKeyHeld(Key::SPACE) &&
+          state.velocity.y > 0.f
+        ) {
+          // When releasing the jump key shortly after a jump,
+          // diminish y velocity more quickly to reduce the
+          // total jump height.
+          state.velocity.y *= 1.f - 5.f * dt;
+        }
+
         state.velocity.y -= gravity;
         player.position += state.velocity * dt;
       }
