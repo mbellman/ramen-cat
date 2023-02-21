@@ -214,4 +214,13 @@ void EffectsSystem::updateDayNightCycleLighting(GmContext* context, GameState& s
   }
 
   scene.sky.altitude = camera.position.y + 2000.f;
+
+  // Change the emissivity of specific meshes by time of day
+  {
+    float windowEmissivity = sqrtf(Gm_Clampf(0.5f - sinf(state.dayNightCycleTime)));
+    float lanternEmissivity = sqrtf(Gm_Clampf(0.5f + Gm_Clampf(-1.f * sinf(state.dayNightCycleTime))));
+
+    mesh("window-1")->emissivity = windowEmissivity;
+    mesh("lantern")->emissivity = lanternEmissivity;
+  }
 }

@@ -73,7 +73,7 @@ void main() {
   vec3 fragment_to_camera = normalize(cameraPosition - fragment_position);
   float fresnel_factor = pow(1.0 - max(dot(frag_normal, fragment_to_camera), 0.0), 5);
 
-  out_color += frag_color * emissivity;
+  out_color += frag_color * emissivity * 1.25;
   out_color += vec3(1) * fresnel_factor * 0.1;
 
   out_color_and_depth = vec4(out_color, frag_depth);

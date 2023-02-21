@@ -1414,6 +1414,7 @@ namespace Gamma {
    * @todo description
    */
   void OpenGLRenderer::renderPostEffects() {
+    buffers.gBuffer.read();
     ctx.accumulationSource->read();
 
     // @todo possibly use nearest-neighbor accumulation buffer filtering combined with FXAA
@@ -1436,6 +1437,7 @@ namespace Gamma {
     shaders.post.use();
     shaders.post.setVec4f("transform", FULL_SCREEN_TRANSFORM);
     shaders.post.setInt("texColorAndDepth", 0);
+    shaders.post.setInt("texNormalAndMaterial", 1);
     shaders.post.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
     shaders.post.setMatrix4f("matInverseView", ctx.matInverseView);
     shaders.post.setVec3f("cameraPosition", ctx.activeCamera->position);

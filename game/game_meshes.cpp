@@ -451,6 +451,17 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
+    .name = "window-1",
+    .hitboxScale = Vec3f(0.8f, 1.f, 0.1f),
+    .create = []() {
+      return Mesh::Model("./game/assets/window-1.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/window-1.png",
+      .roughness = 0.4f
+    }
+  },
+  {
     .name = "glass-window",
     .defaultColor = Vec3f(1.f),
     .maxInstances = 1000,
@@ -536,7 +547,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .texture = "./game/assets/hot-air-balloon.png",
       .normals = "./game/assets/hot-air-balloon-normals.png",
       .canCastShadows = false,
-      .emissivity = 0.3f,
+      .emissivity = 0.2f,
       .roughness = 0.7f
     }
   },

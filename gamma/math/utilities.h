@@ -15,6 +15,10 @@ inline float Gm_Clampf(float value, float min, float max) {
   return value > max ? max : value < min ? min : value;
 }
 
+inline float Gm_Clampf(float value) {
+  return Gm_Clampf(value, 0.f, 1.f);
+}
+
 inline float Gm_Lerpf(float a, float b, float alpha) {
   return a + (b - a) * alpha;
 }

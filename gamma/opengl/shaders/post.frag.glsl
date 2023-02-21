@@ -3,6 +3,7 @@
 #define USE_DEPTH_OF_FIELD 0
 
 uniform sampler2D texColorAndDepth;
+uniform sampler2D texNormalAndMaterial;
 
 uniform mat4 matInverseProjection;
 uniform mat4 matInverseView;
