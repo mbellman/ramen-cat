@@ -26,7 +26,6 @@ GAME
 * rotate character more based on intended motion
 * level unloading (in progress)
 * sitting animation
-* proper nighttime handling
 * increased FoV in tiered dash modes/dash fx
 * signs/neon
 * other food collectibles

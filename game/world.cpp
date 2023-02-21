@@ -282,7 +282,7 @@ internal void loadLevel(GmContext* context, GameState& state, const std::string&
     auto& light = create_light(LightType::DIRECTIONAL_SHADOWCASTER);
 
     light.direction = Vec3f(-0.2f, -1.f, -1.f);
-    light.color = Vec3f(1.0f);
+    light.color = Vec3f(1.f);
     light.serializable = false;
 
     save_light("scene-light", &light);

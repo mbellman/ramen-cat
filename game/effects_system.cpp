@@ -152,7 +152,7 @@ internal void handlePlayerParticles(GmContext* context, GameState& state, float 
 internal void handleDayNightCycle(GmContext* context, GameState& state, float dt) {
   if (state.gameStartTime != 0.f) {
     state.dayNightCycleTime += dt * 0.001f;
-    state.dayNightCycleTime = Gm_Modf(state.dayNightCycleTime, Gm_PI);
+    state.dayNightCycleTime = Gm_Modf(state.dayNightCycleTime, Gm_TAU);
   }
 
   EffectsSystem::updateDayNightCycleLighting(context, state);
@@ -178,16 +178,40 @@ void EffectsSystem::updateDayNightCycleLighting(GmContext* context, GameState& s
   auto& scene = context->scene;
   auto& camera = get_camera();
   auto& sceneLight = light("scene-light");
-  float daytimeFactor = sqrt(sinf(state.dayNightCycleTime));
 
-  sceneLight.direction.y = 0.05f + -1.f * (0.5f + 0.5f * sinf(state.dayNightCycleTime * 2.f - Gm_HALF_PI));
-  sceneLight.direction.z = cosf(state.dayNightCycleTime);
-  sceneLight.power = daytimeFactor;
-  sceneLight.color.y = daytimeFactor;
-  sceneLight.color.z = daytimeFactor;
+  // @todo can we express day/night colors as a continuum, rather than using separate logic for day + night?
+  if (state.dayNightCycleTime < Gm_PI) {
+    // Daytime
+    float sineDayNightCycleTime = sinf(state.dayNightCycleTime);
+    float daytimeFactor = sqrtf(sineDayNightCycleTime);
 
-  scene.sky.sunDirection = sceneLight.direction.invert().unit();
-  scene.sky.sunColor = sceneLight.color * Vec3f(1.f, 0.95f, 0.4f);
-  scene.sky.atmosphereColor = Vec3f::lerp(Vec3f(1.f, 0.1f, 0.5f), Vec3f(1.f), daytimeFactor);
+    sceneLight.direction.y = 0.05f + -1.f * (0.5f + 0.5f * sinf(state.dayNightCycleTime * 2.f - Gm_HALF_PI));
+    sceneLight.direction.z = cosf(state.dayNightCycleTime);
+    sceneLight.power = daytimeFactor;
+    sceneLight.color.x = 1.f;
+    sceneLight.color.y = sineDayNightCycleTime;
+    sceneLight.color.z = sineDayNightCycleTime;
+
+    scene.sky.atmosphereColor = Vec3f::lerp(Vec3f(1.f, 0.1f, 0.5f), Vec3f(1.f), daytimeFactor);
+    scene.sky.sunDirection = sceneLight.direction.invert().unit();
+    scene.sky.sunColor = sceneLight.color * Vec3f(1.f, 0.95f, 0.4f);
+  } else {
+    // Nighttime
+    float nightProgress = state.dayNightCycleTime - Gm_PI;
+    float sineNightProgress = sinf(nightProgress);
+    float lightFactor = sqrtf(sineNightProgress);
+
+    sceneLight.direction.y = 0.05f + -1.f * (0.5f + 0.5f * sinf(state.dayNightCycleTime * 2.f - Gm_HALF_PI));
+    sceneLight.direction.z = cosf(nightProgress);
+    sceneLight.power = lightFactor;
+    sceneLight.color.x = 1.f - sineNightProgress;
+    sceneLight.color.y = sineNightProgress * 0.2f;
+    sceneLight.color.z = sineNightProgress * 0.5f;
+
+    scene.sky.atmosphereColor = Vec3f::lerp(Vec3f(1.f, 0.1f, 0.5f), Vec3f(0.0f, 0.1f, 0.5f), lightFactor);
+    scene.sky.sunDirection = Vec3f(0, 0.05f, 0);
+    scene.sky.sunColor = Vec3f(1.f);
+  }
+
   scene.sky.altitude = camera.position.y + 2000.f;
 }

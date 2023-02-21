@@ -66,9 +66,7 @@ vec3 getAtmosphericsColor(vec3 current_out_color, vec2 uv, float frag_depth, flo
   atmosphere_factor = atmosphere_factor > 1 ? 1 : atmosphere_factor;
   atmosphere_factor = isnan(atmosphere_factor) ? 0 : atmosphere_factor;
 
-  vec3 atmosphere_color = mix(atmosphereColor, vec3(1), 0.5);
-
-  return mix(current_out_color, atmosphere_color, atmosphere_factor);
+  return mix(current_out_color, atmosphereColor, atmosphere_factor);
 }
 
 vec3 getToonShadedColor(vec3 current_out_color, vec2 uv, float linear_frag_depth) {
