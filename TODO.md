@@ -30,7 +30,6 @@ GAME
 * signs/neon
 * other food collectibles
 * seagulls
-* lights dimming during daytime
 * slingshot velocity affected by dashing tier
 * turn camera after wall kicks
 * area titles

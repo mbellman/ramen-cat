@@ -108,6 +108,9 @@ internal void loadLights(GmContext* context, const std::string& levelName) {
     light.power = df(8);
     light.direction = Vec3f(df(9), df(10), df(11));
     light.fov = df(12);
+
+    // Keep track of the original light power figure for serialization
+    light.basePower = light.power;
   }
 
   Console::log("Loaded lights in", Gm_GetMicroseconds() - start, "us");

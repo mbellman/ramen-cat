@@ -52,6 +52,8 @@ static struct EditorState {
   std::vector<Plane> lightCollisionPlanes;
 } editor;
 
+constexpr static float DEFAULT_LIGHT_POWER = 5.f;
+
 internal std::string getEditorModeName(EditorMode mode) {
   switch (mode) {
     case EditorMode::COLLISION_PLANES:
@@ -540,7 +542,8 @@ internal void undoLastHistoryAction(GmContext* context, GameState& state) {
         auto& light = create_light(LightType::POINT);
 
         // @todo figure out a better way of determining power
-        light.power = 5.f;
+        light.power = DEFAULT_LIGHT_POWER;
+        light.basePower = DEFAULT_LIGHT_POWER;
 
         syncLightWithObject(light, restoredObject);
 
@@ -594,7 +597,8 @@ internal void createNewLight(GmContext* context, GameState& state) {
   auto& light = create_light(LightType::POINT);
   auto& lightSphere = create_object_from("light-sphere");
 
-  light.power = 5.f;
+  light.power = DEFAULT_LIGHT_POWER;
+  light.basePower = DEFAULT_LIGHT_POWER;
 
   // @temporary
   lightSphere.position = camera.position + camera.orientation.getDirection() * 150.f;
@@ -841,6 +845,7 @@ internal void handlePowerCommand(const std::string& command) {
     }
 
     editor.selectedLight->power = power;
+    editor.selectedLight->basePower = power;
   }
 }
 
@@ -952,7 +957,7 @@ internal void saveLightsData(GmContext* context, GameState& state) {
       data += Gm_ToString(light->position) + ",";
       data += std::to_string(light->radius) + ",";
       data += Gm_ToString(light->color) + ",";
-      data += std::to_string(light->power) + ",";
+      data += std::to_string(light->basePower) + ",";
       data += Gm_ToString(light->direction) + ",";
       data += std::to_string(light->fov) + "\n";
     }

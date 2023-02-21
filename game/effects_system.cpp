@@ -223,4 +223,15 @@ void EffectsSystem::updateDayNightCycleLighting(GmContext* context, GameState& s
     mesh("window-1")->emissivity = windowEmissivity;
     mesh("lantern")->emissivity = lanternEmissivity;
   }
+
+  // Adjust point + spot light power by time of day
+  {
+    float lightPowerFactor = sqrtf(Gm_Clampf(0.5f - sinf(state.dayNightCycleTime)));
+
+    for (auto* light : context->scene.lights) {
+      if (light->type != LightType::DIRECTIONAL && light->type != LightType::DIRECTIONAL_SHADOWCASTER) {
+        light->power = light->basePower * lightPowerFactor;
+      }
+    }
+  }
 }

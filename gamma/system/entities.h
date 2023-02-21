@@ -32,11 +32,12 @@ namespace Gamma {
    */
   struct Light {
     Vec3f position;
-    float radius = 100.0f;
-    Vec3f color = Vec3f(1.0f);
-    float power = 1.0f;
-    Vec3f direction = Vec3f(0.0f, -1.0f, 0.0f);
-    float fov = 90.0f;
+    float radius = 100.f;
+    Vec3f color = Vec3f(1.f);
+    float power = 1.f;
+    Vec3f direction = Vec3f(0.f, -1.f, 0.f);
+    float fov = 90.f;
+    float basePower = 1.f;
     u32 type = LightType::POINT;
     bool isStatic = false;
     bool serializable = true;
