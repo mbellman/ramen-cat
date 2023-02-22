@@ -486,6 +486,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
   },
   {
     .name = "flat-railing",
+    .hitboxScale = Vec3f(1.f, 0.5f, 0.1f),
     .create = []() {
       return Mesh::Model("./game/assets/flat-railing.obj");
     },
