@@ -462,9 +462,19 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
+    .name = "window-2",
+    .hitboxScale = Vec3f(1.f, 1.f, 0.15f),
+    .create = []() {
+      return Mesh::Model("./game/assets/window-2.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/window-2.png",
+      .roughness = 0.4f
+    }
+  },
+  {
     .name = "glass-window",
     .defaultColor = Vec3f(1.f),
-    .maxInstances = 1000,
     .create = []() {
       return Mesh::Cube();
     },
@@ -475,10 +485,14 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     } 
   },
   {
-    .name = "balcony-1",
-    .hitboxScale = Vec3f(1.f, 0.4f, 0.4f),
+    .name = "flat-railing",
     .create = []() {
-      return Mesh::Model("./game/assets/balcony-1.obj");
+      return Mesh::Model("./game/assets/flat-railing.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/flat-railing.png",
+      .normals = "./game/assets/flat-railing-normals.png",
+      .roughness = 0.3f
     }
   },
   {

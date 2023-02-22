@@ -217,10 +217,12 @@ void EffectsSystem::updateDayNightCycleLighting(GmContext* context, GameState& s
 
   // Change the emissivity of specific meshes by time of day
   {
-    float windowEmissivity = sqrtf(Gm_Clampf(0.5f - sinf(state.dayNightCycleTime)));
+    float lightSourceEmissivity = sqrtf(Gm_Clampf(0.5f - sinf(state.dayNightCycleTime)));
     float lanternEmissivity = sqrtf(Gm_Clampf(0.5f + Gm_Clampf(-1.f * sinf(state.dayNightCycleTime))));
 
-    mesh("window-1")->emissivity = windowEmissivity;
+    mesh("window-1")->emissivity = lightSourceEmissivity;
+    mesh("window-2")->emissivity = lightSourceEmissivity;
+    mesh("lamp")->emissivity = lightSourceEmissivity;
     mesh("lantern")->emissivity = lanternEmissivity;
   }
 

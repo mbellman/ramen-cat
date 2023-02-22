@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "system/AbstractLoader.h"
+#include "system/assert.h"
 #include "system/console.h"
 
 namespace Gamma {
@@ -52,12 +53,10 @@ namespace Gamma {
     FILE* f;
     errno_t err = fopen_s(&f, filePath, "r");
 
-    if (err == 0) {
-      file = f;
-      isLoading = true;
-    } else {
-      Console::warn("[Gamma] AbstractLoader failed to load file:", filePath);
-    }
+    assert(err == 0, "[Gamma] AbstractLoader failed to load file:" + std::string(filePath));
+
+    file = f;
+    isLoading = true;
   }
 
   char AbstractLoader::nextChar() {
