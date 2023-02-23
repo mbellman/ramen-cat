@@ -27,6 +27,8 @@ float incidence = max(dot(normalized_surface_to_light, frag_normal), 0.0);
 float attenuation = pow(1.0 / light_distance, 2);
 float specularity = pow(max(dot(half_vector, frag_normal), 0.0), 50) * (1.0 - roughness);
 
+if (incidence == 0.0) specularity = 0.0;
+
 // Define a non-linear light intensity fall-off toward the radius boundary
 float hack_diffuse_radial_influence = (1.0 - pow(clamp(light_distance / light.radius, 0.0, 1.0), 2));
 float hack_specular_radial_influence = (1.0 - pow(clamp(light_distance / light.radius, 0.0, 1.0), 10));

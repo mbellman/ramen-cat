@@ -19,7 +19,9 @@ ASSETS
 * murals/paintings
 * weeds LoD
 * lamp LoD
-* curved building structures
+* vines
+* signs/neon
+* other food collectibles
 
 GAME
 ----
@@ -27,8 +29,6 @@ GAME
 * level unloading (in progress)
 * sitting animation
 * increased FoV in tiered dash modes/dash fx
-* signs/neon
-* other food collectibles
 * seagulls
 * slingshot velocity affected by dashing tier
 * turn camera after wall kicks
@@ -49,6 +49,7 @@ GAME
 ENGINE
 ------
 * increase directional shadow range
+* optional texture mipmaps
 * cache textures
 * atmospheric scattering improvements
 * area lights
