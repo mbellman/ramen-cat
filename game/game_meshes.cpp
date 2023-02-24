@@ -493,7 +493,8 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     .attributes = {
       .texture = "./game/assets/flat-railing.png",
       .normals = "./game/assets/flat-railing-normals.png",
-      .roughness = 0.3f
+      .roughness = 0.3f,
+      .useMipmaps = false
     }
   },
   {
@@ -561,9 +562,9 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     .attributes = {
       .texture = "./game/assets/hot-air-balloon.png",
       .normals = "./game/assets/hot-air-balloon-normals.png",
-      .canCastShadows = false,
       .emissivity = 0.2f,
-      .roughness = 0.7f
+      .roughness = 0.7f,
+      .canCastShadows = false
     }
   },
   {

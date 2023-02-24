@@ -49,8 +49,6 @@ GAME
 
 ENGINE
 ------
-* optional texture mipmaps
-
 * cache textures
 * area lights
 * skylight contribution gradation/probe-based GI

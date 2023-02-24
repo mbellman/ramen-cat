@@ -99,7 +99,7 @@ namespace Gamma {
 
     if (path.size() > 0 && texture == nullptr) {
       // @todo use a texture factory/cache
-      texture = new OpenGLTexture(path.c_str(), unit);
+      texture = new OpenGLTexture(path.c_str(), unit, sourceMesh->useMipmaps);
 
       #if GAMMA_DEVELOPER_MODE
         Console::log("[Gamma] OpenGLTexture created:", path);

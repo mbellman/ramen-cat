@@ -237,11 +237,6 @@ namespace Gamma {
      */
     u8 maxCascade = 3;
     /**
-     * Controls whether the mesh's instances are rendered
-     * to shadow maps, enabling them to cast shadows.
-     */
-    bool canCastShadows = true;
-    /**
      * Configuration for particle meshes.
      */
     Particles particles;
@@ -262,10 +257,19 @@ namespace Gamma {
      */
     float roughness = 0.6f;
     /**
+     * Controls whether the mesh's instances are rendered
+     * to shadow maps, enabling them to cast shadows.
+     */
+    bool canCastShadows = true;
+    /**
      * Controls whether the mesh instances should render silhouettes
      * when occluded by other geometry.
      */
     bool silhouette = false;
+    /**
+     * Controls whether we should use mipmaps for the mesh textures.
+     */
+    bool useMipmaps = true;
   };
 
   /**
