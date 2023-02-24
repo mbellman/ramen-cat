@@ -428,5 +428,17 @@ namespace MovementSystem {
         state.velocity.z *= (1.0f - 7.f * dt);
       }
     }
+
+    // Stop dashing if we miss a wall kick window
+    {
+      if (state.lastWallBumpTime != 0.f && time_since(state.lastWallBumpTime) > WALL_KICK_WINDOW_DURATION) {
+        state.dashLevel = 0;
+
+        if (state.isOnSolidGround) {
+          // Reset the wall bump time once we hit solid ground
+          state.lastWallBumpTime = 0.f;
+        }
+      }
+    }
   }
 }

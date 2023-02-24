@@ -5,7 +5,6 @@ BUGS
 ----
 * wall kicking at same y coordinate as last solid ground position
 * when enabling the editor in OBJECTS mode with only collision planes enabled, don't show dynamic meshes
-* stop dashing when missing a wall kick window
 
 * clouds causing object outline misbehavior behind atmosphere
 * air dash complete spin (somersault instead?)
