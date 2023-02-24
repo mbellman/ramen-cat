@@ -71,6 +71,7 @@ struct GameState {
   float lastTimeOnSolidGround = 0.f;
   float lastJumpTime = 0.f;
   float lastWallBumpTime = 0.f;
+  float lastWallKickTime = 0.f;
   float lastAirDashTime = 0.f;
   float lastGroundParticleSpawnTime = 0.f;
   float lastAirParticleSpawnTime = 0.f;

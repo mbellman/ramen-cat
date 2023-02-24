@@ -253,7 +253,7 @@ namespace MovementSystem {
     // When midair, adjust acceleration in proportion to how much it resists
     // the current velocity. We want turning to be easier when airborne.
     {
-      if (state.velocity.y != 0.f && time_since(state.lastWallBumpTime) > 1.f) {
+      if (state.velocity.y != 0.f && time_since(state.lastWallKickTime) > 1.f) {
         float directionChangeFactor = 1.f - Vec3f::dot(state.velocity.xz().unit(), acceleration.xz().unit());
 
         if (!std::isnan(directionChangeFactor)) {
@@ -308,6 +308,7 @@ namespace MovementSystem {
 
           state.velocity = wallPlaneVelocity + kickDirection * state.lastWallBumpVelocity.magnitude();
           state.lastWallBumpTime = 0.f;
+          state.lastWallKickTime = state.frameStartTime;
 
           state.canPerformAirDash = true;
           state.canPerformWallKick = true;

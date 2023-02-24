@@ -29,7 +29,6 @@ ASSETS
 GAME
 ----
 * increased FoV in tiered dash modes/dash fx
-* turn camera after wall kicks
 
 * rotate character more based on intended motion
 * level unloading (in progress)
