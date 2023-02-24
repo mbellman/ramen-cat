@@ -84,7 +84,8 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .foliage = {
         .type = FoliageType::FLOWER,
         .factor = 5.f
-      }
+      },
+      .useMipmaps = false
     }
   },
   {
