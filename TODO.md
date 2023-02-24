@@ -27,10 +27,9 @@ ASSETS
 
 GAME
 ----
-* increased FoV in tiered dash modes/dash fx
-
 * rotate character more based on intended motion
 * level unloading (in progress)
+* fancier dashing effects
 * sitting animation
 * seagulls
 * slingshot velocity affected by dashing tier

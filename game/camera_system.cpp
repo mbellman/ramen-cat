@@ -262,6 +262,9 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
     float targetFov = CAMERA_BASE_FOV + CAMERA_FOV_VELOCITY_MULTIPLIER * fovSpeedFactor;
     float alpha = Gm_Clampf(10.f * dt, 0.f, 1.f);
 
+    if (state.dashLevel == 1) targetFov *= 1.1f;
+    if (state.dashLevel == 2) targetFov *= 1.2f;
+
     camera.fov = Gm_Lerpf(camera.fov, targetFov, alpha);
   }
 
