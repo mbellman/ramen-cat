@@ -250,7 +250,18 @@ namespace MovementSystem {
       acceleration += left.invert() * rate;
     }
 
-    state.intendedDirection = Vec3f::lerp(state.intendedDirection, acceleration, 0.5f);
+    // When midair, adjust acceleration in proportion to how much it resists
+    // the current velocity. We want turning to be easier when airborne.
+    {
+      if (state.velocity.y != 0.f && time_since(state.lastWallBumpTime) > 1.f) {
+        float directionChangeFactor = 1.f - Vec3f::dot(state.velocity.xz().unit(), acceleration.xz().unit());
+
+        if (!std::isnan(directionChangeFactor)) {
+          acceleration *= 1.f + directionChangeFactor * 3.f;
+        }
+      }
+    }
+
     state.velocity += acceleration;
     state.isMovingPlayerThisFrame = state.velocity != initialVelocity;
 

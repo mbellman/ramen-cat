@@ -28,7 +28,6 @@ ASSETS
 
 GAME
 ----
-* change direction more easily in midair
 * increased FoV in tiered dash modes/dash fx
 * turn camera after wall kicks
 
