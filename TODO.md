@@ -3,9 +3,12 @@ EDITOR
 
 BUGS
 ----
-* air dash complete spin (somersault instead?)
 * wall kicking at same y coordinate as last solid ground position
 * when enabling the editor in OBJECTS mode with only collision planes enabled, don't show dynamic meshes
+* stop dashing when missing a wall kick window
+
+* clouds causing object outline misbehavior behind atmosphere
+* air dash complete spin (somersault instead?)
 * fix onigiri texture
 * imported models are inverted along X
 * avoid phasing through corners
@@ -25,13 +28,15 @@ ASSETS
 
 GAME
 ----
+* change direction more easily in midair
+* increased FoV in tiered dash modes/dash fx
+* turn camera after wall kicks
+
 * rotate character more based on intended motion
 * level unloading (in progress)
 * sitting animation
-* increased FoV in tiered dash modes/dash fx
 * seagulls
 * slingshot velocity affected by dashing tier
-* turn camera after wall kicks
 * area titles
 * train station model updates
 * npc model improvements/highlight when nearby
@@ -50,8 +55,8 @@ ENGINE
 ------
 * increase directional shadow range
 * optional texture mipmaps
+
 * cache textures
-* atmospheric scattering improvements
 * area lights
 * skylight contribution gradation/probe-based GI
 * planar reflections
