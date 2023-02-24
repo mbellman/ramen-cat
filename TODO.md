@@ -49,7 +49,6 @@ GAME
 
 ENGINE
 ------
-* increase directional shadow range
 * optional texture mipmaps
 
 * cache textures
