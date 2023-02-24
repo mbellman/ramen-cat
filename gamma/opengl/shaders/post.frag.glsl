@@ -70,10 +70,10 @@ vec3 getAtmosphericsColor(vec3 current_out_color, vec2 uv, float frag_depth, flo
   return mix(current_out_color, atmosphereColor, atmosphere_factor);
 }
 
-vec3 getToonShadedColor(vec3 current_out_color, vec2 uv, float linear_frag_depth) {
-  // @todo make configurable
+vec3 getToonShadedColor(vec3 current_out_color, vec2 uv, float depth, float linear_frag_depth) {
   const float OUTLINE_THICKNESS = 1.5;
 
+  // Get the depth values for the top/left/right/bottom pixels
   vec2 texel_size = 1.0 / textureSize(texColorAndDepth, 0);
   vec2 uv1 = uv + texel_size * vec2(-1.0, 0) * OUTLINE_THICKNESS;
   vec2 uv2 = uv + texel_size * vec2(1.0, 0) * OUTLINE_THICKNESS;
@@ -83,17 +83,26 @@ vec3 getToonShadedColor(vec3 current_out_color, vec2 uv, float linear_frag_depth
   float depth2 = getLinearizedDepth(texture(texColorAndDepth, uv2).w, zNear, zFar);
   float depth3 = getLinearizedDepth(texture(texColorAndDepth, uv3).w, zNear, zFar);
   float depth4 = getLinearizedDepth(texture(texColorAndDepth, uv4).w, zNear, zFar);
-  float threshold = 1000.0 * (linear_frag_depth / zFar);
 
-  // @todo @bug fix buggy 'outline' darkening on flat surfaces at grazing angles.
-  // We'll likely have to check normals as well.
+  // Determine how sharp of an angle the surface is being viewed at
+  vec3 world_position = getWorldPosition(depth, uv, matInverseProjection, matInverseView);
+  vec3 normalized_frag_to_camera = normalize(cameraPosition - world_position);
+  vec3 fragment_normal = texture(texNormalAndMaterial, uv).xyz;
+  float grazing_factor = saturate(pow(1.0 - dot(normalized_frag_to_camera, fragment_normal), 10));
+
+  // Calculate a distance threshold representing how far away a neighboring
+  // pixel must be to consider this a silhouette edge
+  float depth_ratio = linear_frag_depth / zFar;
+  float threshold_factor = 1000.0 + 20000.0 * grazing_factor;
+  float distance_threshold = threshold_factor * depth_ratio;
+
   if (
-    depth1 - linear_frag_depth > threshold ||
-    depth2 - linear_frag_depth > threshold ||
-    depth3 - linear_frag_depth > threshold ||
-    depth4 - linear_frag_depth > threshold
+    depth1 - linear_frag_depth > distance_threshold ||
+    depth2 - linear_frag_depth > distance_threshold ||
+    depth3 - linear_frag_depth > distance_threshold ||
+    depth4 - linear_frag_depth > distance_threshold
   ) {
-    float alpha = saturate((linear_frag_depth + zFar * 0.5) / zFar);
+    float alpha = saturate(0.5 + linear_frag_depth / zFar);
 
     current_out_color = mix(vec3(0), current_out_color, alpha);
   }
@@ -120,7 +129,7 @@ void main() {
 
   // @todo make atmospherics optional via a flag
   out_color = getAtmosphericsColor(out_color, screen_warp_uv, frag_color_and_depth.w, linear_frag_depth);
-  out_color = getToonShadedColor(out_color, screen_warp_uv, linear_frag_depth);
+  out_color = getToonShadedColor(out_color, screen_warp_uv, frag_color_and_depth.w, linear_frag_depth);
 
   // @todo gamma correction/tone-mapping
   // out_color = pow(out_color, vec3(1 / 2.2));
