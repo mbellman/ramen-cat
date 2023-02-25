@@ -234,6 +234,24 @@ internal void handlePeople(GmContext* context, GameState& state) {
   });
 }
 
+internal void handleFlyingSeagulls(GmContext* context, GameState& state, float dt) {
+  Quaternion tilt = Quaternion::fromAxisAngle(Vec3f(0, 0, 1.f), 0.5f);
+  float t = get_running_time() * 0.5f;
+
+  for_moving_objects("seagull", {
+    float alpha = t + float(object._record.id);
+    float x = sinf(alpha);
+    float z = cosf(alpha);
+
+    Quaternion turn = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), Gm_Modf(alpha, Gm_TAU) - Gm_HALF_PI);
+
+    object.position = initial.position + Vec3f(x, 0.f, z) * 1000.f;
+    object.rotation = turn * tilt;
+
+    commit(object);
+  });
+}
+
 internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
   auto& player = get_player();
   auto& input = get_input();
@@ -472,6 +490,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
 
   handleNpcs(context, state);
   handlePeople(context, state);
+  handleFlyingSeagulls(context, state, dt);
   handleSlingshots(context, state, dt);
   handleLanterns(context, state, dt);
   handleWindmillWheels(context, state, dt);

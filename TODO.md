@@ -5,6 +5,8 @@ BUGS
 ----
 * excessive head turning during sharp directional changes
 * occasionally incorrect head turning during wall kicks
+* camera no longer zooming out when walking (should resolve this after camera collision repositioning)
+
 * clouds causing object outline misbehavior behind atmosphere
 * air dash complete spin (somersault instead?)
 * fix onigiri texture
@@ -26,9 +28,10 @@ ASSETS
 
 GAME
 ----
-* level unloading (in progress)
+* seagull wing animation
 * hide player model in first person mode
-* seagull behavior
+* level unloading (in progress)
+* roosting birds
 
 * fancier dashing effects
 * sitting animation
