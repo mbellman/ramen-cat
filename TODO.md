@@ -3,8 +3,6 @@ EDITOR
 
 BUGS
 ----
-* when enabling the editor in OBJECTS mode with only collision planes enabled, don't show dynamic meshes
-
 * clouds causing object outline misbehavior behind atmosphere
 * air dash complete spin (somersault instead?)
 * fix onigiri texture

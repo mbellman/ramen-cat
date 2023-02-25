@@ -276,9 +276,16 @@ internal void cycleEditorMode(GmContext* context, s8 delta) {
     editor.selectedLight = nullptr;
   }
 
-  // When entering COLLISION_PLANES mode, ensure that collision planes are visible
   if (editor.mode == EditorMode::COLLISION_PLANES) {
+    // When entering COLLISION_PLANES mode, ensure that collision planes are visible
     mesh("platform")->disabled = false;
+  }
+
+  if (editor.mode == EditorMode::OBJECTS) {
+    // When entering OBJECTS mode, ensure that objects are visible
+    for (auto& asset : GameMeshes::meshAssets) {
+      mesh(asset.name)->disabled = false;
+    }
   }
 
   // Disable light spheres when not in LIGHTS mode
@@ -970,7 +977,22 @@ namespace Editor {
   void enableGameEditor(GmContext* context, GameState& state) {
     state.isEditorEnabled = true;
 
-    showDynamicMeshPlaceholders(context);
+    if (mesh(GameMeshes::meshAssets[0].name)->disabled) {
+      if (mesh("platform")->disabled) {
+        // If game meshes and collision plane meshes are disabled,
+        // default to LIGHTS mode
+        editor.mode = EditorMode::LIGHTS;
+      } else {
+        // If collision plane meshes are enabled, default to
+        // COLLISION_PLANES mode
+        editor.mode = EditorMode::COLLISION_PLANES;
+      }
+    } else {
+      // If game meshes are enabled, make sure dynamic mesh placeholders
+      // are visible
+      showDynamicMeshPlaceholders(context);
+    }
+
     resetMovingObjects(context, state);
 
     // Force certain meshes to be enabled/disabled
