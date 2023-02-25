@@ -3,7 +3,6 @@ EDITOR
 
 BUGS
 ----
-* wall kicking at same y coordinate as last solid ground position
 * when enabling the editor in OBJECTS mode with only collision planes enabled, don't show dynamic meshes
 
 * clouds causing object outline misbehavior behind atmosphere
@@ -27,7 +26,6 @@ ASSETS
 
 GAME
 ----
-* rotate character more based on intended motion
 * level unloading (in progress)
 * fancier dashing effects
 * sitting animation

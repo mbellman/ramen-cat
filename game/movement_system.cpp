@@ -61,21 +61,18 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
   if (Gm_Absf(plane.nDotU) <= 0.7f) {
     state.lastWallBumpNormal = plane.normal;
 
-    if (
-      !state.isOnSolidGround &&
-      time_since(state.lastWallBumpTime) > WALL_KICK_WINDOW_DURATION
-    ) {
+    if (!state.isOnSolidGround && time_since(state.lastWallBumpTime) > WALL_KICK_WINDOW_DURATION) {
       if (
         state.lastWallBumpTime < state.lastTimeOnSolidGround &&
-        Gm_Absf(player.position.y - state.lastSolidGroundPosition.y) > PLAYER_RADIUS * 4.f
+        (player.position - state.lastSolidGroundPosition).magnitude() > PLAYER_RADIUS * 4.f
       ) {
         // Only explicitly enable wall kicks when bumping a wall for the first time
-        // after a ground jump, if the y delta is above a certain threshold. We don't
-        // necessarily set this to false otherwise; if this variable is already true,
-        // it will remain true. We just don't want to flip it to true without the
-        // aforementioned conditions being met. (For example, performing a wall kick
-        // immediately allows more wall kicks to be performed, regardless of last solid
-        // ground time or y delta values).
+        // after a ground jump, if the jump delta is above a certain threshold.
+        // We don't necessarily set this to false otherwise; if this variable is
+        // already true, it will remain true. We just don't want to flip it to true
+        // without the aforementioned conditions being met. (For example, performing
+        // a wall kick immediately allows more wall kicks to be performed, regardless
+        // of last solid ground time or jump delta values).
         state.canPerformWallKick = true;
       }
 
@@ -307,7 +304,6 @@ namespace MovementSystem {
           Vec3f kickDirection = (state.lastWallBumpNormal + Vec3f(0, 1.f, 0)).unit();
 
           state.velocity = wallPlaneVelocity + kickDirection * state.lastWallBumpVelocity.magnitude();
-          state.lastWallBumpTime = 0.f;
           state.lastWallKickTime = state.frameStartTime;
 
           state.canPerformAirDash = true;
@@ -369,7 +365,11 @@ namespace MovementSystem {
 
     // Handle gravity/velocity
     {
-      bool isWindingUpWallKick = state.canPerformWallKick && time_since(state.lastWallBumpTime) <= WALL_KICK_WINDOW_DURATION;
+      bool isWindingUpWallKick = (
+        state.canPerformWallKick &&
+        time_since(state.lastWallBumpTime) <= WALL_KICK_WINDOW_DURATION &&
+        state.lastWallKickTime < state.lastWallBumpTime
+      );
 
       // Only apply gravity/velocity if we're not winding up a wall kick
       if (!isWindingUpWallKick) {
@@ -391,11 +391,14 @@ namespace MovementSystem {
       if (
         state.canPerformWallKick &&
         time_since(state.lastWallBumpTime) > WALL_KICK_WINDOW_DURATION &&
-        time_since(state.lastWallBumpTime) < 1.f
+        state.lastAirDashTime < state.lastWallBumpTime &&
+        state.lastWallKickTime < state.lastWallBumpTime
       ) {
         // If we hit a wall, and wait longer than the wall kick
-        // window duration, prohibit wall kicks and fall down
+        // window duration, reset flags and fall down
         state.canPerformWallKick = false;
+        state.canPerformAirDash = false;
+        state.dashLevel = 0;
         state.velocity = Vec3f(0.f);
       }
     }
@@ -426,18 +429,6 @@ namespace MovementSystem {
         // Gradually slow down along solid ground
         state.velocity.x *= (1.0f - 7.f * dt);
         state.velocity.z *= (1.0f - 7.f * dt);
-      }
-    }
-
-    // Stop dashing if we miss a wall kick window
-    {
-      if (state.lastWallBumpTime != 0.f && time_since(state.lastWallBumpTime) > WALL_KICK_WINDOW_DURATION) {
-        state.dashLevel = 0;
-
-        if (state.isOnSolidGround) {
-          // Reset the wall bump time once we hit solid ground
-          state.lastWallBumpTime = 0.f;
-        }
       }
     }
   }
