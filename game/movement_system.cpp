@@ -299,7 +299,12 @@ namespace MovementSystem {
         if (state.isOnSolidGround) {
           // Regular jump
           float xzSpeed = state.velocity.xz().magnitude();
-          float jumpFactor = 1.f + Gm_Clampf((xzSpeed - MAXIMUM_HORIZONTAL_GROUND_SPEED) / MAXIMUM_HORIZONTAL_GROUND_SPEED);
+
+          float jumpFactor = (
+            state.dashLevel == 1 ? 1.5f :
+            state.dashLevel == 2 ? 2.f :
+            1.f
+          );
 
           state.velocity.y = DEFAULT_JUMP_Y_VELOCITY * jumpFactor;
           state.lastJumpTime = get_running_time();
