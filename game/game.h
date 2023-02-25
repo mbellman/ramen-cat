@@ -91,6 +91,7 @@ struct GameState {
   float totalDistanceTraveled = 0.f;
   float currentYaw = 0.f;
   float currentPitch = 0.f;
+  float turnFactor = 0.f;
 
   struct Animation {
     AnimationRig playerRig;

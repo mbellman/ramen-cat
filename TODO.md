@@ -3,6 +3,8 @@ EDITOR
 
 BUGS
 ----
+* excessive head turning during sharp directional changes
+* occasionally incorrect head turning during wall kicks
 * clouds causing object outline misbehavior behind atmosphere
 * air dash complete spin (somersault instead?)
 * fix onigiri texture
@@ -24,10 +26,10 @@ ASSETS
 
 GAME
 ----
-* level unloading (in progress)
 * fancier dashing effects
-* sitting animation
+* level unloading (in progress)
 * seagulls
+* sitting animation
 * slingshot velocity affected by dashing tier
 * area titles
 * train station model updates

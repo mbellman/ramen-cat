@@ -33,6 +33,8 @@ internal void handlePlayerTrottingAnimation(GameState& state, float dt) {
 
   rig.joints[PLAYER_HEAD].offset = Vec3f(0, 0.05f, 0) * speedRatio * sinf(alpha * 0.75f);
   rig.joints[PLAYER_NECK].offset = Vec3f(0, 0.15f, 0) * speedRatio * sinf(alpha * 0.75f);
+  rig.joints[PLAYER_HEAD].rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), state.turnFactor);
+  rig.joints[PLAYER_NECK].rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), state.turnFactor * 0.5f);
 
   rig.joints[PLAYER_TORSO].offset = Vec3f(0, 0.05f, 0) * speedRatio * sinf(alpha);
   rig.joints[PLAYER_SPINE].offset = Vec3f(0, 0.1f, 0) * speedRatio * sinf(alpha + 1.f);
@@ -64,6 +66,8 @@ internal void handlePlayerDashingAnimation(GmContext* context, GameState& state,
 
   rig.joints[PLAYER_HEAD].offset = Vec3f(0, 0.05f, 0) * speedRatio * sinf(alpha * 0.75f);
   rig.joints[PLAYER_NECK].offset = Vec3f(0, 0.15f, 0) * speedRatio * sinf(alpha * 0.75f);
+  rig.joints[PLAYER_HEAD].rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), state.turnFactor);
+  rig.joints[PLAYER_NECK].rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), state.turnFactor * 0.5f);
 
   rig.joints[PLAYER_TORSO].offset = Vec3f(0, 0.05f, 0) * speedRatio * sinf(alpha);
   rig.joints[PLAYER_SPINE].offset = Vec3f(0, 0.2f, 0) * speedRatio * sinf(alpha - 1.f);
@@ -146,6 +150,9 @@ internal void handlePlayerMidairAnimation(GmContext* context, GameState& state, 
 
   float s_alpha = sinf(airTime * 5.f);
   float c_alpha = cosf(airTime * 5.f);
+
+  rig.joints[PLAYER_HEAD].rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), state.turnFactor);
+  rig.joints[PLAYER_NECK].rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), state.turnFactor * 0.5f);
 
   rig.joints[PLAYER_SPINE].offset = Vec3f(0, -0.1f * airTimeFactor, 0);
   rig.joints[PLAYER_TAILBONE].offset = Vec3f(0, 0, 0.5f * airTimeFactor);

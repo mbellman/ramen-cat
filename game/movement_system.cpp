@@ -247,16 +247,29 @@ namespace MovementSystem {
       acceleration += left.invert() * rate;
     }
 
-    // When midair, adjust acceleration in proportion to how much it resists
-    // the current velocity. We want turning to be easier when airborne.
+    // Directional change handling
     {
-      if (state.velocity.y != 0.f && time_since(state.lastWallKickTime) > 1.f) {
-        float directionChangeFactor = 1.f - Vec3f::dot(state.velocity.xz().unit(), acceleration.xz().unit());
+      float targetTurnFactor = 0.f;
+      float xzSpeed = state.velocity.xz().magnitude();
+      float xzAcceleration = acceleration.xz().magnitude();
 
-        if (!std::isnan(directionChangeFactor)) {
+      if (xzSpeed > 0.f && xzAcceleration > 0.f) {
+        Vec3f unitXzAcceleration = acceleration.xz() / xzAcceleration;
+        Vec3f playerLeft = player.rotation.getLeftDirection();
+        float directionChangeDot = Vec3f::dot(state.velocity.xz() / xzSpeed, unitXzAcceleration);
+
+        targetTurnFactor = (1.f - directionChangeDot) * (Vec3f::dot(unitXzAcceleration, playerLeft) > 0.f ? 1.f : -1.f);
+
+        if (state.velocity.y != 0.f && time_since(state.lastWallKickTime) > 1.f) {
+          // When midair, adjust acceleration in proportion to how much it resists
+          // the current velocity. We want turning to be easier when airborne.
+          float directionChangeFactor = 1.f - directionChangeDot;
+
           acceleration *= 1.f + directionChangeFactor * 3.f;
         }
       }
+
+      state.turnFactor = Gm_Lerpf(state.turnFactor, targetTurnFactor, 5.f * dt);
     }
 
     state.velocity += acceleration;
