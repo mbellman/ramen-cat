@@ -26,9 +26,10 @@ ASSETS
 
 GAME
 ----
-* fancier dashing effects
 * level unloading (in progress)
 * seagulls
+
+* fancier dashing effects
 * sitting animation
 * slingshot velocity affected by dashing tier
 * area titles

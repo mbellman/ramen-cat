@@ -153,7 +153,10 @@ vec3 getScreenSpaceGlobalIlluminationContribution(float fragment_depth, vec3 fra
     global_illumination += sample_color_and_depth.rgb * incidence_factor * distance_factor;
   }
 
-  return global_illumination / float(TOTAL_SAMPLES);
+  // Diminish the prominence of SSGI with distance toward the far plane
+  float depth_factor = saturate(1.0 - linearized_fragment_depth / (zFar * 0.5));
+
+  return (global_illumination / float(TOTAL_SAMPLES)) * depth_factor;
 }
 
 void main() {
