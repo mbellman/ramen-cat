@@ -27,7 +27,8 @@ ASSETS
 GAME
 ----
 * level unloading (in progress)
-* seagulls
+* hide player model in first person mode
+* seagull behavior
 
 * fancier dashing effects
 * sitting animation

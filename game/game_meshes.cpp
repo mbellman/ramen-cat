@@ -118,6 +118,22 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
   },
 
   /**
+   * Animals
+   */
+  {
+    .name = "seagull",
+    .moving = true,
+    .hitboxScale = Vec3f(1.4f, 0.2f, 1.1f),
+    .create = []() {
+      return Mesh::Model("./game/assets/seagull.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/seagull.png",
+      .emissivity = 0.3f
+    }
+  },
+
+  /**
    * Structures
    * ----------
    */
