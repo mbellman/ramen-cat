@@ -3,7 +3,6 @@ EDITOR
 
 BUGS
 ----
-* occasionally incorrect head turning during wall kicks
 * camera no longer zooming out when walking (should resolve this after camera collision repositioning)
 
 * clouds causing object outline misbehavior behind atmosphere

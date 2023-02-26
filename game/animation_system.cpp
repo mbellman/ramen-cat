@@ -105,8 +105,7 @@ internal void handlePlayerWallKickAnimation(GmContext* context, GameState& state
   float timeFactor = windUpTime / WALL_KICK_WINDOW_DURATION;
   float compression = 0.5f * timeFactor;
 
-  Vec3f wallPlaneVelocity = state.lastWallBumpVelocity.alignToPlane(state.lastWallBumpNormal);
-  float kickDot = Vec3f::dot(wallPlaneVelocity, player.rotation.getLeftDirection());
+  float kickDot = Vec3f::dot(state.lastWallBumpNormal, player.rotation.getLeftDirection());
   float headTurn = timeFactor * Gm_Signf(kickDot);
 
   rig.joints[PLAYER_HEAD].rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), headTurn);
