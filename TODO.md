@@ -53,6 +53,7 @@ GAME
 ENGINE
 ------
 * smooth point-camera-at behavior
+* get_running_time() -> get_scene_time()
 
 * cache textures
 * area lights

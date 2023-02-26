@@ -235,17 +235,22 @@ internal void handlePeople(GmContext* context, GameState& state) {
 }
 
 internal void handleFlyingSeagulls(GmContext* context, GameState& state, float dt) {
-  Quaternion tilt = Quaternion::fromAxisAngle(Vec3f(0, 0, 1.f), 0.5f);
-  float t = get_running_time() * 0.5f;
+  float t = get_running_time() * 0.4f;
 
   for_moving_objects("seagull", {
     float alpha = t + float(object._record.id);
-    float x = sinf(alpha);
-    float z = cosf(alpha);
+    float x = sinf(2.f * alpha);
+    float z = 2.f * cosf(alpha);
 
-    Quaternion turn = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), Gm_Modf(alpha, Gm_TAU) - Gm_HALF_PI);
+    Vec3f targetPosition = initial.position + Vec3f(x, 0, z) * 1000.f;
+    Vec3f delta = targetPosition - object.position;
+    float turnAngle = atan2f(delta.x, delta.z) + Gm_PI;
+    float tiltAngle = 0.75f * cosf(alpha);
 
-    object.position = initial.position + Vec3f(x, 0.f, z) * 1000.f;
+    Quaternion turn = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), turnAngle);
+    Quaternion tilt = Quaternion::fromAxisAngle(Vec3f(0, 0, 1.f), tiltAngle);
+
+    object.position = targetPosition;
     object.rotation = turn * tilt;
 
     commit(object);
