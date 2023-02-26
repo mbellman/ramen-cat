@@ -28,7 +28,6 @@ ASSETS
 
 GAME
 ----
-* hide player model in first person mode
 * level unloading (in progress)
 * roosting birds
 
