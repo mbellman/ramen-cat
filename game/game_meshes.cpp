@@ -128,7 +128,11 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       return Mesh::Model("./game/assets/seagull.obj");
     },
     .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
       .texture = "./game/assets/seagull.png",
+      .animation = {
+        .type = PresetAnimationType::BIRD
+      },
       .emissivity = 0.3f
     }
   },

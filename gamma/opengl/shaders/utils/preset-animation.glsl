@@ -13,8 +13,9 @@ uniform PresetAnimation animation;
 uniform float time;
 
 vec3 getFlowerAnimationOffset(vec3 vertex_position, vec3 world_position) {
-  float vertex_distance_from_ground = abs(vertex_position.y * 2.0);
   float rate = time * animation.speed;
+
+  float vertex_distance_from_ground = abs(vertex_position.y * 2.0);
   float x_3 = world_position.x / 3.0;
   float z_3 = world_position.z / 3.0;
   float displacement_factor = animation.factor * min(1.0, pow(vertex_distance_from_ground / 1.5, 2));
@@ -31,7 +32,6 @@ vec3 getLeafAnimationOffset(vec3 vertex_position, vec3 world_position) {
   float rate = time * animation.speed;
 
   float vy = vertex_position.y;
-
   float distance_factor = pow(vy / (1.0 + vy), 2);
   float displacement_factor = animation.factor * 15.0 * distance_factor;
   float y_offset = displacement_factor * (2.0 * sin(rate + gl_InstanceID) + sin(rate + 2.0 * vy));
@@ -40,6 +40,11 @@ vec3 getLeafAnimationOffset(vec3 vertex_position, vec3 world_position) {
 }
 
 vec3 getBirdAnimationOffset(vec3 vertex_position, vec3 world_position) {
-  // @todo
-  return vec3(0);
+  float rate = time * animation.speed;
+  float id = float(gl_InstanceID);
+
+  float displacement_factor = min(1.0, pow(abs(vertex_position.x), 4)) * 20.0;
+  float y_offset = pow(abs(sin(rate)), 5) * sin(rate * 10.0 + id);
+
+  return vec3(0, displacement_factor * y_offset, 0);
 }
