@@ -28,6 +28,7 @@
 #define mesh(meshName) context->scene.meshMap.at(meshName)
 #define objects(meshName) Gm_GetObjects(context, meshName)
 #define point_camera_at(...) Gm_PointCameraAt(context, __VA_ARGS__)
+#define smoothly_point_camera_at(...) Gm_SmoothlyPointCameraAt(context, __VA_ARGS__)
 #define use_frustum_culling(...) Gm_UseFrustumCulling(context, __VA_ARGS__)
 #define use_lod_by_distance(distance, ...) Gm_UseLodByDistance(context, distance, __VA_ARGS__)
 
@@ -126,7 +127,10 @@ void Gm_ResetScene(GmContext* context);
 
 void Gm_PointCameraAt(GmContext* context, const Gamma::Object& object, bool upsideDown = false);
 void Gm_PointCameraAt(GmContext* context, const Gamma::Vec3f& position, bool upsideDown = false);
+void Gm_SmoothlyPointCameraAt(GmContext* context, const Gamma::Object& object, float alpha, bool upsideDown = false);
+void Gm_SmoothlyPointCameraAt(GmContext* context, const Gamma::Vec3f& position, float alpha, bool upsideDown = false);
 void Gm_HandleFreeCameraMode(GmContext* context, float speed, float dt);
+
 void Gm_UseFrustumCulling(GmContext* context, const std::initializer_list<std::string>& meshNames);
 void Gm_UseLodByDistance(GmContext* context, float distance, const std::initializer_list<std::string>& meshNames);
 

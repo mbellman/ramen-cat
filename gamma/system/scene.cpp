@@ -1,5 +1,6 @@
 #include <filesystem>
 
+#include "math/utilities.h"
 #include "system/scene.h"
 #include "system/assert.h"
 #include "system/console.h"
@@ -339,6 +340,31 @@ void Gm_PointCameraAt(GmContext* context, const Gamma::Vec3f& position, bool ups
     : Vec3f::cross(sideways, forward);
 
   camera.orientation.face(forward, up);
+
+  camera.rotation = camera.orientation.toQuaternion();
+}
+
+void Gm_SmoothlyPointCameraAt(GmContext* context, const Gamma::Object& object, float alpha, bool upsideDown) {
+  Gm_SmoothlyPointCameraAt(context, object.position, alpha, upsideDown);
+}
+
+void Gm_SmoothlyPointCameraAt(GmContext* context, const Gamma::Vec3f& position, float alpha, bool upsideDown) {
+  auto& camera = context->scene.camera;
+  Vec3f forward = (position - camera.position).unit();
+  Vec3f sideways = Vec3f::cross(forward, Vec3f(0, 1.0f, 0));
+
+  Vec3f up = upsideDown
+    ? Vec3f::cross(forward, sideways)
+    : Vec3f::cross(sideways, forward);
+  
+  auto currentOrientation = camera.orientation;
+
+  camera.orientation.face(forward, up);
+
+  camera.orientation.roll = Gm_Lerpf(currentOrientation.roll, camera.orientation.roll, alpha);
+  camera.orientation.pitch = Gm_Lerpf(currentOrientation.pitch, camera.orientation.pitch, alpha);
+  camera.orientation.yaw = Gm_LerpCircularf(currentOrientation.yaw, camera.orientation.yaw, alpha, Gm_PI);
+  camera.orientation.yaw = Gm_Modf(camera.orientation.yaw, Gm_TAU);
 
   camera.rotation = camera.orientation.toQuaternion();
 }

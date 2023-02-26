@@ -240,7 +240,9 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
     float titleTransitionDuration = 3.f;
 
     if (time_since(state.gameStartTime) > titleTransitionDuration) {
-      point_camera_at(lookAtPosition);
+      float alpha = state.useCameraOverride ? 1.f : Gm_Clampf(state.cameraLookAtSpeedFactor * dt);
+
+      smoothly_point_camera_at(lookAtPosition, alpha);
     } else {
       // @temporary
       float alpha = easeInOutQuart(time_since(state.gameStartTime) / titleTransitionDuration);

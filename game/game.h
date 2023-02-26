@@ -75,6 +75,7 @@ struct GameState {
   float lastAirDashTime = 0.f;
   float lastGroundParticleSpawnTime = 0.f;
   float lastAirParticleSpawnTime = 0.f;
+  float lastMouseMoveTime = 0.f;
 
   float dayNightCycleTime = 0.f;
 
@@ -107,6 +108,8 @@ struct GameState {
   float cameraOverrideStartTime = 0.f;
   float cameraOverrideDuration = 0.5f;
   bool useCameraOverride = false;
+
+  float cameraLookAtSpeedFactor = 20.f;
 
   // @todo use in dev mode only
   bool isEditorEnabled = false;

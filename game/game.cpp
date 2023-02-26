@@ -100,6 +100,7 @@ void updateGame(GmContext* context, GameState& state, float dt) {
   }
 
   auto& player = get_player();
+  auto& input = get_input();
 
   #if GAMMA_DEVELOPER_MODE
     dt *= state.gameSpeed;
@@ -133,8 +134,6 @@ void updateGame(GmContext* context, GameState& state, float dt) {
   // @temporary
   {
     if (state.gameStartTime == 0.f) {
-      auto& input = get_input();
-
       if (input.didPressKey(Key::SPACE)) {
         state.gameStartTime = state.frameStartTime;
       }
@@ -165,8 +164,6 @@ void updateGame(GmContext* context, GameState& state, float dt) {
   }
 
   #if GAMMA_DEVELOPER_MODE == 1
-    auto& input = get_input();
-
     // Keep track of our last solid ground positions so we can undo movements
     {
       if (
@@ -220,6 +217,16 @@ void updateGame(GmContext* context, GameState& state, float dt) {
     state.previousPlayerPosition = player.position;
     state.wasOnSolidGroundLastFrame = state.isOnSolidGround;
     state.totalDistanceTraveled += state.velocity.xz().magnitude() * dt;
+
+    if (input.didMoveMouse()) {
+      state.lastMouseMoveTime = get_scene_time();
+    }
+
+    if (time_since(state.lastMouseMoveTime) < 0.1f) {
+      state.cameraLookAtSpeedFactor = Gm_Lerpf(state.cameraLookAtSpeedFactor, 200.f, 20.f * dt);
+    } else {
+      state.cameraLookAtSpeedFactor = Gm_Lerpf(state.cameraLookAtSpeedFactor, 20.f, 20.f * dt);
+    }
 
     context->scene.sceneTime += dt;
   }

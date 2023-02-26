@@ -83,6 +83,7 @@ namespace Gamma {
   class InputSystem : public Signaler {
   public:
     bool didClickMouse() const;
+    bool didMoveMouse() const;
     bool didMoveMouseWheel() const;
     bool didPressKey(Key key) const;
     bool didReleaseKey(Key key) const;

@@ -59,6 +59,10 @@ namespace Gamma {
     return didClickMouseThisFrame;
   }
 
+  bool InputSystem::didMoveMouse() const {
+    return mouseDelta.x != 0 || mouseDelta.y != 0;
+  }
+
   bool InputSystem::didMoveMouseWheel() const {
     return didMoveMouseWheelThisFrame;
   }

@@ -1352,10 +1352,7 @@ namespace Editor {
           auto selectedObjectToCamera = camera.position - selectedObject.position;
           auto selectedObjectDistance = selectedObjectToCamera.magnitude();
 
-          // @todo gradually_point_camera_at()
-          Vec3f lookAtTarget = Vec3f::lerp(camera.position + camera.orientation.getDirection() * selectedObjectDistance, selectedObject.position, 25.f * dt);
-
-          point_camera_at(lookAtTarget);
+          smoothly_point_camera_at(selectedObject, 25.f * dt);
 
           // @todo create_object_third_person_camera()
           ThirdPersonCamera objectCamera;
