@@ -117,7 +117,7 @@ namespace Gamma {
     /**
      * @todo description
      */
-    FOLIAGE = 0xFC,
+    PRESET_ANIMATED = 0xFC,
     /**
      * @todo description
      */
@@ -183,27 +183,27 @@ namespace Gamma {
   };
 
   /**
-   * FoliageType
-   * -----------
+   * PresetAnimationType
+   * -------------------
    *
-   * Different categories of foliage, describing different types
+   * Different categories of preset animations, describing different types
    * of geometry displacement behavior.
    */
-  enum FoliageType {
+  enum PresetAnimationType {
     NONE,
     FLOWER,
-    BRANCH,
-    LEAF
+    LEAF,
+    BIRD
   };
 
   /**
-   * Foliage
-   * -------
+   * PresetAnimation
+   * ---------------
    *
    * @todo description
    */
-  struct Foliage {
-    FoliageType type = FoliageType::NONE;
+  struct PresetAnimation {
+    PresetAnimationType type = PresetAnimationType::NONE;
     float speed = 1.f;
     float factor = 1.f;
   };
@@ -241,9 +241,9 @@ namespace Gamma {
      */
     Particles particles;
     /**
-     * Configuration for foliage meshes.
+     * Configuration for preset animated meshes.
      */
-    Foliage foliage;
+    PresetAnimation animation;
     /**
      * Controls how intensely mesh objects render in their
      * natural color, without a light source contribution.

@@ -535,25 +535,25 @@ namespace Gamma {
       }
     }
 
-    // Render foliage
-    shaders.foliage.use();
-    shaders.foliage.setMatrix4f("matProjection", ctx.matProjection);
-    shaders.foliage.setMatrix4f("matView", ctx.matView);
-    shaders.foliage.setInt("meshTexture", 0);
-    shaders.foliage.setInt("meshNormalMap", 1);
-    shaders.foliage.setFloat("time", gmContext->contextTime);
+    // Render preset animated meshes
+    shaders.presetAnimation.use();
+    shaders.presetAnimation.setMatrix4f("matProjection", ctx.matProjection);
+    shaders.presetAnimation.setMatrix4f("matView", ctx.matView);
+    shaders.presetAnimation.setInt("meshTexture", 0);
+    shaders.presetAnimation.setInt("meshNormalMap", 1);
+    shaders.presetAnimation.setFloat("time", gmContext->contextTime);
 
     for (auto* glMesh : glMeshes) {
-      if (glMesh->isMeshType(MeshType::FOLIAGE)) {
-        auto& foliage = glMesh->getSourceMesh()->foliage;
+      if (glMesh->isMeshType(MeshType::PRESET_ANIMATED)) {
+        auto& animation = glMesh->getSourceMesh()->animation;
 
-        shaders.foliage.setInt("foliage.type", foliage.type);
-        shaders.foliage.setFloat("foliage.speed", foliage.speed);
-        shaders.foliage.setFloat("foliage.factor", foliage.factor);
-        shaders.foliage.setBool("hasTexture", glMesh->hasTexture());
-        shaders.foliage.setBool("hasNormalMap", glMesh->hasNormalMap());
-        shaders.foliage.setFloat("emissivity", glMesh->getSourceMesh()->emissivity);
-        shaders.foliage.setFloat("roughness", glMesh->getSourceMesh()->roughness);
+        shaders.presetAnimation.setInt("animation.type", animation.type);
+        shaders.presetAnimation.setFloat("animation.speed", animation.speed);
+        shaders.presetAnimation.setFloat("animation.factor", animation.factor);
+        shaders.presetAnimation.setBool("hasTexture", glMesh->hasTexture());
+        shaders.presetAnimation.setBool("hasNormalMap", glMesh->hasNormalMap());
+        shaders.presetAnimation.setFloat("emissivity", glMesh->getSourceMesh()->emissivity);
+        shaders.presetAnimation.setFloat("roughness", glMesh->getSourceMesh()->roughness);
 
         glMesh->render(ctx.primitiveMode);
       }
@@ -628,11 +628,11 @@ namespace Gamma {
             continue;
           }
 
-          auto& foliage = mesh.foliage;
+          auto& animation = mesh.animation;
 
-          shader.setInt("foliage.type", foliage.type);
-          shader.setFloat("foliage.speed", foliage.speed);
-          shader.setFloat("foliage.factor", foliage.factor);
+          shader.setInt("animation.type", animation.type);
+          shader.setFloat("animation.speed", animation.speed);
+          shader.setFloat("animation.factor", animation.factor);
           shader.setBool("hasTexture", glMesh->hasTexture());
 
           if (mesh.canCastShadows && mesh.maxCascade >= (cascade + 1)) {
@@ -675,12 +675,11 @@ namespace Gamma {
       // @todo allow specific meshes to be associated with spot lights + rendered to shadow maps
       for (auto* glMesh : glMeshes) {
         auto* sourceMesh = glMesh->getSourceMesh();
-        // @todo check foliage behavior for correctness
-        auto& foliage = sourceMesh->foliage;
+        auto& animation = sourceMesh->animation;
 
-        shader.setInt("foliage.type", foliage.type);
-        shader.setFloat("foliage.speed", foliage.speed);
-        shader.setFloat("foliage.factor", foliage.factor);
+        shader.setInt("animation.type", animation.type);
+        shader.setFloat("animation.speed", animation.speed);
+        shader.setFloat("animation.factor", animation.factor);
         shader.setBool("hasTexture", glMesh->hasTexture());
 
         if (sourceMesh->canCastShadows) {

@@ -61,10 +61,10 @@ namespace Gamma {
     shaders.geometry.fragment("./gamma/opengl/shaders/geometry.frag.glsl");
     shaders.geometry.link();
 
-    shaders.foliage.init();
-    shaders.foliage.vertex("./gamma/opengl/shaders/foliage.vert.glsl");
-    shaders.foliage.fragment("./gamma/opengl/shaders/geometry.frag.glsl");
-    shaders.foliage.link();
+    shaders.presetAnimation.init();
+    shaders.presetAnimation.vertex("./gamma/opengl/shaders/preset-animation.vert.glsl");
+    shaders.presetAnimation.fragment("./gamma/opengl/shaders/geometry.frag.glsl");
+    shaders.presetAnimation.link();
 
     shaders.probeReflector.init();
     shaders.probeReflector.vertex("./gamma/opengl/shaders/geometry.vert.glsl");

@@ -63,11 +63,11 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       return Mesh::Model("./game/assets/weeds.obj");
     },
     .attributes = {
-      .type = MeshType::FOLIAGE,
+      .type = MeshType::PRESET_ANIMATED,
       .texture = "./game/assets/weeds.png",
       .maxCascade = 2,
-      .foliage = {
-        .type = FoliageType::FLOWER
+      .animation = {
+        .type = PresetAnimationType::FLOWER
       },
       .emissivity = 0.1f,
       .roughness = 1.f
@@ -79,10 +79,10 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       return Mesh::Model("./game/assets/bush.obj");
     },
     .attributes = {
-      .type = MeshType::FOLIAGE,
+      .type = MeshType::PRESET_ANIMATED,
       .texture = "./game/assets/bush.png",
-      .foliage = {
-        .type = FoliageType::FLOWER,
+      .animation = {
+        .type = PresetAnimationType::FLOWER,
         .factor = 5.f
       },
       .useMipmaps = false
@@ -108,10 +108,10 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       return Mesh::Model("./game/assets/palm-leaf.obj");
     },
     .attributes = {
-      .type = MeshType::FOLIAGE,
+      .type = MeshType::PRESET_ANIMATED,
       .texture = "./game/assets/palm-leaf.png",
-      .foliage = {
-        .type = FoliageType::LEAF
+      .animation = {
+        .type = PresetAnimationType::LEAF
       },
       .roughness = 0.8f
     }

@@ -250,7 +250,7 @@ internal void loadLevel(GmContext* context, GameState& state, const std::string&
 
       // @todo handle all mesh attributes
       mesh.type = attributes.type;
-      mesh.foliage = attributes.foliage;
+      mesh.animation = attributes.animation;
       mesh.texture = attributes.texture;
       mesh.normals = attributes.normals;
       mesh.maxCascade = attributes.maxCascade;
@@ -268,7 +268,7 @@ internal void loadLevel(GmContext* context, GameState& state, const std::string&
 
       // @todo handle all mesh attributes
       mesh.type = attributes.type;
-      mesh.foliage = attributes.foliage;
+      mesh.animation = attributes.animation;
       mesh.texture = attributes.texture;
       mesh.normals = attributes.normals;
       mesh.maxCascade = attributes.maxCascade;

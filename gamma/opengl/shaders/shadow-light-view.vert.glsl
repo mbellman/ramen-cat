@@ -12,22 +12,22 @@ layout (location = 5) in mat4 modelMatrix;
 out vec2 fragUv;
 
 #include "utils/gl.glsl";
-#include "utils/foliage.glsl";
+#include "utils/preset-animation.glsl";
 
 void main() {
   // @hack invert Z
   vec4 world_position = glVec4(modelMatrix * vec4(vertexPosition, 1.0));
 
   // @todo make a utility for this
-  switch (foliage.type) {
+  switch (animation.type) {
     case FLOWER:
-      world_position.xyz += getFlowerFoliageOffset(vertexPosition, world_position.xyz);
-      break;
-    case BRANCH:
-      world_position.xyz += getBranchFoliageOffset(vertexPosition, world_position.xyz);
+      world_position.xyz += getFlowerAnimationOffset(vertexPosition, world_position.xyz);
       break;
     case LEAF:
-      world_position.xyz += getLeafFoliageOffset(vertexPosition, world_position.xyz);
+      world_position.xyz += getLeafAnimationOffset(vertexPosition, world_position.xyz);
+      break;
+    case BIRD:
+      world_position.xyz += getBirdAnimationOffset(vertexPosition, world_position.xyz);
       break;
   }
 

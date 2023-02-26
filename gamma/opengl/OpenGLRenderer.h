@@ -28,7 +28,7 @@ namespace Gamma {
   struct RendererShaders {
     // Rendering pipeline shaders
     OpenGLShader geometry;
-    OpenGLShader foliage;
+    OpenGLShader presetAnimation;
     OpenGLShader probeReflector;
     OpenGLShader gpuParticle;
     OpenGLShader particle;
