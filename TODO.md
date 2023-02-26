@@ -3,7 +3,6 @@ EDITOR
 
 BUGS
 ----
-* excessive head turning during sharp directional changes
 * occasionally incorrect head turning during wall kicks
 * camera no longer zooming out when walking (should resolve this after camera collision repositioning)
 

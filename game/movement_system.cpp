@@ -269,7 +269,7 @@ namespace MovementSystem {
         }
       }
 
-      state.turnFactor = Gm_Lerpf(state.turnFactor, targetTurnFactor, 5.f * dt);
+      state.turnFactor = Gm_Clampf(Gm_Lerpf(state.turnFactor, targetTurnFactor, 5.f * dt), -0.7f, 0.7f);
     }
 
     state.velocity += acceleration;
