@@ -235,7 +235,7 @@ internal void handlePeople(GmContext* context, GameState& state) {
 }
 
 internal void handleFlyingSeagulls(GmContext* context, GameState& state, float dt) {
-  float t = get_running_time() * 0.4f;
+  float t = get_scene_time() * 0.4f;
 
   for_moving_objects("seagull", {
     float alpha = t + float(object._record.id);
@@ -325,7 +325,7 @@ internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
 internal void handleLanterns(GmContext* context, GameState& state, float dt) {
   for_moving_objects("lantern", {
     auto& basePosition = initial.position;
-    float a = get_running_time() + basePosition.z / 200.f;
+    float a = get_scene_time() + basePosition.z / 200.f;
     float angle = 0.2f * sinf(a);
 
     float x = LANTERN_HORIZONTAL_DRIFT * sin(a);
@@ -344,7 +344,7 @@ internal void handleWindmillWheels(GmContext* context, GameState& state, float d
     // Rotate larger windmill wheels more slowly
     float scaleRatio = Gm_Clampf(initial.scale.magnitude() / 500.f, 0.f, 1.f);
     float rotationSpeedFactor = Gm_Lerpf(2.f, 0.2f, scaleRatio);
-    float angle = rotationSpeedFactor * get_running_time();
+    float angle = rotationSpeedFactor * get_scene_time();
 
     object.rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initial.rotation;
 
@@ -355,7 +355,7 @@ internal void handleWindmillWheels(GmContext* context, GameState& state, float d
 internal void handleAcFans(GmContext* context, GameState& state, float dt) {
   for_moving_objects("ac-fan", {
     auto rotationAxis = initial.rotation.getDirection();
-    float angle = 3.f * get_running_time();
+    float angle = 3.f * get_scene_time();
 
     object.rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initial.rotation;
 
@@ -366,9 +366,9 @@ internal void handleAcFans(GmContext* context, GameState& state, float dt) {
 internal void handleHotAirBalloons(GmContext* context, GameState& state, float dt) {
   for_moving_objects("hot-air-balloon", {
     float offset = object.position.x + object.position.z;
-    float heightRate = 0.5f * get_running_time() + offset;
+    float heightRate = 0.5f * get_scene_time() + offset;
     float heightOscillation = object.scale.x / 10.f;
-    float rotationRate = 0.7f * get_running_time() + offset;
+    float rotationRate = 0.7f * get_scene_time() + offset;
 
     object.position = initial.position + Vec3f(0, heightOscillation, 0) * sinf(heightRate);
     object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), 0.05f * sinf(rotationRate));

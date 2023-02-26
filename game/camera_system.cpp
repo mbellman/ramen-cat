@@ -50,7 +50,7 @@ internal Vec3f getLookAtTargetPosition(GmContext* context, GameState& state) {
 
   Vec3f tweenStart = state.sourceCameraState.lookAtTarget;
   Vec3f tweenEnd = state.useCameraOverride ? state.targetCameraState.lookAtTarget : player.position;
-  float t = (get_running_time() - state.cameraOverrideStartTime) / state.cameraOverrideDuration;
+  float t = time_since(state.cameraOverrideStartTime) / state.cameraOverrideDuration;
 
   if (t > 1.f) {
     t = 1.f;

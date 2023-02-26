@@ -36,7 +36,7 @@
 
 #define get_input() context->scene.input
 #define get_camera() context->scene.camera
-#define get_running_time() context->scene.sceneTime
+#define get_scene_time() context->scene.sceneTime
 #define time_since(time) (context->scene.sceneTime - time)
 
 #define add_debug_message(message) context->debugMessages.push_back(message)

@@ -85,8 +85,8 @@ internal void handleDialogue(GmContext* context, GameState& state) {
 
   // Render active dialogue box
   {
-    auto timeSinceDialogueStart = get_running_time() - dialogue.startTime;
-    auto timeSinceLastCharacter = get_running_time() - dialogue.lastCharacterTime;
+    auto timeSinceDialogueStart = time_since(dialogue.startTime);
+    auto timeSinceLastCharacter = time_since(dialogue.lastCharacterTime);
 
     Region<u32> pane = {
       .x = u32(context->window.size.width / 4.f),
@@ -120,7 +120,7 @@ internal void handleDialogue(GmContext* context, GameState& state) {
         hasPrintedFullDialogue = runningText == dialogueText;
 
         if (!hasPrintedFullDialogue) {
-          dialogue.lastCharacterTime = get_running_time();
+          dialogue.lastCharacterTime = get_scene_time();
         }
 
         render_text(dialogueFont, runningText, pane.x + 20, pane.y + 20);
@@ -143,7 +143,7 @@ internal void handleDialogue(GmContext* context, GameState& state) {
       } else {
         // Fudge the dialogue start time to cause the
         // full text to print on the next frame
-        dialogue.startTime = get_running_time() - dialogueText.size() * DIALOGUE_CHARACTER_DURATION;
+        dialogue.startTime = get_scene_time() - dialogueText.size() * DIALOGUE_CHARACTER_DURATION;
       }
     }
   }

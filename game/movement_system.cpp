@@ -307,7 +307,7 @@ namespace MovementSystem {
           );
 
           state.velocity.y = DEFAULT_JUMP_Y_VELOCITY * jumpFactor;
-          state.lastJumpTime = get_running_time();
+          state.lastJumpTime = get_scene_time();
 
           state.isOnSolidGround = false;
           state.canPerformAirDash = true;

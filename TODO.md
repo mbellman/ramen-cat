@@ -28,7 +28,6 @@ ASSETS
 
 GAME
 ----
-* seagull wing animation
 * hide player model in first person mode
 * level unloading (in progress)
 * roosting birds
@@ -53,7 +52,6 @@ GAME
 ENGINE
 ------
 * smooth point-camera-at behavior
-* get_running_time() -> get_scene_time()
 
 * cache textures
 * area lights
