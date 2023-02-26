@@ -22,8 +22,8 @@ internal void updateThirdPersonCameraRadius(GmContext* context, GameState& state
 
   state.camera3p.radius = baseRadius + altitudeRadius;
 
-  if (state.isMovingPlayerThisFrame && state.camera3p.radius < 130.f) {
-    state.camera3p.radius += 100.f * dt;
+  if (state.isMovingPlayerThisFrame && state.camera3p.altitude < 0.2f) {
+    state.camera3p.altitude += dt;
   }
 
   if (

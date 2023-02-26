@@ -3,8 +3,6 @@ EDITOR
 
 BUGS
 ----
-* camera no longer zooming out when walking (should resolve this after camera collision repositioning)
-
 * clouds causing object outline misbehavior behind atmosphere
 * air dash complete spin (somersault instead?)
 * fix onigiri texture
@@ -26,6 +24,7 @@ ASSETS
 
 GAME
 ----
+* variable camera radius
 * level unloading (in progress)
 * roosting birds
 
