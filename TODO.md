@@ -52,6 +52,8 @@ GAME
 
 ENGINE
 ------
+* smooth point-camera-at behavior
+
 * cache textures
 * area lights
 * skylight contribution gradation/probe-based GI
