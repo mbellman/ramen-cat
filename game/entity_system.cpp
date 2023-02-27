@@ -477,17 +477,6 @@ void EntitySystem::initializeGameEntities(GmContext* context, GameState& state) 
     //   Vec3f(-1500.f, 2600.f, 2600.f)
     // });
   }
-
-  // Save initial reference copies of moving objects
-  {
-    for (auto& asset : GameMeshes::meshAssets) {
-      if (asset.moving) {
-        for (auto& object : objects(asset.name)) {
-          state.initialMovingObjects.push_back(object);
-        }
-      }
-    }
-  }
 }
 
 void EntitySystem::handleGameEntities(GmContext* context, GameState& state, float dt) {

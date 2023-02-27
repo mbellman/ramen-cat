@@ -24,10 +24,12 @@ ASSETS
 
 GAME
 ----
-* variable camera radius
 * level unloading (in progress)
+
+* variable camera radius
 * roosting birds
 
+* rooves
 * fancier dashing effects
 * sitting animation
 * slingshot velocity affected by dashing tier

@@ -897,24 +897,6 @@ internal void handleTypeCommand(GmContext* context, const std::string& command) 
   }
 }
 
-internal void handleTimeCommand(GmContext* context, GameState& state, const std::string& command) {
-  float time;
-
-  try {
-    auto parts = Gm_SplitString(command, " ");
-
-    time = stof(parts[1]);
-  } catch (const std::exception& e) {
-    Console::warn("Invalid time command");
-
-    return;
-  }
-
-  state.dayNightCycleTime = time;
-
-  EffectsSystem::updateDayNightCycleLighting(context, state);
-}
-
 internal void saveCollisionPlanesData(GmContext* context, GameState& state) {
   std::string data;
 
@@ -1116,10 +1098,6 @@ namespace Editor {
         } else if (Gm_StringStartsWith(command, "type")) {
           handleTypeCommand(context, command);
         }
-      }
-
-      if (Gm_StringStartsWith(command, "time")) {
-        handleTimeCommand(context, state, command);
       }
     });
 

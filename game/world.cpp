@@ -224,9 +224,17 @@ internal void loadEntityData(GmContext* context, GameState& state, const std::st
 }
 
 internal void unloadCurrentLevel(GmContext* context, GameState& state) {
-  Gm_ResetScene(context);
+  for (auto& asset : GameMeshes::meshAssets) {
+    mesh(asset.name)->objects.reset();
+  }
 
+  for (auto& asset : GameMeshes::dynamicMeshPieces) {
+    mesh(asset.name)->objects.reset();
+  }
+
+  // @todo delete lights
   // @todo properly reset all game state
+  // @todo clear editor history
   state.collisionPlanes.clear();
   state.npcs.clear();
   state.slingshots.clear();
@@ -238,68 +246,42 @@ internal void unloadCurrentLevel(GmContext* context, GameState& state) {
   #endif
 }
 
-internal void loadLevel(GmContext* context, GameState& state, const std::string& levelName) {
-  // Create meshes
-  // @todo create meshes for the current level only
-  {
-    for (auto& asset : GameMeshes::meshAssets) {
-      add_mesh(asset.name, asset.maxInstances, asset.create());
+internal void loadGameMeshes(GmContext* context, GameState& state) {
+  for (auto& asset : GameMeshes::meshAssets) {
+    add_mesh(asset.name, asset.maxInstances, asset.create());
 
-      auto& mesh = *mesh(asset.name);
-      auto& attributes = asset.attributes;
+    auto& mesh = *mesh(asset.name);
+    auto& attributes = asset.attributes;
 
-      // @todo handle all mesh attributes
-      mesh.type = attributes.type;
-      mesh.animation = attributes.animation;
-      mesh.texture = attributes.texture;
-      mesh.normals = attributes.normals;
-      mesh.maxCascade = attributes.maxCascade;
-      mesh.canCastShadows = attributes.canCastShadows;
-      mesh.emissivity = attributes.emissivity;
-      mesh.roughness = attributes.roughness;
-      mesh.silhouette = attributes.silhouette;
-    }
-
-    for (auto& asset : GameMeshes::dynamicMeshPieces) {
-      add_mesh(asset.name, asset.maxInstances, asset.create());
-
-      auto& mesh = *mesh(asset.name);
-      auto& attributes = asset.attributes;
-
-      // @todo handle all mesh attributes
-      mesh.type = attributes.type;
-      mesh.animation = attributes.animation;
-      mesh.texture = attributes.texture;
-      mesh.normals = attributes.normals;
-      mesh.maxCascade = attributes.maxCascade;
-      mesh.canCastShadows = attributes.canCastShadows;
-      mesh.emissivity = attributes.emissivity;
-      mesh.roughness = attributes.roughness;
-      mesh.silhouette = attributes.silhouette;
-    }
+    // @todo handle all mesh attributes
+    mesh.type = attributes.type;
+    mesh.animation = attributes.animation;
+    mesh.texture = attributes.texture;
+    mesh.normals = attributes.normals;
+    mesh.maxCascade = attributes.maxCascade;
+    mesh.canCastShadows = attributes.canCastShadows;
+    mesh.emissivity = attributes.emissivity;
+    mesh.roughness = attributes.roughness;
+    mesh.silhouette = attributes.silhouette;
   }
 
-  // @temporary
-  // @todo allow non-serializable lights to be defined in a level parameters file
-  {
-    auto& light = create_light(LightType::DIRECTIONAL_SHADOWCASTER);
+  for (auto& asset : GameMeshes::dynamicMeshPieces) {
+    add_mesh(asset.name, asset.maxInstances, asset.create());
 
-    light.direction = Vec3f(-0.2f, -1.f, -1.f);
-    light.color = Vec3f(1.f);
-    light.serializable = false;
+    auto& mesh = *mesh(asset.name);
+    auto& attributes = asset.attributes;
 
-    save_light("scene-light", &light);
+    // @todo handle all mesh attributes
+    mesh.type = attributes.type;
+    mesh.animation = attributes.animation;
+    mesh.texture = attributes.texture;
+    mesh.normals = attributes.normals;
+    mesh.maxCascade = attributes.maxCascade;
+    mesh.canCastShadows = attributes.canCastShadows;
+    mesh.emissivity = attributes.emissivity;
+    mesh.roughness = attributes.roughness;
+    mesh.silhouette = attributes.silhouette;
   }
-
-  loadCollisionPlanes(context, state, levelName);
-  loadWorldObjects(context, levelName);
-  loadLights(context, levelName);
-  loadNpcData(context, state, levelName);
-  loadEntityData(context, state, levelName);
-
-  World::rebuildDynamicMeshes(context);
-
-  state.currentLevelName = levelName;
 }
 
 internal void rebuildDynamicStaircases(GmContext* context) {
@@ -557,12 +539,10 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
 
   commit(player);
 
-  // Load world data
-  {
-    // unloadCurrentLevel(context, state);
-    loadLevel(context, state, "umimura");
+  loadGameMeshes(context, state);
 
-    // Hide dynamic mesh placeholders
+  // Hide dynamic mesh placeholders
+  {
     for (auto& asset : GameMeshes::meshAssets) {
       if (asset.dynamic) {
         mesh(asset.name)->disabled = true;
@@ -576,4 +556,43 @@ void World::rebuildDynamicMeshes(GmContext* context) {
   rebuildLamppostLights(context);
   rebuildElectricalPoleWires(context);
   rebuildDynamicBuildings(context);
+}
+
+void World::loadLevel(GmContext* context, GameState& state, const std::string& levelName) {
+  unloadCurrentLevel(context, state);
+
+  // @temporary
+  // @todo allow non-serializable lights to be defined in a level parameters file
+  {
+    if (context->scene.lightStore.find("scene-light") == context->scene.lightStore.end()) {
+      auto& light = create_light(LightType::DIRECTIONAL_SHADOWCASTER);
+
+      light.direction = Vec3f(-0.2f, -1.f, -1.f);
+      light.color = Vec3f(1.f);
+      light.serializable = false;
+
+      save_light("scene-light", &light);
+    }
+  }
+
+  loadCollisionPlanes(context, state, levelName);
+  loadWorldObjects(context, levelName);
+  loadLights(context, levelName);
+  loadNpcData(context, state, levelName);
+  loadEntityData(context, state, levelName);
+
+  World::rebuildDynamicMeshes(context);
+
+  // Save initial reference copies of moving objects
+  {
+    for (auto& asset : GameMeshes::meshAssets) {
+      if (asset.moving) {
+        for (auto& object : objects(asset.name)) {
+          state.initialMovingObjects.push_back(object);
+        }
+      }
+    }
+  }
+
+  state.currentLevelName = levelName;
 }

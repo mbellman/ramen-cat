@@ -16,6 +16,42 @@
 
 using namespace Gamma;
 
+internal void handleTimeCommand(GmContext* context, GameState& state, const std::string& command) {
+  float time;
+
+  try {
+    auto parts = Gm_SplitString(command, " ");
+
+    time = stof(parts[1]);
+  } catch (const std::exception& e) {
+    Console::warn("Invalid time command");
+
+    return;
+  }
+
+  state.dayNightCycleTime = time;
+
+  EffectsSystem::updateDayNightCycleLighting(context, state);
+}
+
+internal void handleLevelCommand(GmContext* context, GameState& state, const std::string& command) {
+  std::string levelName;
+
+  float time;
+
+  try {
+    auto parts = Gm_SplitString(command, " ");
+
+    levelName = parts[1];
+  } catch (const std::exception& e) {
+    Console::warn("Invalid level command");
+
+    return;
+  }
+
+  World::loadLevel(context, state, levelName);
+}
+
 // @todo move this elsewhere
 internal void initializeInputHandlers(GmContext* context, GameState& state) {
   auto& input = get_input();
@@ -60,6 +96,14 @@ internal void initializeInputHandlers(GmContext* context, GameState& state) {
       }
     }
   });
+
+  context->commander.on<std::string>("command", [&state, context](std::string command) {
+    if (Gm_StringStartsWith(command, "time")) {
+      handleTimeCommand(context, state, command);
+    } else if (Gm_StringStartsWith(command, "level")) {
+      handleLevelCommand(context, state, command);
+    }
+  });
 }
 
 void initializeGame(GmContext* context, GameState& state) {
@@ -69,6 +113,7 @@ void initializeGame(GmContext* context, GameState& state) {
   initializeInputHandlers(context, state);
 
   World::initializeGameWorld(context, state);
+  World::loadLevel(context, state, "umimura");
   AnimationSystem::initializeAnimations(context, state);
   CameraSystem::initializeGameCamera(context, state);
   EntitySystem::initializeGameEntities(context, state);
