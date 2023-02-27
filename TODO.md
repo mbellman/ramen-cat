@@ -49,6 +49,7 @@ GAME
 
 ENGINE
 ------
+* mesh.useCloseTranslucency
 * cache textures
 * area lights
 * skylight contribution gradation/probe-based GI
