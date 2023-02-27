@@ -263,16 +263,6 @@ void updateGame(GmContext* context, GameState& state, float dt) {
     state.wasOnSolidGroundLastFrame = state.isOnSolidGround;
     state.totalDistanceTraveled += state.velocity.xz().magnitude() * dt;
 
-    if (input.didMoveMouse()) {
-      state.lastMouseMoveTime = get_scene_time();
-    }
-
-    if (time_since(state.lastMouseMoveTime) < 0.1f) {
-      state.cameraLookAtSpeedFactor = Gm_Lerpf(state.cameraLookAtSpeedFactor, 200.f, 20.f * dt);
-    } else {
-      state.cameraLookAtSpeedFactor = Gm_Lerpf(state.cameraLookAtSpeedFactor, 20.f, 20.f * dt);
-    }
-
     context->scene.sceneTime += dt;
   }
 
