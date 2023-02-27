@@ -3,6 +3,8 @@ EDITOR
 
 BUGS
 ----
+* stop ground particles from appearing when player is standing still
+
 * clouds causing object outline misbehavior behind atmosphere
 * air dash complete spin (somersault instead?)
 * fix onigiri texture
@@ -25,11 +27,9 @@ ASSETS
 GAME
 ----
 * level unloading (in progress)
-
 * variable camera radius
-* roosting birds
 
-* rooves
+* roosting birds
 * fancier dashing effects
 * sitting animation
 * slingshot velocity affected by dashing tier
@@ -50,6 +50,7 @@ GAME
 ENGINE
 ------
 * mesh.useCloseTranslucency
+
 * cache textures
 * area lights
 * skylight contribution gradation/probe-based GI

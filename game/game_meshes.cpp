@@ -277,6 +277,16 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
+    .name = "square-roof",
+    .hitboxScale = Vec3f(1.f, 0.25f, 1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/square-roof.obj");
+    },
+    .attributes = {
+      .roughness = 0.2f
+    }
+  },
+  {
     .name = "metal-panel",
     .create = []() {
       return Mesh::Cube();
