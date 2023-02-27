@@ -170,7 +170,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       return Mesh::Model("./game/assets/building-arch.obj");
     },
     .attributes = {
-      .roughness = 0.7f
+      .roughness = 0.3f
     }
   },
   {
