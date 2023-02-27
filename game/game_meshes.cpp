@@ -278,7 +278,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
   },
   {
     .name = "square-roof",
-    .hitboxScale = Vec3f(1.f, 0.25f, 1.f),
+    .hitboxScale = Vec3f(1.f, 0.15f, 1.f),
     .create = []() {
       return Mesh::Model("./game/assets/square-roof.obj");
     },

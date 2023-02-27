@@ -29,6 +29,7 @@ GAME
 * level unloading (in progress)
 * variable camera radius
 
+* run along walls before wall kicking
 * roosting birds
 * fancier dashing effects
 * sitting animation
