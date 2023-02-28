@@ -14,7 +14,6 @@ BUGS
 ASSETS
 ------
 * flowers
-* update mini rooves to look more japanese
 * staircase step improvements
 * stars
 * murals/paintings
@@ -28,6 +27,7 @@ GAME
 ----
 * level unloading (in progress)
 * variable camera radius
+* super jumps
 
 * run along walls before wall kicking
 * roosting birds
