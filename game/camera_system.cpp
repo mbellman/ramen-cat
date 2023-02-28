@@ -35,14 +35,46 @@ internal void updateThirdPersonCameraRadius(GmContext* context, GameState& state
   }
 }
 
-internal void updateThirdPersonCameraAltitude(GmContext* context, GameState& state, float dt) {
-  if (time_since(state.lastMouseMoveTime) < 1.f) {
+internal void updateThirdPersonCameraDirection(GmContext* context, GameState& state, float dt) {
+  auto& input = get_input();
+
+  if (
+    time_since(state.lastMouseMoveTime) < 1.f &&
+    !input.didPressKey(Key::SHIFT)
+  ) {
     // Defer to mouse camera control
     return;
   }
 
-  if (state.isMovingPlayerThisFrame && state.camera3p.altitude < 0.2f) {
-    state.camera3p.altitude += dt;
+
+  // Tilt the camera when walking on sloped surfaces
+  {
+    if (state.isMovingPlayerThisFrame && state.isOnSolidGround) {
+      auto& player = get_player();
+      float targetAltitude = 0.2f;
+      Vec3f motion = player.position - state.previousPlayerPosition;
+
+      targetAltitude -= motion.unit().y;
+
+      state.camera3p.altitude = Gm_Lerpf(state.camera3p.altitude, targetAltitude, 5.f * dt);
+    }
+  }
+
+  // Keep the camera centered behind the player
+  {
+    float targetAzimuth = state.camera3p.azimuth;
+
+    if (state.direction.x != 0.f && state.direction.z != 0.f) {
+      targetAzimuth = atan2f(state.direction.z, state.direction.x) + Gm_PI;
+    }
+
+    if (state.isMovingPlayerThisFrame && state.isOnSolidGround) {
+      state.camera3p.azimuth = Gm_LerpCircularf(state.camera3p.azimuth, targetAzimuth, 2.f * dt, Gm_PI);
+    }
+
+    if (input.didPressKey(Key::SHIFT)) {
+      state.camera3p.azimuth = targetAzimuth;
+    }
   }
 }
 
@@ -96,7 +128,7 @@ void CameraSystem::initializeGameCamera(GmContext* context, GameState& state) {
   state.camera3p.altitude = 0.1f;
 
   updateThirdPersonCameraRadius(context, state, 0.f);
-  updateThirdPersonCameraAltitude(context, state, 0.f);
+  updateThirdPersonCameraDirection(context, state, 0.f);
 
   get_camera().position = get_player().position + state.camera3p.calculatePosition();
 }
@@ -109,7 +141,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
   START_TIMING("handleGameCamera");
 
   updateThirdPersonCameraRadius(context, state, dt);
-  updateThirdPersonCameraAltitude(context, state, dt);
+  updateThirdPersonCameraDirection(context, state, dt);
   handleCameraOverride(context, state);
 
   auto& input = get_input();
@@ -153,28 +185,6 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
         } else if (state.cameraMode == CameraMode::FIRST_PERSON && state.isMovingPlayerThisFrame) {
           // Exit first-person mode whenever moving the player
           state.cameraMode = CameraMode::NORMAL;
-        }
-      }
-
-      // Handle centering the camera behind the player
-      {
-        float targetAzimuth = state.camera3p.azimuth;
-
-        if (state.direction.x != 0.f && state.direction.z != 0.f) {
-          targetAzimuth = atan2f(state.direction.z, state.direction.x) + Gm_PI;
-        }
-
-        // @todo restore this when adding gamepad/analog controls
-        // if (state.isMovingPlayerThisFrame) {
-        //   state.camera3p.azimuth = Gm_LerpCircularf(state.camera3p.azimuth, targetAzimuth, 2.f * dt, Gm_PI);
-        // }
-
-        if (input.didPressKey(Key::SHIFT)) {
-          state.camera3p.azimuth = targetAzimuth;
-
-          if (state.camera3p.altitude > 0.3f) {
-            state.camera3p.altitude = 0.3f;
-          }
         }
       }
     }

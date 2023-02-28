@@ -306,7 +306,7 @@ namespace MovementSystem {
             1.f
           );
 
-          if (time_since(state.lastJumpTime) < SUPER_JUMP_WINDOW_DURATION) {
+          if (time_since(state.lastAirDashTime) < SUPER_JUMP_WINDOW_DURATION) {
             // Super jump
             jumpFactor *= 2.f;
 

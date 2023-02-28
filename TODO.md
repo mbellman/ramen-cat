@@ -25,8 +25,7 @@ ASSETS
 
 GAME
 ----
-* variable camera radius
-* auto-camera behavior
+* variable camera radius control
 * level unloading (in progress)
 * level settings files
 
