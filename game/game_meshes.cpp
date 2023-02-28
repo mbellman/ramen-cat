@@ -535,7 +535,8 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .texture = "./game/assets/flat-railing.png",
       .normals = "./game/assets/flat-railing-normals.png",
       .roughness = 0.3f,
-      .useMipmaps = false
+      .useMipmaps = false,
+      .useCloseTranslucency = true
     }
   },
   {

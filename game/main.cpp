@@ -2,6 +2,9 @@
 
 #include "game.h"
 
+// @todo move to game constants
+constexpr static float MAX_DT = 1.f / 30.f;
+
 int main(int argc, char* argv[]) {
   using namespace Gamma;
 
@@ -19,8 +22,8 @@ int main(int argc, char* argv[]) {
     Gm_HandleFrameStart(context);
 
     // @todo handle this within the engine (?)
-    if (dt > 0.1f) {
-      dt = 0.1f;
+    if (dt > MAX_DT) {
+      dt = MAX_DT;
     }
 
     updateGame(context, state, dt);

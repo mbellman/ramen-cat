@@ -158,13 +158,13 @@ internal void handlePlayerMidairAnimation(GmContext* context, GameState& state, 
 
   rig.joints[PLAYER_FRONT_RIGHT_LEG_TOP].offset = Vec3f(0, 0.1f, 0.f) * airTimeFactor;
   rig.joints[PLAYER_FRONT_RIGHT_LEG_KNEE].offset = Vec3f(0, 0.2f, -0.3f) * airTimeFactor;
-  rig.joints[PLAYER_FRONT_RIGHT_LEG_KNEE].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), 0.5f);
+  rig.joints[PLAYER_FRONT_RIGHT_LEG_KNEE].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * airTimeFactor);
   rig.joints[PLAYER_FRONT_RIGHT_LEG_FOOT].offset = Vec3f(0, 0.6f + 0.2f * sinf(airTime * 3.f), -1.3f) * airTimeFactor;
   rig.joints[PLAYER_FRONT_RIGHT_LEG_FOOT].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * airTimeFactor);
 
   rig.joints[PLAYER_FRONT_LEFT_LEG_TOP].offset = Vec3f(0, 0.1f, 0.f) * airTimeFactor;
   rig.joints[PLAYER_FRONT_LEFT_LEG_KNEE].offset = Vec3f(0, 0.2f, -0.3f) * airTimeFactor;
-  rig.joints[PLAYER_FRONT_LEFT_LEG_KNEE].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), 0.5f);
+  rig.joints[PLAYER_FRONT_LEFT_LEG_KNEE].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * airTimeFactor);
   rig.joints[PLAYER_FRONT_LEFT_LEG_FOOT].offset = Vec3f(0, 0.6f + 0.2f * cosf(airTime * 3.f), -1.3f) * airTimeFactor;
   rig.joints[PLAYER_FRONT_LEFT_LEG_FOOT].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * airTimeFactor);
 

@@ -2,6 +2,7 @@
 
 uniform bool hasTexture = false;
 uniform bool hasNormalMap = false;
+uniform bool useCloseTranslucency = false;
 uniform sampler2D meshTexture;
 uniform sampler2D meshNormalMap;
 uniform float emissivity = 0.0;
@@ -41,9 +42,11 @@ void main() {
     discard;
   }
 
-  // if (gl_FragCoord.z < 0.95 && int(gl_FragCoord.x) % 2 == 0) {
-  //   discard;
-  // }
+  if (useCloseTranslucency) {
+    if (gl_FragCoord.z < 0.95 && int(gl_FragCoord.x) % 2 == 0) {
+      discard;
+    }
+  }
 
   float material = 0.0;
 

@@ -3,6 +3,7 @@ EDITOR
 
 BUGS
 ----
+* remove lights when unloading level
 * stop ground particles from appearing when player is standing still
 
 * clouds causing object outline misbehavior behind atmosphere
@@ -50,8 +51,6 @@ GAME
 
 ENGINE
 ------
-* mesh.useCloseTranslucency
-
 * cache textures
 * area lights
 * skylight contribution gradation/probe-based GI

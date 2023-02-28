@@ -270,6 +270,11 @@ namespace Gamma {
      * Controls whether we should use mipmaps for the mesh textures.
      */
     bool useMipmaps = true;
+    /**
+     * Controls whether mesh object pixels should be made 'translucent'
+     * when close up to the near plane.
+     */
+    bool useCloseTranslucency = false;
   };
 
   /**

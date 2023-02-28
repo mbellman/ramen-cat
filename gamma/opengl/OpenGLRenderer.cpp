@@ -528,6 +528,7 @@ namespace Gamma {
       if (glMesh->isMeshType(MeshType::DEFAULT)) {
         shaders.geometry.setBool("hasTexture", glMesh->hasTexture());
         shaders.geometry.setBool("hasNormalMap", glMesh->hasNormalMap());
+        shaders.geometry.setBool("useCloseTranslucency", glMesh->getSourceMesh()->useCloseTranslucency);
         shaders.geometry.setFloat("emissivity", glMesh->getSourceMesh()->emissivity);
         shaders.geometry.setFloat("roughness", glMesh->getSourceMesh()->roughness);
 

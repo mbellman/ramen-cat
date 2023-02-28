@@ -246,6 +246,20 @@ internal void unloadCurrentLevel(GmContext* context, GameState& state) {
   #endif
 }
 
+internal void copyMeshAttributes(Mesh& mesh, const MeshAttributes& attributes) {
+  mesh.type = attributes.type;
+  mesh.texture = attributes.texture;
+  mesh.normals = attributes.normals;
+  mesh.maxCascade = attributes.maxCascade;
+  mesh.animation = attributes.animation;
+  mesh.emissivity = attributes.emissivity;
+  mesh.roughness = attributes.roughness;
+  mesh.canCastShadows = attributes.canCastShadows;
+  mesh.silhouette = attributes.silhouette;
+  mesh.useMipmaps = attributes.useMipmaps;
+  mesh.useCloseTranslucency = attributes.useCloseTranslucency;
+}
+
 internal void loadGameMeshes(GmContext* context, GameState& state) {
   for (auto& asset : GameMeshes::meshAssets) {
     add_mesh(asset.name, asset.maxInstances, asset.create());
@@ -253,16 +267,7 @@ internal void loadGameMeshes(GmContext* context, GameState& state) {
     auto& mesh = *mesh(asset.name);
     auto& attributes = asset.attributes;
 
-    // @todo handle all mesh attributes
-    mesh.type = attributes.type;
-    mesh.animation = attributes.animation;
-    mesh.texture = attributes.texture;
-    mesh.normals = attributes.normals;
-    mesh.maxCascade = attributes.maxCascade;
-    mesh.canCastShadows = attributes.canCastShadows;
-    mesh.emissivity = attributes.emissivity;
-    mesh.roughness = attributes.roughness;
-    mesh.silhouette = attributes.silhouette;
+    copyMeshAttributes(mesh, attributes);
   }
 
   for (auto& asset : GameMeshes::dynamicMeshPieces) {
@@ -271,16 +276,7 @@ internal void loadGameMeshes(GmContext* context, GameState& state) {
     auto& mesh = *mesh(asset.name);
     auto& attributes = asset.attributes;
 
-    // @todo handle all mesh attributes
-    mesh.type = attributes.type;
-    mesh.animation = attributes.animation;
-    mesh.texture = attributes.texture;
-    mesh.normals = attributes.normals;
-    mesh.maxCascade = attributes.maxCascade;
-    mesh.canCastShadows = attributes.canCastShadows;
-    mesh.emissivity = attributes.emissivity;
-    mesh.roughness = attributes.roughness;
-    mesh.silhouette = attributes.silhouette;
+    copyMeshAttributes(mesh, attributes);
   }
 }
 
@@ -493,6 +489,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
 
     add_mesh("player", 1, Mesh::Model("./game/assets/cat.obj"));
     mesh("player")->roughness = 0.9f;
+    mesh("player")->useCloseTranslucency = true;
 
     add_mesh("ocean", 1, Mesh::Disc(12));
     add_mesh("ocean-floor", 1, Mesh::Disc(12));
