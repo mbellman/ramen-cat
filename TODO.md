@@ -25,7 +25,6 @@ ASSETS
 
 GAME
 ----
-* super jumps
 * variable camera radius
 * auto-camera behavior
 * level unloading (in progress)

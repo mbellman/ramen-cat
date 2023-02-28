@@ -306,6 +306,13 @@ namespace MovementSystem {
             1.f
           );
 
+          if (time_since(state.lastJumpTime) < SUPER_JUMP_WINDOW_DURATION) {
+            // Super jump
+            jumpFactor *= 2.f;
+
+            context->scene.fx.screenWarpTime = get_scene_time();
+          }
+
           state.velocity.y = DEFAULT_JUMP_Y_VELOCITY * jumpFactor;
           state.lastJumpTime = get_scene_time();
 
@@ -399,7 +406,7 @@ namespace MovementSystem {
           // When releasing the jump key shortly after a jump,
           // diminish y velocity more quickly to reduce the
           // total jump height.
-          state.velocity.y *= 1.f - 5.f * dt;
+          state.velocity.y *= 1.f - 2.f * dt;
         }
 
         state.velocity.y -= gravity;
