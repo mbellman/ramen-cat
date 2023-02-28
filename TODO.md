@@ -25,9 +25,11 @@ ASSETS
 
 GAME
 ----
-* level unloading (in progress)
-* variable camera radius
 * super jumps
+* variable camera radius
+* auto-camera behavior
+* level unloading (in progress)
+* level settings files
 
 * run along walls before wall kicking
 * roosting birds

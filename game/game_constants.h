@@ -39,7 +39,8 @@ constexpr static float WALL_KICK_WINDOW_DURATION = 0.3f;
  * Camera constants
  * ----------------
  */
-const static Gamma::Vec3f CAMERA_TITLE_SCREEN_POSITION = Gamma::Vec3f(-3985.f, 2235.f, -1320.f);
+// const static Gamma::Vec3f CAMERA_TITLE_SCREEN_POSITION = Gamma::Vec3f(-3985.f, 2235.f, -1320.f);
+const static Gamma::Vec3f CAMERA_TITLE_SCREEN_POSITION = Gamma::Vec3f(-4500.f, 5000.f, 1050.f);
 
 constexpr static float CAMERA_FIRST_PERSON_RADIUS  = 5.f;
 constexpr static float CAMERA_NORMAL_BASE_RADIUS = 300.f;
