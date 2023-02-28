@@ -673,6 +673,8 @@ internal void createNewObject(GmContext* context, GameState& state) {
     });
 
     selectObject(context, object);
+
+    World::rebuildDynamicMeshes(context);
   }
 
   updateCollisionPlanes(context, state);
@@ -720,6 +722,10 @@ internal void cloneSelectedObject(GmContext* context, GameState& state) {
   createObjectHistoryAction(context, ActionType::CREATE, object);
   updateCollisionPlanes(context, state);
 
+  if (editor.mode == EditorMode::OBJECTS) {
+    World::rebuildDynamicMeshes(context);
+  }
+
   editor.currentActionType = ActionType::POSITION;
 }
 
@@ -732,6 +738,10 @@ internal void deleteObject(GmContext* context, GameState& state, Object& object)
     remove_object(*originalObject);
 
     updateCollisionPlanes(context, state);
+
+    if (editor.mode == EditorMode::OBJECTS) {
+      World::rebuildDynamicMeshes(context);
+    }
 
     editor.isObjectSelected = false;
 
