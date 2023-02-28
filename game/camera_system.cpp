@@ -170,10 +170,6 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
       }
     }
 
-    // Disable player/ground particles in first-person mode
-    mesh("player")->disabled = state.cameraMode == CameraMode::FIRST_PERSON;
-    mesh("ground-particle")->disabled = state.cameraMode == CameraMode::FIRST_PERSON;
-
     // Wrap the azimuth to [0, Gm_TAU]
     state.camera3p.azimuth = Gm_Modf(state.camera3p.azimuth, Gm_TAU);
   }
