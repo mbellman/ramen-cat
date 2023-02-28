@@ -71,7 +71,7 @@ internal void handlePlayerDashingAnimation(GmContext* context, GameState& state,
 
   rig.joints[PLAYER_TORSO].offset = Vec3f(0, 0.05f, 0) * speedRatio * sinf(alpha);
   rig.joints[PLAYER_SPINE].offset = Vec3f(0, 0.2f, 0) * speedRatio * sinf(alpha - 1.f);
-  rig.joints[PLAYER_TAILBONE].offset = Vec3f(0, 0.4f, 0) * speedRatio * sinf(alpha - 0.5f);
+  rig.joints[PLAYER_TAILBONE].offset = Vec3f(0, 0.2f, 0) * speedRatio * sinf(alpha - 0.5f);
 
   rig.joints[PLAYER_FRONT_RIGHT_LEG_TOP].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * sinf(alpha);
   rig.joints[PLAYER_FRONT_RIGHT_LEG_KNEE].offset = Vec3f(0, 0, 0.5f) * speedRatio * sinf(alpha + 0.5f);
