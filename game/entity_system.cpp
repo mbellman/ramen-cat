@@ -153,7 +153,7 @@ internal void interactWithSlingshot(GmContext* context, GameState& state, Object
   Vec3f slingshotVelocity = Vec3f(xVelocity, yVelocity, zVelocity);
   Vec3f slingshotDirection = object.rotation.getDirection();
 
-  state.lastSlingshotInteractionTime = state.frameStartTime;
+  state.lastSlingshotInteractionTime = get_scene_time();
   state.startingSlingshotAngle = Gm_Modf(-atan2f(slingshotDirection.z, slingshotDirection.x) + Gm_HALF_PI, Gm_TAU);
   state.targetSlingshotAngle = Gm_Modf(-slingshotToPlayerAngle + Gm_HALF_PI, Gm_TAU);
   state.activeSlingshotRecord = object._record;
@@ -380,7 +380,7 @@ internal void handleHotAirBalloons(GmContext* context, GameState& state, float d
 
 internal void handleOnigiri(GmContext* context, GameState& state, float dt) {
   auto& player = get_player();
-  float alpha = 2.f * state.frameStartTime;
+  float alpha = 2.f * get_scene_time();
 
   // @todo generalize collectible behavior, store special entities for collectibles to determine appropriate handling
   for_moving_objects("onigiri", {
@@ -392,7 +392,7 @@ internal void handleOnigiri(GmContext* context, GameState& state, float dt) {
     } else {
       float yOffset = sinf(alpha + float(object._record.id) * 0.5f);
 
-      object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), state.frameStartTime);
+      object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), get_scene_time());
       object.position = initial.position + Vec3f(0, yOffset, 0) * 10.f;
 
       if ((object.position - player.position).magnitude() < 100.f) {

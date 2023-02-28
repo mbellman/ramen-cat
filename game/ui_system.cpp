@@ -69,8 +69,8 @@ internal void showNextQueuedDialogue(GmContext* context, GameState& state) {
   dialogue.done = false;
   dialogue.blocking = true;
 
-  dialogue.startTime = state.frameStartTime;
-  dialogue.lastCharacterTime = state.frameStartTime;
+  dialogue.startTime = get_scene_time();
+  dialogue.lastCharacterTime = get_scene_time();
   dialogue.duration = Gm_FLOAT_MAX;
 }
 
@@ -170,8 +170,8 @@ void UISystem::showDialogue(GmContext* context, GameState& state, const std::str
   dialogue.done = false;
   dialogue.blocking = options.blocking;
   dialogue.queue = { text };
-  dialogue.startTime = state.frameStartTime;
-  dialogue.lastCharacterTime = state.frameStartTime;
+  dialogue.startTime = get_scene_time();
+  dialogue.lastCharacterTime = get_scene_time();
   dialogue.duration = options.duration;
 }
 

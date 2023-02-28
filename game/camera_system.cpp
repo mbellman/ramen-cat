@@ -22,10 +22,6 @@ internal void updateThirdPersonCameraRadius(GmContext* context, GameState& state
 
   state.camera3p.radius = baseRadius + altitudeRadius;
 
-  if (state.isMovingPlayerThisFrame && state.camera3p.altitude < 0.2f) {
-    state.camera3p.altitude += dt;
-  }
-
   if (
     state.canPerformWallKick &&
     state.lastWallBumpTime != 0.f &&
@@ -36,6 +32,17 @@ internal void updateThirdPersonCameraRadius(GmContext* context, GameState& state
     float alpha = time_since(state.lastWallBumpTime) / WALL_KICK_WINDOW_DURATION;
 
     state.camera3p.radius = Gm_Lerpf(calculatedRadius, calculatedRadius * 0.6f, alpha);
+  }
+}
+
+internal void updateThirdPersonCameraAltitude(GmContext* context, GameState& state, float dt) {
+  if (time_since(state.lastMouseMoveTime) < 1.f) {
+    // Defer to mouse camera control
+    return;
+  }
+
+  if (state.isMovingPlayerThisFrame && state.camera3p.altitude < 0.2f) {
+    state.camera3p.altitude += dt;
   }
 }
 
@@ -89,6 +96,7 @@ void CameraSystem::initializeGameCamera(GmContext* context, GameState& state) {
   state.camera3p.altitude = 0.1f;
 
   updateThirdPersonCameraRadius(context, state, 0.f);
+  updateThirdPersonCameraAltitude(context, state, 0.f);
 
   get_camera().position = get_player().position + state.camera3p.calculatePosition();
 }
@@ -101,6 +109,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
   START_TIMING("handleGameCamera");
 
   updateThirdPersonCameraRadius(context, state, dt);
+  updateThirdPersonCameraAltitude(context, state, dt);
   handleCameraOverride(context, state);
 
   auto& input = get_input();
@@ -284,7 +293,7 @@ void CameraSystem::setTargetCameraState(GmContext* context, GameState& state, co
   state.targetCameraState = cameraState;
 
   state.useCameraOverride = true;
-  state.cameraOverrideStartTime = state.frameStartTime;
+  state.cameraOverrideStartTime = get_scene_time();
 }
 
 void CameraSystem::restoreOriginalCameraState(GmContext* context, GameState& state) {
@@ -293,6 +302,6 @@ void CameraSystem::restoreOriginalCameraState(GmContext* context, GameState& sta
   
   state.targetCameraState = state.originalCameraState;
 
-  state.cameraOverrideStartTime = state.frameStartTime;
+  state.cameraOverrideStartTime = get_scene_time();
   state.useCameraOverride = false;
 }

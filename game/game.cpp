@@ -163,7 +163,6 @@ void updateGame(GmContext* context, GameState& state, float dt) {
 
   // Set start-of-frame variables
   {
-    state.frameStartTime = get_scene_time();
     state.isMovingPlayerThisFrame = false;
   }
 
@@ -180,12 +179,12 @@ void updateGame(GmContext* context, GameState& state, float dt) {
   {
     if (state.gameStartTime == 0.f) {
       if (input.didPressKey(Key::SPACE)) {
-        state.gameStartTime = state.frameStartTime;
+        state.gameStartTime = get_scene_time();
       }
 
       #if GAMMA_DEVELOPER_MODE
         if (input.didPressKey(Key::ENTER)) {
-          state.gameStartTime = state.frameStartTime - 2.9f;
+          state.gameStartTime = get_scene_time() - 2.9f;
         }
       #endif
     }
@@ -199,7 +198,7 @@ void updateGame(GmContext* context, GameState& state, float dt) {
       player.position = state.lastSolidGroundPosition;
 
       state.velocity = Vec3f(0.f);
-      state.lastTimeOnSolidGround = state.frameStartTime;
+      state.lastTimeOnSolidGround = get_scene_time();
 
       UISystem::showDialogue(context, state, "You fell down.\nPlease be careful next time.", {
         .duration = 3.f,
@@ -262,6 +261,10 @@ void updateGame(GmContext* context, GameState& state, float dt) {
     state.previousPlayerPosition = player.position;
     state.wasOnSolidGroundLastFrame = state.isOnSolidGround;
     state.totalDistanceTraveled += state.velocity.xz().magnitude() * dt;
+
+    if (input.didMoveMouse()) {
+      state.lastMouseMoveTime = get_scene_time();
+    }
 
     context->scene.sceneTime += dt;
   }

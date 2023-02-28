@@ -48,7 +48,7 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
 
     state.velocity.y = 0.f;
     state.lastSolidGroundPosition = player.position;
-    state.lastTimeOnSolidGround = state.frameStartTime;
+    state.lastTimeOnSolidGround = get_scene_time();
   } else if (plane.nDotU < -0.7f && state.velocity.y > 0.f) {
     // When hitting a downward-facing plane from the underside,
     // immediately negate any upward velocity.
@@ -76,7 +76,7 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
         state.canPerformWallKick = true;
       }
 
-      state.lastWallBumpTime = state.frameStartTime;
+      state.lastWallBumpTime = get_scene_time();
       state.lastWallBumpVelocity = state.velocity;
     }
   }
@@ -125,7 +125,7 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
 
         state.velocity.y = 0.f;
         state.lastSolidGroundPosition = player.position;
-        state.lastTimeOnSolidGround = state.frameStartTime;
+        state.lastTimeOnSolidGround = get_scene_time();
 
         didCollideWithSolidGround = true;
       }
@@ -329,12 +329,12 @@ namespace MovementSystem {
           Vec3f kickDirection = (state.lastWallBumpNormal + Vec3f(0, 1.f, 0)).unit();
 
           state.velocity = wallPlaneVelocity + kickDirection * state.lastWallBumpVelocity.magnitude();
-          state.lastWallKickTime = state.frameStartTime;
+          state.lastWallKickTime = get_scene_time();
 
           state.canPerformAirDash = true;
           state.canPerformWallKick = true;
 
-          context->scene.fx.screenWarpTime = state.frameStartTime;
+          context->scene.fx.screenWarpTime = get_scene_time();
         } else if (state.canPerformAirDash) {
           // Air dash
           Vec3f airDashDirection = camera.orientation.getDirection();
@@ -360,8 +360,8 @@ namespace MovementSystem {
             state.dashLevel++;
           }
 
-          state.lastAirDashTime = state.frameStartTime;
-          context->scene.fx.screenWarpTime = state.frameStartTime;
+          state.lastAirDashTime = get_scene_time();
+          context->scene.fx.screenWarpTime = get_scene_time();
         }
       }
     }

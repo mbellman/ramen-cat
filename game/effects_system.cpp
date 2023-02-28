@@ -45,7 +45,7 @@ internal void handlePlayerParticles(GmContext* context, GameState& state, float 
           particle.scale = Vec3f(0.f);
         }
 
-        state.lastGroundParticleSpawnTime = state.frameStartTime;
+        state.lastGroundParticleSpawnTime = get_scene_time();
 
         commit(particle);
 
@@ -76,15 +76,15 @@ internal void handlePlayerParticles(GmContext* context, GameState& state, float 
             }
             // Dash level 2
             case 2: {
-              r = fractf(state.frameStartTime);
+              r = fractf(get_scene_time());
               r *= 2.f;
               if (r > 1.f) r = 2.f - r;
 
-              g = fractf(state.frameStartTime + 0.33f);
+              g = fractf(get_scene_time() + 0.33f);
               g *= 2.f;
               if (g > 1.f) g = 2.f - g;
 
-              b = fractf(state.frameStartTime + 0.66f);
+              b = fractf(get_scene_time() + 0.66f);
               b *= 2.f;
               if (b > 1.f) b = 2.f - b;
 
@@ -99,7 +99,7 @@ internal void handlePlayerParticles(GmContext* context, GameState& state, float 
           particle.scale = Vec3f(0.f);
         }
 
-        state.lastAirParticleSpawnTime = state.frameStartTime;
+        state.lastAirParticleSpawnTime = get_scene_time();
 
         commit(particle);
 
