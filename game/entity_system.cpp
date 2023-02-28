@@ -325,13 +325,14 @@ internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
 internal void handleLanterns(GmContext* context, GameState& state, float dt) {
   for_moving_objects("lantern", {
     auto& basePosition = initial.position;
-    float a = get_scene_time() + basePosition.z / 200.f;
-    float angle = 0.2f * sinf(a);
+    float alpha = get_scene_time() * 1.5f + basePosition.z / 200.f;
+    float sineAlpha = sinf(alpha);
+    float swing = 0.2f * sineAlpha;
 
-    float x = LANTERN_HORIZONTAL_DRIFT * sin(a);
+    float x = LANTERN_HORIZONTAL_DRIFT * sineAlpha;
     float y = LANTERN_VERTICAL_DRIFT * powf(Gm_Absf(x) / LANTERN_HORIZONTAL_DRIFT, 2);
 
-    object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 0, 1.f), angle); 
+    object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 0, 1.f), swing); 
     object.position = basePosition + Vec3f(x, y, 0);
 
     commit(object);
