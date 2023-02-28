@@ -424,20 +424,14 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
     float pitch = state.currentPitch;
     Vec3f movement = player.position - state.previousPlayerPosition;
 
-    // Only turn the player character when not winding up a wall kick.
-    // Wall kick wind-ups use a custom rotation animation.
-    if (
+    // Only rotate the player character when not winding up a wall kick,
+    // and when moving. Wall kick wind-ups use a custom rotation animation.
+    if ((
       time_since(state.lastWallBumpTime) > WALL_KICK_WINDOW_DURATION ||
       state.lastWallKickTime > state.lastWallBumpTime
-    ) {
-      if (state.velocity.magnitude() > 20.f) {
-        yaw = atan2f(movement.x, movement.z) + Gm_PI;
-        pitch = -1.f * atan2f(movement.y, movement.xz().magnitude());
-      }
-
-      if (!state.isOnSolidGround) {
-        pitch *= 1.f / (1.f + time_since(state.lastTimeOnSolidGround));
-      }
+    ) && state.velocity.magnitude() > 20.f) {
+      yaw = atan2f(movement.x, movement.z) + Gm_PI;
+      pitch = -1.f * atan2f(movement.y, movement.xz().magnitude());
     }
 
     if (state.lastAirDashTime != 0.f && time_since(state.lastAirDashTime) < 0.5f) {
