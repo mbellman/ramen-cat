@@ -224,6 +224,8 @@ void EffectsSystem::updateDayNightCycleLighting(GmContext* context, GameState& s
     mesh("windows-1")->emissivity = lightSourceEmissivity;
     mesh("window-2")->emissivity = lightSourceEmissivity;
     mesh("lamp")->emissivity = lightSourceEmissivity;
+    mesh("ramen-lamp")->emissivity = 0.1f + lightSourceEmissivity;
+
     mesh("lantern")->emissivity = lanternEmissivity;
   }
 

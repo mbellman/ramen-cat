@@ -26,7 +26,8 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     },
     .attributes = {
       .texture = "./game/assets/lantern.png",
-      .emissivity = 0.5f
+      .emissivity = 0.5f,
+      .useMipmaps = false
     }
   },
   {
@@ -590,6 +591,26 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     },
     .attributes = {
       .texture = "./game/assets/wood-beam.png"
+    }
+  },
+  {
+    .name = "ramen-stall-2",
+    .create = []() {
+      return Mesh::Model("./game/assets/ramen-stall-2.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/ramen-stall-2.png"
+    }
+  },
+  {
+    .name = "ramen-lamp",
+    .hitboxScale = Vec3f(0.7f, 1.2f, 0.7f),
+    .create = []() {
+      return Mesh::Model("./game/assets/ramen-lamp.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/ramen-lamp.png",
+      .useMipmaps = false
     }
   },
   {
