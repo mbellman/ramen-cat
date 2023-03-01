@@ -613,6 +613,20 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .useMipmaps = false
     }
   },
+
+  {
+    .name = "ramen-sign",
+    .hitboxScale = Vec3f(1.f, 0.25f, 0.05f),
+    .hitboxOffset = Vec3f(0, -1.f, 0),
+    .create = []() {
+      return Mesh::Model("./game/assets/ramen-sign.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/ramen-sign.png",
+      .roughness = 1.f,
+      .useMipmaps = false
+    }
+  },
   {
     .name = "ramen-bowl",
     .hitboxScale = Vec3f(1.f, 0.4f, 1.f),
