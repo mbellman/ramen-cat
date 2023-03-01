@@ -7,7 +7,7 @@ BUGS
 * stop ground particles from appearing when player is standing still
 
 * clouds causing object outline misbehavior behind atmosphere
-* air dash complete spin (somersault instead?)
+* air dash complete spin
 * fix onigiri texture
 * imported models are inverted along X
 * avoid phasing through corners
@@ -15,7 +15,6 @@ BUGS
 ASSETS
 ------
 * flowers
-* staircase step improvements
 * stars
 * murals/paintings
 * weeds LoD
@@ -40,7 +39,6 @@ GAME
 * npc model improvements/highlight when nearby
 * hot-reloading NPCs/entities data
 * avoid running off edges without input
-* food carts
 * lens flare
 * capes/gliding
 * npc movement paths

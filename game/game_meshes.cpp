@@ -584,6 +584,15 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
+    .name = "ramen-stall",
+    .create = []() {
+      return Mesh::Model("./game/assets/ramen-stall.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/wood-beam.png"
+    }
+  },
+  {
     .name = "ramen-bowl",
     .hitboxScale = Vec3f(1.f, 0.4f, 1.f),
     .create = []() {
