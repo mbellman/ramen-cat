@@ -298,8 +298,6 @@ namespace MovementSystem {
       if (input.didPressKey(Key::SPACE)) {
         if (state.isOnSolidGround) {
           // Regular jump
-          float xzSpeed = state.velocity.xz().magnitude();
-
           float jumpFactor = (
             state.dashLevel == 1 ? 1.5f :
             state.dashLevel == 2 ? 2.f :
