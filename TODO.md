@@ -6,7 +6,6 @@ BUGS
 * remove lights when unloading level
 * stop ground particles from appearing when player is standing still
 
-* velocity becoming NaN (???)
 * clouds causing object outline misbehavior behind atmosphere
 * air dash complete spin
 * fix onigiri texture

@@ -54,9 +54,11 @@ internal void updateThirdPersonCameraDirection(GmContext* context, GameState& st
       float targetAltitude = 0.2f;
       Vec3f motion = player.position - state.previousPlayerPosition;
 
-      targetAltitude -= motion.unit().y;
+      if (motion.magnitude() > 0.f) {
+        targetAltitude -= motion.unit().y;
 
-      state.camera3p.altitude = Gm_Lerpf(state.camera3p.altitude, targetAltitude, 5.f * dt);
+        state.camera3p.altitude = Gm_Lerpf(state.camera3p.altitude, targetAltitude, 5.f * dt);
+      }
     }
   }
 
