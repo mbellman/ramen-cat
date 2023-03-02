@@ -29,6 +29,7 @@ GAME
 * level unloading (in progress)
 * level settings files
 
+* dynamic tail animations
 * run along walls before wall kicking
 * roosting birds
 * fancier dashing effects

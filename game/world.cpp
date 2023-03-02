@@ -491,6 +491,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
     mesh("player")->texture = "./game/assets/cat.png";
     mesh("player")->roughness = 0.9f;
     mesh("player")->emissivity = 0.2f;
+    mesh("player")->useMipmaps = false;
     mesh("player")->useCloseTranslucency = true;
 
     add_mesh("ocean", 1, Mesh::Disc(12));
