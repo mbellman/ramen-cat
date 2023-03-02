@@ -622,7 +622,11 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       return Mesh::Model("./game/assets/ramen-sign.obj");
     },
     .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
       .texture = "./game/assets/ramen-sign.png",
+      .animation = {
+        .type = PresetAnimationType::CLOTH
+      },
       .roughness = 1.f,
       .useMipmaps = false
     }

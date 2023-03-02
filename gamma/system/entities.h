@@ -193,7 +193,8 @@ namespace Gamma {
     NONE,
     FLOWER,
     LEAF,
-    BIRD
+    BIRD,
+    CLOTH
   };
 
   /**

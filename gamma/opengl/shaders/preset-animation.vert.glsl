@@ -61,6 +61,9 @@ void main() {
     case BIRD:
       world_position.xyz += getBirdAnimationOffset(vertexPosition, world_position.xyz);
       break;
+    case CLOTH:
+      world_position.xyz += getClothAnimationOffset(vertexPosition, world_position.xyz);
+      break;
   }
 
   gl_Position = matProjection * matView * world_position;

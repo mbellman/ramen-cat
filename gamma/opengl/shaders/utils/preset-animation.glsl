@@ -2,6 +2,7 @@
 #define FLOWER 1
 #define LEAF 2
 #define BIRD 3
+#define CLOTH 4
 
 struct PresetAnimation {
   int type;
@@ -47,4 +48,14 @@ vec3 getBirdAnimationOffset(vec3 vertex_position, vec3 world_position) {
   float y_offset = pow(abs(sin(rate)), 2) * sin(rate * 6.0 + id);
 
   return vec3(0, displacement_factor * y_offset, 0);
+}
+
+vec3 getClothAnimationOffset(vec3 vertex_position, vec3 world_position) {
+  float rate = 3.0 * time * animation.speed;
+
+  float displacement_factor = sqrt(abs(vertex_position.y));
+  float x = displacement_factor * 2.0 * sin(rate + vertex_position.y * 10.0 + vertex_position.x * 5.0);
+  float z = displacement_factor * cos(rate + vertex_position.y * 10.0 + vertex_position.x * 10.0);
+
+  return vec3(x, 0, z);
 }
