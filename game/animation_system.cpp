@@ -23,37 +23,51 @@ using namespace Gamma;
 #define PLAYER_BACK_LEFT_LEG_TOP 14
 #define PLAYER_BACK_LEFT_LEG_KNEE 15
 #define PLAYER_BACK_LEFT_LEG_FOOT 16
+#define PLAYER_TAIL_JOINT_1 17
+#define PLAYER_TAIL_JOINT_2 18
+
+internal float wsinf(float x) {
+  float mx = Gm_Modf(-x + Gm_HALF_PI, Gm_PI);
+
+  return (cosf(mx) * 0.5f + 0.5f) * (mx / (mx + 1.f)) * 2.595f * 2.f - 1.f;
+}
+
+internal float wcosf(float x) {
+  float mx = Gm_Modf(-x, Gm_PI);
+
+  return (cosf(mx) * 0.5f + 0.5f) * (mx / (mx + 1.f)) * 2.595f * 2.f - 1.f;
+}
 
 internal void handlePlayerTrottingAnimation(GameState& state, float dt) {
   auto& rig = state.animation.playerRig;
 
   float speed = state.velocity.xz().magnitude();
   float speedRatio = speed / (speed + MAXIMUM_HORIZONTAL_GROUND_SPEED);
-  float alpha = state.totalDistanceTraveled * 0.06f;
+  float alpha = state.totalDistanceTraveled * 0.03f;
 
-  rig.joints[PLAYER_HEAD].offset = Vec3f(0, 0.05f, 0) * speedRatio * sinf(alpha * 0.75f);
-  rig.joints[PLAYER_NECK].offset = Vec3f(0, 0.15f, 0) * speedRatio * sinf(alpha * 0.75f);
+  rig.joints[PLAYER_HEAD].offset = Vec3f(0, 0.05f, 0) * speedRatio * sinf(alpha * 2.f);
+  rig.joints[PLAYER_NECK].offset = Vec3f(0, 0.15f, 0) * speedRatio * sinf(alpha * 2.f);
   rig.joints[PLAYER_HEAD].rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), state.turnFactor);
   rig.joints[PLAYER_NECK].rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), state.turnFactor * 0.5f);
 
   rig.joints[PLAYER_TORSO].offset = Vec3f(0, 0.05f, 0) * speedRatio * sinf(alpha);
   rig.joints[PLAYER_SPINE].offset = Vec3f(0, 0.1f, 0) * speedRatio * sinf(alpha + 1.f);
 
-  rig.joints[PLAYER_FRONT_RIGHT_LEG_TOP].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * sinf(alpha);
-  rig.joints[PLAYER_FRONT_RIGHT_LEG_KNEE].offset = Vec3f(0, 0, 0.2f) * speedRatio * sinf(alpha + 0.5f);
-  rig.joints[PLAYER_FRONT_RIGHT_LEG_FOOT].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * sinf(alpha + 1.f);
+  rig.joints[PLAYER_FRONT_RIGHT_LEG_TOP].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * wsinf(alpha);
+  rig.joints[PLAYER_FRONT_RIGHT_LEG_KNEE].offset = Vec3f(0, 0, 0.4f) * speedRatio * wsinf(alpha + 0.8f);
+  rig.joints[PLAYER_FRONT_RIGHT_LEG_FOOT].offset = Vec3f(0, 0.2f, 1.2f) * speedRatio * wsinf(alpha + 1.f);
 
-  rig.joints[PLAYER_FRONT_LEFT_LEG_TOP].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * cosf(alpha);
-  rig.joints[PLAYER_FRONT_LEFT_LEG_KNEE].offset = Vec3f(0, 0, 0.2f) * speedRatio * cosf(alpha + 0.5f);
-  rig.joints[PLAYER_FRONT_LEFT_LEG_FOOT].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * cosf(alpha + 1.f);
+  rig.joints[PLAYER_FRONT_LEFT_LEG_TOP].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * wcosf(alpha);
+  rig.joints[PLAYER_FRONT_LEFT_LEG_KNEE].offset = Vec3f(0, 0, 0.4f) * speedRatio * wcosf(alpha + 0.8f);
+  rig.joints[PLAYER_FRONT_LEFT_LEG_FOOT].offset = Vec3f(0, 0.2f, 1.2f) * speedRatio * wcosf(alpha + 1.f);
 
-  rig.joints[PLAYER_BACK_RIGHT_LEG_TOP].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * sinf(alpha - 0.5f);
-  rig.joints[PLAYER_BACK_RIGHT_LEG_KNEE].offset = Vec3f(0, 0, 0.2f) * speedRatio * sinf(alpha);
-  rig.joints[PLAYER_BACK_RIGHT_LEG_FOOT].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * sinf(alpha + 0.5f);
+  rig.joints[PLAYER_BACK_RIGHT_LEG_TOP].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * wsinf(alpha);
+  rig.joints[PLAYER_BACK_RIGHT_LEG_KNEE].offset = Vec3f(0, 0, 0.4f) * speedRatio * wsinf(alpha + 0.5f);
+  rig.joints[PLAYER_BACK_RIGHT_LEG_FOOT].offset = Vec3f(0, 0.2f, 1.2f) * speedRatio * wsinf(alpha + 1.5f);
 
-  rig.joints[PLAYER_BACK_LEFT_LEG_TOP].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * cosf(alpha - 0.5f);
-  rig.joints[PLAYER_BACK_LEFT_LEG_KNEE].offset = Vec3f(0, 0, 0.2f) * speedRatio * cosf(alpha);
-  rig.joints[PLAYER_BACK_LEFT_LEG_FOOT].offset = Vec3f(0, 0.2f, 0.8f) * speedRatio * cosf(alpha + 0.5f);
+  rig.joints[PLAYER_BACK_LEFT_LEG_TOP].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * wcosf(alpha);
+  rig.joints[PLAYER_BACK_LEFT_LEG_KNEE].offset = Vec3f(0, 0, 0.4f) * speedRatio * wcosf(alpha + 0.5f);
+  rig.joints[PLAYER_BACK_LEFT_LEG_FOOT].offset = Vec3f(0, 0.2f, 1.2f) * speedRatio * wcosf(alpha + 1.5f);
 }
 
 internal void handlePlayerDashingAnimation(GmContext* context, GameState& state, float dt) {
@@ -206,6 +220,17 @@ internal void handlePlayerAnimation(GmContext* context, GameState& state, float 
     }
   }
 
+  // @temporary
+  // @todo use different tail animations
+  {
+    auto& rig = state.animation.playerRig;
+
+    float t = get_scene_time();
+
+    rig.joints[PLAYER_TAIL_JOINT_1].offset = Vec3f(0, sinf(t * 2.f) * cosf(t * 1.1f) * 0.05f, 0);
+    rig.joints[PLAYER_TAIL_JOINT_2].offset = Vec3f(cosf(t * 2.f) * sinf(t * 0.7f) * 0.2f, sinf(t * 2.f + 1.f) * cosf(t * 1.7f) * 0.1f - 0.2f, 0);
+  }
+
   // Recalculate joint rotation matrices
   {
     for (auto& joint : state.animation.playerRig.joints) {
@@ -338,6 +363,18 @@ void AnimationSystem::initializeAnimations(GmContext* context, GameState& state)
     // Rear left leg bottom [16]
     rig.joints.push_back({
       .position = Vec3f(0.303f, -0.898f, 0.358f),
+      .rotation = Quaternion(1.f, 0, 0, 0)
+    });
+
+    // Tail joint 1 [17]
+    rig.joints.push_back({
+      .position = Vec3f(0, 0.1f, 0.7f),
+      .rotation = Quaternion(1.f, 0, 0, 0)
+    });
+
+    // Tail joint 2 [18]
+    rig.joints.push_back({
+      .position = Vec3f(0, 0.2f, 1.f),
       .rotation = Quaternion(1.f, 0, 0, 0)
     });
 

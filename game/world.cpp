@@ -488,7 +488,9 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
     mesh("platform")->disabled = true;
 
     add_mesh("player", 1, Mesh::Model("./game/assets/cat.obj"));
+    mesh("player")->texture = "./game/assets/cat.png";
     mesh("player")->roughness = 0.9f;
+    mesh("player")->emissivity = 0.2f;
     mesh("player")->useCloseTranslucency = true;
 
     add_mesh("ocean", 1, Mesh::Disc(12));
