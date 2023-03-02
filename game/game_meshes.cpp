@@ -31,6 +31,18 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
+    .name = "paper-lantern",
+    .moving = true,
+    .create = []() {
+      return Mesh::Model("./game/assets/paper-lantern.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/paper-lantern.png",
+      .emissivity = 0.5f,
+      .useMipmaps = false
+    }
+  },
+  {
     .name = "small-light",
     .defaultColor = Vec3f(1.f, 0.9f, 0.7f),
     .hitboxScale = Vec3f(1.5f),
@@ -604,6 +616,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
   },
   {
     .name = "ramen-lamp",
+    .moving = true,
     .hitboxScale = Vec3f(0.7f, 1.2f, 0.7f),
     .create = []() {
       return Mesh::Model("./game/assets/ramen-lamp.obj");

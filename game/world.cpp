@@ -523,6 +523,20 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
 
   player.scale = Vec3f(PLAYER_RADIUS);
 
+  // @temporary
+  {
+    add_mesh("market-particles", 1000, Mesh::Particles(true));
+
+    auto& particles = mesh("market-particles")->particles;
+
+    particles.spawn = Vec3f(270.f, 1500.f, -3500.f);
+    particles.spread = 1500.f;
+    particles.medianSize = 1.5f;
+    particles.sizeVariation = 0.5f;
+    particles.medianSpeed = 1.f;
+    particles.deviation = 20.f;
+  }
+
   // @todo make spawn position/direction configurable based on level
   // umimura-alpha
   // player.position = Vec3f(-30.f, 243.f, 2200.f);
