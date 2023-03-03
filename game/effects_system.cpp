@@ -227,6 +227,7 @@ void EffectsSystem::updateDayNightCycleLighting(GmContext* context, GameState& s
     mesh("ramen-lamp")->emissivity = 0.3f + 0.7f * lightSourceEmissivity;
     mesh("ramen-sign")->emissivity = 0.3f * lightSourceEmissivity;
     mesh("paper-lantern")->emissivity = 0.2f + 0.4f * lightSourceEmissivity;
+    mesh("umimura-tree-branches")->emissivity = lightSourceEmissivity;
 
     mesh("lantern")->emissivity = lanternEmissivity;
   }

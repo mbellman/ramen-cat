@@ -733,6 +733,33 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .normals = "./game/assets/stairs-1-normals.png",
       .roughness = 0.3f
     }
+  },
+
+  /**
+   * Level-specific structures
+   * ------------------------
+   */
+  {
+    .name = "umimura-tree-base",
+    .defaultScale = Vec3f(1000.f),
+    .maxInstances = 2,
+    .create = []() {
+      return Mesh::Model("./game/assets/umimura-tree-base.obj");
+    },
+    .attributes = {
+      .roughness = 0.2f
+    }
+  },
+  {
+    .name = "umimura-tree-branches",
+    .defaultScale = Vec3f(1000.f),
+    .maxInstances = 2,
+    .create = []() {
+      return Mesh::Model("./game/assets/umimura-tree-branches.obj");
+    },
+    .attributes = {
+      .emissivity = 0.5f
+    }
   }
 };
 

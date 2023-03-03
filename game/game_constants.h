@@ -66,4 +66,4 @@ constexpr static float DASH_PARTICLE_SPAWN_DELAY = 1.f / float(TOTAL_DASH_PARTIC
 
 constexpr static float DASH_PARTICLE_SIZE = 3.5f;
 
-constexpr static float INITIAL_DAY_NIGHT_CYCLE_TIME = 2.f;
+constexpr static float INITIAL_DAY_NIGHT_CYCLE_TIME = 1.5f;
