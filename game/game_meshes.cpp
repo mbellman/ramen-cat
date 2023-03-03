@@ -275,8 +275,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       return Mesh::Model("./game/assets/bathhouse-roof-spire.obj");
     },
     .attributes = {
-      .normals = "./game/assets/metal-guard-normals.png",
-      .roughness = 0.8f
+      .roughness = 0.3f
     }
   },
   {

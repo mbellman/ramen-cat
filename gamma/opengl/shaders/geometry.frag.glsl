@@ -43,7 +43,7 @@ void main() {
   }
 
   if (useCloseTranslucency) {
-    if (gl_FragCoord.z < 0.95 && int(gl_FragCoord.x) % 2 == 0) {
+    if (gl_FragCoord.z < 0.95 && int(gl_FragCoord.x) % 3 < 2) {
       discard;
     }
   }

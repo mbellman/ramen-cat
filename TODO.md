@@ -5,6 +5,7 @@ BUGS
 ----
 * remove lights when unloading level
 * stop ground particles from appearing when player is standing still
+* head jerking when switching animations
 
 * clouds causing object outline misbehavior behind atmosphere
 * air dash complete spin
@@ -14,20 +15,24 @@ BUGS
 
 ASSETS
 ------
+* vines
+* streetlamps
 * flowers
+* columns
+* signs/neon
 * stars
 * murals/paintings
+* painted domes/rooves
+* other food collectibles
 * weeds LoD
 * lamp LoD
-* vines
-* signs/neon
-* other food collectibles
 
 GAME
 ----
 * variable camera radius control
 * level unloading (in progress)
 * level settings files
+* player visibility light
 
 * dynamic tail animations
 * run along walls before wall kicking
