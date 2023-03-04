@@ -102,13 +102,30 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
-    .name = "vines",
+    .name = "vines-horizontal",
+    .hitboxScale = Vec3f(1.f, 0.3f, 0.3f),
     .create = []() {
-      return Mesh::Model("./game/assets/vines.obj");
+      return Mesh::Model("./game/assets/vines-horizontal.obj");
     },
     .attributes = {
       .type = MeshType::PRESET_ANIMATED,
-      .texture = "./game/assets/vines.png",
+      .texture = "./game/assets/vines-horizontal.png",
+      .animation = {
+        .type = PresetAnimationType::FLOWER,
+        .factor = 5.f
+      },
+      .useMipmaps = false
+    }
+  },
+  {
+    .name = "vines-vertical",
+    .hitboxScale = Vec3f(0.3f, 0.3f, 0.3f),
+    .create = []() {
+      return Mesh::Model("./game/assets/vines-vertical.obj");
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .texture = "./game/assets/vines-vertical.png",
       .animation = {
         .type = PresetAnimationType::FLOWER,
         .factor = 5.f
