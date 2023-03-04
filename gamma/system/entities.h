@@ -276,6 +276,10 @@ namespace Gamma {
      * when close up to the near plane.
      */
     bool useCloseTranslucency = false;
+    /**
+     * Controls whether geometry is textured across the xz plane.
+     */
+    bool useXzPlaneTexturing = false;
   };
 
   /**

@@ -258,6 +258,7 @@ internal void copyMeshAttributes(Mesh& mesh, const MeshAttributes& attributes) {
   mesh.silhouette = attributes.silhouette;
   mesh.useMipmaps = attributes.useMipmaps;
   mesh.useCloseTranslucency = attributes.useCloseTranslucency;
+  mesh.useXzPlaneTexturing = attributes.useXzPlaneTexturing;
 }
 
 internal void loadGameMeshes(GmContext* context, GameState& state) {

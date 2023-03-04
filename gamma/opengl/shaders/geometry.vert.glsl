@@ -2,6 +2,7 @@
 
 uniform mat4 matProjection;
 uniform mat4 matView;
+uniform bool useXzPlaneTexturing = false;
 
 layout (location = 0) in vec3 vertexPosition;
 layout (location = 1) in vec3 vertexNormal;
@@ -54,5 +55,6 @@ void main() {
   fragNormal = normal_matrix * vertexNormal;
   fragTangent = normal_matrix * vertexTangent;
   fragBitangent = getFragBitangent(fragNormal, fragTangent);
-  fragUv = vertexUv;
+  // @todo allow scaling factor to be configured
+  fragUv = useXzPlaneTexturing ? world_position.xz / 400.0 : vertexUv;
 }

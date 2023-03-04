@@ -102,6 +102,21 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
+    .name = "vines",
+    .create = []() {
+      return Mesh::Model("./game/assets/vines.obj");
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .texture = "./game/assets/vines.png",
+      .animation = {
+        .type = PresetAnimationType::FLOWER,
+        .factor = 5.f
+      },
+      .useMipmaps = false
+    }
+  },
+  {
     .name = "palm-trunk",
     .hitboxScale = Vec3f(0.1f, 1.f, 0.1f),
     .create = []() {
@@ -156,7 +171,6 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
    */
   {
     .name = "concrete-slab",
-    .defaultColor = Vec3f(0.5f),
     .maxInstances = 10000,
     .create = []() {
       return Mesh::Cube();
@@ -165,7 +179,19 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .roughness = 0.9f
     }
   },
-
+  {
+    .name = "cobblestone",
+    .hitboxScale = Vec3f(1.f, 0.1f, 1.f),
+    .create = []() {
+      return Mesh::Plane(2);
+    },
+    .attributes = {
+      .texture = "./game/assets/cobblestone.png",
+      .normals = "./game/assets/cobblestone-normals.png",
+      .roughness = 0.7f,
+      .useXzPlaneTexturing = true
+    }
+  },
   {
     .name = "building-1",
     .dynamic = true,

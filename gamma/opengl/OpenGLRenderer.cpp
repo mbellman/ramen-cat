@@ -526,11 +526,14 @@ namespace Gamma {
 
     for (auto* glMesh : glMeshes) {
       if (glMesh->isMeshType(MeshType::DEFAULT)) {
+        auto& mesh = *glMesh->getSourceMesh();
+
         shaders.geometry.setBool("hasTexture", glMesh->hasTexture());
         shaders.geometry.setBool("hasNormalMap", glMesh->hasNormalMap());
-        shaders.geometry.setBool("useCloseTranslucency", glMesh->getSourceMesh()->useCloseTranslucency);
-        shaders.geometry.setFloat("emissivity", glMesh->getSourceMesh()->emissivity);
-        shaders.geometry.setFloat("roughness", glMesh->getSourceMesh()->roughness);
+        shaders.geometry.setBool("useCloseTranslucency", mesh.useCloseTranslucency);
+        shaders.geometry.setBool("useXzPlaneTexturing", mesh.useXzPlaneTexturing);
+        shaders.geometry.setFloat("emissivity", mesh.emissivity);
+        shaders.geometry.setFloat("roughness", mesh.roughness);
 
         glMesh->render(ctx.primitiveMode);
       }
