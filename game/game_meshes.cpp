@@ -181,6 +181,17 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .emissivity = 0.3f
     }
   },
+  {
+    .name = "bird-at-rest",
+    .moving = true,
+    .hitboxScale = Vec3f(0.4f, 0.5f, 1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/bird-at-rest.obj");
+    },
+    .attributes = {
+      .emissivity = 0.3f
+    }
+  },
 
   /**
    * Structures
@@ -198,7 +209,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
   },
   {
     .name = "cobblestone",
-    .hitboxScale = Vec3f(1.f, 0.1f, 1.f),
+    .hitboxScale = Vec3f(1.f, 0.025f, 1.f),
     .create = []() {
       return Mesh::Plane(2);
     },
