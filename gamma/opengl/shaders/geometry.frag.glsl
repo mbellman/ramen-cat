@@ -38,7 +38,7 @@ vec3 getNormal() {
 void main() {
   vec4 color = hasTexture ? texture(meshTexture, fragUv) * vec4(fragColor, 1.0) : vec4(fragColor, 1.0);
 
-  if (color.a < 0.5) {
+  if (color.a < 0.3) {
     discard;
   }
 
