@@ -234,6 +234,45 @@ internal void handlePeople(GmContext* context, GameState& state) {
   });
 }
 
+internal void handleBirds(GmContext* context, GameState& state, float dt) {
+  auto& player = get_player();
+  float t = get_scene_time() * 10.f;
+
+  for_moving_objects("bird-at-rest", {
+    if (object.scale.x < 1.f) {
+      continue;
+    }
+
+    float alpha = t + float(object._record.id) * 2.f;
+    float yOffset = powf(sinf(alpha) * 0.5f + 0.5f, 6.f) * 5.f;
+    float distance = (player.position - object.position).magnitude();
+
+    // @todo base distance on player speed
+    if (distance < 200.f) {
+      auto& flyingBird = create_object_from("bird-flying");
+
+      flyingBird.position = object.position;
+      flyingBird.scale = object.scale;
+      flyingBird.rotation = object.rotation;
+
+      commit(flyingBird);
+
+      object.scale = Vec3f(0.f);
+    } else {
+      object.position = initial.position + Vec3f(0, yOffset, 0);
+    }
+
+    commit(object);
+  });
+
+  for (auto& bird : objects("bird-flying")) {
+    bird.position += bird.rotation.getDirection() * 600.f * dt;
+    bird.position.y += 100.f * dt;
+
+    commit(bird);
+  }
+}
+
 internal void handleFlyingSeagulls(GmContext* context, GameState& state, float dt) {
   float t = get_scene_time() * 0.4f;
 
@@ -518,6 +557,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
 
   handleNpcs(context, state);
   handlePeople(context, state);
+  handleBirds(context, state, dt);
   handleFlyingSeagulls(context, state, dt);
   handleSlingshots(context, state, dt);
   handleLanterns(context, state, dt);

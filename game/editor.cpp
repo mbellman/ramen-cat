@@ -987,6 +987,11 @@ namespace Editor {
 
     resetMovingObjects(context, state);
 
+    // Force-reset certain meshes
+    {
+      objects("bird-flying").reset();
+    }
+
     // Force certain meshes to be enabled/disabled
     {
       for (auto& asset : GameMeshes::meshAssets) {

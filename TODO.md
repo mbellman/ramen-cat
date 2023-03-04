@@ -41,7 +41,6 @@ GAME
 * animation blending
 * dynamic tail animations
 * run along walls before wall kicking
-* roosting birds
 * fancier dashing effects
 * sitting animation
 * slingshot velocity affected by dashing tier

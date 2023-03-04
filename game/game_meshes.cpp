@@ -192,6 +192,21 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .emissivity = 0.3f
     }
   },
+  {
+    .name = "bird-flying",
+    .hitboxScale = Vec3f(0.4f, 0.5f, 1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/bird-flying.obj");
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .animation = {
+        .type = PresetAnimationType::BIRD,
+        .speed = 5.f
+      },
+      .emissivity = 0.3f
+    }
+  },
 
   /**
    * Structures
