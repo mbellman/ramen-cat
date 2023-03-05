@@ -248,6 +248,13 @@ void updateGame(GmContext* context, GameState& state, float dt) {
         Console::log("Increased game speed to", state.gameSpeed);
       }
     }
+
+    // Allow F to enter free camera mode
+    {
+      if (input.didPressKey(Key::F)) {
+        state.isFreeCameraMode = !state.isFreeCameraMode;
+      }
+    }
   #endif
 
   // Track end-of-frame variables

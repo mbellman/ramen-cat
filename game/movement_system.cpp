@@ -205,6 +205,12 @@ internal void resolveAllHotAirBalloonCollisions(GmContext* context, GameState& s
 
 namespace MovementSystem {
   void handlePlayerMovementInput(GmContext* context, GameState& state, float dt) {
+    #if GAMMA_DEVELOPER_MODE
+      if (state.isFreeCameraMode) {
+        return;
+      }
+    #endif
+
     if (
       UISystem::hasBlockingDialogue() ||
       EntitySystem::isInteractingWithEntity(context, state) ||

@@ -130,6 +130,7 @@ struct GameState {
   #if GAMMA_DEVELOPER_MODE == 1
     std::vector<Gamma::Vec3f> lastSolidGroundPositions;
     float gameSpeed = 1.f;
+    bool isFreeCameraMode = false;
   #endif
 };
 

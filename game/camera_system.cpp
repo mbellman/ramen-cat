@@ -140,6 +140,23 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
     return;
   }
 
+  #if GAMMA_DEVELOPER_MODE
+    if (state.isFreeCameraMode) {
+      if (Gm_IsWindowFocused()) {
+        auto& camera = get_camera();
+        auto& mouseDelta = get_input().getMouseDelta();
+
+        Gm_HandleFreeCameraMode(context, 10000.f, dt);
+
+        camera.orientation.yaw += mouseDelta.x / 1500.f;
+        camera.orientation.pitch += mouseDelta.y / 1500.f;
+        camera.rotation = camera.orientation.toQuaternion();
+      }
+
+      return;
+    }
+  #endif
+
   START_TIMING("handleGameCamera");
 
   updateThirdPersonCameraRadius(context, state, dt);
