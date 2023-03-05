@@ -185,15 +185,18 @@ void EffectsSystem::updateDayNightCycleLighting(GmContext* context, GameState& s
     float sineDayNightCycleTime = sinf(state.dayNightCycleTime);
     float daytimeFactor = sqrtf(sineDayNightCycleTime);
 
-    sceneLight.direction.y = 0.05f + -1.f * (0.5f + 0.5f * sinf(state.dayNightCycleTime * 2.f - Gm_HALF_PI));
+    sceneLight.direction.x = -0.2f;
+    sceneLight.direction.y = -1.f * (0.5f + 0.5f * sinf(state.dayNightCycleTime * 2.f - Gm_HALF_PI));
     sceneLight.direction.z = cosf(state.dayNightCycleTime);
-    sceneLight.power = daytimeFactor;
+    sceneLight.direction = sceneLight.direction.unit();
+
     sceneLight.color.x = 1.f;
     sceneLight.color.y = sineDayNightCycleTime;
     sceneLight.color.z = sineDayNightCycleTime;
+    sceneLight.power = daytimeFactor;
 
     scene.sky.atmosphereColor = Vec3f::lerp(Vec3f(1.f, 0.1f, 0.5f), Vec3f(1.f), daytimeFactor);
-    scene.sky.sunDirection = sceneLight.direction.invert().unit();
+    scene.sky.sunDirection = sceneLight.direction.invert();
     scene.sky.sunColor = sceneLight.color * Vec3f(1.f, 0.95f, 0.4f);
   } else {
     // Nighttime
@@ -201,16 +204,19 @@ void EffectsSystem::updateDayNightCycleLighting(GmContext* context, GameState& s
     float sineNightProgress = sinf(nightProgress);
     float lightFactor = sqrtf(sineNightProgress);
 
-    sceneLight.direction.y = 0.05f + -1.f * (0.5f + 0.5f * sinf(state.dayNightCycleTime * 2.f - Gm_HALF_PI));
+    sceneLight.direction.x = 0.2f;
+    sceneLight.direction.y = -1.f * (0.5f + 0.5f * sinf(state.dayNightCycleTime * 2.f - Gm_HALF_PI));
     sceneLight.direction.z = cosf(nightProgress);
-    sceneLight.power = lightFactor;
+    sceneLight.direction = sceneLight.direction.unit();
+
     sceneLight.color.x = 1.f - sineNightProgress;
     sceneLight.color.y = sineNightProgress * 0.2f;
     sceneLight.color.z = sineNightProgress * 0.5f;
+    sceneLight.power = lightFactor;
 
     scene.sky.atmosphereColor = Vec3f::lerp(Vec3f(1.f, 0.1f, 0.5f), Vec3f(0.0f, 0.1f, 0.5f), lightFactor);
-    scene.sky.sunDirection = Vec3f(0, 0.05f, 0);
-    scene.sky.sunColor = Vec3f(1.f);
+    scene.sky.sunDirection = sceneLight.direction;
+    scene.sky.sunColor = sceneLight.color * Vec3f(1.f, 0.95f, 0.4f);
   }
 
   scene.sky.altitude = camera.position.y + 2000.f;

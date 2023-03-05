@@ -32,7 +32,6 @@ GAME
 * level settings files
 * player visibility light
 * seagull height variation
-* sun/moon
 
 * allow SPACE to be queued when pressed just before hitting the ground
 * dust clouds when super-jumping
