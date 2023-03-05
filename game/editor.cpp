@@ -185,7 +185,7 @@ internal void syncLightWithObject(Light& light, const Object& object) {
   light.direction = object.rotation.getDirection();
 }
 
-internal void updateCollisionPlanes(GmContext* context, GameState& state) {
+internal void rebuildCollisionPlanes(GmContext* context, GameState& state) {
   u64 start = Gm_GetMicroseconds();
 
   state.collisionPlanes.clear();
@@ -232,10 +232,18 @@ internal void resetMovingObjects(GmContext* context, GameState& state) {
   }
 }
 
-internal void updateInitialMovingObjects(GmContext* context, GameState& state) {
+internal void rebuildInitialMovingObjects(GmContext* context, GameState& state) {
   state.initialMovingObjects.clear();
 
   for (auto& asset : GameMeshes::meshAssets) {
+    if (asset.moving) {
+      for (auto& object : objects(asset.name)) {
+        state.initialMovingObjects.push_back(object);
+      }
+    }
+  }
+
+  for (auto& asset : GameMeshes::dynamicMeshPieces) {
     if (asset.moving) {
       for (auto& object : objects(asset.name)) {
         state.initialMovingObjects.push_back(object);
@@ -511,7 +519,7 @@ internal void undoLastHistoryAction(GmContext* context, GameState& state) {
 
       editor.isObjectSelected = false;
 
-      updateCollisionPlanes(context, state);
+      rebuildCollisionPlanes(context, state);
       World::rebuildDynamicMeshes(context);
 
       break;
@@ -530,7 +538,7 @@ internal void undoLastHistoryAction(GmContext* context, GameState& state) {
       editor.selectedObject = restoredObject;
       editor.isObjectSelected = true;
 
-      updateCollisionPlanes(context, state);
+      rebuildCollisionPlanes(context, state);
       World::rebuildDynamicMeshes(context);
 
       // When restoring deleted objects using undo, we need to update
@@ -580,7 +588,7 @@ internal void undoLastHistoryAction(GmContext* context, GameState& state) {
         editor.selectedObject = *liveLastActionObject;
         editor.isObjectSelected = true;
 
-        updateCollisionPlanes(context, state);
+        rebuildCollisionPlanes(context, state);
         World::rebuildDynamicMeshes(context);
       }
     }
@@ -615,7 +623,7 @@ internal void createNewLight(GmContext* context, GameState& state) {
 
   syncLightWithObject(light, lightSphere);
   createObjectHistoryAction(context, ActionType::CREATE, lightSphere);
-  updateCollisionPlanes(context, state);
+  rebuildCollisionPlanes(context, state);
 
   editor.currentActionType = ActionType::POSITION;
   editor.selectedLight = &light;
@@ -677,7 +685,7 @@ internal void createNewObject(GmContext* context, GameState& state) {
     World::rebuildDynamicMeshes(context);
   }
 
-  updateCollisionPlanes(context, state);
+  rebuildCollisionPlanes(context, state);
 
   editor.currentActionType = ActionType::POSITION;
 }
@@ -720,7 +728,7 @@ internal void cloneSelectedObject(GmContext* context, GameState& state) {
 
   selectObject(context, object);
   createObjectHistoryAction(context, ActionType::CREATE, object);
-  updateCollisionPlanes(context, state);
+  rebuildCollisionPlanes(context, state);
 
   if (editor.mode == EditorMode::OBJECTS) {
     World::rebuildDynamicMeshes(context);
@@ -737,7 +745,7 @@ internal void deleteObject(GmContext* context, GameState& state, Object& object)
 
     remove_object(*originalObject);
 
-    updateCollisionPlanes(context, state);
+    rebuildCollisionPlanes(context, state);
 
     if (editor.mode == EditorMode::OBJECTS) {
       World::rebuildDynamicMeshes(context);
@@ -1000,6 +1008,12 @@ namespace Editor {
         }
       }
 
+      for (auto& asset : GameMeshes::dynamicMeshPieces) {
+        if (!asset.dynamic) {
+          mesh(asset.name)->objects.showAll();
+        }
+      }
+
       mesh("light-sphere")->disabled = editor.mode != EditorMode::LIGHTS;
     }
 
@@ -1031,10 +1045,10 @@ namespace Editor {
     saveWorldObjectsData(context, state);
     saveLightsData(context, state);
 
-    updateInitialMovingObjects(context, state);
-    updateCollisionPlanes(context, state);
-
     World::rebuildDynamicMeshes(context);
+
+    rebuildInitialMovingObjects(context, state);
+    rebuildCollisionPlanes(context, state);
 
     // Force certain meshes to be enabled/disabled
     {
@@ -1149,7 +1163,7 @@ namespace Editor {
       }
     }
 
-    updateCollisionPlanes(context, state);
+    rebuildCollisionPlanes(context, state);
   }
 
   void handleGameEditor(GmContext* context, GameState& state, float dt) {
@@ -1377,7 +1391,7 @@ namespace Editor {
               .color = Vec3f(0, 0, 1.f)
             });
 
-            updateCollisionPlanes(context, state);
+            rebuildCollisionPlanes(context, state);
 
             mesh("platform")->disabled = false;
           }
@@ -1393,7 +1407,7 @@ namespace Editor {
       }
 
       if (input.didReleaseMouse() && editor.isObjectSelected) {
-        updateCollisionPlanes(context, state);
+        rebuildCollisionPlanes(context, state);
         World::rebuildDynamicMeshes(context);
       }
     }

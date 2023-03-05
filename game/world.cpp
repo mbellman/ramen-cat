@@ -479,6 +479,23 @@ internal void rebuildDynamicBuildings(GmContext* context) {
   }
 }
 
+internal void rebuildAcUnitFans(GmContext* context) {
+  objects("ac-fan").reset();
+
+  for (auto& unit : objects("ac-unit")) {
+    auto& fan = create_object_from("ac-fan");
+    Vec3f horizontalOffset = unit.rotation.getLeftDirection().invert() * unit.scale.x * 0.38f;
+    Vec3f forwardOffset = unit.rotation.getDirection().invert() * unit.scale.z * 0.2f;
+
+    fan.position = unit.position + horizontalOffset + forwardOffset;
+    fan.scale = unit.scale * 0.4f;
+    fan.rotation = unit.rotation;
+    fan.color = Vec3f(0.1f);
+
+    commit(fan);
+  }
+}
+
 void World::initializeGameWorld(GmContext* context, GameState& state) {
   context->scene.zNear = 5.f;
   context->scene.zFar = 50000.f;
@@ -571,6 +588,7 @@ void World::rebuildDynamicMeshes(GmContext* context) {
   rebuildLamppostLights(context);
   rebuildElectricalPoleWires(context);
   rebuildDynamicBuildings(context);
+  rebuildAcUnitFans(context);
 }
 
 void World::loadLevel(GmContext* context, GameState& state, const std::string& levelName) {
@@ -601,6 +619,14 @@ void World::loadLevel(GmContext* context, GameState& state, const std::string& l
   // Save initial reference copies of moving objects
   {
     for (auto& asset : GameMeshes::meshAssets) {
+      if (asset.moving) {
+        for (auto& object : objects(asset.name)) {
+          state.initialMovingObjects.push_back(object);
+        }
+      }
+    }
+
+    for (auto& asset : GameMeshes::dynamicMeshPieces) {
       if (asset.moving) {
         for (auto& object : objects(asset.name)) {
           state.initialMovingObjects.push_back(object);

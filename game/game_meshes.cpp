@@ -204,7 +204,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .texture = "./game/assets/bird.png",
       .animation = {
         .type = PresetAnimationType::BIRD,
-        .speed = 5.f,
+        .speed = 3.f,
         .factor = 0.75f
       },
       .emissivity = 0.3f
@@ -516,18 +516,6 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     },
     .attributes = {
       .roughness = 0.4f
-    }
-  },
-  {
-    .name = "ac-fan",
-    .moving = true,
-    .defaultColor = Vec3f(0.1f),
-    .hitboxScale = Vec3f(1.f, 1.f, 0.1f),
-    .create = []() {
-      return Mesh::Model("./game/assets/ac-fan.obj");
-    },
-    .attributes = {
-      .roughness = 0.2f
     }
   },
   {
@@ -872,7 +860,16 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
       .roughness = 0.3f
     }
   },
-
+  {
+    .name = "ac-fan",
+    .moving = true,
+    .create = []() {
+      return Mesh::Model("./game/assets/ac-fan.obj");
+    },
+    .attributes = {
+      .roughness = 0.2f
+    }
+  },
   {
     .name = "building-1-body",
     .create = []() {
