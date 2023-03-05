@@ -189,6 +189,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       return Mesh::Model("./game/assets/bird-at-rest.obj");
     },
     .attributes = {
+      .texture = "./game/assets/bird.png",
       .emissivity = 0.3f
     }
   },
@@ -200,6 +201,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     },
     .attributes = {
       .type = MeshType::PRESET_ANIMATED,
+      .texture = "./game/assets/bird.png",
       .animation = {
         .type = PresetAnimationType::BIRD,
         .speed = 5.f
