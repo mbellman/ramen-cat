@@ -68,6 +68,7 @@ struct GameState {
   CameraMode cameraMode = CameraMode::NORMAL;
 
   float lastTimeOnSolidGround = 0.f;
+  float lastTimeInAir = 0.f;
   float lastJumpTime = 0.f;
   float lastWallBumpTime = 0.f;
   float lastWallKickTime = 0.f;

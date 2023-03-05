@@ -38,13 +38,19 @@ internal float wcosf(float x) {
   return (cosf(mx) * 0.5f + 0.5f) * (mx / (mx + 1.f)) * 2.595f * 2.f - 1.f;
 }
 
+internal float getPeriodicHeadTurn(float sceneTime) {
+  return (sinf(sceneTime * 0.5f) + sinf(sceneTime * 1.7f)) * 0.4f;
+}
+
 internal void handlePlayerTrottingAnimation(GmContext* context, GameState& state, float dt) {
   auto& rig = state.animation.playerRig;
 
   float speed = state.velocity.xz().magnitude();
   float speedRatio = speed / (speed + MAXIMUM_HORIZONTAL_GROUND_SPEED);
   float alpha = state.totalDistanceTraveled * 0.03f;
-  float periodicHeadTurn = (sinf(get_scene_time() * 0.5f) + sinf(get_scene_time() * 1.7f)) * 0.4f;
+  float timeOnSolidGround = time_since(state.lastTimeInAir);
+  float periodicHeadTurnFactor = timeOnSolidGround / (timeOnSolidGround + 1.f);
+  float periodicHeadTurn = getPeriodicHeadTurn(get_scene_time()) * periodicHeadTurnFactor;
 
   rig.joints[PLAYER_HEAD].offset = Vec3f(0, 0.05f, 0) * speedRatio * sinf(alpha * 2.f);
   rig.joints[PLAYER_NECK].offset = Vec3f(0, 0.15f, 0) * speedRatio * sinf(alpha * 2.f);
@@ -161,16 +167,18 @@ internal void handlePlayerMidairAnimation(GmContext* context, GameState& state, 
   float dashTime = time_since(state.lastAirDashTime);
   float airTime = jumpTime < dashTime ? jumpTime : dashTime;
   float airTimeFactor = airTime / (airTime + 0.5f);
+  float periodicHeadTurnFactor = 1.f - airTimeFactor;
+  float periodicHeadTurn = getPeriodicHeadTurn(get_scene_time()) * periodicHeadTurnFactor;
 
   float s_alpha = sinf(airTime * 5.f);
   float c_alpha = cosf(airTime * 5.f);
 
   Vec3f turnOffset = Vec3f(-0.5f * state.turnFactor, 0, 0);
 
-  rig.joints[PLAYER_HEAD].rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), state.turnFactor);
+  rig.joints[PLAYER_HEAD].rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), state.turnFactor + periodicHeadTurn);
   rig.joints[PLAYER_HEAD].offset = turnOffset;
 
-  rig.joints[PLAYER_NECK].rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), state.turnFactor * 0.5f);
+  rig.joints[PLAYER_NECK].rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), state.turnFactor * 0.5f + periodicHeadTurn * 0.5f);
   rig.joints[PLAYER_NECK].offset = turnOffset;
 
   rig.joints[PLAYER_TORSO].offset = turnOffset;
@@ -265,6 +273,9 @@ internal void handleAnimatedMeshWithRig(Mesh& mesh, AnimationRig& rig) {
 
       animatedVertex.vertex.position = Vec3f::lerp(vertexPosition, targetPosition, weight);
     }
+
+    // @todo see if this is necessary
+    // animatedVertex.vertex.position = Vec3f::lerp(mesh.transformedVertices[i].position, animatedVertex.vertex.position, 0.5f);
 
     mesh.transformedVertices[i] = animatedVertex.vertex;
   }

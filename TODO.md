@@ -3,8 +3,6 @@ EDITOR
 
 BUGS
 ----
-* head jerking when switching animations
-
 * clouds causing object outline misbehavior behind atmosphere
 * air dash complete spin
 * imported models are inverted along X

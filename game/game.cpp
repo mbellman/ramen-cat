@@ -260,6 +260,7 @@ void updateGame(GmContext* context, GameState& state, float dt) {
   // Track end-of-frame variables
   {
     Vec3f motionLine = player.position - state.previousPlayerPosition;
+    float sceneTime = get_scene_time();
 
     if (motionLine.magnitude() > 1.f) {
       state.direction = motionLine;
@@ -269,8 +270,12 @@ void updateGame(GmContext* context, GameState& state, float dt) {
     state.wasOnSolidGroundLastFrame = state.isOnSolidGround;
     state.totalDistanceTraveled += state.velocity.xz().magnitude() * dt;
 
+    if (!state.isOnSolidGround) {
+      state.lastTimeInAir = sceneTime;
+    }
+
     if (input.didMoveMouse()) {
-      state.lastMouseMoveTime = get_scene_time();
+      state.lastMouseMoveTime = sceneTime;
     }
 
     context->scene.sceneTime += dt;
