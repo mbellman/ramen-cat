@@ -44,7 +44,7 @@ vec3 getBirdAnimationOffset(vec3 vertex_position, vec3 world_position) {
   float rate = time * animation.speed;
   float id = float(gl_InstanceID);
 
-  float displacement_factor = min(1.0, pow(abs(vertex_position.x), 4)) * 35.0;
+  float displacement_factor = animation.factor * min(1.0, pow(abs(vertex_position.x), 2)) * 35.0;
   float y_offset = pow(abs(sin(rate)), 2) * sin(rate * 6.0 + id);
 
   return vec3(0, displacement_factor * y_offset, 0);

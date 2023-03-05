@@ -184,7 +184,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
   {
     .name = "bird-at-rest",
     .moving = true,
-    .hitboxScale = Vec3f(0.4f, 0.5f, 1.f),
+    .hitboxScale = Vec3f(0.2f, 0.25f, 0.5f),
     .create = []() {
       return Mesh::Model("./game/assets/bird-at-rest.obj");
     },
@@ -195,7 +195,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
   },
   {
     .name = "bird-flying",
-    .hitboxScale = Vec3f(0.4f, 0.5f, 1.f),
+    .hitboxScale = Vec3f(0.2f, 0.25f, 0.5f),
     .create = []() {
       return Mesh::Model("./game/assets/bird-flying.obj");
     },
@@ -204,7 +204,8 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .texture = "./game/assets/bird.png",
       .animation = {
         .type = PresetAnimationType::BIRD,
-        .speed = 5.f
+        .speed = 5.f,
+        .factor = 0.75f
       },
       .emissivity = 0.3f
     }
