@@ -273,15 +273,16 @@ internal void handleBirds(GmContext* context, GameState& state, float dt) {
   }
 }
 
-internal void handleFlyingSeagulls(GmContext* context, GameState& state, float dt) {
+internal void handleSeagulls(GmContext* context, GameState& state, float dt) {
   float t = get_scene_time() * 0.4f;
 
   for_moving_objects("seagull", {
     float alpha = t + float(object._record.id);
-    float x = sinf(2.f * alpha);
-    float z = 2.f * cosf(alpha);
+    float xOffset = sinf(2.f * alpha) * 1000.f;
+    float yOffset = sin(2.f * alpha) * 50.f;
+    float zOffset = 2.f * cosf(alpha) * 1000.f;
 
-    Vec3f targetPosition = initial.position + Vec3f(x, 0, z) * 1000.f;
+    Vec3f targetPosition = initial.position + Vec3f(xOffset, yOffset, zOffset);
     Vec3f delta = targetPosition - object.position;
     float turnAngle = atan2f(delta.x, delta.z) + Gm_PI;
     float tiltAngle = 0.75f * cosf(alpha);
@@ -558,7 +559,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   handleNpcs(context, state);
   handlePeople(context, state);
   handleBirds(context, state, dt);
-  handleFlyingSeagulls(context, state, dt);
+  handleSeagulls(context, state, dt);
   handleSlingshots(context, state, dt);
   handleLanterns(context, state, dt);
   handleWindmillWheels(context, state, dt);
