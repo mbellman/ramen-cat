@@ -9,7 +9,6 @@ BUGS
 
 * clouds causing object outline misbehavior behind atmosphere
 * air dash complete spin
-* fix onigiri texture
 * imported models are inverted along X
 * avoid phasing through corners
 
