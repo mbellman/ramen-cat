@@ -2,6 +2,7 @@
 #include "game_meshes.h"
 #include "collisions.h"
 #include "game_constants.h"
+#include "editor.h"
 #include "macros.h"
 
 using namespace Gamma;
@@ -232,9 +233,35 @@ internal void unloadCurrentLevel(GmContext* context, GameState& state) {
     mesh(asset.name)->objects.reset();
   }
 
-  // @todo delete lights
+  auto& scene = context->scene;
+  u32 lightIndex = 0;
+
+  // @todo remove all serializable lights from light store
+
+  while (lightIndex < scene.lights.size()) {
+    auto* light = scene.lights[lightIndex];
+
+    if (light->serializable) {
+      if (
+        light->type == LightType::DIRECTIONAL_SHADOWCASTER ||
+        light->type == LightType::POINT_SHADOWCASTER ||
+        light->type == LightType::SPOT_SHADOWCASTER
+      ) {
+        context->renderer->destroyShadowMap(light);
+      }
+
+      Gm_VectorRemove(scene.lights, light);
+
+      delete light;
+    } else {
+      lightIndex++;
+    }
+  }
+
   // @todo properly reset all game state
-  // @todo clear editor history
+  
+  Editor::resetGameEditor();
+
   state.collisionPlanes.clear();
   state.npcs.clear();
   state.slingshots.clear();

@@ -1468,4 +1468,13 @@ namespace Editor {
 
     LOG_TIME();
   }
+
+  void resetGameEditor() {
+    editor.history.clear();
+
+    editor.selectedLight = nullptr;
+    editor.isObservingObject = false;
+    editor.isObjectSelected = false;
+    editor.lastClickTime = 0.f;
+  }
 }
