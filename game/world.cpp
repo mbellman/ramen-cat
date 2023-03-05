@@ -535,7 +535,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
     add_mesh("player", 1, Mesh::Model("./game/assets/cat.obj"));
     mesh("player")->texture = "./game/assets/cat.png";
     mesh("player")->roughness = 0.9f;
-    mesh("player")->emissivity = 0.2f;
+    mesh("player")->emissivity = 0.3f;
     mesh("player")->useMipmaps = false;
     mesh("player")->useCloseTranslucency = true;
 

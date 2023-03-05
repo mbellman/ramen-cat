@@ -27,12 +27,12 @@ GAME
 * variable camera radius control
 * level unloading (in progress)
 * level settings files
-* player visibility light
 
 * allow SPACE to be queued when pressed just before hitting the ground
 * dust clouds when super-jumping
-* animation blending
+* animation blending (?)
 * dynamic tail animations
+* player highlight/special shader effects
 * run along walls before wall kicking
 * fancier dashing effects
 * sitting animation

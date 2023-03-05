@@ -180,7 +180,7 @@ void EffectsSystem::handleGameEffects(GmContext* context, GameState& state, floa
 void EffectsSystem::updateDayNightCycleLighting(GmContext* context, GameState& state) {
   auto& scene = context->scene;
   auto& camera = get_camera();
-  auto& sceneLight = light("scene-light");
+  auto& sceneLight = get_light("scene-light");
 
   // @todo can we express day/night colors as a continuum, rather than using separate logic for day + night?
   if (state.dayNightCycleTime < Gm_PI) {
@@ -241,12 +241,16 @@ void EffectsSystem::updateDayNightCycleLighting(GmContext* context, GameState& s
     mesh("lantern")->emissivity = lanternEmissivity;
   }
 
-  // Adjust point + spot light power by time of day
+  // Adjust (serializable) point + spot light power by time of day
   {
     float lightPowerFactor = sqrtf(Gm_Clampf(0.5f - sinf(state.dayNightCycleTime)));
 
     for (auto* light : context->scene.lights) {
-      if (light->type != LightType::DIRECTIONAL && light->type != LightType::DIRECTIONAL_SHADOWCASTER) {
+      if (
+        light->serializable &&
+        light->type != LightType::DIRECTIONAL &&
+        light->type != LightType::DIRECTIONAL_SHADOWCASTER
+      ) {
         light->power = light->basePower * lightPowerFactor;
       }
     }

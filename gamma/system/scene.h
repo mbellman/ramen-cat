@@ -22,7 +22,7 @@
 #define save_light(lightName, light) Gm_SaveLight(context, lightName, light)
 #define get_object_by_record(record) Gm_GetObjectByRecord(context, record)
 #define is_mesh_object(object, meshName) object._record.meshIndex == context->scene.meshMap.at(meshName)->index
-#define light(lightName) Gm_GetLight(context, lightName)
+#define get_light(lightName) Gm_GetLight(context, lightName)
 #define remove_object(object) Gm_RemoveObject(context, object)
 #define remove_light(light) Gm_RemoveLight(context, light)
 #define mesh(meshName) context->scene.meshMap.at(meshName)
