@@ -3,7 +3,6 @@ EDITOR
 
 BUGS
 ----
-* stop ground particles from appearing when player is standing still
 * head jerking when switching animations
 
 * clouds causing object outline misbehavior behind atmosphere
