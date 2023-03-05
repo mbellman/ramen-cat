@@ -52,7 +52,6 @@ GAME
 
 ENGINE
 ------
-* skip lights at 0 power
 * cache textures
 * area lights
 * skylight contribution gradation/probe-based GI

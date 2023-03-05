@@ -32,7 +32,11 @@ const GmSceneStats Gm_GetSceneStats(GmContext* context) {
     stats.totalMeshes++;
   }
 
-  stats.totalLights = context->scene.lights.size();
+  for (auto* light : context->scene.lights) {
+    if (light->power > 0.f) {
+      stats.totalLights++;
+    }
+  }
 
   return stats;
 }

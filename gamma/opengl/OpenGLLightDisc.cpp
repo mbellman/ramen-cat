@@ -124,7 +124,10 @@ namespace Gamma {
 
     disc.light = light;
 
-    if (localLightPosition.z > 0.1f) {
+    if (light.power == 0.f) {
+      disc.offset = Vec2f(0.f);
+      disc.scale = Vec2f(0.f);
+    } else if (localLightPosition.z > 0.1f) {
       // Light source in front of the camera
       Vec3f screenLightPosition = matProjection.transformVec3f(localLightPosition) / localLightPosition.z;
 
