@@ -25,6 +25,7 @@ ASSETS
 GAME
 ----
 * variable camera radius control
+* move camera forward when tilting upward
 * level unloading (in progress)
 * level settings files
 
