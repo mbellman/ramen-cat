@@ -12,8 +12,10 @@ ASSETS
 ------
 * vines
 * streetlamps
+* torii gates
 * flowers
 * columns
+* (redo) metal pipes
 * signs/neon
 * stars
 * murals/paintings
@@ -28,24 +30,25 @@ GAME
 * move camera forward when tilting upward
 * level unloading (in progress)
 * level settings files
-
-* allow SPACE to be queued when pressed just before hitting the ground
 * dust clouds when super-jumping
-* animation blending (?)
+
 * dynamic tail animations
-* player highlight/special shader effects
+* hoops
 * run along walls before wall kicking
+* respawn birds
+* allow SPACE to be queued when pressed just before hitting the ground
+* animation blending (?)
+* player highlight/special shader effects
 * fancier dashing effects
 * sitting animation
 * slingshot velocity affected by dashing tier
 * area titles
-* train station model updates
 * npc model improvements/highlight when nearby
+* npc movement paths
 * hot-reloading NPCs/entities data
-* avoid running off edges without input
+* avoid running off edges without input (?)
 * lens flare
 * capes/gliding
-* npc movement paths
 * controller support
 * catnip power up + screen-warp effect
 * dialogue events/camera changes during dialogue
