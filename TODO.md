@@ -3,10 +3,10 @@ EDITOR
 
 BUGS
 ----
-* clouds causing object outline misbehavior behind atmosphere
 * air dash complete spin
-* imported models are inverted along X
+* clouds causing object outline misbehavior behind atmosphere
 * avoid phasing through corners
+* imported models are inverted along X
 
 ASSETS
 ------
@@ -26,17 +26,17 @@ ASSETS
 
 GAME
 ----
-* variable camera radius control
 * move camera forward when tilting upward
 * level unloading (in progress)
-* level settings files
 * dust clouds when super-jumping
-
 * dynamic tail animations
+* level settings files
+* variable camera radius control
+
 * hoops
-* run along walls before wall kicking
 * respawn birds
 * allow SPACE to be queued when pressed just before hitting the ground
+* run along walls before wall kicking
 * animation blending (?)
 * player highlight/special shader effects
 * fancier dashing effects

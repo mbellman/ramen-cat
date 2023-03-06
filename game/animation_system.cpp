@@ -498,10 +498,12 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
       pitch = -1.f * atan2f(movement.y, movement.xz().magnitude());
     }
 
-    if (state.lastAirDashTime != 0.f && time_since(state.lastAirDashTime) < 0.5f) {
+    float timeSinceLastAirDash = time_since(state.lastAirDashTime);
+
+    if (state.lastAirDashTime != 0.f && timeSinceLastAirDash < 0.5f) {
       // Spin when doing an air dash
       // @bug this doesn't always do a complete spin
-      float alpha = easeOutQuint(time_since(state.lastAirDashTime) * 2.f);
+      float alpha = easeOutBack(timeSinceLastAirDash * 2.f);
 
       yaw += alpha * Gm_TAU;
     }

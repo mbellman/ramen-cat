@@ -2,6 +2,7 @@
 #include "ui_system.h"
 #include "entity_system.h"
 #include "collisions.h"
+#include "easing.h"
 #include "game_constants.h"
 #include "macros.h"
 
@@ -278,11 +279,13 @@ namespace MovementSystem {
       state.turnFactor = Gm_Clampf(Gm_Lerpf(state.turnFactor, targetTurnFactor, 5.f * dt), -0.7f, 0.7f);
 
       // When doing an air dash spin, adjust the turn factor accordingly
-      if (time_since(state.lastAirDashTime) < 0.5f) {
-        float targetAirDashTurnFactor = 1.f - time_since(state.lastAirDashTime) / 0.5f;
-        float alpha = 10.f * dt;
+      float timeSinceLastAirDash = time_since(state.lastAirDashTime);
 
-        state.turnFactor = Gm_Lerpf(state.turnFactor, targetAirDashTurnFactor, alpha);
+      if (timeSinceLastAirDash < 0.5f) {
+        float alpha = easeOutBack(timeSinceLastAirDash / 0.5f);
+        float targetAirDashTurnFactor = 1.f - alpha;
+
+        state.turnFactor = Gm_Lerpf(state.turnFactor, targetAirDashTurnFactor, 10.f * dt);
       }
     }
 
