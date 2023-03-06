@@ -466,24 +466,37 @@ internal void handleHotAirBalloons(GmContext* context, GameState& state, float d
   });
 }
 
-internal void handleOnigiri(GmContext* context, GameState& state, float dt) {
+internal void handleCollectables(GmContext* context, GameState& state, float dt) {
   auto& player = get_player();
-  float alpha = 2.f * get_scene_time();
+  float t = get_scene_time();
+  float t2 = t * 2.f;
 
-  // @todo generalize collectible behavior, store special entities for collectibles to determine appropriate handling
+  // @todo generalize collectable behavior, store special entities for collectables to determine appropriate handling
   for_moving_objects("onigiri", {
     if (object.scale.x < 0.1f) {
+      // Already collected
       object.scale = Vec3f(0.f);
-    } else if (object.position.x != initial.position.x || object.position.z != initial.position.z) {
-      object.position = Vec3f::lerp(object.position, player.position, 20.f * dt);
-      object.scale *= (1.f - 10.f * dt);
-    } else {
-      float yOffset = sinf(alpha + float(object._record.id) * 0.5f);
+    } else if (object.scale.x != initial.scale.x) {
+      // Collection animation
+      if (object.position.y - initial.position.y > 50.f) {
+        object.scale -= 200.f * dt;
+      } else {
+        object.scale -= 15.f * dt;
+      }
 
-      object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), get_scene_time());
+      float alpha = easeOutBack(1.f - object.scale.x / initial.scale.x);
+
+      object.position = Vec3f::lerp(object.position, initial.position + Vec3f(0, 60.f, 0), alpha);
+    } else {
+      // Idle (uncollected) animation
+      float yOffset = sinf(t2 + float(object._record.id) * 0.5f);
+
+      object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), t);
       object.position = initial.position + Vec3f(0, yOffset, 0) * 10.f;
 
       if ((object.position - player.position).magnitude() < 100.f) {
+        // Item collected!
+        object.scale *= 0.99f;
         object.position = Vec3f::lerp(object.position, player.position, 10.f * dt);
       }
     }
@@ -581,7 +594,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   handleWindTurbines(context, state, dt);
   handleAcFans(context, state, dt);
   handleHotAirBalloons(context, state, dt);
-  handleOnigiri(context, state, dt);
+  handleCollectables(context, state, dt);
   handleJetstreams(context, state, dt);
   handleOcean(context);
 

@@ -27,3 +27,10 @@ internal float easeOutElastic(float t) {
     powf(2.f, -10.f * t) * sinf((t * 10.f - 0.75f) * c4) + 1.f
   );
 }
+
+internal float easeOutBack(float t) {
+  float c1 = 1.70158f;
+  float c3 = c1 + 1.f;
+
+  return 1.f + c3 * powf(t - 1.f, 3) + c1 * powf(t - 1.f, 2);
+}

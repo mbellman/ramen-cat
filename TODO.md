@@ -20,7 +20,7 @@ ASSETS
 * stars
 * murals/paintings
 * painted domes/rooves
-* other food collectibles
+* other food collectables
 * weeds LoD
 * lamp LoD
 

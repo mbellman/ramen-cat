@@ -785,7 +785,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
   },
 
   /**
-   * Collectibles
+   * Collectables
    * ------------
    */
   {
