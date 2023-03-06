@@ -242,7 +242,11 @@ internal void handlePlayerAnimation(GmContext* context, GameState& state, float 
 
     float t = get_scene_time();
 
-    rig.joints[PLAYER_TAIL_JOINT_1].offset = Vec3f(0, sinf(t * 2.f) * cosf(t * 1.1f) * 0.05f, 0);
+    rig.joints[PLAYER_TAIL_JOINT_1].offset = Vec3f(
+      0 - state.turnFactor * 0.5f,
+      sinf(t * 2.f) * cosf(t * 1.1f) * 0.05f,
+      0
+    );
 
     rig.joints[PLAYER_TAIL_JOINT_2].offset = Vec3f(
       cosf(t * 2.f) * sinf(t * 0.7f) * 0.2f - state.turnFactor,
@@ -397,7 +401,7 @@ void AnimationSystem::initializeAnimations(GmContext* context, GameState& state)
 
     // Tail joint 2 [18]
     rig.joints.push_back({
-      .position = Vec3f(0, 0.2f, 1.f),
+      .position = Vec3f(0, 0.2f, 1.5f),
       .rotation = Quaternion(1.f, 0, 0, 0)
     });
 

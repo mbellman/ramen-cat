@@ -249,6 +249,16 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
+    .name = "japanese-building",
+    .create = []() {
+      return Mesh::Model("./game/assets/japanese-building.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/japanese-building.png",
+      .roughness = 0.7f
+    }
+  },
+  {
     .name = "building-arch",
     .hitboxScale = Vec3f(1.f, 1.f, 0.1f),
     .create = []() {
