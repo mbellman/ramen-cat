@@ -413,12 +413,27 @@ internal void handleLanterns(GmContext* context, GameState& state, float dt) {
 }
 
 internal void handleWindmillWheels(GmContext* context, GameState& state, float dt) {
+  float t = get_scene_time();
+
   for_moving_objects("windmill-wheel", {
     auto rotationAxis = initial.rotation.getDirection();
     // Rotate larger windmill wheels more slowly
     float scaleRatio = Gm_Clampf(initial.scale.magnitude() / 500.f, 0.f, 1.f);
     float rotationSpeedFactor = Gm_Lerpf(2.f, 0.2f, scaleRatio);
     float angle = rotationSpeedFactor * get_scene_time();
+
+    object.rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initial.rotation;
+
+    commit(object);
+  });
+}
+
+internal void handleWindTurbines(GmContext* context, GameState& state, float dt) {
+  float t = get_scene_time();
+
+  for_moving_objects("wind-turbine", {
+    auto rotationAxis = initial.rotation.getDirection();
+    float angle = 0.25f * t + float(object._record.id);
 
     object.rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initial.rotation;
 
@@ -563,6 +578,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   handleSlingshots(context, state, dt);
   handleLanterns(context, state, dt);
   handleWindmillWheels(context, state, dt);
+  handleWindTurbines(context, state, dt);
   handleAcFans(context, state, dt);
   handleHotAirBalloons(context, state, dt);
   handleOnigiri(context, state, dt);

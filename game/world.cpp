@@ -523,6 +523,23 @@ internal void rebuildAcUnitFans(GmContext* context) {
   }
 }
 
+internal void rebuildWindTurbines(GmContext* context) {
+  objects("wind-turbine").reset();
+
+  for (auto& base : objects("wind-turbine-base")) {
+    auto& turbine = create_object_from("wind-turbine");
+    Vec3f verticalOffset = base.rotation.getUpDirection() * base.scale.z * 1.13f;
+    Vec3f forwardOffset = base.rotation.getDirection() * base.scale.z * 0.1f;
+
+    turbine.position = base.position + verticalOffset + forwardOffset;
+    turbine.scale = base.scale;
+    turbine.rotation = base.rotation;
+    turbine.color = Vec3f(1.f);
+
+    commit(turbine);
+  }
+}
+
 void World::initializeGameWorld(GmContext* context, GameState& state) {
   context->scene.zNear = 5.f;
   context->scene.zFar = 50000.f;
@@ -616,6 +633,7 @@ void World::rebuildDynamicMeshes(GmContext* context) {
   rebuildElectricalPoleWires(context);
   rebuildDynamicBuildings(context);
   rebuildAcUnitFans(context);
+  rebuildWindTurbines(context);
 }
 
 void World::loadLevel(GmContext* context, GameState& state, const std::string& levelName) {

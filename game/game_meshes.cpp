@@ -475,6 +475,16 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
+    .name = "wind-turbine-base",
+    .hitboxScale = Vec3f(0.1f, 1.f, 0.1f),
+    .create = []() {
+      return Mesh::Model("./game/assets/wind-turbine-base.obj");
+    },
+    .attributes = {
+      .roughness = 0.4f
+    }
+  },
+  {
     .name = "floor-1",
     .create = []() {
       return Mesh::Model("./game/assets/texture-cube.obj");
@@ -878,6 +888,16 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
     },
     .attributes = {
       .roughness = 0.2f
+    }
+  },
+  {
+    .name = "wind-turbine",
+    .moving = true,
+    .create = []() {
+      return Mesh::Model("./game/assets/wind-turbine.obj");
+    },
+    .attributes = {
+      .roughness = 0.4f
     }
   },
   {
