@@ -253,7 +253,7 @@ namespace MovementSystem {
       acceleration += left.invert() * rate;
     }
 
-    // Directional change handling
+    // Directional change handling/turn factor determination
     {
       float targetTurnFactor = 0.f;
       float xzSpeed = state.velocity.xz().magnitude();
@@ -276,6 +276,14 @@ namespace MovementSystem {
       }
 
       state.turnFactor = Gm_Clampf(Gm_Lerpf(state.turnFactor, targetTurnFactor, 5.f * dt), -0.7f, 0.7f);
+
+      // When doing an air dash spin, adjust the turn factor accordingly
+      if (time_since(state.lastAirDashTime) < 0.5f) {
+        float targetAirDashTurnFactor = 1.f - time_since(state.lastAirDashTime) / 0.5f;
+        float alpha = 10.f * dt;
+
+        state.turnFactor = Gm_Lerpf(state.turnFactor, targetAirDashTurnFactor, alpha);
+      }
     }
 
     state.velocity += acceleration;
