@@ -13,10 +13,12 @@ namespace Gamma {
    * azimuth, and radius.
    */
   Vec3f ThirdPersonCamera::calculatePosition() const {
+    float cosAltitude = cosf(altitude);
+
     return Vec3f(
-      cosf(altitude) * cosf(azimuth) * radius,
+      cosAltitude * cosf(azimuth) * radius,
       sinf(altitude) * radius,
-      cosf(altitude) * sinf(azimuth) * radius
+      cosAltitude * sinf(azimuth) * radius
     );
   }
 

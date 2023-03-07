@@ -567,6 +567,28 @@ internal void handleOcean(GmContext* context) {
   commit(floor);
 }
 
+internal void handleToriiGates(GmContext* context, GameState& state) {
+  auto& player = get_player();
+
+  for (auto& gate : objects("torii-gate")) {
+    Vec3f forward = gate.rotation.getDirection();
+    Vec3f lastPlayerDirection = (state.previousPlayerPosition - gate.position);
+    Vec3f currentPlayerDirection = (player.position - gate.position);
+    float lastDot = Vec3f::dot(forward, lastPlayerDirection);
+    float currentDot = Vec3f::dot(forward, currentPlayerDirection);
+
+    if (
+      Gm_Signf(lastDot) != Gm_Signf(currentDot) &&
+      currentPlayerDirection.magnitude() < gate.scale.x * 0.8f
+    ) {
+      state.isInToriiGateZone = !state.isInToriiGateZone;
+      state.toriiGateTransitionTime = get_scene_time();
+
+      break;
+    }
+  }
+}
+
 void EntitySystem::initializeGameEntities(GmContext* context, GameState& state) {
   // @temporary
   {
@@ -584,19 +606,23 @@ void EntitySystem::initializeGameEntities(GmContext* context, GameState& state) 
 void EntitySystem::handleGameEntities(GmContext* context, GameState& state, float dt) {
   START_TIMING("handleGameEntities");
 
-  handleNpcs(context, state);
-  handlePeople(context, state);
+  // Inert entities
   handleBirds(context, state, dt);
   handleSeagulls(context, state, dt);
-  handleSlingshots(context, state, dt);
   handleLanterns(context, state, dt);
   handleWindmillWheels(context, state, dt);
   handleWindTurbines(context, state, dt);
   handleAcFans(context, state, dt);
+  handleOcean(context);
+
+  // Interactible/player-dependent entities
+  handleSlingshots(context, state, dt);
+  handleNpcs(context, state);
+  handlePeople(context, state);
   handleHotAirBalloons(context, state, dt);
   handleCollectables(context, state, dt);
   handleJetstreams(context, state, dt);
-  handleOcean(context);
+  handleToriiGates(context, state);
 
   LOG_TIME();
 }

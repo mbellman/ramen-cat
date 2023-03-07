@@ -169,6 +169,11 @@ void main() {
 
       out_color = mix(out_color, base_out_color, alpha);
     }
+
+    float torii_gate_zone_factor = min(1.0, in_progress) - min(1.0, out_progress);
+    float vignette_factor = distance(screen_warp_uv, vec2(0.5)) * torii_gate_zone_factor;
+
+    out_color = mix(out_color, vec3(0.2, 0, 0), vignette_factor);
   }
 
   // @todo gamma correction/tone-mapping

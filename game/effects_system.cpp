@@ -27,6 +27,21 @@ internal void initializePlayerParticles(GmContext* context) {
   }
 }
 
+internal void initializeToriiGateZoneParticles(GmContext* context) {
+  add_mesh("tgz-particle", TOTAL_TORII_GATE_ZONE_PARTICLES, Mesh::Sphere(4));
+  mesh("tgz-particle")->emissivity = 0.5f;
+  mesh("tgz-particle")->canCastShadows = false;
+
+  for (u16 i = 0; i < TOTAL_TORII_GATE_ZONE_PARTICLES; i++) {
+    auto& particle = create_object_from("tgz-particle");
+
+    particle.color = Vec3f(0.f);
+    particle.scale = Vec3f(0.f);
+
+    commit(particle);
+  }
+}
+
 internal void handlePlayerParticles(GmContext* context, GameState& state, float dt) {
   // Find the next available particle to spawn behind the player
   {
@@ -161,22 +176,73 @@ internal void handleDayNightCycle(GmContext* context, GameState& state, float dt
   EffectsSystem::updateDayNightCycleLighting(context, state);
 }
 
-internal void handleToriiGateRedshift(GmContext* context, GameState& state, float dt) {
-  auto& fx = context->scene.fx;
+internal void handleToriiGateEffects(GmContext* context, GameState& state, float dt) {
+  auto& player = get_player();
 
-  fx.redshiftSpawn = get_player().position;
+  // Zone transition effects
+  {
+    auto& fx = context->scene.fx;
 
-  if (state.isInToriiGateZone) {
-    fx.redshiftInProgress = time_since(state.toriiGateTransitionTime);
-    fx.redshiftOutProgress = 0.f;
-  } else {
-    fx.redshiftOutProgress = time_since(state.toriiGateTransitionTime);
+    fx.redshiftSpawn = player.position;
+
+    if (state.isInToriiGateZone) {
+      fx.redshiftInProgress = time_since(state.toriiGateTransitionTime);
+      fx.redshiftOutProgress = 0.f;
+    } else if (state.toriiGateTransitionTime != 0.f) {
+      fx.redshiftOutProgress = time_since(state.toriiGateTransitionTime);
+    }
   }
 
-  // @todo trigger when traveling through torii gates
-  if (get_input().didPressKey(Key::R)) {
-    state.isInToriiGateZone = !state.isInToriiGateZone;
-    state.toriiGateTransitionTime = get_scene_time();
+  // Zone effects
+  {
+    #define MIN(n, m) n > m ? m : n
+    #define MAX(n, m) n < m ? m : n
+
+    float timeSinceToriiGateTransition = time_since(state.toriiGateTransitionTime);
+    float particleScalingFactor = state.isInToriiGateZone ? MIN(timeSinceToriiGateTransition, 1.0f) : MAX(1.f - timeSinceToriiGateTransition, 0.f);
+
+    mesh("tgz-particle")->disabled = !(state.isInToriiGateZone || timeSinceToriiGateTransition < 1.f);
+
+    for (auto& particle : objects("tgz-particle")) {
+      if (particle.scale.x < 0.5f) {
+        float azimuth = Gm_Randomf(0.f, Gm_TAU);
+        float altitude = Gm_Randomf(-Gm_HALF_PI, Gm_HALF_PI);
+        float radius = Gm_Randomf(0.1f, 1.f);
+
+        radius *= radius;
+        radius = 1.f - radius;
+
+        Vec3f spawn = Vec3f(
+          cosf(altitude) * cosf(azimuth) * radius,
+          sinf(altitude) * radius,
+          cosf(altitude) * sinf(azimuth) * radius
+        );
+
+        spawn *= 3000.f;
+
+        particle.position = player.position + spawn;
+        particle.scale = Vec3f(Gm_Randomf(1.f, TORII_GATE_ZONE_PARTICLE_SIZE));
+        particle.rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_Randomf(0.f, Gm_PI));
+      } else {
+        float lifetime = particle.scale.x / TORII_GATE_ZONE_PARTICLE_SIZE;
+        Vec3f targetScale = Vec3f(TORII_GATE_ZONE_PARTICLE_SIZE * lifetime + 5.f * dt);
+        float lifetimeScale = 2.f * (lifetime < 0.5f ? lifetime : 1.f - lifetime);
+
+        particle.scale = targetScale * particleScalingFactor * lifetimeScale;
+        particle.color.r = u8(255.f * lifetimeScale);
+
+        commit(particle);
+
+        if (lifetime < 1.f) {
+          // Store the base scale without the scaling factor applied after the commit
+          // so we can read it on the next cycle to determine the particle's lifetime
+          particle.scale = targetScale;
+        } else {
+          // Reset the particle
+          particle.scale = Vec3f(0.f);
+        }
+      }
+    }
   }
 }
 
@@ -185,6 +251,7 @@ void EffectsSystem::initializeGameEffects(GmContext* context, GameState& state) 
   state.dayNightCycleTime = INITIAL_DAY_NIGHT_CYCLE_TIME;
 
   initializePlayerParticles(context);
+  initializeToriiGateZoneParticles(context);
 }
 
 void EffectsSystem::handleGameEffects(GmContext* context, GameState& state, float dt) {
@@ -192,7 +259,7 @@ void EffectsSystem::handleGameEffects(GmContext* context, GameState& state, floa
 
   handlePlayerParticles(context, state, dt);
   handleDayNightCycle(context, state, dt);
-  handleToriiGateRedshift(context, state, dt);
+  handleToriiGateEffects(context, state, dt);
 
   LOG_TIME();
 }
