@@ -28,9 +28,8 @@ internal float easeOutElastic(float t) {
   );
 }
 
-internal float easeOutBack(float t) {
-  float c1 = 1.70158f;
-  float c3 = c1 + 1.f;
+internal float easeOutBack(float t, float overshot) {
+  float x = overshot + 1.f;
 
-  return 1.f + c3 * powf(t - 1.f, 3) + c1 * powf(t - 1.f, 2);
+  return 1.f + x * powf(t - 1.f, 3) + overshot * powf(t - 1.f, 2);
 }

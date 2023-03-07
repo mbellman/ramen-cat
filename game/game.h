@@ -90,6 +90,8 @@ struct GameState {
   u8 dashLevel = 0;
 
   float totalDistanceTraveled = 0.f;
+  float airDashSpinStartYaw = 0.f;
+  float airDashSpinEndYaw = 0.f;
   float currentYaw = 0.f;
   float currentPitch = 0.f;
   float turnFactor = 0.f;

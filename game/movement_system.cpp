@@ -277,16 +277,6 @@ namespace MovementSystem {
       }
 
       state.turnFactor = Gm_Clampf(Gm_Lerpf(state.turnFactor, targetTurnFactor, 5.f * dt), -0.7f, 0.7f);
-
-      // When doing an air dash spin, adjust the turn factor accordingly
-      float timeSinceLastAirDash = time_since(state.lastAirDashTime);
-
-      if (timeSinceLastAirDash < 0.5f) {
-        float alpha = easeOutBack(timeSinceLastAirDash / 0.5f);
-        float targetAirDashTurnFactor = 1.f - alpha;
-
-        state.turnFactor = Gm_Lerpf(state.turnFactor, targetAirDashTurnFactor, 10.f * dt);
-      }
     }
 
     state.velocity += acceleration;
@@ -376,6 +366,9 @@ namespace MovementSystem {
           }
 
           state.lastAirDashTime = get_scene_time();
+          state.airDashSpinStartYaw = state.currentYaw;
+          state.airDashSpinEndYaw = atan2(airDashDirection.x, airDashDirection.z) + Gm_PI;
+          if (state.airDashSpinEndYaw - state.airDashSpinStartYaw < Gm_PI) state.airDashSpinEndYaw += Gm_TAU;
           context->scene.fx.screenWarpTime = get_scene_time();
         }
       }

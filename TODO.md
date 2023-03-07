@@ -3,7 +3,6 @@ EDITOR
 
 BUGS
 ----
-* air dash complete spin
 * clouds causing object outline misbehavior behind atmosphere
 * avoid phasing through corners
 * imported models are inverted along X
@@ -32,6 +31,7 @@ GAME
 * dynamic tail animations
 * level settings files
 * variable camera radius control
+* variable air dash spin animation duration
 
 * hoops
 * respawn birds

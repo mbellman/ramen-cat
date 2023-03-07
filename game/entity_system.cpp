@@ -484,7 +484,7 @@ internal void handleCollectables(GmContext* context, GameState& state, float dt)
         object.scale -= 15.f * dt;
       }
 
-      float alpha = easeOutBack(1.f - object.scale.x / initial.scale.x);
+      float alpha = easeOutBack(1.f - object.scale.x / initial.scale.x, 1.7f);
 
       object.position = Vec3f::lerp(object.position, initial.position + Vec3f(0, 60.f, 0), alpha);
     } else {

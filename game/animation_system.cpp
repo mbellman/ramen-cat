@@ -498,20 +498,35 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
       pitch = -1.f * atan2f(movement.y, movement.xz().magnitude());
     }
 
-    float timeSinceLastAirDash = time_since(state.lastAirDashTime);
+    // Adjust pitch when winding up a wall kick
+    float timeSinceLastWallBump = time_since(state.lastWallBumpTime);
 
-    if (state.lastAirDashTime != 0.f && timeSinceLastAirDash < 0.5f) {
-      // Spin when doing an air dash
-      // @bug this doesn't always do a complete spin
-      float alpha = easeOutBack(timeSinceLastAirDash * 2.f);
-
-      yaw += alpha * Gm_TAU;
-    }
-
-    if (state.lastWallBumpTime != 0.f && time_since(state.lastWallBumpTime) < WALL_KICK_WINDOW_DURATION) {
-      float alpha = time_since(state.lastWallBumpTime) / WALL_KICK_WINDOW_DURATION;
+    if (state.lastWallBumpTime != 0.f && timeSinceLastWallBump < WALL_KICK_WINDOW_DURATION) {
+      float alpha = timeSinceLastWallBump / WALL_KICK_WINDOW_DURATION;
 
       pitch -= alpha * 0.25f;
+    }
+
+    // Spin when air dashing
+    float timeSinceLastAirDash = time_since(state.lastAirDashTime);
+    float totalRotation = state.airDashSpinEndYaw - state.airDashSpinStartYaw;
+
+    if (
+      state.lastAirDashTime != 0.f &&
+      // Only keep spinning if we're in midair, OR if we're still a bit
+      // early in the spin animation. We use an arbitrary threshold which
+      // "feels" right to ensure that manual movement takes over the yaw,
+      // canceling the spin, but not so quickly as to look discontinuous.
+      (!state.isOnSolidGround || timeSinceLastAirDash < 0.3f) &&
+      // Have the spin last for one second
+      timeSinceLastAirDash < 1.f
+    ) {
+      float alpha = easeOutBack(timeSinceLastAirDash, 1.2f);
+      float targetTurnFactor = 2.f * (1.f - alpha);
+
+      yaw = state.airDashSpinStartYaw + alpha * totalRotation;
+
+      state.turnFactor = Gm_Lerpf(state.turnFactor, targetTurnFactor, 10.f * dt);
     }
 
     yaw = Gm_LerpCircularf(state.currentYaw, yaw, 10.f * dt, Gm_PI);
