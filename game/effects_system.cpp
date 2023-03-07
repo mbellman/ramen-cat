@@ -161,6 +161,25 @@ internal void handleDayNightCycle(GmContext* context, GameState& state, float dt
   EffectsSystem::updateDayNightCycleLighting(context, state);
 }
 
+internal void handleToriiGateRedshift(GmContext* context, GameState& state, float dt) {
+  auto& fx = context->scene.fx;
+
+  fx.redshiftSpawn = get_player().position;
+
+  if (state.isInToriiGateZone) {
+    fx.redshiftInProgress = time_since(state.toriiGateTransitionTime);
+    fx.redshiftOutProgress = 0.f;
+  } else {
+    fx.redshiftOutProgress = time_since(state.toriiGateTransitionTime);
+  }
+
+  // @todo trigger when traveling through torii gates
+  if (get_input().didPressKey(Key::R)) {
+    state.isInToriiGateZone = !state.isInToriiGateZone;
+    state.toriiGateTransitionTime = get_scene_time();
+  }
+}
+
 void EffectsSystem::initializeGameEffects(GmContext* context, GameState& state) {
   context->scene.clouds = "./game/assets/clouds.png";
   state.dayNightCycleTime = INITIAL_DAY_NIGHT_CYCLE_TIME;
@@ -173,6 +192,7 @@ void EffectsSystem::handleGameEffects(GmContext* context, GameState& state, floa
 
   handlePlayerParticles(context, state, dt);
   handleDayNightCycle(context, state, dt);
+  handleToriiGateRedshift(context, state, dt);
 
   LOG_TIME();
 }

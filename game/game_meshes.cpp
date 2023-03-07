@@ -259,6 +259,18 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
+    .name = "torii-gate",
+    .hitboxScale = Vec3f(1.f, 1.f, 0.15f),
+    .maxInstances = 50,
+    .create = []() {
+      return Mesh::Model("./game/assets/torii-gate.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/torii-gate.png",
+      .roughness = 0.4f
+    }
+  },
+  {
     .name = "building-arch",
     .hitboxScale = Vec3f(1.f, 1.f, 0.1f),
     .create = []() {

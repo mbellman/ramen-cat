@@ -97,6 +97,11 @@ struct GmScene {
 
   struct Fx {
     float screenWarpTime = -1.f;
+
+    // Game-specific modifications
+    Gamma::Vec3f redshiftSpawn;
+    float redshiftInProgress = 0.f;
+    float redshiftOutProgress = 0.f;
   } fx;
 
   struct GmUI {

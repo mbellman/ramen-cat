@@ -128,6 +128,10 @@ struct GameState {
 
   std::vector<Jetstream> jetstreams;
 
+  // Torii Gates
+  bool isInToriiGateZone = false;
+  float toriiGateTransitionTime = 0.f;
+
   std::vector<Gamma::Object> initialMovingObjects;
 
   #if GAMMA_DEVELOPER_MODE == 1
