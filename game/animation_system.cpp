@@ -513,15 +513,14 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
 
     if (
       state.lastAirDashTime != 0.f &&
+      timeSinceLastAirDash < AIR_DASH_SPIN_DURATION &&
       // Only keep spinning if we're in midair, OR if we're still a bit
       // early in the spin animation. We use an arbitrary threshold which
       // "feels" right to ensure that manual movement takes over the yaw,
       // canceling the spin, but not so quickly as to look discontinuous.
-      (!state.isOnSolidGround || timeSinceLastAirDash < 0.3f) &&
-      // Have the spin last for one second
-      timeSinceLastAirDash < 1.f
+      (!state.isOnSolidGround || timeSinceLastAirDash < AIR_DASH_SPIN_DURATION * 0.3f)
     ) {
-      float alpha = easeOutBack(timeSinceLastAirDash, 1.2f);
+      float alpha = easeOutBack(timeSinceLastAirDash / AIR_DASH_SPIN_DURATION, 1.2f);
       float targetTurnFactor = 2.f * (1.f - alpha);
 
       yaw = state.airDashSpinStartYaw + alpha * totalRotation;
