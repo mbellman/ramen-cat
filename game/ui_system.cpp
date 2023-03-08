@@ -5,6 +5,7 @@
 #include "SDL_ttf.h"
 
 #include "ui_system.h"
+#include "easing.h"
 #include "macros.h"
 
 using namespace Gamma;
@@ -12,7 +13,15 @@ using namespace Gamma;
 constexpr static float DIALOGUE_CHARACTER_DURATION = 0.05f;
 
 // @temporary
-static SDL_Surface* cat = nullptr;
+static SDL_Surface* collectableHud = nullptr;
+
+static SDL_Surface* onigiri = nullptr;
+static SDL_Surface* demonOnigiri = nullptr;
+
+static SDL_Surface* nitamago = nullptr;
+static SDL_Surface* demonNitamago = nullptr;
+
+// @temporary
 static SDL_Surface* dialoguePane = nullptr;
 static TTF_Font* dialogueFont = nullptr;
 
@@ -41,6 +50,10 @@ internal SDL_Surface* createRectangle(u32 width, u32 height, u32 color) {
   return surface;
 }
 
+/**
+ * Takes a substring of a given string, up to a given number of
+ * explicit character symbols (excluding spaces of tabs).
+ */
 internal std::string substringWithCharacterCount(const std::string& value, u32 characterCount) {
   u32 usedCharacters = 0;
   std::string substring;
@@ -72,6 +85,39 @@ internal void showNextQueuedDialogue(GmContext* context, GameState& state) {
   dialogue.startTime = get_scene_time();
   dialogue.lastCharacterTime = get_scene_time();
   dialogue.duration = Gm_FLOAT_MAX;
+}
+
+// @todo clean up
+internal void handleHud(GmContext* context, GameState& state, float dt) {
+  auto& frame = context->window.size;
+
+  render_image(collectableHud, 50, frame.height - collectableHud->h - 40, collectableHud->w, collectableHud->h);
+
+  // Onigiri
+  {
+    float alpha = state.inventory.demonOnigiri.count > 0 ? time_since(state.inventory.demonOnigiri.firstCollectionTime) : 0.f;
+    alpha *= 2.f;
+    if (alpha > 1.f) alpha = 1.f;
+    alpha = easeOutElastic(alpha);
+
+    int xOffset = int(14.f * alpha);
+
+    render_image(demonOnigiri, 65 + xOffset, frame.height - demonOnigiri->h - 50, demonOnigiri->w, demonOnigiri->h);
+    render_image(onigiri, 65 - xOffset, frame.height - onigiri->h - 50, onigiri->w, onigiri->h);
+  }
+
+  // Nitamago
+  {
+    float alpha = state.inventory.demonNitamago.count > 0 ? time_since(state.inventory.demonNitamago.firstCollectionTime) : 0.f;
+    alpha *= 2.f;
+    if (alpha > 1.f) alpha = 1.f;
+    alpha = easeOutElastic(alpha);
+
+    int xOffset = int(14.f * alpha);
+
+    render_image(demonNitamago, 180 + xOffset, frame.height - demonNitamago->h - 50, demonNitamago->w, demonNitamago->h);
+    render_image(nitamago, 180 - xOffset, frame.height - nitamago->h - 50, nitamago->w, nitamago->h);
+  }
 }
 
 internal void handleDialogue(GmContext* context, GameState& state) {
@@ -154,12 +200,19 @@ void UISystem::initializeUI(GmContext* context, GameState& state) {
   dialogueFont = TTF_OpenFont("./fonts/OpenSans-Regular.ttf", 32);
 
   // @temporary
-  cat = IMG_Load("./game/ui/cat.png");
+  collectableHud = IMG_Load("./game/assets/hud/collectable-hud.png");
+
+  onigiri = IMG_Load("./game/assets/hud/onigiri.png");
+  demonOnigiri = IMG_Load("./game/assets/hud/demon-onigiri.png");
+
+  nitamago = IMG_Load("./game/assets/hud/nitamago.png");
+  demonNitamago = IMG_Load("./game/assets/hud/demon-nitamago.png");
 }
 
 void UISystem::handleUI(GmContext* context, GameState& state, float dt) {  
   START_TIMING("handleUI");
 
+  handleHud(context, state, dt);
   handleDialogue(context, state);
 
   LOG_TIME();

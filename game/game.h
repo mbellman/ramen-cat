@@ -40,6 +40,12 @@ struct Jetstream {
   float radius = 500.f;
 };
 
+struct InventoryItem {
+  u8 count = 0;
+  float firstCollectionTime = 0.f;
+  float lastCollectionTime = 0.f;
+};
+
 struct CameraState {
   Gamma::ThirdPersonCamera camera3p;
   Gamma::Vec3f lookAtTarget;
@@ -99,6 +105,16 @@ struct GameState {
   struct Animation {
     AnimationRig playerRig;
   } animation;
+
+  struct Inventory {
+    InventoryItem onigiri;
+    InventoryItem nitamago;
+    InventoryItem chashu;
+
+    InventoryItem demonOnigiri;
+    InventoryItem demonNitamago;
+    InventoryItem demonChashu;
+  } inventory;
 
   // NPC handling
   NonPlayerCharacter* activeNpc = nullptr;

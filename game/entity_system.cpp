@@ -1,6 +1,7 @@
 #include "entity_system.h"
 #include "camera_system.h"
 #include "ui_system.h"
+#include "inventory_system.h"
 #include "world.h"
 #include "game_meshes.h"
 #include "macros.h"
@@ -472,37 +473,85 @@ internal void handleCollectables(GmContext* context, GameState& state, float dt)
   float t2 = t * 2.f;
 
   // @todo generalize collectable behavior, store special entities for collectables to determine appropriate handling
-  for_moving_objects("onigiri", {
-    if (object.scale.x < 0.1f) {
-      // Already collected
-      object.scale = Vec3f(0.f);
-    } else if (object.scale.x != initial.scale.x) {
-      // Collection animation
-      if (object.position.y - initial.position.y > 50.f) {
-        object.scale -= 200.f * dt;
+  {
+    for_moving_objects("onigiri", {
+      if (object.scale.x < 0.1f) {
+        // Already collected
+        object.scale = Vec3f(0.f);
+      } else if (object.scale.x != initial.scale.x) {
+        // Collection animation
+        if (object.position.y - initial.position.y > 50.f) {
+          object.scale -= 200.f * dt;
+        } else {
+          object.scale -= 15.f * dt;
+        }
+
+        float alpha = easeOutBack(1.f - object.scale.x / initial.scale.x, 1.7f);
+
+        object.position = Vec3f::lerp(object.position, initial.position + Vec3f(0, 60.f, 0), alpha);
       } else {
-        object.scale -= 15.f * dt;
+        // Idle (uncollected) animation
+        float yOffset = sinf(t2 + float(object._record.id) * 0.5f);
+
+        object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), t);
+        object.position = initial.position + Vec3f(0, yOffset, 0) * 10.f;
+
+        if ((object.position - player.position).magnitude() < 100.f) {
+          // Item collected!
+          object.scale *= 0.99f;
+          object.position = Vec3f::lerp(object.position, player.position, 10.f * dt);
+
+          if (state.isInToriiGateZone) {
+            InventorySystem::collectItem(context, state.inventory.demonOnigiri);
+          } else {
+            InventorySystem::collectItem(context, state.inventory.onigiri);
+          }
+        }
       }
 
-      float alpha = easeOutBack(1.f - object.scale.x / initial.scale.x, 1.7f);
+      commit(object);
+    });
+  }
 
-      object.position = Vec3f::lerp(object.position, initial.position + Vec3f(0, 60.f, 0), alpha);
-    } else {
-      // Idle (uncollected) animation
-      float yOffset = sinf(t2 + float(object._record.id) * 0.5f);
+  {
+    for_moving_objects("nitamago", {
+      if (object.scale.x < 0.1f) {
+        // Already collected
+        object.scale = Vec3f(0.f);
+      } else if (object.scale.x != initial.scale.x) {
+        // Collection animation
+        if (object.position.y - initial.position.y > 50.f) {
+          object.scale -= 200.f * dt;
+        } else {
+          object.scale -= 15.f * dt;
+        }
 
-      object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), t);
-      object.position = initial.position + Vec3f(0, yOffset, 0) * 10.f;
+        float alpha = easeOutBack(1.f - object.scale.x / initial.scale.x, 1.7f);
 
-      if ((object.position - player.position).magnitude() < 100.f) {
-        // Item collected!
-        object.scale *= 0.99f;
-        object.position = Vec3f::lerp(object.position, player.position, 10.f * dt);
+        object.position = Vec3f::lerp(object.position, initial.position + Vec3f(0, 60.f, 0), alpha);
+      } else {
+        // Idle (uncollected) animation
+        float yOffset = sinf(t2 + float(object._record.id) * 0.5f);
+
+        object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), t);
+        object.position = initial.position + Vec3f(0, yOffset, 0) * 10.f;
+
+        if ((object.position - player.position).magnitude() < 100.f) {
+          // Item collected!
+          object.scale *= 0.99f;
+          object.position = Vec3f::lerp(object.position, player.position, 10.f * dt);
+
+          if (state.isInToriiGateZone) {
+            InventorySystem::collectItem(context, state.inventory.demonNitamago);
+          } else {
+            InventorySystem::collectItem(context, state.inventory.nitamago);
+          }
+        }
       }
-    }
 
-    commit(object);
-  });
+      commit(object);
+    });
+  }
 }
 
 internal void handleJetstreams(GmContext* context, GameState& state, float dt) {
