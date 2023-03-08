@@ -32,7 +32,6 @@ GAME
 * level settings files
 * variable camera radius control
 * variable air dash spin animation duration
-* torii gate fx tweaks
 
 * hoops
 * respawn birds

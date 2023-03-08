@@ -183,8 +183,6 @@ internal void handleToriiGateEffects(GmContext* context, GameState& state, float
   {
     auto& fx = context->scene.fx;
 
-    fx.redshiftSpawn = player.position;
-
     if (state.isInToriiGateZone) {
       fx.redshiftInProgress = time_since(state.toriiGateTransitionTime);
       fx.redshiftOutProgress = 0.f;

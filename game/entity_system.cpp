@@ -584,6 +584,8 @@ internal void handleToriiGates(GmContext* context, GameState& state) {
       state.isInToriiGateZone = !state.isInToriiGateZone;
       state.toriiGateTransitionTime = get_scene_time();
 
+      context->scene.fx.redshiftSpawn = gate.position;
+
       break;
     }
   }
