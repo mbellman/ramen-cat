@@ -64,6 +64,16 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .texture = "./game/assets/japanese-lamppost.png"
     }
   },
+  {
+    .name = "streetlamp",
+    .hitboxScale = Vec3f(0.4f, 1.f, 0.15f),
+    .create = []() {
+      return Mesh::Model("./game/assets/streetlamp.obj");
+    },
+    .attributes = {
+      .roughness = 0.4f
+    }
+  },
 
   /**
    * Plants
