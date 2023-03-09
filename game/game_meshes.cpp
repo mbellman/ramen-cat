@@ -71,7 +71,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       return Mesh::Model("./game/assets/streetlamp.obj");
     },
     .attributes = {
-      .roughness = 0.4f
+      .roughness = 0.3f
     }
   },
 
@@ -949,12 +949,22 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
     }
   },
   {
-    .name = "japanese-lamppost-light",
+    .name = "streetlamp-light",
     .create = []() {
-      return Mesh::Model("./game/assets/japanese-lamppost-light.obj");
+      return Mesh::Cube();
     },
     .attributes = {
       .emissivity = 1.f
+    }
+  },
+
+  {
+    .name = "streetlamp-frame",
+    .create = []() {
+      return Mesh::Model("./game/assets/streetlamp-frame.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/wood-beam.png"
     }
   },
   {

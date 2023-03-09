@@ -388,25 +388,29 @@ internal void rebuildDynamicStaircases(GmContext* context) {
   #endif
 }
 
-internal void rebuildLamppostLights(GmContext* context) {
-  objects("japanese-lamppost-light").reset();
+internal void rebuildStreetlampLights(GmContext* context) {
+  objects("streetlamp-light").reset();
 
-  for (auto& post : objects("japanese-lamppost")) {
-    auto& light = create_object_from("japanese-lamppost-light");
+  for (auto& lamp : objects("streetlamp")) {
+    auto& lampLight = create_object_from("streetlamp-light");
+    auto& frame = create_object_from("streetlamp-frame");
 
-    light.position = post.position + Vec3f(0, 0.78f, 0) * post.scale.y;
-    light.scale = post.scale;
-    light.rotation = post.rotation;
-    light.color = Vec3f(1.f, 0.9f, 0.75f);
+    Vec3f offset = Vec3f(lamp.scale.x * 0.17f, lamp.scale.y * 0.74f, 0);
+    Vec3f r_offset = lamp.rotation.toMatrix4f().transformVec3f(offset);
 
-    commit(light);
+    lampLight.position = lamp.position + r_offset;
+    lampLight.scale = Vec3f(lamp.scale.x, lamp.scale.y * 1.2f, lamp.scale.z) * 0.12f;
+    lampLight.rotation = lamp.rotation;
+    lampLight.color = Vec3f(1.f, 0.8f, 0.6f);
+
+    frame.position = lamp.position;
+    frame.scale = lamp.scale;
+    frame.rotation = lamp.rotation;
+    frame.color = Vec3f(0.7f);
+
+    commit(lampLight);
+    commit(frame);
   }
-
-  #if GAMMA_DEVELOPER_MODE
-    u16 totalLights = objects("japanese-lamppost-light").totalActive();
-
-    Console::log("Generated", std::to_string(totalLights), "lamppost lights");
-  #endif
 }
 
 internal void rebuildElectricalPoleWires(GmContext* context) {
@@ -629,7 +633,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
 
 void World::rebuildDynamicMeshes(GmContext* context) {
   rebuildDynamicStaircases(context);
-  rebuildLamppostLights(context);
+  rebuildStreetlampLights(context);
   rebuildElectricalPoleWires(context);
   rebuildDynamicBuildings(context);
   rebuildAcUnitFans(context);
