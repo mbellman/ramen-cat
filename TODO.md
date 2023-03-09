@@ -23,7 +23,6 @@ ASSETS
 
 GAME
 ----
-* tilting when running
 * dust clouds when super-jumping
 * level unloading (in progress)
 * dynamic tail animations

@@ -531,7 +531,8 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
     yaw = Gm_LerpCircularf(state.currentYaw, yaw, 10.f * dt, Gm_PI);
     pitch = Gm_Lerpf(state.currentPitch, pitch, 10.f * dt);
 
-    player.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), yaw);
+    player.rotation = Quaternion::fromAxisAngle(Vec3f(0, 0, 1.f), state.turnFactor * 0.5f);
+    player.rotation *= Quaternion::fromAxisAngle(Vec3f(0, 1, 0), yaw);
     player.rotation *= Quaternion::fromAxisAngle(player.rotation.getLeftDirection(), pitch);
 
     handlePlayerAnimation(context, state, dt);
