@@ -9,12 +9,11 @@ BUGS
 
 ASSETS
 ------
-* vines
 * streetlamps
-* torii gates
-* flowers
 * columns
 * (redo) metal pipes
+* plant vases
+* trees
 * signs/neon
 * stars
 * murals/paintings
@@ -26,15 +25,17 @@ ASSETS
 GAME
 ----
 * move camera forward when tilting upward
-* level unloading (in progress)
+* tilting when running
 * dust clouds when super-jumping
+* level unloading (in progress)
 * dynamic tail animations
 * level settings files
 * variable camera radius control
-* variable air dash spin animation duration
+* variable air dash spin animation duration (?)
 
 * hoops
 * respawn birds
+* enemies in torii gate zone
 * allow SPACE to be queued when pressed just before hitting the ground
 * run along walls before wall kicking
 * animation blending (?)

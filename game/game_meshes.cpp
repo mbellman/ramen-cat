@@ -134,6 +134,22 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
+    .name = "flower",
+    .hitboxScale = Vec3f(1.f, 0.5f, 1.f),
+    .hitboxOffset = Vec3f(0, 0.25f, 0),
+    .create = []() {
+      return Mesh::Model("./game/assets/flower.obj");
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .texture = "./game/assets/flower.png",
+      .animation = {
+        .type = PresetAnimationType::FLOWER,
+        .factor = 2.f
+      }
+    }
+  },
+  {
     .name = "palm-trunk",
     .hitboxScale = Vec3f(0.1f, 1.f, 0.1f),
     .create = []() {
@@ -827,6 +843,20 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .useMipmaps = false
     }
   },
+  {
+    .name = "chashu",
+    .moving = true,
+    .defaultScale = Vec3f(40.f),
+    .hitboxScale = Vec3f(0.8f, 0.8f, 0.2f),
+    .create = []() {
+      return Mesh::Model("./game/assets/chashu.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/chashu.png",
+      .emissivity = 0.2f,
+      .useMipmaps = false
+    }
+  },
 
   /**
    * Stairs
@@ -876,6 +906,26 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     },
     .attributes = {
       .emissivity = 0.5f
+    }
+  },
+  {
+    .name = "umimura-sculpture-stand",
+    .hitboxScale = Vec3f(0.1f, 1.f, 0.1f),
+    .maxInstances = 2,
+    .create = []() {
+      return Mesh::Model("./game/assets/sculpture-stand.obj");
+    }
+  },
+  {
+    .name = "umimura-sculpture-fan",
+    .moving = true,
+    .hitboxScale = Vec3f(1.f, 0.2f, 1.f),
+    .maxInstances = 2,
+    .create = []() {
+      return Mesh::Model("./game/assets/sculpture-fan.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/sculpture-fan.png"
     }
   }
 };

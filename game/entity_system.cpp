@@ -467,89 +467,65 @@ internal void handleHotAirBalloons(GmContext* context, GameState& state, float d
   });
 }
 
+internal void handleCollectable(GmContext* context, GameState& state, float dt, float time, Object& player, Object& initial, Object& object, InventoryItem& demonItem, InventoryItem& item) {
+  if (object.scale.x < 0.1f) {
+    // Already collected
+    object.scale = Vec3f(0.f);
+  } else if (object.scale.x != initial.scale.x) {
+    // Collection animation
+    if (object.position.y - initial.position.y > 50.f) {
+      object.scale -= 200.f * dt;
+    } else {
+      object.scale -= 15.f * dt;
+    }
+
+    float alpha = easeOutBack(1.f - object.scale.x / initial.scale.x, 1.7f);
+
+    object.position = Vec3f::lerp(object.position, initial.position + Vec3f(0, 60.f, 0), alpha);
+  } else {
+    // Idle (uncollected) animation
+    float yOffset = sinf(time * 2.f + float(object._record.id) * 0.5f);
+
+    object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), time);
+    object.position = initial.position + Vec3f(0, yOffset, 0) * 10.f;
+
+    if ((object.position - player.position).magnitude() < 100.f) {
+      // Item collected!
+      object.scale *= 0.99f;
+      object.position = Vec3f::lerp(object.position, player.position, 10.f * dt);
+
+      if (state.isInToriiGateZone) {
+        InventorySystem::collectItem(context, demonItem);
+      } else {
+        InventorySystem::collectItem(context, item);
+      }
+    }
+  }
+
+  commit(object);
+}
+
 internal void handleCollectables(GmContext* context, GameState& state, float dt) {
   auto& player = get_player();
   float t = get_scene_time();
   float t2 = t * 2.f;
 
-  // @todo generalize collectable behavior, store special entities for collectables to determine appropriate handling
+  // @todo store special entities for collectables to determine appropriate handling
   {
     for_moving_objects("onigiri", {
-      if (object.scale.x < 0.1f) {
-        // Already collected
-        object.scale = Vec3f(0.f);
-      } else if (object.scale.x != initial.scale.x) {
-        // Collection animation
-        if (object.position.y - initial.position.y > 50.f) {
-          object.scale -= 200.f * dt;
-        } else {
-          object.scale -= 15.f * dt;
-        }
-
-        float alpha = easeOutBack(1.f - object.scale.x / initial.scale.x, 1.7f);
-
-        object.position = Vec3f::lerp(object.position, initial.position + Vec3f(0, 60.f, 0), alpha);
-      } else {
-        // Idle (uncollected) animation
-        float yOffset = sinf(t2 + float(object._record.id) * 0.5f);
-
-        object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), t);
-        object.position = initial.position + Vec3f(0, yOffset, 0) * 10.f;
-
-        if ((object.position - player.position).magnitude() < 100.f) {
-          // Item collected!
-          object.scale *= 0.99f;
-          object.position = Vec3f::lerp(object.position, player.position, 10.f * dt);
-
-          if (state.isInToriiGateZone) {
-            InventorySystem::collectItem(context, state.inventory.demonOnigiri);
-          } else {
-            InventorySystem::collectItem(context, state.inventory.onigiri);
-          }
-        }
-      }
-
-      commit(object);
+      handleCollectable(context, state, dt, t, player, initial, object, state.inventory.demonOnigiri, state.inventory.onigiri);
     });
   }
 
   {
     for_moving_objects("nitamago", {
-      if (object.scale.x < 0.1f) {
-        // Already collected
-        object.scale = Vec3f(0.f);
-      } else if (object.scale.x != initial.scale.x) {
-        // Collection animation
-        if (object.position.y - initial.position.y > 50.f) {
-          object.scale -= 200.f * dt;
-        } else {
-          object.scale -= 15.f * dt;
-        }
+      handleCollectable(context, state, dt, t, player, initial, object, state.inventory.demonNitamago, state.inventory.nitamago);
+    });
+  }
 
-        float alpha = easeOutBack(1.f - object.scale.x / initial.scale.x, 1.7f);
-
-        object.position = Vec3f::lerp(object.position, initial.position + Vec3f(0, 60.f, 0), alpha);
-      } else {
-        // Idle (uncollected) animation
-        float yOffset = sinf(t2 + float(object._record.id) * 0.5f);
-
-        object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), t);
-        object.position = initial.position + Vec3f(0, yOffset, 0) * 10.f;
-
-        if ((object.position - player.position).magnitude() < 100.f) {
-          // Item collected!
-          object.scale *= 0.99f;
-          object.position = Vec3f::lerp(object.position, player.position, 10.f * dt);
-
-          if (state.isInToriiGateZone) {
-            InventorySystem::collectItem(context, state.inventory.demonNitamago);
-          } else {
-            InventorySystem::collectItem(context, state.inventory.nitamago);
-          }
-        }
-      }
-
-      commit(object);
+  {
+    for_moving_objects("chashu", {
+      handleCollectable(context, state, dt, t, player, initial, object, state.inventory.demonChashu, state.inventory.chashu);
     });
   }
 }
@@ -640,6 +616,20 @@ internal void handleToriiGates(GmContext* context, GameState& state) {
   }
 }
 
+internal void handleUniqueLevelStructures(GmContext* context, GameState& state, float dt) {
+  float t = get_scene_time();
+
+  {
+    for_moving_objects("umimura-sculpture-fan", {
+      float angle = t * 0.2f;
+
+      object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angle);
+
+      commit(object);
+    });
+  }
+}
+
 void EntitySystem::initializeGameEntities(GmContext* context, GameState& state) {
   // @temporary
   {
@@ -657,13 +647,14 @@ void EntitySystem::initializeGameEntities(GmContext* context, GameState& state) 
 void EntitySystem::handleGameEntities(GmContext* context, GameState& state, float dt) {
   START_TIMING("handleGameEntities");
 
-  // Inert entities
+  // Non-interactible entities
   handleBirds(context, state, dt);
   handleSeagulls(context, state, dt);
   handleLanterns(context, state, dt);
   handleWindmillWheels(context, state, dt);
   handleWindTurbines(context, state, dt);
   handleAcFans(context, state, dt);
+  handleUniqueLevelStructures(context, state, dt);
   handleOcean(context);
 
   // Interactible/player-dependent entities
