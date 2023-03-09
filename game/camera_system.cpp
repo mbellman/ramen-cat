@@ -81,16 +81,18 @@ internal void updateThirdPersonCameraDirection(GmContext* context, GameState& st
 }
 
 internal Vec3f getLookAtTargetPosition(GmContext* context, GameState& state) {
+  auto& camera = get_camera();
   auto& player = get_player();
+  Vec3f defaultLookAtTarget = player.position + camera.orientation.getDirection().xz() * PLAYER_RADIUS * 2.f;
 
   if (state.cameraOverrideStartTime == 0.f) {
     // If we haven't started a camera transition yet,
-    // always use the player position.
-    return player.position;
+    // use the default look-at target.
+    return defaultLookAtTarget;
   }
 
   Vec3f tweenStart = state.sourceCameraState.lookAtTarget;
-  Vec3f tweenEnd = state.useCameraOverride ? state.targetCameraState.lookAtTarget : player.position;
+  Vec3f tweenEnd = state.useCameraOverride ? state.targetCameraState.lookAtTarget : defaultLookAtTarget;
   float t = time_since(state.cameraOverrideStartTime) / state.cameraOverrideDuration;
 
   if (t > 1.f) {

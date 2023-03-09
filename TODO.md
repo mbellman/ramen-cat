@@ -9,7 +9,6 @@ BUGS
 
 ASSETS
 ------
-* streetlamps
 * columns
 * (redo) metal pipes
 * plant vases
@@ -24,7 +23,6 @@ ASSETS
 
 GAME
 ----
-* move camera forward when tilting upward
 * tilting when running
 * dust clouds when super-jumping
 * level unloading (in progress)
