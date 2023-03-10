@@ -68,6 +68,7 @@ struct GameState {
   Gamma::Vec3f direction = Gamma::Vec3f(0, 0, 1.f);
   Gamma::Vec3f previousPlayerPosition;
   Gamma::Vec3f lastSolidGroundPosition;
+  Gamma::Vec3f lastHardLandingPosition;
   Gamma::Vec3f lastWallBumpNormal;
   Gamma::Vec3f lastWallBumpVelocity;
 
@@ -79,6 +80,7 @@ struct GameState {
   float lastWallBumpTime = 0.f;
   float lastWallKickTime = 0.f;
   float lastAirDashTime = 0.f;
+  float lastHardLandingTime = 0.f;
   float lastGroundParticleSpawnTime = 0.f;
   float lastAirParticleSpawnTime = 0.f;
   float lastMouseMoveTime = 0.f;

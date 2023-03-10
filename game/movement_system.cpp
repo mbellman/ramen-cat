@@ -303,6 +303,8 @@ namespace MovementSystem {
     // Handle jump/wall kick/air dash actions
     {
       if (input.didPressKey(Key::SPACE)) {
+        float time = get_scene_time();
+
         if (state.isOnSolidGround) {
           // Regular jump
           float jumpFactor = (
@@ -315,11 +317,14 @@ namespace MovementSystem {
             // Super jump
             jumpFactor *= 2.f;
 
-            context->scene.fx.screenWarpTime = get_scene_time();
+            context->scene.fx.screenWarpTime = time;
+
+            state.lastHardLandingPosition = player.position;
+            state.lastHardLandingTime = time;
           }
 
           state.velocity.y = DEFAULT_JUMP_Y_VELOCITY * jumpFactor;
-          state.lastJumpTime = get_scene_time();
+          state.lastJumpTime = time;
 
           state.isOnSolidGround = false;
           state.canPerformAirDash = true;
@@ -334,12 +339,12 @@ namespace MovementSystem {
           Vec3f kickDirection = (state.lastWallBumpNormal + Vec3f(0, 1.f, 0)).unit();
 
           state.velocity = wallPlaneVelocity + kickDirection * state.lastWallBumpVelocity.magnitude();
-          state.lastWallKickTime = get_scene_time();
+          state.lastWallKickTime = time;
 
           state.canPerformAirDash = true;
           state.canPerformWallKick = true;
 
-          context->scene.fx.screenWarpTime = get_scene_time();
+          context->scene.fx.screenWarpTime = time;
         } else if (state.canPerformAirDash) {
           // Air dash
           Vec3f airDashDirection = camera.orientation.getDirection();
@@ -365,11 +370,12 @@ namespace MovementSystem {
             state.dashLevel++;
           }
 
-          state.lastAirDashTime = get_scene_time();
+          state.lastAirDashTime = time;
           state.airDashSpinStartYaw = state.currentYaw;
           state.airDashSpinEndYaw = atan2(airDashDirection.x, airDashDirection.z) + Gm_PI;
           if (state.airDashSpinEndYaw - state.airDashSpinStartYaw < Gm_PI) state.airDashSpinEndYaw += Gm_TAU;
-          context->scene.fx.screenWarpTime = get_scene_time();
+
+          context->scene.fx.screenWarpTime = time;
         }
       }
     }
@@ -395,6 +401,7 @@ namespace MovementSystem {
     auto& input = get_input();
     auto& player = get_player();
     float gravity = FORCE_GRAVITY * dt;
+    Vec3f initialVelocity = state.velocity;
 
     // Handle gravity/velocity
     {
@@ -450,6 +457,11 @@ namespace MovementSystem {
       // Otherwise, jumping and landing keeps the flag set to true, and bumping
       // into a wall triggers the wall kick wind-up action.
       state.canPerformWallKick = false;
+
+      if (initialVelocity.y < -550.f) {
+        state.lastHardLandingPosition = player.position - Vec3f(0, PLAYER_RADIUS * 0.5f, 0);
+        state.lastHardLandingTime = get_scene_time();
+      }
     }
 
     if (state.isOnSolidGround && !state.isMovingPlayerThisFrame) {

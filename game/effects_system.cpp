@@ -1,29 +1,36 @@
 #include "effects_system.h"
+#include "easing.h"
 #include "macros.h"
 #include "game_constants.h"
 
 using namespace Gamma;
 
 internal void initializePlayerParticles(GmContext* context) {
-  add_mesh("ground-particle", TOTAL_GROUND_PARTICLES, Mesh::Sphere(6));
-  mesh("ground-particle")->emissivity = 0.5f;
+  // Ground particles
+  {
+    add_mesh("ground-particle", TOTAL_GROUND_PARTICLES, Mesh::Sphere(6));
+    mesh("ground-particle")->emissivity = 0.5f;
 
-  add_mesh("dash-particle", TOTAL_DASH_PARTICLES, Mesh::Particles());
+    for (u8 i = 0; i < TOTAL_GROUND_PARTICLES; i++) {
+      auto& particle = create_object_from("ground-particle");
+      
+      particle.scale = Vec3f(0.f);
 
-  for (u8 i = 0; i < TOTAL_GROUND_PARTICLES; i++) {
-    auto& particle = create_object_from("ground-particle");
-    
-    particle.scale = Vec3f(0.f);
-
-    commit(particle);
+      commit(particle);
+    }
   }
 
-  for (u8 i = 0; i < TOTAL_DASH_PARTICLES; i++) {
-    auto& particle = create_object_from("dash-particle");
+  // Dash particles
+  {
+    add_mesh("dash-particle", TOTAL_DASH_PARTICLES, Mesh::Particles());
 
-    particle.scale = Vec3f(0.f);
+    for (u8 i = 0; i < TOTAL_DASH_PARTICLES; i++) {
+      auto& particle = create_object_from("dash-particle");
 
-    commit(particle);
+      particle.scale = Vec3f(0.f);
+
+      commit(particle);
+    }
   }
 }
 
@@ -47,7 +54,14 @@ internal void handlePlayerParticles(GmContext* context, GameState& state, float 
   {
     auto& player = get_player();
 
+    // Ground particles
+    constexpr static float TOTAL_RUNNING_PARTICLES = TOTAL_GROUND_PARTICLES - TOTAL_HARD_LANDING_PARTICLES;
+
     for (auto& particle : objects("ground-particle")) {
+      if (particle._record.id >= TOTAL_RUNNING_PARTICLES) {
+        continue;
+      }
+
       if (
         particle.scale.x == 0.f &&
         time_since(state.lastGroundParticleSpawnTime) > GROUND_PARTICLE_SPAWN_DELAY
@@ -71,6 +85,29 @@ internal void handlePlayerParticles(GmContext* context, GameState& state, float 
       }
     }
 
+    float timeSinceLastHardLanding = time_since(state.lastHardLandingTime);
+
+    if (state.lastHardLandingTime != 0.f && timeSinceLastHardLanding < 1.f) {      
+      float alpha = easeOutQuint(timeSinceLastHardLanding);
+      float radius = alpha * 50.f;
+      float scale = sqrtf(1.f - timeSinceLastHardLanding) * 5.f;
+
+      for (auto& particle : objects("ground-particle")) {
+        if (particle._record.id < TOTAL_RUNNING_PARTICLES) {
+          continue;
+        }
+
+        float p = Gm_TAU * float(particle._record.id - TOTAL_RUNNING_PARTICLES) / TOTAL_HARD_LANDING_PARTICLES;
+
+        particle.position = state.lastHardLandingPosition + Vec3f(sinf(p), 0, cosf(p)) * radius;
+        particle.scale = Vec3f(scale);
+        particle.color = Vec3f(0.6f);
+
+        commit(particle);
+      }
+    }
+
+    // Dash particles
     for (auto& particle : objects("dash-particle")) {
       if (
         particle.scale.x == 0.f &&

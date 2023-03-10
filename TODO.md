@@ -23,7 +23,6 @@ ASSETS
 
 GAME
 ----
-* dust clouds when super-jumping
 * level unloading (in progress)
 * dynamic tail animations
 * level settings files
