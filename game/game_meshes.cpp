@@ -160,6 +160,16 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
+    .name = "tree-trunk",
+    .hitboxScale = Vec3f(0.7f, 1.f, 0.7f),
+    .create = []() {
+      return Mesh::Model("./game/assets/tree-trunk.obj");
+    },
+    .attributes = {
+      .roughness = 0.8f
+    }
+  },
+  {
     .name = "palm-trunk",
     .hitboxScale = Vec3f(0.1f, 1.f, 0.1f),
     .create = []() {
