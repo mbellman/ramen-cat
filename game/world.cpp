@@ -390,6 +390,7 @@ internal void rebuildDynamicStaircases(GmContext* context) {
 
 internal void rebuildStreetlampLights(GmContext* context) {
   objects("streetlamp-light").reset();
+  objects("streetlamp-frame").reset();
 
   for (auto& lamp : objects("streetlamp")) {
     auto& lampLight = create_object_from("streetlamp-light");

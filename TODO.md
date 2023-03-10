@@ -3,6 +3,8 @@ EDITOR
 
 BUGS
 ----
+* spinny first person camera
+
 * clouds causing object outline misbehavior behind atmosphere
 * avoid phasing through corners
 * imported models are inverted along X
@@ -23,11 +25,12 @@ ASSETS
 
 GAME
 ----
-* level unloading (in progress)
+* terminal velocity in air
+* hang glider
 * dynamic tail animations
-* level settings files
-* variable camera radius control
 * variable air dash spin animation duration (?)
+* level unloading (game state reset)
+* level settings files
 
 * hoops
 * respawn birds
@@ -45,7 +48,6 @@ GAME
 * hot-reloading NPCs/entities data
 * avoid running off edges without input (?)
 * lens flare
-* capes/gliding
 * controller support
 * catnip power up + screen-warp effect
 * dialogue events/camera changes during dialogue
@@ -54,9 +56,10 @@ GAME
 ENGINE
 ------
 * cache textures
-* area lights
-* skylight contribution gradation/probe-based GI
-* planar reflections
-* infinite particles
 * sound
 * Mesh::MeshPack() ?
+* volumetric lighting
+* planar reflections
+* infinite particles
+* skylight contribution gradation/probe-based GI
+* area lights (?)
