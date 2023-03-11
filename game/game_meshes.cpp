@@ -680,6 +680,16 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
+    .name = "awning",
+    .hitboxScale = Vec3f(0.9f, 0.2f, 0.4f),
+    .create = []() {
+      return Mesh::Model("./game/assets/awning.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/awning.png"
+    }
+  },
+  {
     .name = "wood-plank",
     .hitboxScale = Vec3f(0.2f, 0.05f, 1.f),
     .create = []() {

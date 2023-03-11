@@ -11,6 +11,14 @@ inline float Gm_Absf(float value) {
   return value < 0.f ? -value : value;
 }
 
+inline float Gm_Minf(float value, float min) {
+  return value < min ? value : min;
+}
+
+inline float Gm_Maxf(float value, float max) {
+  return value > max ? value : max;
+}
+
 inline float Gm_Clampf(float value, float min, float max) {
   return value > max ? max : value < min ? min : value;
 }

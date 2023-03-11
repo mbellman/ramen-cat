@@ -3,7 +3,7 @@ EDITOR
 
 BUGS
 ----
-* spinny first person camera
+* spinny high-altitude camera
 
 * jittery camera/physics
 * clouds causing object outline misbehavior behind atmosphere
