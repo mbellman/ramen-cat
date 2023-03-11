@@ -63,22 +63,18 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
     state.lastWallBumpNormal = plane.normal;
 
     if (!state.isOnSolidGround && time_since(state.lastWallBumpTime) > WALL_KICK_WINDOW_DURATION) {
-      if (
-        state.lastWallBumpTime < state.lastTimeOnSolidGround &&
-        (player.position - state.lastSolidGroundPosition).magnitude() > PLAYER_RADIUS * 4.f
-      ) {
-        // Only explicitly enable wall kicks when bumping a wall for the first time
-        // after a ground jump, if the jump delta is above a certain threshold.
-        // We don't necessarily set this to false otherwise; if this variable is
-        // already true, it will remain true. We just don't want to flip it to true
-        // without the aforementioned conditions being met. (For example, performing
-        // a wall kick immediately allows more wall kicks to be performed, regardless
-        // of last solid ground time or jump delta values).
-        state.canPerformWallKick = true;
-      }
-
+      // Automatic wall kick
       state.lastWallBumpTime = get_scene_time();
       state.lastWallBumpVelocity = state.velocity;
+
+      Vec3f wallPlaneVelocity = state.lastWallBumpVelocity.alignToPlane(state.lastWallBumpNormal);
+      Vec3f kickDirection = (state.lastWallBumpNormal + Vec3f(0, 1.f, 0)).unit();
+
+      state.velocity = wallPlaneVelocity + kickDirection * state.lastWallBumpVelocity.magnitude() * 0.75f;
+      state.lastWallKickTime = get_scene_time();
+
+      state.canPerformAirDash = true;
+      state.canPerformWallKick = true;
     }
   }
 }
@@ -405,42 +401,19 @@ namespace MovementSystem {
 
     // Handle gravity/velocity
     {
-      bool isWindingUpWallKick = (
-        state.canPerformWallKick &&
-        time_since(state.lastWallBumpTime) <= WALL_KICK_WINDOW_DURATION &&
-        state.lastWallKickTime < state.lastWallBumpTime
-      );
-
-      // Only apply gravity/velocity if we're not winding up a wall kick
-      if (!isWindingUpWallKick) {
-        if (
-          time_since(state.lastJumpTime) < 1.f &&
-          !input.isKeyHeld(Key::SPACE) &&
-          state.velocity.y > 0.f
-        ) {
-          // When releasing the jump key shortly after a jump,
-          // diminish y velocity more quickly to reduce the
-          // total jump height.
-          state.velocity.y *= 1.f - 2.f * dt;
-        }
-
-        state.velocity.y -= gravity;
-        player.position += state.velocity * dt;
-      }
-
       if (
-        state.canPerformWallKick &&
-        time_since(state.lastWallBumpTime) > WALL_KICK_WINDOW_DURATION &&
-        state.lastAirDashTime < state.lastWallBumpTime &&
-        state.lastWallKickTime < state.lastWallBumpTime
+        time_since(state.lastJumpTime) < 1.f &&
+        !input.isKeyHeld(Key::SPACE) &&
+        state.velocity.y > 0.f
       ) {
-        // If we hit a wall, and wait longer than the wall kick
-        // window duration, reset flags and fall down
-        state.canPerformWallKick = false;
-        state.canPerformAirDash = false;
-        state.dashLevel = 0;
-        state.velocity = Vec3f(0.f);
+        // When releasing the jump key shortly after a jump,
+        // diminish y velocity more quickly to reduce the
+        // total jump height.
+        state.velocity.y *= 1.f - 2.f * dt;
       }
+
+      state.velocity.y -= gravity;
+      player.position += state.velocity * dt;
     }
 
     // Track the xz distance traveled from the last solid ground position

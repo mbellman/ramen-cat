@@ -228,8 +228,9 @@ internal void handlePlayerAnimation(GmContext* context, GameState& state, float 
       handlePlayerDashingAnimation(context, state, dt);
     }
   } else {
-    if (state.canPerformWallKick && time_since(state.lastWallBumpTime) < WALL_KICK_WINDOW_DURATION) {
-      handlePlayerWallKickAnimation(context, state, dt);
+    if (time_since(state.lastWallBumpTime) < WALL_KICK_WINDOW_DURATION) {
+      // @todo rewrite handlePlayerWallKickAnimation()
+      handlePlayerMidairAnimation(context, state, dt);
     } else {
       handlePlayerMidairAnimation(context, state, dt);
     }
@@ -490,10 +491,7 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
 
     // Only rotate the player character when not winding up a wall kick,
     // and when moving. Wall kick wind-ups use a custom rotation animation.
-    if ((
-      time_since(state.lastWallBumpTime) > WALL_KICK_WINDOW_DURATION ||
-      state.lastWallKickTime > state.lastWallBumpTime
-    ) && state.velocity.magnitude() > 20.f) {
+    if (state.velocity.magnitude() > 20.f) {
       yaw = atan2f(movement.x, movement.z) + Gm_PI;
       pitch = -1.f * atan2f(movement.y, movement.xz().magnitude());
     }

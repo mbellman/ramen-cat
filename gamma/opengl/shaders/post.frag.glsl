@@ -159,7 +159,7 @@ void main() {
       vec3 redshifted_out_color = out_color;
 
       redshifted_out_color *= vec3(0.3, 0.4, 0.5);
-      redshifted_out_color += vec3(redshift, 0, 0);
+      redshifted_out_color += vec3(redshift * 1.5, 0, 0);
 
       out_color = mix(out_color, redshifted_out_color, alpha);
     }
