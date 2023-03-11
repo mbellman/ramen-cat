@@ -361,6 +361,7 @@ void EffectsSystem::updateDayNightCycleLighting(GmContext* context, GameState& s
     mesh("umimura-tree-branches")->emissivity = lightSourceEmissivity;
 
     mesh("lantern")->emissivity = lanternEmissivity;
+    mesh("streetlamp-light")->emissivity = lanternEmissivity;
   }
 
   // Adjust (serializable) point + spot light power by time of day

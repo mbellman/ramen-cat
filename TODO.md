@@ -5,6 +5,7 @@ BUGS
 ----
 * spinny first person camera
 
+* jittery camera/physics
 * clouds causing object outline misbehavior behind atmosphere
 * avoid phasing through corners
 * imported models are inverted along X
