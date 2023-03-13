@@ -33,7 +33,6 @@ GAME
 * level unloading (game state reset)
 * level settings files
 
-* hoops
 * respawn birds
 * enemies in torii gate zone
 * allow SPACE to be queued when pressed just before hitting the ground

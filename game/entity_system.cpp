@@ -598,7 +598,7 @@ internal void handleToriiGates(GmContext* context, GameState& state) {
   for (auto& gate : objects("torii-gate")) {
     Vec3f forward = gate.rotation.getDirection();
     Vec3f lastPlayerDirection = (state.previousPlayerPosition - gate.position);
-    Vec3f currentPlayerDirection = (player.position - gate.position);
+    Vec3f currentPlayerDirection = player.position - gate.position;
     float lastDot = Vec3f::dot(forward, lastPlayerDirection);
     float currentDot = Vec3f::dot(forward, currentPlayerDirection);
 
@@ -612,6 +612,90 @@ internal void handleToriiGates(GmContext* context, GameState& state) {
       context->scene.fx.redshiftSpawn = gate.position;
 
       break;
+    }
+  }
+}
+
+internal void restoreLastUsedRing(GmContext* context, GameState& state) {
+  auto* object = get_object_by_record(state.lastUsedRing._record);
+
+  if (object != nullptr) {
+    auto& ring = *object;
+
+    ring.scale = state.lastUsedRing.scale;
+
+    commit(ring);
+  }
+}
+
+static std::vector<Vec3f> ringParticleOffsets;
+
+internal void handleRings(GmContext* context, GameState& state) {
+  auto& player = get_player();
+
+  // Check for passage through rings
+  {
+    for (auto& ring : objects("ring")) {
+      Vec3f forward = ring.rotation.getDirection();
+      Vec3f lastPlayerDirection = (state.previousPlayerPosition - ring.position);
+      Vec3f currentPlayerDirection = player.position - ring.position;
+      float lastDot = Vec3f::dot(forward, lastPlayerDirection);
+      float currentDot = Vec3f::dot(forward, currentPlayerDirection);
+
+      if (
+        Gm_Signf(lastDot) != Gm_Signf(currentDot) &&
+        currentPlayerDirection.magnitude() < ring.scale.x * 0.9f
+      ) {
+        if (state.lastRingLaunchTime != 0.f) {
+          restoreLastUsedRing(context, state);
+        }
+
+        state.velocity = forward * 2000.f * (currentDot > 0.f ? 1.f : -1.f);
+        state.lastRingLaunchTime = get_scene_time();
+        state.lastUsedRing = ring;
+
+        break;
+      }
+    }
+  }
+
+  // Animate the last-used ring
+  {
+    if (state.lastRingLaunchTime != 0.f) {
+      float alpha = 2.f * time_since(state.lastRingLaunchTime);
+
+      if (alpha < 1.f) {
+        auto* object = get_object_by_record(state.lastUsedRing._record);
+
+        if (object != nullptr) {
+          auto& ring = *object;
+          float scaleAlpha = sinf(alpha * Gm_PI);
+          float scaleFactor = 1.f - 0.4f * scaleAlpha;
+
+          ring.scale = state.lastUsedRing.scale * scaleFactor;
+
+          commit(ring);
+        }
+      } else {
+        restoreLastUsedRing(context, state);
+      }
+    }
+  }
+
+  // Animate ring particles
+  {
+    if (state.lastRingLaunchTime != 0.f) {
+      Vec3f spawnPosition = state.lastUsedRing.position;
+      float alpha = time_since(state.lastRingLaunchTime);
+
+      for (auto& particle : objects("ring-particle")) {
+        auto offset = ringParticleOffsets[particle._record.id];
+
+        particle.position = state.lastUsedRing.position + offset * alpha * 500.f;
+        particle.scale = Vec3f(5.f * (1.f - alpha));
+
+        commit(particle);
+      }
     }
   }
 }
@@ -631,6 +715,29 @@ internal void handleUniqueLevelStructures(GmContext* context, GameState& state, 
 }
 
 void EntitySystem::initializeGameEntities(GmContext* context, GameState& state) {
+  add_mesh("ring-particle", 50, Mesh::Particles());
+
+  for (u16 i = 0; i < 50; i++) {
+    auto& particle = create_object_from("ring-particle");
+
+    particle.color = Vec3f(1.f, 0.9f, 0.4f);
+    particle.scale = Vec3f(0.f);
+
+    commit(particle);
+
+    float azimuth = Gm_Randomf(0.f, Gm_TAU);
+    float altitude = Gm_Randomf(-Gm_HALF_PI, Gm_HALF_PI);
+    float radius = Gm_Randomf(1.f, 2.f);
+
+    Vec3f offset = Vec3f(
+      cosf(altitude) * cosf(azimuth) * radius,
+      sinf(altitude) * radius,
+      cosf(altitude) * sinf(azimuth) * radius
+    );
+
+    ringParticleOffsets.push_back(offset);
+  }
+
   // @temporary
   {
     // addJetstream(context, state, {
@@ -665,6 +772,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   handleCollectables(context, state, dt);
   handleJetstreams(context, state, dt);
   handleToriiGates(context, state);
+  handleRings(context, state);
 
   LOG_TIME();
 }

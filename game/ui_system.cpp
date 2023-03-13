@@ -212,7 +212,7 @@ void UISystem::initializeUI(GmContext* context, GameState& state) {
 void UISystem::handleUI(GmContext* context, GameState& state, float dt) {  
   START_TIMING("handleUI");
 
-  handleHud(context, state, dt);
+  // handleHud(context, state, dt);
   handleDialogue(context, state);
 
   LOG_TIME();

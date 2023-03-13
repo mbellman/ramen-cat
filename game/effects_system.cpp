@@ -35,12 +35,12 @@ internal void initializePlayerParticles(GmContext* context) {
 }
 
 internal void initializeToriiGateZoneParticles(GmContext* context) {
-  add_mesh("tgz-particle", TOTAL_TORII_GATE_ZONE_PARTICLES, Mesh::Sphere(4));
-  mesh("tgz-particle")->emissivity = 0.5f;
-  mesh("tgz-particle")->canCastShadows = false;
+  add_mesh("torii-particle", TOTAL_TORII_GATE_ZONE_PARTICLES, Mesh::Sphere(4));
+  mesh("torii-particle")->emissivity = 0.5f;
+  mesh("torii-particle")->canCastShadows = false;
 
   for (u16 i = 0; i < TOTAL_TORII_GATE_ZONE_PARTICLES; i++) {
-    auto& particle = create_object_from("tgz-particle");
+    auto& particle = create_object_from("torii-particle");
 
     particle.color = Vec3f(0.f);
     particle.scale = Vec3f(0.f);
@@ -236,9 +236,9 @@ internal void handleToriiGateEffects(GmContext* context, GameState& state, float
     float timeSinceToriiGateTransition = time_since(state.toriiGateTransitionTime);
     float particleScalingFactor = state.isInToriiGateZone ? MIN(timeSinceToriiGateTransition, 1.0f) : MAX(1.f - timeSinceToriiGateTransition, 0.f);
 
-    mesh("tgz-particle")->disabled = !(state.isInToriiGateZone || timeSinceToriiGateTransition < 1.f);
+    mesh("torii-particle")->disabled = !(state.isInToriiGateZone || timeSinceToriiGateTransition < 1.f);
 
-    for (auto& particle : objects("tgz-particle")) {
+    for (auto& particle : objects("torii-particle")) {
       if (particle.scale.x < 0.5f) {
         float azimuth = Gm_Randomf(0.f, Gm_TAU);
         float altitude = Gm_Randomf(-Gm_HALF_PI, Gm_HALF_PI);

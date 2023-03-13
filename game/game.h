@@ -150,6 +150,10 @@ struct GameState {
   bool isInToriiGateZone = false;
   float toriiGateTransitionTime = 0.f;
 
+  // Rings
+  Gamma::Object lastUsedRing;
+  float lastRingLaunchTime = 0.f;
+
   std::vector<Gamma::Object> initialMovingObjects;
 
   #if GAMMA_DEVELOPER_MODE == 1

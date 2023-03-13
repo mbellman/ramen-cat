@@ -489,20 +489,17 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
     float pitch = state.currentPitch;
     Vec3f movement = player.position - state.previousPlayerPosition;
 
-    // Only rotate the player character when not winding up a wall kick,
-    // and when moving. Wall kick wind-ups use a custom rotation animation.
-    if (state.velocity.magnitude() > 20.f) {
+    // Only rotate the player character when moving
+    if (state.velocity.magnitude() > 1.f) {
       yaw = atan2f(movement.x, movement.z) + Gm_PI;
       pitch = -1.f * atan2f(movement.y, movement.xz().magnitude());
     }
 
-    // Adjust pitch when winding up a wall kick
-    float timeSinceLastWallBump = time_since(state.lastWallBumpTime);
+    // Perform somersaults when launching through rings
+    if (time_since(state.lastRingLaunchTime) < 0.5f) {
+      float alpha = easeOutQuint(time_since(state.lastRingLaunchTime) * 2.f);
 
-    if (state.lastWallBumpTime != 0.f && timeSinceLastWallBump < WALL_KICK_WINDOW_DURATION) {
-      float alpha = timeSinceLastWallBump / WALL_KICK_WINDOW_DURATION;
-
-      pitch -= alpha * 0.25f;
+      pitch += Gm_TAU * alpha;
     }
 
     // Spin when air dashing
@@ -527,7 +524,12 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
     }
 
     yaw = Gm_LerpCircularf(state.currentYaw, yaw, 10.f * dt, Gm_PI);
-    pitch = Gm_Lerpf(state.currentPitch, pitch, 10.f * dt);
+
+    if (time_since(state.lastRingLaunchTime) < 0.5f) {
+      pitch = Gm_Lerpf(state.currentPitch, pitch, 10.f * dt);
+    } else {
+      pitch = Gm_LerpCircularf(state.currentPitch, pitch, 10.f * dt, Gm_PI);
+    }
 
     player.rotation = Quaternion::fromAxisAngle(Vec3f(0, 0, 1.f), state.turnFactor * 0.5f);
     player.rotation *= Quaternion::fromAxisAngle(Vec3f(0, 1, 0), yaw);

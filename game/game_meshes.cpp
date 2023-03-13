@@ -112,6 +112,21 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
+    .name = "sakura",
+    .create = []() {
+      return Mesh::Model("./game/assets/bush.obj");
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .texture = "./game/assets/sakura.png",
+      .animation = {
+        .type = PresetAnimationType::FLOWER,
+        .factor = 5.f
+      },
+      .useMipmaps = false
+    }
+  },
+  {
     .name = "vines-horizontal",
     .hitboxScale = Vec3f(1.f, 0.3f, 0.3f),
     .create = []() {
@@ -200,6 +215,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
 
   /**
    * Animals
+   * -------
    */
   {
     .name = "seagull",
@@ -839,6 +855,22 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     .hitboxScale = Vec3f(0.6f, 1.4f, 0.2f),
     .create = []() {
       return Mesh::Model("./game/assets/person.obj");
+    }
+  },
+
+  /**
+   * Entities
+   * --------
+   */
+  {
+    .name = "ring",
+    .moving = true,
+    .hitboxScale = Vec3f(1.f, 1.f, 0.1f),
+    .create = []() {
+      return Mesh::Model("./game/assets/ring.obj");
+    },
+    .attributes = {
+      .roughness = 0.2f
     }
   },
 

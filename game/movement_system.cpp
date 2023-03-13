@@ -401,18 +401,24 @@ namespace MovementSystem {
 
     // Handle gravity/velocity
     {
+      bool didLaunchFromRing = state.lastRingLaunchTime > 0.f && time_since(state.lastRingLaunchTime) < 1.f;
+
       if (
         time_since(state.lastJumpTime) < 1.f &&
         !input.isKeyHeld(Key::SPACE) &&
-        state.velocity.y > 0.f
+        state.velocity.y > 0.f &&
+        !didLaunchFromRing
       ) {
         // When releasing the jump key shortly after a jump,
         // diminish y velocity more quickly to reduce the
         // total jump height.
         state.velocity.y *= 1.f - 2.f * dt;
       }
+        
+      if (!didLaunchFromRing) {
+        state.velocity.y -= gravity;
+      }
 
-      state.velocity.y -= gravity;
       player.position += state.velocity * dt;
     }
 
