@@ -235,40 +235,65 @@ internal void handlePeople(GmContext* context, GameState& state) {
   });
 }
 
+internal void spawnFlyingBird(GmContext* context, GameState& state, const Object& reference) {
+  for (auto& bird : objects("bird-flying")) {
+    if (bird.scale.x == 0.f) {
+      copy_object_properties(bird, reference);
+
+      commit(bird);
+
+      return;
+    }
+  }
+
+  auto& bird = create_object_from("bird-flying");
+
+  copy_object_properties(bird, reference);
+
+  commit(bird);
+}
+
 internal void handleBirds(GmContext* context, GameState& state, float dt) {
   auto& player = get_player();
   float t = get_scene_time() * 10.f;
 
   for_moving_objects("bird-at-rest", {
-    if (object.scale.x < 1.f) {
-      continue;
-    }
+    float distance = (object.position - player.position).magnitude();
 
-    float alpha = t + float(object._record.id) * 2.f;
-    float yOffset = powf(sinf(alpha) * 0.5f + 0.5f, 6.f) * 5.f;
-    float distance = (player.position - object.position).magnitude();
+    if (object.scale.x == 0.f) {
 
-    // @todo base distance on player speed
-    if (distance < 200.f) {
-      auto& flyingBird = create_object_from("bird-flying");
-
-      flyingBird.position = object.position;
-      flyingBird.scale = object.scale;
-      flyingBird.rotation = object.rotation;
-
-      commit(flyingBird);
-
-      object.scale = Vec3f(0.f);
+      if (distance > BIRD_AT_REST_RESPAWN_DISTANCE) {
+        // Respawn birds at rest when sufficiently far away
+        object.scale = initial.scale;
+      }
     } else {
-      object.position = initial.position + Vec3f(0, yOffset, 0);
+      // Normal behavior
+      float alpha = t + float(object._record.id) * 2.f;
+      float yOffset = powf(sinf(alpha) * 0.5f + 0.5f, 6.f) * 5.f;
+
+      // @todo base distance on player speed
+      if (distance < 200.f) {
+        // Fly away when approached by the player
+        spawnFlyingBird(context, state, object);
+
+        object.scale = Vec3f(0.f);
+      } else {
+        // Animate when at rest
+        object.position = initial.position + Vec3f(0, yOffset, 0);
+      } 
     }
 
     commit(object);
   });
 
   for (auto& bird : objects("bird-flying")) {
-    bird.position += bird.rotation.getDirection() * 600.f * dt;
-    bird.position.y += 100.f * dt;
+    if (bird.scale.x < 1.f) {
+      bird.scale = Vec3f(0.f);
+    } else {
+      bird.position += bird.rotation.getDirection() * 600.f * dt;
+      bird.position.y += 100.f * dt;
+      bird.scale *= (1.f - 0.5f * dt);
+    }
 
     commit(bird);
   }

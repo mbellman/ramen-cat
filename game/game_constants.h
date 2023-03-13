@@ -22,6 +22,8 @@ const static Gamma::Vec3f HIGHLIGHT_SLINGSHOT_COLOR = Gamma::Vec3f(1.f);
 constexpr static float LANTERN_HORIZONTAL_DRIFT = 15.f;
 constexpr static float LANTERN_VERTICAL_DRIFT = 5.f;
 
+constexpr static float BIRD_AT_REST_RESPAWN_DISTANCE = 2500.f;
+
 /**
  * Movement/physics constants
  * --------------------------

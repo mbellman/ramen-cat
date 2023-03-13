@@ -42,6 +42,12 @@
 
 #define add_debug_message(message) context->debugMessages.push_back(message)
 
+#define copy_object_properties(a, b) \
+    a.position = b.position;\
+    a.scale = b.scale;\
+    a.rotation = b.rotation;\
+    a.color = b.color
+
 struct GmContext;
 
 struct GmSceneStats {
