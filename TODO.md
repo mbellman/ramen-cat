@@ -3,8 +3,6 @@ EDITOR
 
 BUGS
 ----
-* spinny high-altitude camera
-
 * jittery camera/physics
 * clouds causing object outline misbehavior behind atmosphere
 * avoid phasing through corners

@@ -172,7 +172,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
         state.camera3p.azimuth -= delta.x / 1000.f;
         state.camera3p.altitude += delta.y / 1000.f;
 
-        state.camera3p.limitAltitude(0.95f);
+        state.camera3p.limitAltitude(0.9f);
       }
 
       // Handle view mode changes
