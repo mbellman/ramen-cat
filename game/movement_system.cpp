@@ -282,13 +282,15 @@ namespace MovementSystem {
     {
       Vec3f horizontalVelocity = state.velocity.xz();
 
-      float speedLimit = MAXIMUM_HORIZONTAL_GROUND_SPEED * (
-        state.dashLevel == 1 ? DASH_LEVEL_1_SPEED_FACTOR :
-        state.dashLevel == 2 ? DASH_LEVEL_2_SPEED_FACTOR :
-        1.f
-      );
+      float speedLimit = state.isOnSolidGround
+        ? MAXIMUM_HORIZONTAL_GROUND_SPEED * (
+            state.dashLevel == 1 ? DASH_LEVEL_1_SPEED_FACTOR :
+            state.dashLevel == 2 ? DASH_LEVEL_2_SPEED_FACTOR :
+            1.f
+          )
+        : MAXIMUM_HORIZONTAL_AIR_SPEED;
 
-      if (state.isOnSolidGround && horizontalVelocity.magnitude() > speedLimit) {
+      if (horizontalVelocity.magnitude() > speedLimit) {
         Vec3f limitedHorizontalVelocity = horizontalVelocity.unit() * speedLimit;
 
         state.velocity.x = limitedHorizontalVelocity.x;

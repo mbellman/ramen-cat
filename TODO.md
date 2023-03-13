@@ -24,7 +24,6 @@ ASSETS
 
 GAME
 ----
-* terminal velocity in air
 * hang glider
 * dynamic tail animations
 * variable air dash spin animation duration (?)
