@@ -671,6 +671,7 @@ internal void handleRings(GmContext* context, GameState& state) {
         Gm_Signf(lastDot) != Gm_Signf(currentDot) &&
         currentPlayerDirection.magnitude() < ring.scale.x * 0.9f
       ) {
+        // Launch through the ring
         if (state.lastRingLaunchTime != 0.f) {
           restoreLastUsedRing(context, state);
         }
@@ -678,6 +679,8 @@ internal void handleRings(GmContext* context, GameState& state) {
         state.velocity = forward * 2000.f * (currentDot > 0.f ? 1.f : -1.f);
         state.lastRingLaunchTime = get_scene_time();
         state.lastUsedRing = ring;
+
+        state.camera3p.altitude = forward.y;
 
         break;
       }

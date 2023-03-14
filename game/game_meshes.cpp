@@ -877,7 +877,6 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
    */
   {
     .name = "ring",
-    .moving = true,
     .hitboxScale = Vec3f(1.f, 1.f, 0.1f),
     .create = []() {
       return Mesh::Model("./game/assets/ring.obj");

@@ -39,6 +39,7 @@ constexpr static float DEFAULT_JUMP_Y_VELOCITY = 500.f;
 constexpr static float WALL_KICK_WINDOW_DURATION = 0.3f;
 constexpr static float SUPER_JUMP_WINDOW_DURATION = 0.6f;
 constexpr static float AIR_DASH_SPIN_DURATION = 0.7f;
+constexpr static float SOMERSAULT_DURATION = 0.8f;
 
 /**
  * Camera constants

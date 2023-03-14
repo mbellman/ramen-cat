@@ -403,7 +403,7 @@ namespace MovementSystem {
 
     // Handle gravity/velocity
     {
-      bool didLaunchFromRing = state.lastRingLaunchTime > 0.f && time_since(state.lastRingLaunchTime) < 1.f;
+      bool didLaunchFromRing = state.lastRingLaunchTime != 0.f && time_since(state.lastRingLaunchTime) < SOMERSAULT_DURATION;
 
       if (
         time_since(state.lastJumpTime) < 1.f &&

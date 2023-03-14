@@ -292,8 +292,10 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
     if (state.dashLevel == 1) targetFov *= 1.1f;
     if (state.dashLevel == 2) targetFov *= 1.2f;
 
-    if (time_since(state.lastRingLaunchTime) < 1.f) {
-      targetFov *= 1.f + 0.5f * (1.f - time_since(state.lastRingLaunchTime));
+    if (state.lastRingLaunchTime != 0.f && time_since(state.lastRingLaunchTime) < 1.f) {
+      float alpha = 1.f - easeOutQuint(time_since(state.lastRingLaunchTime));
+
+      targetFov *= 1.f + alpha;
     }
 
     camera.fov = Gm_Lerpf(camera.fov, targetFov, alpha);

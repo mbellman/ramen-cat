@@ -165,48 +165,59 @@ internal void handlePlayerMidairAnimation(GmContext* context, GameState& state, 
   auto& rig = state.animation.playerRig;
   float jumpTime = time_since(state.lastTimeOnSolidGround);
   float dashTime = time_since(state.lastAirDashTime);
+  float ringLaunchTime = time_since(state.lastRingLaunchTime);
+  float somersaultAlpha = ringLaunchTime < SOMERSAULT_DURATION ? easeOutQuint(time_since(state.lastRingLaunchTime) * (1.f / SOMERSAULT_DURATION)) : 0.f;
   float airTime = jumpTime < dashTime ? jumpTime : dashTime;
   float airTimeFactor = airTime / (airTime + 0.5f);
+  float legSwingAlpha = airTime * 10.f;
   float periodicHeadTurnFactor = 1.f - airTimeFactor;
   float periodicHeadTurn = getPeriodicHeadTurn(get_scene_time()) * periodicHeadTurnFactor;
+  Vec3f turnOffset = Vec3f(-0.5f * state.turnFactor, 0, 0);
+
+  float somersault = sinf(somersaultAlpha * Gm_PI);
+  Vec3f somersaultOffset = Vec3f(0, -somersault, 0);
+  Quaternion somersaultRotation = Quaternion::fromAxisAngle(Vec3f(1, 0, 0), -somersault);
 
   float s_alpha = sinf(airTime * 5.f);
   float c_alpha = cosf(airTime * 5.f);
 
-  Vec3f turnOffset = Vec3f(-0.5f * state.turnFactor, 0, 0);
-
   rig.joints[PLAYER_HEAD].rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), state.turnFactor + periodicHeadTurn);
-  rig.joints[PLAYER_HEAD].offset = turnOffset;
+  rig.joints[PLAYER_HEAD].rotation *= somersaultRotation;
+  rig.joints[PLAYER_HEAD].offset = turnOffset + somersaultOffset;
 
   rig.joints[PLAYER_NECK].rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), state.turnFactor * 0.5f + periodicHeadTurn * 0.5f);
-  rig.joints[PLAYER_NECK].offset = turnOffset;
+  rig.joints[PLAYER_NECK].rotation *= somersaultRotation;
+  rig.joints[PLAYER_NECK].offset = turnOffset + somersaultOffset;
 
-  rig.joints[PLAYER_TORSO].offset = turnOffset;
-  rig.joints[PLAYER_SPINE].offset = Vec3f(0, -0.1f * airTimeFactor, 0) + turnOffset * 0.5f;
+  rig.joints[PLAYER_TORSO].offset = turnOffset + somersaultOffset;
+  rig.joints[PLAYER_TORSO].rotation = somersaultRotation;
+  rig.joints[PLAYER_SPINE].offset = Vec3f(0, -0.1f * airTimeFactor, 0) + turnOffset * 0.5f + somersaultOffset * 0.2f;
   rig.joints[PLAYER_TAILBONE].offset = Vec3f(0, 0, 0.5f * airTimeFactor);
 
-  rig.joints[PLAYER_FRONT_RIGHT_LEG_TOP].offset = Vec3f(0, 0.1f, 0.f) * airTimeFactor + turnOffset;
-  rig.joints[PLAYER_FRONT_RIGHT_LEG_KNEE].offset = Vec3f(0, 0.2f, -0.3f) * airTimeFactor + turnOffset;
-  rig.joints[PLAYER_FRONT_RIGHT_LEG_KNEE].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * airTimeFactor);
-  rig.joints[PLAYER_FRONT_RIGHT_LEG_FOOT].offset = Vec3f(0, 0.6f + 0.2f * sinf(airTime * 3.f), -1.3f) * airTimeFactor + turnOffset;
-  rig.joints[PLAYER_FRONT_RIGHT_LEG_FOOT].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * airTimeFactor);
+  rig.joints[PLAYER_FRONT_RIGHT_LEG_TOP].offset = Vec3f(0, 0.1f, 0.f) * airTimeFactor + turnOffset + somersaultOffset;
+  rig.joints[PLAYER_FRONT_RIGHT_LEG_TOP].rotation = somersaultRotation;
+  rig.joints[PLAYER_FRONT_RIGHT_LEG_KNEE].offset = Vec3f(0, 0.2f, -0.3f) * airTimeFactor + turnOffset + somersaultOffset;
+  rig.joints[PLAYER_FRONT_RIGHT_LEG_KNEE].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * airTimeFactor) * somersaultRotation;
+  rig.joints[PLAYER_FRONT_RIGHT_LEG_FOOT].offset = Vec3f(0, 0.6f + 0.2f * sinf(legSwingAlpha), -1.3f) * airTimeFactor + turnOffset + Vec3f(0, -somersault * 2.f, somersault);
+  rig.joints[PLAYER_FRONT_RIGHT_LEG_FOOT].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * airTimeFactor) * somersaultRotation;
 
-  rig.joints[PLAYER_FRONT_LEFT_LEG_TOP].offset = Vec3f(0, 0.1f, 0.f) * airTimeFactor + turnOffset;
-  rig.joints[PLAYER_FRONT_LEFT_LEG_KNEE].offset = Vec3f(0, 0.2f, -0.3f) * airTimeFactor + turnOffset;
-  rig.joints[PLAYER_FRONT_LEFT_LEG_KNEE].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * airTimeFactor);
-  rig.joints[PLAYER_FRONT_LEFT_LEG_FOOT].offset = Vec3f(0, 0.6f + 0.2f * cosf(airTime * 3.f), -1.3f) * airTimeFactor + turnOffset;
-  rig.joints[PLAYER_FRONT_LEFT_LEG_FOOT].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * airTimeFactor);
+  rig.joints[PLAYER_FRONT_LEFT_LEG_TOP].offset = Vec3f(0, 0.1f, 0.f) * airTimeFactor + turnOffset + somersaultOffset;
+  rig.joints[PLAYER_FRONT_LEFT_LEG_TOP].rotation = somersaultRotation;
+  rig.joints[PLAYER_FRONT_LEFT_LEG_KNEE].offset = Vec3f(0, 0.2f, -0.3f) * airTimeFactor + turnOffset + somersaultOffset;
+  rig.joints[PLAYER_FRONT_LEFT_LEG_KNEE].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * airTimeFactor) * somersaultRotation;
+  rig.joints[PLAYER_FRONT_LEFT_LEG_FOOT].offset = Vec3f(0, 0.6f + 0.2f * cosf(legSwingAlpha), -1.3f) * airTimeFactor + turnOffset + Vec3f(0, -somersault * 2.f, somersault);
+  rig.joints[PLAYER_FRONT_LEFT_LEG_FOOT].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI * airTimeFactor) * somersaultRotation;
 
   rig.joints[PLAYER_BACK_RIGHT_LEG_TOP].offset = Vec3f(0, 0, 0.5f * airTimeFactor);
   rig.joints[PLAYER_BACK_RIGHT_LEG_KNEE].offset = Vec3f(0, 0, 1.f * airTimeFactor);
   rig.joints[PLAYER_BACK_RIGHT_LEG_KNEE].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.25f * airTimeFactor);
-  rig.joints[PLAYER_BACK_RIGHT_LEG_FOOT].offset = Vec3f(0, -0.1f + 0.1f * sinf(airTime * 3.f), 1.5f) * airTimeFactor;
+  rig.joints[PLAYER_BACK_RIGHT_LEG_FOOT].offset = Vec3f(0, -0.1f + 0.1f * sinf(legSwingAlpha), 1.5f) * airTimeFactor;
   rig.joints[PLAYER_BACK_RIGHT_LEG_FOOT].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.5f* airTimeFactor);
 
   rig.joints[PLAYER_BACK_LEFT_LEG_TOP].offset = Vec3f(0, 0, 0.5f * airTimeFactor);
   rig.joints[PLAYER_BACK_LEFT_LEG_KNEE].offset = Vec3f(0, 0, 1.f * airTimeFactor);
   rig.joints[PLAYER_BACK_LEFT_LEG_KNEE].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.25f * airTimeFactor);
-  rig.joints[PLAYER_BACK_LEFT_LEG_FOOT].offset = Vec3f(0, -0.1f + 0.1f * cosf(airTime * 3.f), 1.5f) * airTimeFactor;
+  rig.joints[PLAYER_BACK_LEFT_LEG_FOOT].offset = Vec3f(0, -0.1f + 0.1f * cosf(legSwingAlpha), 1.5f) * airTimeFactor;
   rig.joints[PLAYER_BACK_LEFT_LEG_FOOT].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -Gm_HALF_PI * 0.5f * airTimeFactor);
 }
 
@@ -240,7 +251,6 @@ internal void handlePlayerAnimation(GmContext* context, GameState& state, float 
   // @todo use dynamic tail animations based on action
   {
     auto& rig = state.animation.playerRig;
-
     float t = get_scene_time();
 
     rig.joints[PLAYER_TAIL_JOINT_1].offset = Vec3f(
@@ -496,8 +506,8 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
     }
 
     // Perform somersaults when launching through rings
-    if (time_since(state.lastRingLaunchTime) < 0.5f) {
-      float alpha = easeOutQuint(time_since(state.lastRingLaunchTime) * 2.f);
+    if (time_since(state.lastRingLaunchTime) < SOMERSAULT_DURATION) {
+      float alpha = easeOutQuint(time_since(state.lastRingLaunchTime) * (1.f / SOMERSAULT_DURATION));
 
       pitch += Gm_TAU * alpha;
     }
@@ -537,6 +547,13 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
 
     handlePlayerAnimation(context, state, dt);
     handleAnimatedMeshWithRig(*mesh("player"), state.animation.playerRig);
+
+    if (state.lastRingLaunchTime != 0.f && time_since(state.lastRingLaunchTime) < 1.f) {
+      float somersaultAlpha = time_since(state.lastRingLaunchTime) * (1.f / SOMERSAULT_DURATION);
+      float somersaultScale = Gm_Maxf(0.f, sinf(somersaultAlpha * Gm_PI) * 0.5f);
+
+      player.scale.z = PLAYER_RADIUS * (1.f + somersaultScale);
+    }
 
     state.currentYaw = yaw;
     state.currentPitch = pitch;
