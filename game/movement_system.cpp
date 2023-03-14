@@ -62,7 +62,7 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
   if (Gm_Absf(plane.nDotU) <= 0.7f) {
     state.lastWallBumpNormal = plane.normal;
 
-    if (!state.isOnSolidGround && time_since(state.lastWallBumpTime) > WALL_KICK_WINDOW_DURATION) {
+    if (time_since(state.lastTimeOnSolidGround) > 0.1f && time_since(state.lastWallBumpTime) > WALL_KICK_WINDOW_DURATION) {
       // Automatic wall kick
       state.lastWallBumpTime = get_scene_time();
       state.lastWallBumpVelocity = state.velocity;
@@ -98,8 +98,8 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
       continue;
     }
 
-    Vec3f lineStart = state.previousPlayerPosition;
-    Vec3f lineEnd = player.position - plane.normal * PLAYER_RADIUS;
+    Vec3f lineStart = player.position - plane.normal * PLAYER_RADIUS;
+    Vec3f lineEnd = player.position + plane.normal * PLAYER_RADIUS;
     auto collision = Collisions::getLinePlaneCollision(lineStart, lineEnd, plane);
 
     if (collision.hit) {
