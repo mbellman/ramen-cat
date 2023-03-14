@@ -291,6 +291,19 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
+    .name = "tiles",
+    .hitboxScale = Vec3f(1.f, 0.025f, 1.f),
+    .create = []() {
+      return Mesh::Plane(2);
+    },
+    .attributes = {
+      .texture = "./game/assets/tiles.png",
+      .normals = "./game/assets/cobblestone-normals.png",
+      .roughness = 0.7f,
+      .useXzPlaneTexturing = true
+    }
+  },
+  {
     .name = "building-1",
     .dynamic = true,
     .create = []() {

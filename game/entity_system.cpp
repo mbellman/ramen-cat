@@ -716,7 +716,7 @@ internal void handleRings(GmContext* context, GameState& state) {
       for (auto& particle : objects("ring-particle")) {
         auto offset = ringParticleOffsets[particle._record.id];
 
-        particle.position = state.lastUsedRing.position + offset * alpha * 500.f;
+        particle.position = state.lastUsedRing.position + offset * alpha * 350.f;
         particle.scale = Vec3f(5.f * (1.f - alpha));
 
         commit(particle);

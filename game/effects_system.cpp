@@ -366,7 +366,7 @@ void EffectsSystem::updateDayNightCycleLighting(GmContext* context, GameState& s
 
   // Adjust (serializable) point + spot light power by time of day
   {
-    float lightPowerFactor = sqrtf(Gm_Clampf(0.5f - sinf(state.dayNightCycleTime)));
+    float lightPowerFactor = powf(Gm_Clampf(0.5f - sinf(state.dayNightCycleTime)), 1.f / 3.f);
 
     for (auto* light : context->scene.lights) {
       if (
