@@ -40,8 +40,7 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
     // between the player direction and plane normal. Thus, we have to
     // perform this correction here.
     {
-      // @hack invert() accounts for the z-inversion of the player model.
-      // Perhaps this should be fixed!
+      // @todo fix player model orientation
       float dot = Vec3f::dot(player.rotation.getDirection().xz().invert(), plane.normal);
 
       state.currentPitch = Gm_Lerpf(state.currentPitch, dot, 10.f * dt);
@@ -200,6 +199,232 @@ internal void resolveAllHotAirBalloonCollisions(GmContext* context, GameState& s
   LOG_TIME();
 }
 
+internal void handleNormalMovementInput(GmContext* context, GameState& state, float dt) {
+  auto& input = get_input();
+  auto& player = get_player();
+  auto& camera = get_camera();
+
+  auto rate = 5000.f * dt;
+  auto initialVelocity = state.velocity;
+
+  Vec3f forward = camera.orientation.getDirection().xz().unit();
+  Vec3f left = camera.orientation.getLeftDirection().xz().unit();
+  Vec3f acceleration = Vec3f(0);
+
+  if (state.velocity.y != 0.f) {
+    // Reduce movement rate in midair
+    rate *= 0.05f;
+  }
+
+  if (input.isKeyHeld(Key::W)) {
+    acceleration += forward * rate;
+  }
+
+  if (input.isKeyHeld(Key::S)) {
+    // @todo fix player model orientation
+    acceleration += forward.invert() * rate;
+  }
+
+  if (input.isKeyHeld(Key::A)) {
+    acceleration += left * rate;
+  }
+
+  if (input.isKeyHeld(Key::D)) {
+    // @todo fix player model orientation
+    acceleration += left.invert() * rate;
+  }
+
+  // Directional change handling/turn factor determination
+  {
+    float targetTurnFactor = 0.f;
+    float xzSpeed = state.velocity.xz().magnitude();
+    float xzAcceleration = acceleration.xz().magnitude();
+
+    if (xzSpeed > 0.f && xzAcceleration > 0.f) {
+      Vec3f unitXzVelocity = state.velocity.xz() / xzSpeed;
+      Vec3f unitXzAcceleration = acceleration.xz() / xzAcceleration;
+      Vec3f playerLeft = player.rotation.getLeftDirection();
+      float directionChangeDot = Vec3f::dot(unitXzVelocity, unitXzAcceleration);
+
+      targetTurnFactor = (1.f - directionChangeDot) * (Vec3f::dot(unitXzAcceleration, playerLeft) > 0.f ? 1.f : -1.f);
+
+      if (state.velocity.y != 0.f && time_since(state.lastWallKickTime) > 1.f) {
+        // When midair, adjust acceleration in proportion to how much it resists
+        // the current velocity. We want turning to be easier when airborne.
+        float directionChangeFactor = 1.f - directionChangeDot;
+
+        acceleration *= 1.f + directionChangeFactor * 3.f;
+      }
+    }
+
+    state.turnFactor = Gm_Clampf(Gm_Lerpf(state.turnFactor, targetTurnFactor, 5.f * dt), -0.7f, 0.7f);
+  }
+
+  state.velocity += acceleration;
+  state.isMovingPlayerThisFrame = state.velocity != initialVelocity;
+
+  // Limit horizontal speed on ground
+  {
+    Vec3f horizontalVelocity = state.velocity.xz();
+
+    float speedLimit = state.isOnSolidGround
+      ? MAXIMUM_HORIZONTAL_GROUND_SPEED * (
+          state.dashLevel == 1 ? DASH_LEVEL_1_SPEED_FACTOR :
+          state.dashLevel == 2 ? DASH_LEVEL_2_SPEED_FACTOR :
+          1.f
+        )
+      : MAXIMUM_HORIZONTAL_AIR_SPEED;
+
+    if (horizontalVelocity.magnitude() > speedLimit) {
+      Vec3f limitedHorizontalVelocity = horizontalVelocity.unit() * speedLimit;
+
+      state.velocity.x = limitedHorizontalVelocity.x;
+      state.velocity.z = limitedHorizontalVelocity.z;
+    }
+  }
+
+  // Handle jump/wall kick/air dash actions
+  {
+    if (input.didPressKey(Key::SPACE)) {
+      float time = get_scene_time();
+
+      if (state.isOnSolidGround) {
+        // Regular jump
+        float jumpFactor = (
+          state.dashLevel == 1 ? 1.5f :
+          state.dashLevel == 2 ? 2.f :
+          1.f
+        );
+
+        if (time_since(state.lastAirDashTime) < SUPER_JUMP_WINDOW_DURATION) {
+          // Super jump
+          jumpFactor *= 2.f;
+
+          context->scene.fx.screenWarpTime = time;
+
+          state.lastHardLandingPosition = player.position;
+          state.lastHardLandingTime = time;
+        }
+
+        state.velocity.y = DEFAULT_JUMP_Y_VELOCITY * jumpFactor;
+        state.lastJumpTime = time;
+
+        state.isOnSolidGround = false;
+        state.canPerformAirDash = true;
+
+        // Make sure the player is off the ground plane
+        // at the start of the jump to avoid a next-frame
+        // collision snapping them back in place
+        player.position.y += 2.f;
+      } else if (state.canPerformWallKick && time_since(state.lastWallBumpTime) < WALL_KICK_WINDOW_DURATION) {
+        // Wall kick
+        Vec3f wallPlaneVelocity = state.lastWallBumpVelocity.alignToPlane(state.lastWallBumpNormal);
+        Vec3f kickDirection = (state.lastWallBumpNormal + Vec3f(0, 1.f, 0)).unit();
+
+        state.velocity = wallPlaneVelocity + kickDirection * state.lastWallBumpVelocity.magnitude();
+        state.lastWallKickTime = time;
+
+        state.canPerformAirDash = true;
+        state.canPerformWallKick = true;
+
+        context->scene.fx.screenWarpTime = time;
+      } else if (state.canPerformAirDash) {
+        // Air dash
+        Vec3f airDashDirection = camera.orientation.getDirection();
+
+        if (airDashDirection.y < 0.f) {
+          airDashDirection = (airDashDirection * Vec3f(2.f, 1.f, 2.f)).unit();
+        }
+
+        state.velocity = airDashDirection * MAXIMUM_HORIZONTAL_GROUND_SPEED * (
+          // Start dashing at level 1 speed
+          state.dashLevel == 0 ? DASH_LEVEL_1_SPEED_FACTOR :
+          // Start dashing at level 2 speed
+          state.dashLevel == 1 ? DASH_LEVEL_2_SPEED_FACTOR :
+          // Cap at speed level 2
+          DASH_LEVEL_2_SPEED_FACTOR
+        );
+
+        state.canPerformAirDash = false;
+        state.canPerformWallKick = true;
+
+        // @todo configure upper limit
+        if (state.dashLevel < 2) {
+          state.dashLevel++;
+        }
+
+        state.lastAirDashTime = time;
+        state.airDashSpinStartYaw = state.currentYaw;
+        state.airDashSpinEndYaw = atan2(airDashDirection.x, airDashDirection.z) + Gm_PI;
+        if (state.airDashSpinEndYaw - state.airDashSpinStartYaw < Gm_PI) state.airDashSpinEndYaw += Gm_TAU;
+
+        context->scene.fx.screenWarpTime = time;
+      }
+    }
+  }
+
+  // Movement state resets
+  {
+    if (state.dashLevel > 0 && state.isOnSolidGround && !state.isMovingPlayerThisFrame) {
+      // Stop dashing when we cease movement while dashing along the ground
+      state.dashLevel = 0;
+    }
+
+    if (state.isOnSolidGround && state.velocity.xz().magnitude() > 1.f) {
+      // If we were on solid ground, but any movement
+      // occurs along the xz plane, all bets are off!
+      state.isOnSolidGround = false;
+    }
+  }
+}
+
+internal void handleGliderMovementInput(GmContext* context, GameState& state, float dt) {
+  auto& input = get_input();
+  auto& player = get_player();
+  float targetTurnFactor = 0.f;
+
+  if (input.isKeyHeld(Key::W)) {
+    state.currentPitch += 2.f * dt;
+  }
+
+  if (input.isKeyHeld(Key::S)) {
+    state.currentPitch -= 2.f * dt;
+  }
+
+  if (input.isKeyHeld(Key::A)) {
+    state.currentYaw -= 2.f * dt;
+
+    targetTurnFactor = -1.f;
+  }
+
+  if (input.isKeyHeld(Key::D)) {
+    state.currentYaw += 2.f * dt;
+
+    targetTurnFactor = 1.f;
+  }
+
+  float speed = state.velocity.magnitude();
+  // @todo fix player model orientation
+  float azimuth = state.currentYaw - Gm_HALF_PI;
+  float altitude = -state.currentPitch;
+  float cosAltitude = cosf(altitude);
+
+  Vec3f direction = Vec3f(
+    // @todo fix player model orientation
+    -1.f * cosAltitude * cosf(azimuth),
+    sinf(altitude),
+    cosAltitude * sinf(azimuth)
+  );
+
+  float velocityFactor = Vec3f::dot(direction, Vec3f(0, -1.f, 0));
+
+  state.velocity = direction * speed;
+  state.velocity *= (1.f + velocityFactor * dt);
+
+  state.turnFactor = Gm_Lerpf(state.turnFactor, targetTurnFactor, 5.f * dt);
+  state.turnFactor = Gm_Clampf(state.turnFactor, -1.f, 1.f);
+}
+
 namespace MovementSystem {
   void handlePlayerMovementInput(GmContext* context, GameState& state, float dt) {
     #if GAMMA_DEVELOPER_MODE
@@ -218,183 +443,15 @@ namespace MovementSystem {
 
     START_TIMING("handlePlayerMovementInput");
 
-    auto& input = get_input();
-    auto& player = get_player();
-    auto& camera = get_camera();
-
-    auto rate = 5000.f * dt;
-    auto initialVelocity = state.velocity;
-
-    Vec3f forward = camera.orientation.getDirection().xz().unit();
-    Vec3f left = camera.orientation.getLeftDirection().xz().unit();
-    Vec3f acceleration = Vec3f(0);
-
-    if (state.velocity.y != 0.f) {
-      // Reduce movement rate in midair
-      rate *= 0.05f;
-    }
-
-    if (input.isKeyHeld(Key::W)) {
-      acceleration += forward * rate;
-    }
-
-    if (input.isKeyHeld(Key::S)) {
-      acceleration += forward.invert() * rate;
-    }
-
-    if (input.isKeyHeld(Key::A)) {
-      acceleration += left * rate;
-    }
-
-    if (input.isKeyHeld(Key::D)) {
-      acceleration += left.invert() * rate;
-    }
-
-    if (input.didPressKey(Key::SHIFT)) {
+    if (get_input().didPressKey(Key::SHIFT)) {
       state.isGliding = !state.isGliding;
       state.lastGliderChangeTime = get_scene_time();
     }
 
-    // Directional change handling/turn factor determination
-    {
-      float targetTurnFactor = 0.f;
-      float xzSpeed = state.velocity.xz().magnitude();
-      float xzAcceleration = acceleration.xz().magnitude();
-
-      if (xzSpeed > 0.f && xzAcceleration > 0.f) {
-        Vec3f unitXzAcceleration = acceleration.xz() / xzAcceleration;
-        Vec3f playerLeft = player.rotation.getLeftDirection();
-        float directionChangeDot = Vec3f::dot(state.velocity.xz() / xzSpeed, unitXzAcceleration);
-
-        targetTurnFactor = (1.f - directionChangeDot) * (Vec3f::dot(unitXzAcceleration, playerLeft) > 0.f ? 1.f : -1.f);
-
-        if (state.velocity.y != 0.f && time_since(state.lastWallKickTime) > 1.f) {
-          // When midair, adjust acceleration in proportion to how much it resists
-          // the current velocity. We want turning to be easier when airborne.
-          float directionChangeFactor = 1.f - directionChangeDot;
-
-          acceleration *= 1.f + directionChangeFactor * 3.f;
-        }
-      }
-
-      state.turnFactor = Gm_Clampf(Gm_Lerpf(state.turnFactor, targetTurnFactor, 5.f * dt), -0.7f, 0.7f);
-    }
-
-    state.velocity += acceleration;
-    state.isMovingPlayerThisFrame = state.velocity != initialVelocity;
-
-    // Limit horizontal speed on ground
-    {
-      Vec3f horizontalVelocity = state.velocity.xz();
-
-      float speedLimit = state.isOnSolidGround
-        ? MAXIMUM_HORIZONTAL_GROUND_SPEED * (
-            state.dashLevel == 1 ? DASH_LEVEL_1_SPEED_FACTOR :
-            state.dashLevel == 2 ? DASH_LEVEL_2_SPEED_FACTOR :
-            1.f
-          )
-        : MAXIMUM_HORIZONTAL_AIR_SPEED;
-
-      if (horizontalVelocity.magnitude() > speedLimit) {
-        Vec3f limitedHorizontalVelocity = horizontalVelocity.unit() * speedLimit;
-
-        state.velocity.x = limitedHorizontalVelocity.x;
-        state.velocity.z = limitedHorizontalVelocity.z;
-      }
-    }
-
-    // Handle jump/wall kick/air dash actions
-    {
-      if (input.didPressKey(Key::SPACE)) {
-        float time = get_scene_time();
-
-        if (state.isOnSolidGround) {
-          // Regular jump
-          float jumpFactor = (
-            state.dashLevel == 1 ? 1.5f :
-            state.dashLevel == 2 ? 2.f :
-            1.f
-          );
-
-          if (time_since(state.lastAirDashTime) < SUPER_JUMP_WINDOW_DURATION) {
-            // Super jump
-            jumpFactor *= 2.f;
-
-            context->scene.fx.screenWarpTime = time;
-
-            state.lastHardLandingPosition = player.position;
-            state.lastHardLandingTime = time;
-          }
-
-          state.velocity.y = DEFAULT_JUMP_Y_VELOCITY * jumpFactor;
-          state.lastJumpTime = time;
-
-          state.isOnSolidGround = false;
-          state.canPerformAirDash = true;
-
-          // Make sure the player is off the ground plane
-          // at the start of the jump to avoid a next-frame
-          // collision snapping them back in place
-          player.position.y += 2.f;
-        } else if (state.canPerformWallKick && time_since(state.lastWallBumpTime) < WALL_KICK_WINDOW_DURATION) {
-          // Wall kick
-          Vec3f wallPlaneVelocity = state.lastWallBumpVelocity.alignToPlane(state.lastWallBumpNormal);
-          Vec3f kickDirection = (state.lastWallBumpNormal + Vec3f(0, 1.f, 0)).unit();
-
-          state.velocity = wallPlaneVelocity + kickDirection * state.lastWallBumpVelocity.magnitude();
-          state.lastWallKickTime = time;
-
-          state.canPerformAirDash = true;
-          state.canPerformWallKick = true;
-
-          context->scene.fx.screenWarpTime = time;
-        } else if (state.canPerformAirDash) {
-          // Air dash
-          Vec3f airDashDirection = camera.orientation.getDirection();
-
-          if (airDashDirection.y < 0.f) {
-            airDashDirection = (airDashDirection * Vec3f(2.f, 1.f, 2.f)).unit();
-          }
-
-          state.velocity = airDashDirection * MAXIMUM_HORIZONTAL_GROUND_SPEED * (
-            // Start dashing at level 1 speed
-            state.dashLevel == 0 ? DASH_LEVEL_1_SPEED_FACTOR :
-            // Start dashing at level 2 speed
-            state.dashLevel == 1 ? DASH_LEVEL_2_SPEED_FACTOR :
-            // Cap at speed level 2
-            DASH_LEVEL_2_SPEED_FACTOR
-          );
-
-          state.canPerformAirDash = false;
-          state.canPerformWallKick = true;
-
-          // @todo configure upper limit
-          if (state.dashLevel < 2) {
-            state.dashLevel++;
-          }
-
-          state.lastAirDashTime = time;
-          state.airDashSpinStartYaw = state.currentYaw;
-          state.airDashSpinEndYaw = atan2(airDashDirection.x, airDashDirection.z) + Gm_PI;
-          if (state.airDashSpinEndYaw - state.airDashSpinStartYaw < Gm_PI) state.airDashSpinEndYaw += Gm_TAU;
-
-          context->scene.fx.screenWarpTime = time;
-        }
-      }
-    }
-
-    // Movement state resets
-    {
-      if (state.dashLevel > 0 && state.isOnSolidGround && !state.isMovingPlayerThisFrame) {
-        // Stop dashing when we cease movement while dashing along the ground
-        state.dashLevel = 0;
-      }
-
-      if (state.isOnSolidGround && state.velocity.xz().magnitude() > 1.f) {
-        // If we were on solid ground, but any movement
-        // occurs along the xz plane, all bets are off!
-        state.isOnSolidGround = false;
-      }
+    if (state.isGliding) {
+      handleGliderMovementInput(context, state, dt);
+    } else {
+      handleNormalMovementInput(context, state, dt);
     }
 
     LOG_TIME();
@@ -424,11 +481,15 @@ namespace MovementSystem {
         
       if (!didLaunchFromRing) {
         if (state.isGliding) {
-          float alpha = Gm_Minf(1.f, 1.f + player.rotation.getDirection().y);
+          // @todo fix player model orientation
+          Vec3f forward = player.rotation.getDirection().invert();
+          float alpha = 1.f + forward.y;
           float buoyancy = alpha * FORCE_GRAVITY * 0.9f * dt;
 
           state.velocity.y -= gravity;
           state.velocity.y += buoyancy;
+
+          state.velocity.y *= (1.f - dt);
         } else {
           state.velocity.y -= gravity;
         }

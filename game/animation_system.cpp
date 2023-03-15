@@ -499,8 +499,8 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
     float pitch = state.currentPitch;
     Vec3f movement = player.position - state.previousPlayerPosition;
 
-    // Only rotate the player character when moving
-    if (state.velocity.magnitude() > 1.f) {
+    // Only rotate the player character when not gliding + moving
+    if (!state.isGliding && state.velocity.magnitude() > 1.f) {
       yaw = atan2f(movement.x, movement.z) + Gm_PI;
       pitch = -1.f * atan2f(movement.y, movement.xz().magnitude());
     }
@@ -539,19 +539,6 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
       pitch = Gm_Lerpf(state.currentPitch, pitch, 10.f * dt);
     } else {
       pitch = Gm_LerpCircularf(state.currentPitch, pitch, 10.f * dt, Gm_PI);
-    }
-
-    // @todo don't handle glider controls here
-    if (state.isGliding) {
-      auto& input = get_input();
-
-      if (input.isKeyHeld(Key::W)) {
-        pitch += 5.f * dt;
-      }
-
-      if (input.isKeyHeld(Key::S)) {
-        pitch -= 5.f * dt;
-      }
     }
 
     player.rotation = Quaternion::fromAxisAngle(Vec3f(0, 0, 1.f), state.turnFactor * 0.5f);
