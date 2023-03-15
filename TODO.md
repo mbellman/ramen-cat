@@ -41,7 +41,7 @@ GAME
 * npc model improvements/highlight when nearby
 * npc movement paths
 * hot-reloading NPCs/entities data
-* avoid running off edges without input (?)
+* avoid running off edges
 * lens flare
 * controller support
 * catnip power up + screen-warp effect

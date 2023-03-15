@@ -149,13 +149,13 @@ void main() {
     float redshift = frag_color_and_depth.w == 1.0 ? 1.0 : pow(1.0 - max(0.0, nDotC), 4);
     float in_progress = min(1.0, redshiftInProgress);
     float out_progress = min(1.0, redshiftOutProgress);
-    float redshift_in_radius = zFar * (redshiftInProgress < 1.0 ? pow(redshiftInProgress, 2) : redshiftInProgress);
-    float redshift_out_radius = zFar * (redshiftOutProgress < 1.0 ? pow(redshiftOutProgress, 2) : redshiftOutProgress);
+    float redshift_in_radius = zFar * (redshiftInProgress < 1.0 ? pow(redshiftInProgress, 3) : redshiftInProgress);
+    float redshift_out_radius = zFar * (redshiftOutProgress < 1.0 ? pow(redshiftOutProgress, 3) : redshiftOutProgress);
     vec3 base_out_color = out_color;
     float distance_from_redshift_spawn = distance(redshiftSpawn, world_position);
 
     if (distance_from_redshift_spawn < redshift_in_radius) {
-      float alpha = 1.0 - pow(distance_from_redshift_spawn / redshift_in_radius, 2);
+      float alpha = 1.0 - pow(distance_from_redshift_spawn / redshift_in_radius, 3);
       vec3 redshifted_out_color = out_color;
 
       redshifted_out_color *= vec3(0.3, 0.4, 0.5);
@@ -165,7 +165,7 @@ void main() {
     }
 
     if (distance_from_redshift_spawn < redshift_out_radius) {
-      float alpha = 1.0 - pow(distance_from_redshift_spawn / redshift_out_radius, 2);
+      float alpha = 1.0 - pow(distance_from_redshift_spawn / redshift_out_radius, 3);
 
       out_color = mix(out_color, base_out_color, alpha);
     }
