@@ -423,7 +423,15 @@ namespace MovementSystem {
       }
         
       if (!didLaunchFromRing) {
-        state.velocity.y -= gravity;
+        if (state.isGliding) {
+          float alpha = Gm_Minf(1.f, 1.f + player.rotation.getDirection().y);
+          float buoyancy = alpha * FORCE_GRAVITY * 0.9f * dt;
+
+          state.velocity.y -= gravity;
+          state.velocity.y += buoyancy;
+        } else {
+          state.velocity.y -= gravity;
+        }
       }
 
       player.position += state.velocity * dt;

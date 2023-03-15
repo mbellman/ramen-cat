@@ -541,6 +541,19 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
       pitch = Gm_LerpCircularf(state.currentPitch, pitch, 10.f * dt, Gm_PI);
     }
 
+    // @todo don't handle glider controls here
+    if (state.isGliding) {
+      auto& input = get_input();
+
+      if (input.isKeyHeld(Key::W)) {
+        pitch += 5.f * dt;
+      }
+
+      if (input.isKeyHeld(Key::S)) {
+        pitch -= 5.f * dt;
+      }
+    }
+
     player.rotation = Quaternion::fromAxisAngle(Vec3f(0, 0, 1.f), state.turnFactor * 0.5f);
     player.rotation *= Quaternion::fromAxisAngle(Vec3f(0, 1, 0), yaw);
     player.rotation *= Quaternion::fromAxisAngle(player.rotation.getLeftDirection(), pitch);
