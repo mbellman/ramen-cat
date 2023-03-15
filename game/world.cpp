@@ -561,6 +561,10 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
     mesh("player")->useMipmaps = false;
     mesh("player")->useCloseTranslucency = true;
 
+    add_mesh("glider", 1, Mesh::Model("./game/assets/glider.obj"));
+    mesh("glider")->roughness = 0.4f;
+    mesh("glider")->useCloseTranslucency = true;
+
     add_mesh("ocean", 1, Mesh::Disc(12));
     add_mesh("ocean-floor", 1, Mesh::Disc(12));
 
@@ -592,6 +596,13 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   auto& player = create_object_from("player");
 
   player.scale = Vec3f(PLAYER_RADIUS);
+
+  auto& glider = create_object_from("glider");
+
+  glider.scale = Vec3f(PLAYER_RADIUS);
+  glider.color = Vec3f(0.1f);
+
+  commit(glider);
 
   // @temporary
   {

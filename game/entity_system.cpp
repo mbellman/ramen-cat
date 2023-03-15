@@ -742,6 +742,28 @@ internal void handleUniqueLevelStructures(GmContext* context, GameState& state, 
   }
 }
 
+internal void handleGlider(GmContext* context, GameState& state) {
+  auto& glider = objects("glider")[0];
+  auto& player = get_player();
+
+  glider.position = player.position + player.rotation.getUpDirection() * PLAYER_RADIUS * 1.5f;
+  glider.rotation = player.rotation;
+
+  if (state.isGliding) {
+    float alpha = Gm_Minf(1.f, time_since(state.lastGliderChangeTime));
+    float scale = easeOutElastic(alpha) * PLAYER_RADIUS;
+
+    glider.scale = Vec3f(scale);
+  } else {
+    float alpha = Gm_Minf(1.f, 2.f * time_since(state.lastGliderChangeTime));
+    float scale = PLAYER_RADIUS * (1.f - easeInOutQuad(alpha));
+
+    glider.scale = Vec3f(scale);
+  }
+
+  commit(glider);
+}
+
 void EntitySystem::initializeGameEntities(GmContext* context, GameState& state) {
   add_mesh("ring-particle", 50, Mesh::Particles());
 
@@ -801,6 +823,9 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   handleJetstreams(context, state, dt);
   handleToriiGates(context, state);
   handleRings(context, state);
+
+  // Power-up/ability entities
+  handleGlider(context, state);
 
   LOG_TIME();
 }

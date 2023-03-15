@@ -83,6 +83,7 @@ struct GameState {
   float lastHardLandingTime = 0.f;
   float lastGroundParticleSpawnTime = 0.f;
   float lastAirParticleSpawnTime = 0.f;
+  float lastGliderChangeTime = 0.f;
   float lastMouseMoveTime = 0.f;
 
   float dayNightCycleTime = 0.f;
@@ -91,6 +92,7 @@ struct GameState {
   bool wasOnSolidGroundLastFrame = false;
   bool isMovingPlayerThisFrame = false;
   bool isRepositioningCamera = false;
+  bool isGliding = false;
 
   bool canPerformWallKick = false;
   bool canPerformAirDash = false;

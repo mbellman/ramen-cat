@@ -250,6 +250,11 @@ namespace MovementSystem {
       acceleration += left.invert() * rate;
     }
 
+    if (input.didPressKey(Key::SHIFT)) {
+      state.isGliding = !state.isGliding;
+      state.lastGliderChangeTime = get_scene_time();
+    }
+
     // Directional change handling/turn factor determination
     {
       float targetTurnFactor = 0.f;
