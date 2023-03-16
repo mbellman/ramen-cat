@@ -537,14 +537,14 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
 
     yaw = Gm_LerpCircularf(state.currentYaw, yaw, 10.f * dt, Gm_PI);
 
-    if (time_since(state.lastBoostRingLaunchTime) < 0.5f) {
+    if (time_since(state.lastBoostRingLaunchTime) < SOMERSAULT_DURATION) {
       pitch = Gm_Lerpf(state.currentPitch, pitch, 10.f * dt);
     } else {
       pitch = Gm_LerpCircularf(state.currentPitch, pitch, 10.f * dt, Gm_PI);
     }
 
     player.rotation = Quaternion::fromAxisAngle(Vec3f(0, 0, 1.f), state.turnFactor * 0.5f);
-    player.rotation *= Quaternion::fromAxisAngle(Vec3f(0, 1, 0), yaw);
+    player.rotation *= Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), yaw);
     player.rotation *= Quaternion::fromAxisAngle(player.rotation.getLeftDirection(), pitch);
 
     handlePlayerAnimation(context, state, dt);

@@ -281,8 +281,29 @@ void updateGame(GmContext* context, GameState& state, float dt) {
     context->scene.sceneTime += dt;
   }
 
+  Vec3f playerPosition = player.position;
+  Quaternion playerRotation = player.rotation;
+
+  // Apply glider-specific character transforms after all other steps.
+  // We want these effects to be visible, but not permanently set on
+  // the player object, since the player position/orientation determine
+  // certain aspects of camera behavior and controls.
+  if (state.isGliding) {
+    // @todo fix player model orientation
+    Vec3f forward = player.rotation.getDirection().invert();
+    float alpha = Vec3f::dot(forward, Vec3f(0, 1.f, 0));
+
+    player.position -= player.rotation.getUpDirection() * PLAYER_RADIUS * 0.5f * alpha;
+    player.position += forward * alpha * PLAYER_RADIUS;
+    player.rotation *= Quaternion::fromAxisAngle(player.rotation.getLeftDirection(), -alpha);
+  }
+
   // Commit any changes to the player object
   commit(player);
+
+  // Reset glider-specific character transforms
+  player.position = playerPosition;
+  player.rotation = playerRotation;
 
   LOG_TIME();
 }

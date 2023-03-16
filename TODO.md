@@ -23,6 +23,7 @@ ASSETS
 
 GAME
 ----
+* increase camera radius when moving
 * extend boost ring launch time when gliding
 * have boost ring particles follow the player
 * dynamic tail animations
