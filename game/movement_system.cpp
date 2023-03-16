@@ -405,11 +405,11 @@ internal void handleGliderMovementInput(GmContext* context, GameState& state, fl
     targetTurnFactor = 1.f;
   }
 
-  state.turnFactor = Gm_Lerpf(state.turnFactor, targetTurnFactor, 5.f * dt);
+  state.turnFactor = Gm_Lerpf(state.turnFactor, targetTurnFactor, 2.f * dt);
   state.turnFactor = Gm_Clampf(state.turnFactor, -1.f, 1.f);
 
   // @todo move the below into handlePlayerMovementPhysics()
-  float targetPitch = Gm_Lerpf(0.3f, -0.5f, speed / MAXIMUM_GLIDER_SPEED);
+  float targetPitch = Gm_Lerpf(0.5f, -0.5f, speed / MAXIMUM_GLIDER_SPEED);
 
   state.currentPitch = Gm_Lerpf(state.currentPitch, targetPitch, 5.f * (1.f - speedFactor) * dt);
 
@@ -430,6 +430,9 @@ internal void handleGliderMovementInput(GmContext* context, GameState& state, fl
   if (time_since(state.lastBoostRingLaunchTime) > 1.f) {
     state.velocity = direction * speed;
     state.velocity += direction * 10.f * velocityFactor * dt;
+
+    // Use banking to determine additional velocity
+    state.velocity += player.rotation.getLeftDirection().unit() * state.turnFactor * 10000.f * dt;
   }
 
   float newSpeed = state.velocity.magnitude();
