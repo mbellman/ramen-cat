@@ -515,6 +515,12 @@ namespace MovementSystem {
       // into a wall triggers the wall kick wind-up action.
       state.canPerformWallKick = false;
 
+      if (state.isGliding) {
+        // If the glider is active on solid ground, disable it
+        state.isGliding = false;
+        state.lastGliderChangeTime = get_scene_time();
+      }
+
       if (initialVelocity.y < -550.f) {
         state.lastHardLandingPosition = player.position - Vec3f(0, PLAYER_RADIUS * 0.5f, 0);
         state.lastHardLandingTime = get_scene_time();

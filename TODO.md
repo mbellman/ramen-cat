@@ -26,8 +26,10 @@ GAME
 * dynamic tail animations
 * variable air dash spin animation duration (?)
 * level unloading (game state reset)
-* level settings files
+* settings for individuals levels
 
+* extend boost ring launch time when gliding
+* have boost ring particles follow the player
 * enemies in torii gate zone
 * allow SPACE to be queued when pressed just before hitting the ground
 * run along walls before wall kicking
