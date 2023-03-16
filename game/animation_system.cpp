@@ -165,8 +165,8 @@ internal void handlePlayerMidairAnimation(GmContext* context, GameState& state, 
   auto& rig = state.animation.playerRig;
   float jumpTime = time_since(state.lastTimeOnSolidGround);
   float dashTime = time_since(state.lastAirDashTime);
-  float ringLaunchTime = time_since(state.lastRingLaunchTime);
-  float somersaultAlpha = ringLaunchTime < SOMERSAULT_DURATION ? easeOutQuint(time_since(state.lastRingLaunchTime) * (1.f / SOMERSAULT_DURATION)) : 0.f;
+  float ringLaunchTime = time_since(state.lastBoostRingLaunchTime);
+  float somersaultAlpha = ringLaunchTime < SOMERSAULT_DURATION ? easeOutQuint(time_since(state.lastBoostRingLaunchTime) * (1.f / SOMERSAULT_DURATION)) : 0.f;
   float airTime = jumpTime < dashTime ? jumpTime : dashTime;
   float airTimeFactor = airTime / (airTime + 0.5f);
   float legSwingAlpha = airTime * 10.f;
@@ -498,17 +498,18 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
     float yaw = state.currentYaw;
     float pitch = state.currentPitch;
     Vec3f movement = player.position - state.previousPlayerPosition;
-    bool didLaunchFromRing = time_since(state.lastRingLaunchTime) < SOMERSAULT_DURATION;
+    bool usedBoostRing = time_since(state.lastBoostRingLaunchTime) < SOMERSAULT_DURATION;
 
-    // Only rotate the player character when not gliding + moving
-    if (state.velocity.magnitude() > 1.f && (!state.isGliding || didLaunchFromRing)) {
+    if (state.velocity.magnitude() > 1.f && (!state.isGliding || usedBoostRing)) {
+      // Determine the updated character rotation, based on movement direction,
+      // as long as we're moving + not gliding, or if we just used a boost ring.
       yaw = atan2f(movement.x, movement.z) + Gm_PI;
       pitch = -1.f * atan2f(movement.y, movement.xz().magnitude());
     }
 
-    // Perform somersaults when launching through rings without the glider
-    if (didLaunchFromRing && !state.isGliding) {
-      float alpha = easeOutQuint(time_since(state.lastRingLaunchTime) * (1.f / SOMERSAULT_DURATION));
+    // Perform somersaults when launching through boost rings without the glider
+    if (usedBoostRing && !state.isGliding) {
+      float alpha = easeOutQuint(time_since(state.lastBoostRingLaunchTime) * (1.f / SOMERSAULT_DURATION));
 
       pitch += Gm_TAU * alpha;
     }
@@ -536,7 +537,7 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
 
     yaw = Gm_LerpCircularf(state.currentYaw, yaw, 10.f * dt, Gm_PI);
 
-    if (time_since(state.lastRingLaunchTime) < 0.5f) {
+    if (time_since(state.lastBoostRingLaunchTime) < 0.5f) {
       pitch = Gm_Lerpf(state.currentPitch, pitch, 10.f * dt);
     } else {
       pitch = Gm_LerpCircularf(state.currentPitch, pitch, 10.f * dt, Gm_PI);
@@ -549,8 +550,8 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
     handlePlayerAnimation(context, state, dt);
     handleAnimatedMeshWithRig(*mesh("player"), state.animation.playerRig);
 
-    if (state.lastRingLaunchTime != 0.f && time_since(state.lastRingLaunchTime) < 1.f) {
-      float somersaultAlpha = time_since(state.lastRingLaunchTime) * (1.f / SOMERSAULT_DURATION);
+    if (state.lastBoostRingLaunchTime != 0.f && time_since(state.lastBoostRingLaunchTime) < 1.f) {
+      float somersaultAlpha = time_since(state.lastBoostRingLaunchTime) * (1.f / SOMERSAULT_DURATION);
       float somersaultScale = Gm_Maxf(0.f, sinf(somersaultAlpha * Gm_PI) * 0.5f);
 
       player.scale.z = PLAYER_RADIUS * (1.f + somersaultScale);

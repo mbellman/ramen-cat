@@ -641,13 +641,13 @@ internal void handleToriiGates(GmContext* context, GameState& state) {
   }
 }
 
-internal void restoreLastUsedRing(GmContext* context, GameState& state) {
-  auto* object = get_object_by_record(state.lastUsedRing._record);
+internal void restoreLastUsedBoostRing(GmContext* context, GameState& state) {
+  auto* object = get_object_by_record(state.lastUsedBoostRing._record);
 
   if (object != nullptr) {
     auto& ring = *object;
 
-    ring.scale = state.lastUsedRing.scale;
+    ring.scale = state.lastUsedBoostRing.scale;
 
     commit(ring);
   }
@@ -655,12 +655,12 @@ internal void restoreLastUsedRing(GmContext* context, GameState& state) {
 
 static std::vector<Vec3f> ringParticleOffsets;
 
-internal void handleRings(GmContext* context, GameState& state) {
+internal void handleBoostRings(GmContext* context, GameState& state) {
   auto& player = get_player();
 
-  // Check for passage through rings
+  // Check for passage through boost rings
   {
-    for (auto& ring : objects("ring")) {
+    for (auto& ring : objects("boost-ring")) {
       Vec3f forward = ring.rotation.getDirection();
       Vec3f lastPlayerDirection = (state.previousPlayerPosition - ring.position);
       Vec3f currentPlayerDirection = player.position - ring.position;
@@ -671,14 +671,14 @@ internal void handleRings(GmContext* context, GameState& state) {
         Gm_Signf(lastDot) != Gm_Signf(currentDot) &&
         currentPlayerDirection.magnitude() < ring.scale.x * 0.9f
       ) {
-        // Launch through the ring
-        if (state.lastRingLaunchTime != 0.f) {
-          restoreLastUsedRing(context, state);
+        // Launch through the boost ring
+        if (state.lastBoostRingLaunchTime != 0.f) {
+          restoreLastUsedBoostRing(context, state);
         }
 
         state.velocity = forward * 2000.f * (currentDot > 0.f ? 1.f : -1.f);
-        state.lastRingLaunchTime = get_scene_time();
-        state.lastUsedRing = ring;
+        state.lastBoostRingLaunchTime = get_scene_time();
+        state.lastUsedBoostRing = ring;
 
         state.camera3p.altitude = forward.y;
 
@@ -689,37 +689,37 @@ internal void handleRings(GmContext* context, GameState& state) {
 
   // Animate the last-used ring
   {
-    if (state.lastRingLaunchTime != 0.f) {
-      float alpha = 2.f * time_since(state.lastRingLaunchTime);
+    if (state.lastBoostRingLaunchTime != 0.f) {
+      float alpha = 2.f * time_since(state.lastBoostRingLaunchTime);
 
       if (alpha < 1.f) {
-        auto* object = get_object_by_record(state.lastUsedRing._record);
+        auto* object = get_object_by_record(state.lastUsedBoostRing._record);
 
         if (object != nullptr) {
           auto& ring = *object;
           float scaleAlpha = sinf(alpha * Gm_PI);
           float scaleFactor = 1.f - 0.4f * scaleAlpha;
 
-          ring.scale = state.lastUsedRing.scale * scaleFactor;
+          ring.scale = state.lastUsedBoostRing.scale * scaleFactor;
 
           commit(ring);
         }
       } else {
-        restoreLastUsedRing(context, state);
+        restoreLastUsedBoostRing(context, state);
       }
     }
   }
 
   // Animate ring particles
   {
-    if (state.lastRingLaunchTime != 0.f) {
-      Vec3f spawnPosition = state.lastUsedRing.position;
-      float alpha = time_since(state.lastRingLaunchTime);
+    if (state.lastBoostRingLaunchTime != 0.f) {
+      Vec3f spawnPosition = state.lastUsedBoostRing.position;
+      float alpha = time_since(state.lastBoostRingLaunchTime);
 
       for (auto& particle : objects("ring-particle")) {
         auto offset = ringParticleOffsets[particle._record.id];
 
-        particle.position = state.lastUsedRing.position + offset * alpha * 350.f;
+        particle.position = state.lastUsedBoostRing.position + offset * alpha * 350.f;
         particle.scale = Vec3f(5.f * (1.f - alpha));
 
         commit(particle);
@@ -822,7 +822,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   handleCollectables(context, state, dt);
   handleJetstreams(context, state, dt);
   handleToriiGates(context, state);
-  handleRings(context, state);
+  handleBoostRings(context, state);
 
   // Power-up/ability entities
   handleGlider(context, state);

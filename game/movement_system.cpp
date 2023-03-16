@@ -427,7 +427,7 @@ internal void handleGliderMovementInput(GmContext* context, GameState& state, fl
 
   float velocityFactor = 0.1f + Vec3f::dot(direction, Vec3f(0, -1.f, 0));
 
-  if (time_since(state.lastRingLaunchTime) > 1.f) {
+  if (time_since(state.lastBoostRingLaunchTime) > 1.f) {
     state.velocity = direction * speed;
     state.velocity += direction * 10.f * velocityFactor * dt;
   }
@@ -479,7 +479,7 @@ namespace MovementSystem {
 
     // Handle gravity/velocity
     {
-      bool didLaunchFromRing = state.lastRingLaunchTime != 0.f && time_since(state.lastRingLaunchTime) < SOMERSAULT_DURATION;
+      bool didLaunchFromRing = state.lastBoostRingLaunchTime != 0.f && time_since(state.lastBoostRingLaunchTime) < SOMERSAULT_DURATION;
 
       if (
         time_since(state.lastJumpTime) < 1.f &&

@@ -152,9 +152,9 @@ struct GameState {
   bool isInToriiGateZone = false;
   float toriiGateTransitionTime = 0.f;
 
-  // Rings
-  Gamma::Object lastUsedRing;
-  float lastRingLaunchTime = 0.f;
+  // Boost rings
+  Gamma::Object lastUsedBoostRing;
+  float lastBoostRingLaunchTime = 0.f;
 
   std::vector<Gamma::Object> initialMovingObjects;
 
