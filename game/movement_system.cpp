@@ -405,7 +405,7 @@ internal void handleGliderMovementInput(GmContext* context, GameState& state, fl
     targetTurnFactor = 1.f;
   }
 
-  state.currentPitch = Gm_Lerpf(state.currentPitch, 0.3f, 5.f * (1.f - speedFactor) * dt);
+  state.currentPitch = Gm_Lerpf(state.currentPitch, 0.1f, 5.f * (1.f - speedFactor) * dt);
 
   // @todo fix player model orientation
   float azimuth = state.currentYaw - Gm_HALF_PI;
@@ -422,7 +422,7 @@ internal void handleGliderMovementInput(GmContext* context, GameState& state, fl
   float velocityFactor = 0.1f + Vec3f::dot(direction, Vec3f(0, -1.f, 0));
 
   state.velocity = direction * speed;
-  state.velocity *= (1.f + velocityFactor * dt);
+  state.velocity += direction * 10.f * velocityFactor * dt;
 
   float newSpeed = state.velocity.magnitude();
 
