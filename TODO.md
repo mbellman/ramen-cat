@@ -23,7 +23,6 @@ ASSETS
 
 GAME
 ----
-* hang glider physics refinements
 * dynamic tail animations
 * variable air dash spin animation duration (?)
 * level unloading (game state reset)

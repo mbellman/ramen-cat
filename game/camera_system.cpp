@@ -58,7 +58,7 @@ internal void updateThirdPersonCameraDirection(GmContext* context, GameState& st
       targetAzimuth = atan2f(state.direction.z, state.direction.x) + Gm_PI;
     }
 
-    if (state.isMovingPlayerThisFrame && state.isOnSolidGround || state.isGliding) {
+    if ((state.isMovingPlayerThisFrame && state.isOnSolidGround) || state.isGliding) {
       state.camera3p.azimuth = Gm_LerpCircularf(state.camera3p.azimuth, targetAzimuth, 2.f * dt, Gm_PI);
     }
 

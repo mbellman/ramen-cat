@@ -174,7 +174,7 @@ internal void handlePlayerMidairAnimation(GmContext* context, GameState& state, 
   float periodicHeadTurn = getPeriodicHeadTurn(get_scene_time()) * periodicHeadTurnFactor;
   Vec3f turnOffset = state.isGliding ? Vec3f(0.f) : Vec3f(-0.5f * state.turnFactor, 0, 0);
 
-  float somersault = sinf(somersaultAlpha * Gm_PI);
+  float somersault = state.isGliding ? 0.f : sinf(somersaultAlpha * Gm_PI);
   Vec3f somersaultOffset = Vec3f(0, -somersault, 0);
   Quaternion somersaultRotation = Quaternion::fromAxisAngle(Vec3f(1, 0, 0), -somersault);
 
@@ -498,15 +498,16 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
     float yaw = state.currentYaw;
     float pitch = state.currentPitch;
     Vec3f movement = player.position - state.previousPlayerPosition;
+    bool didLaunchFromRing = time_since(state.lastRingLaunchTime) < SOMERSAULT_DURATION;
 
     // Only rotate the player character when not gliding + moving
-    if (!state.isGliding && state.velocity.magnitude() > 1.f) {
+    if (state.velocity.magnitude() > 1.f && (!state.isGliding || didLaunchFromRing)) {
       yaw = atan2f(movement.x, movement.z) + Gm_PI;
       pitch = -1.f * atan2f(movement.y, movement.xz().magnitude());
     }
 
-    // Perform somersaults when launching through rings
-    if (time_since(state.lastRingLaunchTime) < SOMERSAULT_DURATION) {
+    // Perform somersaults when launching through rings without the glider
+    if (didLaunchFromRing && !state.isGliding) {
       float alpha = easeOutQuint(time_since(state.lastRingLaunchTime) * (1.f / SOMERSAULT_DURATION));
 
       pitch += Gm_TAU * alpha;
