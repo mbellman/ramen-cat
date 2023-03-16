@@ -32,6 +32,7 @@ constexpr static float FORCE_GRAVITY = 750.f;
 constexpr static float FORCE_WALL = 1000.f;
 constexpr static float MAXIMUM_HORIZONTAL_GROUND_SPEED = 650.f;
 constexpr static float MAXIMUM_HORIZONTAL_AIR_SPEED = 1500.f;
+constexpr static float MAXIMUM_GLIDER_SPEED = 3000.f;
 constexpr static float BASE_AIR_DASH_SPEED = 1000.f;
 constexpr static float DASH_LEVEL_1_SPEED_FACTOR = 1.6f;
 constexpr static float DASH_LEVEL_2_SPEED_FACTOR = 2.3f;

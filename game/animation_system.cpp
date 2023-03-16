@@ -172,7 +172,7 @@ internal void handlePlayerMidairAnimation(GmContext* context, GameState& state, 
   float legSwingAlpha = airTime * 10.f;
   float periodicHeadTurnFactor = 1.f - airTimeFactor;
   float periodicHeadTurn = getPeriodicHeadTurn(get_scene_time()) * periodicHeadTurnFactor;
-  Vec3f turnOffset = Vec3f(-0.5f * state.turnFactor, 0, 0);
+  Vec3f turnOffset = state.isGliding ? Vec3f(0.f) : Vec3f(-0.5f * state.turnFactor, 0, 0);
 
   float somersault = sinf(somersaultAlpha * Gm_PI);
   Vec3f somersaultOffset = Vec3f(0, -somersault, 0);

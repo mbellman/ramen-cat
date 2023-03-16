@@ -382,13 +382,15 @@ internal void handleGliderMovementInput(GmContext* context, GameState& state, fl
   auto& input = get_input();
   auto& player = get_player();
   float targetTurnFactor = 0.f;
+  float speed = state.velocity.magnitude();
+  float speedFactor = speed / (speed + 500.f);
 
   if (input.isKeyHeld(Key::W)) {
     state.currentPitch += 2.f * dt;
   }
 
   if (input.isKeyHeld(Key::S)) {
-    state.currentPitch -= 2.f * dt;
+    state.currentPitch -= 2.f * dt * speedFactor;
   }
 
   if (input.isKeyHeld(Key::A)) {
@@ -403,7 +405,8 @@ internal void handleGliderMovementInput(GmContext* context, GameState& state, fl
     targetTurnFactor = 1.f;
   }
 
-  float speed = state.velocity.magnitude();
+  state.currentPitch = Gm_Lerpf(state.currentPitch, 0.3f, 5.f * (1.f - speedFactor) * dt);
+
   // @todo fix player model orientation
   float azimuth = state.currentYaw - Gm_HALF_PI;
   float altitude = -state.currentPitch;
@@ -416,10 +419,16 @@ internal void handleGliderMovementInput(GmContext* context, GameState& state, fl
     cosAltitude * sinf(azimuth)
   );
 
-  float velocityFactor = Vec3f::dot(direction, Vec3f(0, -1.f, 0));
+  float velocityFactor = 0.1f + Vec3f::dot(direction, Vec3f(0, -1.f, 0));
 
   state.velocity = direction * speed;
   state.velocity *= (1.f + velocityFactor * dt);
+
+  float newSpeed = state.velocity.magnitude();
+
+  if (newSpeed > MAXIMUM_GLIDER_SPEED) {
+    state.velocity *= (MAXIMUM_GLIDER_SPEED / speed);
+  }
 
   state.turnFactor = Gm_Lerpf(state.turnFactor, targetTurnFactor, 5.f * dt);
   state.turnFactor = Gm_Clampf(state.turnFactor, -1.f, 1.f);
@@ -480,19 +489,7 @@ namespace MovementSystem {
       }
         
       if (!didLaunchFromRing) {
-        if (state.isGliding) {
-          // @todo fix player model orientation
-          Vec3f forward = player.rotation.getDirection().invert();
-          float alpha = 1.f + forward.y;
-          float buoyancy = alpha * FORCE_GRAVITY * 0.9f * dt;
-
-          state.velocity.y -= gravity;
-          state.velocity.y += buoyancy;
-
-          state.velocity.y *= (1.f - dt);
-        } else {
-          state.velocity.y -= gravity;
-        }
+        state.velocity.y -= gravity;
       }
 
       player.position += state.velocity * dt;

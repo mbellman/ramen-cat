@@ -746,7 +746,7 @@ internal void handleGlider(GmContext* context, GameState& state) {
   auto& glider = objects("glider")[0];
   auto& player = get_player();
 
-  glider.position = player.position + player.rotation.getUpDirection() * PLAYER_RADIUS * 1.5f;
+  glider.position = player.position + player.rotation.getUpDirection() * PLAYER_RADIUS * 1.f;
   glider.rotation = player.rotation;
 
   if (state.isGliding) {
