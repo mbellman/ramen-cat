@@ -1096,7 +1096,7 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
       return Mesh::Model("./game/assets/yuki-building-1-frame.obj");
     },
     .attributes = {
-      .roughness = 0.5f
+      .roughness = 0.8f
     }
   }
 };

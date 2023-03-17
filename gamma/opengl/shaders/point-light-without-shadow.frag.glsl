@@ -17,6 +17,7 @@ uniform mat4 matInverseView;
 
 noperspective in vec2 fragUv;
 flat in Light light;
+in float intensity;
 
 layout (location = 0) out vec4 out_colorAndDepth;
 

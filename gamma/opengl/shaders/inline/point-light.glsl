@@ -39,6 +39,9 @@ vec3 radiant_flux = light.color * light.power * light.radius;
 vec3 diffuse_term = frag_color * radiant_flux * incidence * attenuation * hack_diffuse_radial_influence * hack_soft_tapering * (1.0 - specularity) * sqrt(roughness);
 vec3 specular_term = 5.0 * radiant_flux * specularity * attenuation * hack_specular_radial_influence;
 
+// @todo bring this back in later
+// vec3 volumetric_term = light.color * incidence * intensity;
+
 #if USE_DEV_LIGHT_DISCS == 1
   vec3 illuminated_color = light.color * vec3(0.3) + (diffuse_term + specular_term) * (1.0 - min(1.0, emissivity));
 #else
