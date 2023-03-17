@@ -623,7 +623,10 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   // player.position = Vec3f(-30.f, 243.f, 2200.f);
 
   // umimura
-  player.position = Vec3f(-670.f, 4375.f, 2575.f);
+  // player.position = Vec3f(-670.f, 4375.f, 2575.f);
+
+  // yukimura
+  player.position = Vec3f(-30.f, 115.f, -150.f);
 
   player.color = Vec3f(1.f, 0.4f, 0.4f);
 
