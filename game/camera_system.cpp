@@ -18,6 +18,11 @@ internal void updateThirdPersonCameraRadius(GmContext* context, GameState& state
       ? CAMERA_NORMAL_BASE_RADIUS
       : CAMERA_ZOOM_OUT_BASE_RADIUS;
 
+  float speed = state.velocity.magnitude();
+
+  // Extend the radius outward when moving faster
+  baseRadius += 200.f * (speed / (speed + 500.f));
+
   float altitudeRadius = CAMERA_RADIUS_ALTITUDE_MULTIPLIER * state.camera3p.altitude / Gm_HALF_PI;
 
   state.camera3p.radius = baseRadius + altitudeRadius;
