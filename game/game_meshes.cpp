@@ -650,6 +650,13 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
+    .name = "door",
+    .hitboxScale = Vec3f(0.5f, 1.f, 0.1f),
+    .create = []() {
+      return Mesh::Model("./game/assets/door.obj");
+    }
+  },
+  {
     .name = "windows-1",
     .hitboxScale = Vec3f(1.f, 0.4f, 0.05f),
     .create = []() {
