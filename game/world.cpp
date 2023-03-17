@@ -509,6 +509,19 @@ internal void rebuildDynamicBuildings(GmContext* context) {
     commit(body);
     commit(frame);
   }
+
+  objects("yuki-building-1-frame").reset();
+
+  for (auto& building : objects("yuki-building-1")) {
+    auto& frame = create_object_from("yuki-building-1-frame");
+
+    frame.position = building.position;
+    frame.scale = building.scale;
+    frame.rotation = building.rotation;
+    frame.color = Vec3f(0.4f, 0.3f, 0.2f);
+
+    commit(frame);
+  }
 }
 
 internal void rebuildAcUnitFans(GmContext* context) {
@@ -626,7 +639,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   // player.position = Vec3f(-670.f, 4375.f, 2575.f);
 
   // yukimura
-  player.position = Vec3f(-30.f, 115.f, -150.f);
+  player.position = Vec3f(-670.f, 140.f, -230.f);
 
   player.color = Vec3f(1.f, 0.4f, 0.4f);
 

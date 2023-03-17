@@ -324,6 +324,14 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
+    .name = "yuki-building-1",
+    .defaultColor = Vec3f(1.f, 0.9f, 0.8f),
+    .hitboxScale = Vec3f(0.5f, 1.f, 0.5f),
+    .create = []() {
+      return Mesh::Model("./game/assets/yuki-building-1.obj");
+    }
+  },
+  {
     .name = "torii-gate",
     .hitboxScale = Vec3f(1.f, 1.f, 0.15f),
     .maxInstances = 50,
@@ -1080,6 +1088,15 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
     },
     .attributes = {
       .texture = "./game/assets/building-1-frame.png"
+    }
+  },
+  {
+    .name = "yuki-building-1-frame",
+    .create = []() {
+      return Mesh::Model("./game/assets/yuki-building-1-frame.obj");
+    },
+    .attributes = {
+      .roughness = 0.5f
     }
   }
 };
