@@ -489,6 +489,7 @@ internal void rebuildElectricalPoleWires(GmContext* context) {
 }
 
 internal void rebuildDynamicBuildings(GmContext* context) {
+  // @todo generalize this
   objects("building-1-body").reset();
   objects("building-1-frame").reset();
 
@@ -510,10 +511,25 @@ internal void rebuildDynamicBuildings(GmContext* context) {
     commit(frame);
   }
 
+  // @todo generalize this
   objects("yuki-building-1-frame").reset();
 
   for (auto& building : objects("yuki-building-1")) {
     auto& frame = create_object_from("yuki-building-1-frame");
+
+    frame.position = building.position;
+    frame.scale = building.scale;
+    frame.rotation = building.rotation;
+    frame.color = Vec3f(0.5f, 0.4f, 0.3f);
+
+    commit(frame);
+  }
+
+  // @todo generalize this
+  objects("yuki-building-2-frame").reset();
+
+  for (auto& building : objects("yuki-building-2")) {
+    auto& frame = create_object_from("yuki-building-2-frame");
 
     frame.position = building.position;
     frame.scale = building.scale;
