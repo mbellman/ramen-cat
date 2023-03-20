@@ -534,7 +534,7 @@ internal void rebuildDynamicBuildings(GmContext* context) {
     frame.position = building.position;
     frame.scale = building.scale;
     frame.rotation = building.rotation;
-    frame.color = Vec3f(0.5f, 0.4f, 0.3f);
+    frame.color = Vec3f(0.2f, 0.15f, 0.15f);
 
     commit(frame);
   }
