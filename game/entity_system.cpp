@@ -676,7 +676,10 @@ internal void handleBoostRings(GmContext* context, GameState& state, float dt) {
           restoreLastUsedBoostRing(context, state);
         }
 
-        state.velocity = forward * 2000.f * (currentDot > 0.f ? 1.f : -1.f);
+        // @todo make configurable
+        float launchSpeed = state.isGliding ? 3000.f : 2000.f;
+
+        state.velocity = forward * launchSpeed * (currentDot > 0.f ? 1.f : -1.f);
         state.lastBoostRingLaunchTime = get_scene_time();
         state.lastUsedBoostRing = ring;
         state.camera3p.altitude = forward.y;
