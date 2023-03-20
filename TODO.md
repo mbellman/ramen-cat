@@ -23,7 +23,6 @@ ASSETS
 
 GAME
 ----
-* have boost ring particles follow the player
 * dynamic tail animations
 * variable air dash spin animation duration (?)
 * level unloading (game state reset)

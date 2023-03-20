@@ -655,7 +655,7 @@ internal void restoreLastUsedBoostRing(GmContext* context, GameState& state) {
 
 static std::vector<Vec3f> ringParticleOffsets;
 
-internal void handleBoostRings(GmContext* context, GameState& state) {
+internal void handleBoostRings(GmContext* context, GameState& state, float dt) {
   auto& player = get_player();
 
   // Check for passage through boost rings
@@ -679,8 +679,11 @@ internal void handleBoostRings(GmContext* context, GameState& state) {
         state.velocity = forward * 2000.f * (currentDot > 0.f ? 1.f : -1.f);
         state.lastBoostRingLaunchTime = get_scene_time();
         state.lastUsedBoostRing = ring;
-
         state.camera3p.altitude = forward.y;
+
+        if (state.dashLevel == 0) {
+          state.dashLevel = 1;
+        }
 
         break;
       }
@@ -710,17 +713,29 @@ internal void handleBoostRings(GmContext* context, GameState& state) {
     }
   }
 
+  // @todo move to effects_system.cpp
   // Animate ring particles
   {
     if (state.lastBoostRingLaunchTime != 0.f) {
       Vec3f spawnPosition = state.lastUsedBoostRing.position;
-      float alpha = time_since(state.lastBoostRingLaunchTime);
+      float boostRingDuration = state.isGliding ? GLIDER_BOOST_RING_DURATION : BOOST_RING_DURATION;
+      float alpha = time_since(state.lastBoostRingLaunchTime) / boostRingDuration;
 
+      // "Spawn" the next particle
+      u16 totalRingParticles = objects("ring-particle").totalActive();
+      u16 nextRingParticleId = u16(alpha * float(totalRingParticles));
+      auto& nextRingParticle = objects("ring-particle")[nextRingParticleId];
+
+      nextRingParticle.position = player.position;
+      nextRingParticle.scale = Vec3f(DASH_PARTICLE_SIZE);
+
+      // Scale down existing particles
       for (auto& particle : objects("ring-particle")) {
-        auto offset = ringParticleOffsets[particle._record.id];
+        particle.scale -= Vec3f(DASH_PARTICLE_SIZE * dt);
 
-        particle.position = state.lastUsedBoostRing.position + offset * alpha * 350.f;
-        particle.scale = Vec3f(5.f * (1.f - alpha));
+        if (particle.scale.x < 0.f) {
+          particle.scale = Vec3f(0.f);
+        }
 
         commit(particle);
       }
@@ -822,7 +837,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   handleCollectables(context, state, dt);
   handleJetstreams(context, state, dt);
   handleToriiGates(context, state);
-  handleBoostRings(context, state);
+  handleBoostRings(context, state, dt);
 
   // Power-up/ability entities
   handleGlider(context, state);

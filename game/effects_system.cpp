@@ -147,6 +147,13 @@ internal void handlePlayerParticles(GmContext* context, GameState& state, float 
             }
           }
 
+          if (state.lastBoostRingLaunchTime != 0.f && time_since(state.lastBoostRingLaunchTime) < BOOST_RING_DURATION) {
+            // Temporarily change the color of dash particles when launching through boost rings
+            r = 1.f;
+            g = 0.9f;
+            b = 0.4f;
+          }
+
           particle.position = state.previousPlayerPosition + randomPositionWithinUnitSphere * PLAYER_RADIUS;
           particle.scale = Vec3f(DASH_PARTICLE_SIZE);
           particle.color = Vec3f(r, g, b);
