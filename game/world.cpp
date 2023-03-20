@@ -595,18 +595,30 @@ internal void applyLevelSettings_UmimuraAlpha(GmContext* context, GameState& sta
   auto& player = get_player();
 
   player.position = Vec3f(-30.f, 243.f, 2200.f);
+
+  context->scene.zFar = 50000.f;
+
+  Gm_EnableFlags(GammaFlags::RENDER_HORIZON_ATMOSPHERE);
 }
 
 internal void applyLevelSettings_Umimura(GmContext* context, GameState& state) {
   auto& player = get_player();
 
   player.position = Vec3f(-670.f, 4400.f, 2575.f);
+
+  context->scene.zFar = 50000.f;
+
+  Gm_EnableFlags(GammaFlags::RENDER_HORIZON_ATMOSPHERE);
 }
 
 internal void applyLevelSettings_Yukimura(GmContext* context, GameState& state) {
   auto& player = get_player();
 
   player.position = Vec3f(-670.f, 140.f, -230.f);
+
+  context->scene.zFar = 10000.f;
+
+  Gm_DisableFlags(GammaFlags::RENDER_HORIZON_ATMOSPHERE);
 }
 
 void World::initializeGameWorld(GmContext* context, GameState& state) {

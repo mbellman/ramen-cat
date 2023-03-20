@@ -1,6 +1,7 @@
 #version 460 core
 
 #define USE_DEPTH_OF_FIELD 0
+#define USE_HORIZON_ATMOSPHERE 1
 
 uniform sampler2D texColorAndDepth;
 uniform sampler2D texNormalAndMaterial;
@@ -69,9 +70,11 @@ vec3 getAtmosphericsColor(vec3 current_out_color, vec2 uv, float frag_depth, flo
   float depth_divisor = frag_depth == 1.0 ? zFar : zFar * 0.85;
   float atmosphere_factor = linear_frag_depth / depth_divisor;
 
-  atmosphere_factor *= sky_direction_2d.y < horizon_direction_2d.y ? 1.0 : pow(dot(sky_direction_2d, horizon_direction_2d), 100);
-  atmosphere_factor = atmosphere_factor > 1 ? 1 : atmosphere_factor;
-  atmosphere_factor = isnan(atmosphere_factor) ? 0 : atmosphere_factor;
+  #if USE_HORIZON_ATMOSPHERE == 1
+    atmosphere_factor *= sky_direction_2d.y < horizon_direction_2d.y ? 1.0 : pow(dot(sky_direction_2d, horizon_direction_2d), 100);
+    atmosphere_factor = atmosphere_factor > 1 ? 1 : atmosphere_factor;
+    atmosphere_factor = isnan(atmosphere_factor) ? 0 : atmosphere_factor;
+  #endif
 
   return mix(current_out_color, atmosphereColor, atmosphere_factor);
 }

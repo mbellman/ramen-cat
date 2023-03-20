@@ -271,6 +271,12 @@ namespace Gamma {
     } else if (Gm_FlagWasDisabled(GammaFlags::RENDER_DEPTH_OF_FIELD)) {
       shaders.post.define("USE_DEPTH_OF_FIELD", "0");
     }
+
+    if (Gm_FlagWasEnabled(GammaFlags::RENDER_HORIZON_ATMOSPHERE)) {
+      shaders.post.define("USE_HORIZON_ATMOSPHERE", "1");
+    } else if (Gm_FlagWasDisabled(GammaFlags::RENDER_HORIZON_ATMOSPHERE)) {
+      shaders.post.define("USE_HORIZON_ATMOSPHERE", "0");
+    }
   }
 
   /**

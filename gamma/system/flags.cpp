@@ -11,7 +11,8 @@ namespace Gamma {
     GammaFlags::RENDER_SHADOWS |
     GammaFlags::RENDER_INDIRECT_SKY_LIGHT |
     GammaFlags::RENDER_AMBIENT_OCCLUSION |
-    GammaFlags::RENDER_GLOBAL_ILLUMINATION;
+    GammaFlags::RENDER_GLOBAL_ILLUMINATION |
+    GammaFlags::RENDER_HORIZON_ATMOSPHERE;
 
   static u32 previousFlags = internalFlags;
 

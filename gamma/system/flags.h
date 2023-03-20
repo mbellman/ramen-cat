@@ -24,7 +24,8 @@ namespace Gamma {
     RENDER_AMBIENT_OCCLUSION = 1 << 16,
     RENDER_GLOBAL_ILLUMINATION = 1 << 17,
     RENDER_INDIRECT_SKY_LIGHT = 1 << 18,
-    RENDER_DEPTH_OF_FIELD = 1 << 19
+    RENDER_DEPTH_OF_FIELD = 1 << 19,
+    RENDER_HORIZON_ATMOSPHERE = 1 << 20
   };
 
   void Gm_DisableFlags(GammaFlags flags);
