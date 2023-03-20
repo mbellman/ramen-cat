@@ -7,6 +7,7 @@ BUGS
 * clouds causing object outline misbehavior behind atmosphere
 * imported models are inverted along X
 * texture loads occasionally causing crashes (???)
+* inverted player model orientation
 
 ASSETS
 ------

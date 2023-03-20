@@ -113,7 +113,7 @@ void initializeGame(GmContext* context, GameState& state) {
   initializeInputHandlers(context, state);
 
   World::initializeGameWorld(context, state);
-  World::loadLevel(context, state, "yukimura");
+  World::loadLevel(context, state, "umimura");
   AnimationSystem::initializeAnimations(context, state);
   CameraSystem::initializeGameCamera(context, state);
   EntitySystem::initializeGameEntities(context, state);

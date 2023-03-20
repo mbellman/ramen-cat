@@ -86,6 +86,8 @@ struct GameState {
   float lastGliderChangeTime = 0.f;
   float lastMouseMoveTime = 0.f;
 
+  float superjumpChargeTime = 0.f;
+
   float dayNightCycleTime = 0.f;
 
   bool isOnSolidGround = false;

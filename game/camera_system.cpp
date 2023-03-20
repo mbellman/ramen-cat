@@ -23,6 +23,12 @@ internal void updateThirdPersonCameraRadius(GmContext* context, GameState& state
   // Extend the radius outward when moving faster
   baseRadius += 200.f * (speed / (speed + 500.f));
 
+  if (state.superjumpChargeTime != 0.f) {
+    float alpha = state.superjumpChargeTime / (state.superjumpChargeTime + 2.f);
+
+    baseRadius += 200.f * alpha;
+  }
+
   float altitudeRadius = CAMERA_RADIUS_ALTITUDE_MULTIPLIER * state.camera3p.altitude / Gm_HALF_PI;
 
   state.camera3p.radius = baseRadius + altitudeRadius;
@@ -284,7 +290,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
     }
   }
 
-  // Adjust the FOV when moving at higher speeds
+  // Adjust the field of view when moving at higher speeds
   {
     auto& camera = get_camera();
     float speedOverFovLimit = state.velocity.magnitude() - CAMERA_FOV_MINIMUM_SPEED;
@@ -298,9 +304,17 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
     if (state.dashLevel == 2) targetFov *= 1.2f;
 
     if (state.lastBoostRingLaunchTime != 0.f && time_since(state.lastBoostRingLaunchTime) < 1.f) {
+      // Boost ring FoV adjustments
       float alpha = 1.f - easeOutQuint(time_since(state.lastBoostRingLaunchTime));
 
       targetFov *= 1.f + alpha;
+    }
+
+    if (state.superjumpChargeTime != 0.f) {
+      // Charged super jump FoV adjustments
+      float alpha = state.superjumpChargeTime / (state.superjumpChargeTime + 2.f);
+
+      targetFov -= 30.f * alpha;
     }
 
     camera.fov = Gm_Lerpf(camera.fov, targetFov, alpha);

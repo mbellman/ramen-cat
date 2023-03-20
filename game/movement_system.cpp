@@ -285,6 +285,13 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
 
   // Handle jump/wall kick/air dash actions
   {
+    // @todo change the key binding for charged super jumps
+    if (input.isKeyHeld(Key::CONTROL)) {
+      state.superjumpChargeTime += dt;
+    } else {
+      state.superjumpChargeTime = 0.f;
+    }
+
     if (input.didPressKey(Key::SPACE)) {
       float time = get_scene_time();
 
@@ -296,9 +303,20 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
           1.f
         );
 
-        if (time_since(state.lastAirDashTime) < SUPER_JUMP_WINDOW_DURATION) {
+        if (time_since(state.lastAirDashTime) < SUPER_JUMP_WINDOW_DURATION || state.superjumpChargeTime != 0.f) {
           // Super jump
           jumpFactor *= 2.f;
+
+          if (state.superjumpChargeTime != 0.f) {
+            // Charged super jump
+            float alpha = 1.f + state.superjumpChargeTime / (state.superjumpChargeTime + 2.f);
+
+            // @todo fix player model orientation
+            state.velocity += player.rotation.getDirection().invert() * 200.f;
+            state.superjumpChargeTime = 0.f;
+
+            jumpFactor *= alpha;
+          }
 
           context->scene.fx.screenWarpTime = time;
 

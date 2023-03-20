@@ -233,6 +233,10 @@ internal void handlePlayerAnimation(GmContext* context, GameState& state, float 
   }
 
   if (state.isOnSolidGround) {
+    if (state.superjumpChargeTime != 0.f) {
+      // @todo handlePlayerSuperjumpChargeAnimation(context, state, dt)
+    }
+
     if (state.dashLevel == 0) {
       handlePlayerTrottingAnimation(context, state, dt);
     } else {
