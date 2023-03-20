@@ -23,7 +23,6 @@ ASSETS
 
 GAME
 ----
-* extend boost ring launch time when gliding
 * have boost ring particles follow the player
 * dynamic tail animations
 * variable air dash spin animation duration (?)

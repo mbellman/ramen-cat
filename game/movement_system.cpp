@@ -482,13 +482,14 @@ namespace MovementSystem {
 
     // Handle gravity/velocity
     {
-      bool didLaunchFromRing = state.lastBoostRingLaunchTime != 0.f && time_since(state.lastBoostRingLaunchTime) < SOMERSAULT_DURATION;
+      float boostRingDuration = state.isGliding ? GLIDER_BOOST_RING_DURATION : BOOST_RING_DURATION;
+      bool didUseBoostRing = state.lastBoostRingLaunchTime != 0.f && time_since(state.lastBoostRingLaunchTime) < boostRingDuration;
 
       if (
         time_since(state.lastJumpTime) < 1.f &&
         !input.isKeyHeld(Key::SPACE) &&
         state.velocity.y > 0.f &&
-        !didLaunchFromRing
+        !didUseBoostRing
       ) {
         // When releasing the jump key shortly after a jump,
         // diminish y velocity more quickly to reduce the
@@ -496,7 +497,7 @@ namespace MovementSystem {
         state.velocity.y *= 1.f - 2.f * dt;
       }
         
-      if (!didLaunchFromRing) {
+      if (!didUseBoostRing) {
         state.velocity.y -= gravity;
       }
 

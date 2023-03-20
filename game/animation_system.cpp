@@ -166,7 +166,7 @@ internal void handlePlayerMidairAnimation(GmContext* context, GameState& state, 
   float jumpTime = time_since(state.lastTimeOnSolidGround);
   float dashTime = time_since(state.lastAirDashTime);
   float ringLaunchTime = time_since(state.lastBoostRingLaunchTime);
-  float somersaultAlpha = ringLaunchTime < SOMERSAULT_DURATION ? easeOutQuint(time_since(state.lastBoostRingLaunchTime) * (1.f / SOMERSAULT_DURATION)) : 0.f;
+  float somersaultAlpha = ringLaunchTime < BOOST_RING_DURATION ? easeOutQuint(time_since(state.lastBoostRingLaunchTime) * (1.f / BOOST_RING_DURATION)) : 0.f;
   float airTime = jumpTime < dashTime ? jumpTime : dashTime;
   float airTimeFactor = airTime / (airTime + 0.5f);
   float legSwingAlpha = airTime * 10.f;
@@ -498,9 +498,9 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
     float yaw = state.currentYaw;
     float pitch = state.currentPitch;
     Vec3f movement = player.position - state.previousPlayerPosition;
-    bool usedBoostRing = time_since(state.lastBoostRingLaunchTime) < SOMERSAULT_DURATION;
+    bool didUseBoostRing = state.lastBoostRingLaunchTime != 0.f && time_since(state.lastBoostRingLaunchTime) < BOOST_RING_DURATION;
 
-    if (state.velocity.xz().magnitude() > 20.f && (!state.isGliding || usedBoostRing)) {
+    if (state.velocity.xz().magnitude() > 20.f && (!state.isGliding || didUseBoostRing)) {
       // Determine the updated character rotation, based on movement direction,
       // as long as we're moving + not gliding, or if we just used a boost ring.
       yaw = atan2f(movement.x, movement.z) + Gm_PI;
@@ -508,8 +508,8 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
     }
 
     // Perform somersaults when launching through boost rings without the glider
-    if (usedBoostRing && !state.isGliding) {
-      float alpha = easeOutQuint(time_since(state.lastBoostRingLaunchTime) * (1.f / SOMERSAULT_DURATION));
+    if (didUseBoostRing && !state.isGliding) {
+      float alpha = easeOutQuint(time_since(state.lastBoostRingLaunchTime) * (1.f / BOOST_RING_DURATION));
 
       pitch += Gm_TAU * alpha;
     }
@@ -537,7 +537,7 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
 
     yaw = Gm_LerpCircularf(state.currentYaw, yaw, 10.f * dt, Gm_PI);
 
-    if (time_since(state.lastBoostRingLaunchTime) < SOMERSAULT_DURATION) {
+    if (time_since(state.lastBoostRingLaunchTime) < BOOST_RING_DURATION) {
       pitch = Gm_Lerpf(state.currentPitch, pitch, 10.f * dt);
     } else {
       pitch = Gm_LerpCircularf(state.currentPitch, pitch, 10.f * dt, Gm_PI);
@@ -551,7 +551,7 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
     handleAnimatedMeshWithRig(*mesh("player"), state.animation.playerRig);
 
     if (state.lastBoostRingLaunchTime != 0.f && time_since(state.lastBoostRingLaunchTime) < 1.f) {
-      float somersaultAlpha = time_since(state.lastBoostRingLaunchTime) * (1.f / SOMERSAULT_DURATION);
+      float somersaultAlpha = time_since(state.lastBoostRingLaunchTime) * (1.f / BOOST_RING_DURATION);
       float somersaultScale = Gm_Maxf(0.f, sinf(somersaultAlpha * Gm_PI) * 0.5f);
 
       player.scale.z = PLAYER_RADIUS * (1.f + somersaultScale);
