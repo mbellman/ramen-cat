@@ -500,10 +500,14 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
     Vec3f movement = player.position - state.previousPlayerPosition;
     bool didUseBoostRing = state.lastBoostRingLaunchTime != 0.f && time_since(state.lastBoostRingLaunchTime) < BOOST_RING_DURATION;
 
-    if (state.velocity.xz().magnitude() > 20.f && (!state.isGliding || didUseBoostRing)) {
+    if (state.velocity.magnitude() > 20.f && (!state.isGliding || didUseBoostRing)) {
       // Determine the updated character rotation, based on movement direction,
       // as long as we're moving + not gliding, or if we just used a boost ring.
-      yaw = atan2f(movement.x, movement.z) + Gm_PI;
+      if (state.velocity.xz().magnitude() > 20.f) {
+        // Only update yaw if moving sufficiently along the xz plane
+        yaw = atan2f(movement.x, movement.z) + Gm_PI;
+      }
+
       pitch = -1.f * atan2f(movement.y, movement.xz().magnitude());
     }
 
