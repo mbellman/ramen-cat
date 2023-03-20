@@ -538,6 +538,20 @@ internal void rebuildDynamicBuildings(GmContext* context) {
 
     commit(frame);
   }
+
+  // @todo generalize this
+  objects("yuki-building-3-frame").reset();
+
+  for (auto& building : objects("yuki-building-3")) {
+    auto& frame = create_object_from("yuki-building-3-frame");
+
+    frame.position = building.position;
+    frame.scale = building.scale;
+    frame.rotation = building.rotation;
+    frame.color = Vec3f(0.3f, 0.25f, 0.2f);
+
+    commit(frame);
+  }
 }
 
 internal void rebuildAcUnitFans(GmContext* context) {
