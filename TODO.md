@@ -28,7 +28,6 @@ GAME
 * dynamic tail animations
 * variable air dash spin animation duration (?)
 * level unloading (game state reset)
-* settings for individuals levels
 
 * enemies in torii gate zone
 * allow SPACE to be queued when pressed just before hitting the ground

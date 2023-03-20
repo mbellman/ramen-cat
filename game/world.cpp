@@ -258,8 +258,7 @@ internal void unloadCurrentLevel(GmContext* context, GameState& state) {
     }
   }
 
-  // @todo properly reset all game state
-  
+  // @todo only do this in developer mode
   Editor::resetGameEditor();
 
   state.collisionPlanes.clear();
@@ -267,6 +266,10 @@ internal void unloadCurrentLevel(GmContext* context, GameState& state) {
   state.slingshots.clear();
   state.jetstreams.clear();
   state.initialMovingObjects.clear();
+
+  state.velocity = Vec3f(0.f);
+  state.currentPitch = 0.f;
+  state.currentYaw = 0.f;
 
   #if GAMMA_DEVELOPER_MODE
     state.lastSolidGroundPositions.clear();
@@ -588,6 +591,24 @@ internal void rebuildWindTurbines(GmContext* context) {
   }
 }
 
+internal void applyLevelSettings_UmimuraAlpha(GmContext* context, GameState& state) {
+  auto& player = get_player();
+
+  player.position = Vec3f(-30.f, 243.f, 2200.f);
+}
+
+internal void applyLevelSettings_Umimura(GmContext* context, GameState& state) {
+  auto& player = get_player();
+
+  player.position = Vec3f(-670.f, 4400.f, 2575.f);
+}
+
+internal void applyLevelSettings_Yukimura(GmContext* context, GameState& state) {
+  auto& player = get_player();
+
+  player.position = Vec3f(-670.f, 140.f, -230.f);
+}
+
 void World::initializeGameWorld(GmContext* context, GameState& state) {
   context->scene.zNear = 5.f;
   context->scene.zFar = 50000.f;
@@ -661,16 +682,6 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
     particles.deviation = 20.f;
   }
 
-  // @todo make spawn position/direction configurable based on level
-  // umimura-alpha
-  // player.position = Vec3f(-30.f, 243.f, 2200.f);
-
-  // umimura
-  // player.position = Vec3f(-670.f, 4375.f, 2575.f);
-
-  // yukimura
-  player.position = Vec3f(-670.f, 140.f, -230.f);
-
   player.color = Vec3f(1.f, 0.4f, 0.4f);
 
   state.direction = Vec3f(0, 0, -1.f);
@@ -700,6 +711,25 @@ void World::rebuildDynamicMeshes(GmContext* context) {
 
 void World::loadLevel(GmContext* context, GameState& state, const std::string& levelName) {
   unloadCurrentLevel(context, state);
+
+  // Apply level settings
+  {
+    typedef std::function<void(GmContext*, GameState&)> LevelSettingsFunction;
+
+    std::map<std::string, LevelSettingsFunction> levelSettingsFunctionMap = {
+      { "umimura-alpha", applyLevelSettings_UmimuraAlpha },
+      { "umimura", applyLevelSettings_Umimura },
+      { "yukimura", applyLevelSettings_Yukimura }
+    };
+
+    if (levelSettingsFunctionMap.find(levelName) != levelSettingsFunctionMap.end()) {
+      auto applyLevelSettings = levelSettingsFunctionMap.at(levelName);
+
+      applyLevelSettings(context, state);
+
+      state.previousPlayerPosition = get_player().position;
+    }
+  }
 
   // @temporary
   // @todo allow non-serializable lights to be defined in a level parameters file
