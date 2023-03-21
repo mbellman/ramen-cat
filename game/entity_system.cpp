@@ -727,10 +727,14 @@ internal void handleBoostRings(GmContext* context, GameState& state, float dt) {
       // "Spawn" the next particle
       u16 totalRingParticles = objects("ring-particle").totalActive();
       u16 nextRingParticleId = u16(alpha * float(totalRingParticles));
-      auto& nextRingParticle = objects("ring-particle")[nextRingParticleId];
 
-      nextRingParticle.position = player.position;
-      nextRingParticle.scale = Vec3f(DASH_PARTICLE_SIZE);
+      if (nextRingParticleId < totalRingParticles) {
+        // Only grab the next particle up until the last one
+        auto& nextRingParticle = objects("ring-particle")[nextRingParticleId];
+
+        nextRingParticle.position = player.position;
+        nextRingParticle.scale = Vec3f(DASH_PARTICLE_SIZE);
+      }
 
       // Scale down existing particles
       for (auto& particle : objects("ring-particle")) {
