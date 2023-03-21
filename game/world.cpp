@@ -599,6 +599,10 @@ internal void applyLevelSettings_UmimuraAlpha(GmContext* context, GameState& sta
   context->scene.zFar = 50000.f;
 
   Gm_EnableFlags(GammaFlags::RENDER_HORIZON_ATMOSPHERE);
+
+  mesh("ocean")->disabled = false;
+  mesh("ocean-floor")->disabled = false;
+  mesh("market-particles")->disabled = true;
 }
 
 internal void applyLevelSettings_Umimura(GmContext* context, GameState& state) {
@@ -609,6 +613,10 @@ internal void applyLevelSettings_Umimura(GmContext* context, GameState& state) {
   context->scene.zFar = 50000.f;
 
   Gm_EnableFlags(GammaFlags::RENDER_HORIZON_ATMOSPHERE);
+
+  mesh("ocean")->disabled = false;
+  mesh("ocean-floor")->disabled = false;
+  mesh("market-particles")->disabled = false;
 }
 
 internal void applyLevelSettings_Yukimura(GmContext* context, GameState& state) {
@@ -616,9 +624,13 @@ internal void applyLevelSettings_Yukimura(GmContext* context, GameState& state) 
 
   player.position = Vec3f(-670.f, 140.f, -230.f);
 
-  context->scene.zFar = 10000.f;
+  context->scene.zFar = 15000.f;
 
   Gm_DisableFlags(GammaFlags::RENDER_HORIZON_ATMOSPHERE);
+
+  mesh("ocean")->disabled = true;
+  mesh("ocean-floor")->disabled = true;
+  mesh("market-particles")->disabled = true;
 }
 
 void World::initializeGameWorld(GmContext* context, GameState& state) {

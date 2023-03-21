@@ -518,6 +518,19 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .roughness = 0.1f
     }
   },
+
+  {
+    .name = "wood-guard",
+    .hitboxScale = Vec3f(1.f, 0.15f, 0.15f),
+    .create = []() {
+      return Mesh::Model("./game/assets/wood-guard.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/wood-plank.png",
+      .normals = "./game/assets/wood-plank-normals.png",
+      .roughness = 0.9f
+    }
+  },
   {
     .name = "ladder",
     .hitboxScale = Vec3f(0.45f, 1.f, 0.2f),
