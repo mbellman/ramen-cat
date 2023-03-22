@@ -520,15 +520,14 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
   },
 
   {
-    .name = "wood-guard",
-    .hitboxScale = Vec3f(1.f, 0.15f, 0.15f),
+    .name = "rock-wall",
+    .hitboxScale = Vec3f(1.f, 1.f, 0.2f),
     .create = []() {
-      return Mesh::Model("./game/assets/wood-guard.obj");
+      return Mesh::Model("./game/assets/rock-wall.obj");
     },
     .attributes = {
-      .texture = "./game/assets/wood-plank.png",
-      .normals = "./game/assets/wood-plank-normals.png",
-      .roughness = 0.9f
+      .texture = "./game/assets/rock-wall.png",
+      .normals = "./game/assets/rock-wall-normals.png"
     }
   },
   {
