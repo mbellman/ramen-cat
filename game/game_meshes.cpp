@@ -181,7 +181,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       return Mesh::Model("./game/assets/tree-trunk.obj");
     },
     .attributes = {
-      .roughness = 0.8f
+      .roughness = 0.9f
     }
   },
   {
@@ -260,6 +260,17 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
         .factor = 0.75f
       },
       .emissivity = 0.3f
+    }
+  },
+  {
+    .name = "firefly-spawn",
+    .dynamic = true,
+    .defaultColor = Vec3f(0.7f, 1.f, 0.2f),
+    .create = []() {
+      return Mesh::Cube();
+    },
+    .attributes = {
+      .emissivity = 1.f
     }
   },
 

@@ -323,6 +323,28 @@ internal void handleSeagulls(GmContext* context, GameState& state, float dt) {
   });
 }
 
+internal void handleFireflies(GmContext* context, GameState& state, float dt) {
+  float t = get_scene_time();
+  auto& glowObjects = objects("firefly-glow");
+
+  for_moving_objects("firefly", {
+    float alpha = t + float(object._record.id);
+    auto& glow = glowObjects[object._record.id];
+
+    Vec3f offset = Vec3f(
+      sinf(alpha) * 20.f,
+      cosf(alpha * 0.7f) * 20.f,
+      sin(alpha * 1.1f) * 20.f
+    );
+
+    object.position = initial.position + offset;
+    glow.position = object.position;
+
+    commit(object);
+    commit(glow);
+  });
+}
+
 internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
   auto& player = get_player();
   auto& input = get_input();
@@ -653,8 +675,6 @@ internal void restoreLastUsedBoostRing(GmContext* context, GameState& state) {
   }
 }
 
-static std::vector<Vec3f> ringParticleOffsets;
-
 internal void handleBoostRings(GmContext* context, GameState& state, float dt) {
   auto& player = get_player();
 
@@ -787,27 +807,53 @@ internal void handleGlider(GmContext* context, GameState& state) {
 }
 
 void EntitySystem::initializeGameEntities(GmContext* context, GameState& state) {
-  add_mesh("ring-particle", 50, Mesh::Particles());
+  // Boost ring particles
+  {
+    add_mesh("ring-particle", 50, Mesh::Particles());
 
-  for (u16 i = 0; i < 50; i++) {
-    auto& particle = create_object_from("ring-particle");
+    for (u16 i = 0; i < 50; i++) {
+      auto& particle = create_object_from("ring-particle");
 
-    particle.color = Vec3f(1.f, 0.9f, 0.4f);
-    particle.scale = Vec3f(0.f);
+      particle.color = Vec3f(1.f, 0.9f, 0.4f);
+      particle.scale = Vec3f(0.f);
 
-    commit(particle);
+      commit(particle);
+    }
+  }
 
-    float azimuth = Gm_Randomf(0.f, Gm_TAU);
-    float altitude = Gm_Randomf(-Gm_HALF_PI, Gm_HALF_PI);
-    float radius = Gm_Randomf(1.f, 2.f);
+  // Fireflies
+  {
+    add_mesh("firefly", 1000, Mesh::Sphere(4));
+    mesh("firefly")->emissivity = 1.f;
+    add_mesh("firefly-glow", 1000, Mesh::Particles());
 
-    Vec3f offset = Vec3f(
-      cosf(altitude) * cosf(azimuth) * radius,
-      sinf(altitude) * radius,
-      cosf(altitude) * sinf(azimuth) * radius
-    );
+    for (auto& spawn : objects("firefly-spawn")) {
+      auto& light = create_light(LightType::POINT);
 
-    ringParticleOffsets.push_back(offset);
+      light.position = spawn.position;
+      light.color = Vec3f(0.7f, 1.f, 0.2f);
+      light.power = 5.f;
+      light.radius = 500.f;
+      light.serializable = false;
+
+      for (u16 i = 0; i < 10; i++) {
+        auto& firefly = create_object_from("firefly");
+        auto& glow = create_object_from("firefly-glow");
+
+        firefly.position = spawn.position + Vec3f(Gm_Randomf(-1.f, 1.f), Gm_Randomf(-1.f, 1.f), Gm_Randomf(-1.f, 1.f)).unit() * 100.f;
+        firefly.scale = Vec3f(3.f);
+        firefly.color = Vec3f(0.7f, 1.f, 0.2f);
+
+        glow.position = firefly.position;
+        glow.scale = firefly.scale * 2.f;
+        glow.color = firefly.color;
+
+        commit(firefly);
+        commit(glow);
+
+        state.initialMovingObjects.push_back(firefly);
+      }
+    }
   }
 
   // @temporary
@@ -829,6 +875,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   // Non-interactible entities
   handleBirds(context, state, dt);
   handleSeagulls(context, state, dt);
+  handleFireflies(context, state, dt);
   handleLanterns(context, state, dt);
   handleWindmillWheels(context, state, dt);
   handleWindTurbines(context, state, dt);
