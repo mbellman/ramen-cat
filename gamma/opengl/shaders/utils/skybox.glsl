@@ -6,7 +6,7 @@ vec4 getSkyColor(vec3 sky_direction, vec3 sun_direction, vec3 base_sun_color, ve
   float altitude_y_offset = altitude / 50000.0;
 
   float y = sky_direction.y + altitude_y_offset;
-  float cos_y = cos(y);
+  float cos_y = max(0.0, cos(y));
 
   // @todo make configurable
   vec3 BASE_DAYLIGHT_COLOR = vec3(0.25, 0.35, 1.0);
