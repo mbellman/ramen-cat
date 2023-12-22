@@ -110,10 +110,9 @@ namespace Gamma {
     return maxObjects;
   }
 
-  // @todo consolidate logic in partitionByDistance/partitionByVisibility
-  u16 ObjectPool::partitionByDistance(u16 start, float distance, const Vec3f& cameraPosition) {
+  u16 ObjectPool::partitionByDistance(u16 start, float distance, const Vec3f& cameraPosition, bool checkAllObjects) {
     u16 current = start;
-    u16 end = totalVisible();
+    u16 end = checkAllObjects ? totalActive() : totalVisible();
 
     while (end > current) {
       float currentObjectDistance = (objects[current].position - cameraPosition).magnitude();
@@ -142,7 +141,6 @@ namespace Gamma {
     return current;
   }
 
-  // @todo consolidate logic in partitionByDistance/partitionByVisibility
   // @todo accept a distance threshold to avoid culling partially
   // in-frame/partially out-of-frame objects
   void ObjectPool::partitionByVisibility(const Camera& camera) {
@@ -246,6 +244,10 @@ namespace Gamma {
   void ObjectPool::setColorById(u16 objectId, const pVec4& color) {
     colors[indices[objectId]] = color;
     changed = true;
+  }
+
+  void ObjectPool::setTotalVisible(u16 total) {
+    totalVisibleObjects = total;
   }
 
   u16 ObjectPool::totalActive() const {

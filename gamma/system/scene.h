@@ -29,7 +29,9 @@
 #define objects(meshName) Gm_GetObjects(context, meshName)
 #define point_camera_at(...) Gm_PointCameraAt(context, __VA_ARGS__)
 #define smoothly_point_camera_at(...) Gm_SmoothlyPointCameraAt(context, __VA_ARGS__)
+
 #define use_frustum_culling(...) Gm_UseFrustumCulling(context, __VA_ARGS__)
+#define use_distance_culling(...) Gm_UseDistanceCulling(context, __VA_ARGS__)
 #define use_lod_by_distance(distance, ...) Gm_UseLodByDistance(context, distance, __VA_ARGS__)
 
 #define render_image(image, x, y, w, h) Gm_RenderImage(context, image, x, y, w, h)
@@ -143,6 +145,7 @@ void Gm_SmoothlyPointCameraAt(GmContext* context, const Gamma::Vec3f& position, 
 void Gm_HandleFreeCameraMode(GmContext* context, float speed, float dt);
 
 void Gm_UseFrustumCulling(GmContext* context, const std::initializer_list<std::string>& meshNames);
+void Gm_UseDistanceCulling(GmContext* context, float distance, const std::initializer_list<std::string>& meshNames);
 void Gm_UseLodByDistance(GmContext* context, float distance, const std::initializer_list<std::string>& meshNames);
 
 void Gm_RenderImage(GmContext* context, SDL_Surface* image, u32 x, u32 y, u32 w, u32 h);

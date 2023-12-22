@@ -327,6 +327,8 @@ void CameraSystem::handleVisibilityCullingAndLevelsOfDetail(GmContext* context, 
   START_TIMING("handleVisibilityCullingAndLevelsOfDetail");
 
   use_frustum_culling({ "weeds", "lamp", "ladder", "ac-unit", "ac-fan" });
+  use_distance_culling(3000.f, { "flower" });
+  use_distance_culling(5000.f, { "onigiri", "nitamago", "chashu" });
 
   LOG_TIME();
 }

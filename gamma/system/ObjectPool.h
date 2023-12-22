@@ -38,12 +38,13 @@ namespace Gamma {
     u16 getHighestId() const;
     Matrix4f* getMatrices() const;
     u16 max() const;
-    u16 partitionByDistance(u16 start, float distance, const Vec3f& cameraPosition);
+    u16 partitionByDistance(u16 start, float distance, const Vec3f& cameraPosition, bool checkAllObjects = false);
     void partitionByVisibility(const Camera& camera);
     void removeById(u16 objectId);
     void reset();
     void reserve(u16 size);
     void setColorById(u16 objectId, const pVec4& color);
+    void setTotalVisible(u16 total);
     void showAll();
     u16 totalActive() const;
     u16 totalVisible() const;

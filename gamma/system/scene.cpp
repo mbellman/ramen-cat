@@ -413,9 +413,21 @@ void Gm_UseFrustumCulling(GmContext* context, const std::initializer_list<std::s
   }
 }
 
+void Gm_UseDistanceCulling(GmContext* context, float distance, const std::initializer_list<std::string>& meshNames) {
+  auto& meshMap = context->scene.meshMap;
+  auto& camera = get_camera();
+
+  for (auto& meshName : meshNames) {
+    auto& objects = meshMap[meshName]->objects;
+    auto totalVisible = objects.partitionByDistance(0, distance, camera.position, true);
+
+    objects.setTotalVisible(totalVisible);
+  }
+}
+
 void Gm_UseLodByDistance(GmContext* context, float distance, const std::initializer_list<std::string>& meshNames) {
   auto& meshMap = context->scene.meshMap;
-  auto& camera = context->scene.camera;
+  auto& camera = get_camera();
 
   for (auto& meshName : meshNames) {
     auto& mesh = *meshMap[meshName];
