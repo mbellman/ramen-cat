@@ -622,9 +622,9 @@ internal void applyLevelSettings_Umimura(GmContext* context, GameState& state) {
 internal void applyLevelSettings_Overworld(GmContext* context, GameState& state) {
   auto& player = get_player();
 
-  player.position = Vec3f(-670.f, 4400.f, 2575.f);
+  player.position = Vec3f(5616.f, 19802.f, 13012.f);
 
-  context->scene.zFar = 150000.f;
+  context->scene.zFar = 200000.f;
 
   Gm_EnableFlags(GammaFlags::RENDER_HORIZON_ATMOSPHERE);
 
