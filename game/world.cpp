@@ -602,49 +602,67 @@ internal void applyLevelSettings_UmimuraAlpha(GmContext* context, GameState& sta
 
   mesh("ocean")->disabled = false;
   mesh("ocean-floor")->disabled = false;
-  mesh("market-particles")->disabled = true;
 }
 
 internal void applyLevelSettings_Umimura(GmContext* context, GameState& state) {
+  Gm_EnableFlags(GammaFlags::RENDER_HORIZON_ATMOSPHERE);
+
   auto& player = get_player();
 
   player.position = Vec3f(-670.f, 4400.f, 2575.f);
 
   context->scene.zFar = 50000.f;
 
-  Gm_EnableFlags(GammaFlags::RENDER_HORIZON_ATMOSPHERE);
+  {
+    add_mesh("market-particles", 1000, Mesh::Particles(true));
+
+    auto& particles = mesh("market-particles")->particles;
+
+    particles.spawn = Vec3f(270.f, 1500.f, -3500.f);
+    particles.spread = 1500.f;
+    particles.medianSize = 1.5f;
+    particles.sizeVariation = 0.5f;
+    particles.medianSpeed = 1.f;
+    particles.deviation = 20.f;
+  }
 
   mesh("ocean")->disabled = false;
   mesh("ocean-floor")->disabled = false;
-  mesh("market-particles")->disabled = false;
 }
 
 internal void applyLevelSettings_Overworld(GmContext* context, GameState& state) {
+  Gm_EnableFlags(GammaFlags::RENDER_HORIZON_ATMOSPHERE);
+
   auto& player = get_player();
 
-  player.position = Vec3f(5616.f, 19802.f, 13012.f);
+  player.position = Vec3f(7588.f, 29412.f, 23176.f);
 
   context->scene.zFar = 200000.f;
 
-  Gm_EnableFlags(GammaFlags::RENDER_HORIZON_ATMOSPHERE);
-
   mesh("ocean")->disabled = false;
   mesh("ocean-floor")->disabled = false;
-  mesh("market-particles")->disabled = false;
+
+  auto& ocean = mesh("ocean")->objects[0];
+  auto& oceanFloor = mesh("ocean-floor")->objects[0];
+
+  ocean.scale = Vec3f(200000.f, 1.f, 200000.f);
+  oceanFloor.scale = Vec3f(200000.f, 1.f, 200000.f);
+
+  commit(ocean);
+  commit(oceanFloor);
 }
 
 internal void applyLevelSettings_Yukimura(GmContext* context, GameState& state) {
+  Gm_DisableFlags(GammaFlags::RENDER_HORIZON_ATMOSPHERE);
+
   auto& player = get_player();
 
   player.position = Vec3f(-670.f, 140.f, -230.f);
 
   context->scene.zFar = 15000.f;
 
-  Gm_DisableFlags(GammaFlags::RENDER_HORIZON_ATMOSPHERE);
-
   mesh("ocean")->disabled = true;
   mesh("ocean-floor")->disabled = true;
-  mesh("market-particles")->disabled = true;
 }
 
 void World::initializeGameWorld(GmContext* context, GameState& state) {
@@ -698,6 +716,9 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   auto& player = create_object_from("player");
 
   player.scale = Vec3f(PLAYER_RADIUS);
+  player.color = Vec3f(1.f, 0.4f, 0.4f);
+
+  commit(player);
 
   auto& glider = create_object_from("glider");
 
@@ -706,25 +727,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
 
   commit(glider);
 
-  // @temporary
-  {
-    add_mesh("market-particles", 1000, Mesh::Particles(true));
-
-    auto& particles = mesh("market-particles")->particles;
-
-    particles.spawn = Vec3f(270.f, 1500.f, -3500.f);
-    particles.spread = 1500.f;
-    particles.medianSize = 1.5f;
-    particles.sizeVariation = 0.5f;
-    particles.medianSpeed = 1.f;
-    particles.deviation = 20.f;
-  }
-
-  player.color = Vec3f(1.f, 0.4f, 0.4f);
-
   state.direction = Vec3f(0, 0, -1.f);
-
-  commit(player);
 
   loadGameMeshes(context, state);
 

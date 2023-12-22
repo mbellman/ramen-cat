@@ -1190,7 +1190,7 @@ namespace Editor {
     {
       if (editor.currentActionType != ActionType::CREATE) {
         Vec3f cameraDirection = camera.orientation.getDirection().unit();
-        Vec3f lineOfSightEnd = camera.position + cameraDirection * 4000.f;
+        Vec3f lineOfSightEnd = camera.position + cameraDirection * 10000.f;
         Vec3f inverseCameraDirection = cameraDirection.invert();
         float closestDistance = Gm_FLOAT_MAX;
 
@@ -1361,7 +1361,7 @@ namespace Editor {
 
           smoothly_point_camera_at(selectedObject, 25.f * dt);
 
-          // @todo create_object_third_person_camera()
+          // @todo create_object_third_person_camera(object)
           ThirdPersonCamera objectCamera;
 
           auto azimuth = atan2f(selectedObjectToCamera.z, selectedObjectToCamera.x);
@@ -1396,11 +1396,11 @@ namespace Editor {
             mesh("platform")->disabled = false;
           }
         } else {
-          // Handle WASD inputs
+          // Handle WASD free camera movement
           float speed =
-            input.isKeyHeld(Key::SPACE) ? 20000.f :
+            input.isKeyHeld(Key::SPACE) ? 50000.f :
             input.isKeyHeld(Key::SHIFT) ? 800.f :
-            4000.f;
+            6000.f;
 
           Gm_HandleFreeCameraMode(context, speed, dt);
         }

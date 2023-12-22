@@ -4,6 +4,23 @@ using namespace Gamma;
 
 std::vector<MeshAsset> GameMeshes::meshAssets = {
   /**
+   * Primitives
+   * ----------
+   */
+  {
+    .name = "sphere",
+    .create = []() {
+      return Mesh::Sphere(10);
+    },
+  },
+  {
+    .name = "cube",
+    .create = []() {
+      return Mesh::Cube();
+    },
+  },
+
+  /**
    * Lights
    * ------
    */

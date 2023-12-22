@@ -102,7 +102,7 @@ vec3 getToonShadedColor(vec3 current_out_color, vec2 uv, float depth, float line
   // Calculate a distance threshold representing how far away a neighboring
   // pixel must be to consider this a silhouette edge
   float depth_ratio = linear_frag_depth / zFar;
-  float threshold_factor = 1000.0 + 20000.0 * grazing_factor;
+  float threshold_factor = 1000.0 + (zFar / 2.0) * grazing_factor;
   float distance_threshold = threshold_factor * depth_ratio;
 
   if (

@@ -127,6 +127,7 @@ void initializeGame(GmContext* context, GameState& state) {
   state.previousPlayerPosition = get_player().position;
 
   // Set title screen position
+  // @todo do this per-level
   {
     auto& camera = get_camera();
 

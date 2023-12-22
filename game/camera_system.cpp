@@ -82,9 +82,19 @@ internal void updateThirdPersonCameraDirection(GmContext* context, GameState& st
 internal Vec3f getLookAtTargetPosition(GmContext* context, GameState& state) {
   auto& camera = get_camera();
   auto& player = get_player();
+
   float currentCameraRadius = (camera.position - player.position).magnitude();
+  auto playerUp = player.rotation.getUpDirection();
+  float heightAbovePlayer = 30.f;
+  auto cameraUnitXzDirection = camera.orientation.getDirection().xz().unit();
   float forwardFactor = Gm_Maxf(currentCameraRadius - CAMERA_NORMAL_BASE_RADIUS, 0.f) * 0.15f;
-  Vec3f defaultLookAtTarget = player.position + camera.orientation.getDirection().xz().unit() * forwardFactor;
+
+  // @todo description
+  Vec3f defaultLookAtTarget = player.position + playerUp * heightAbovePlayer + cameraUnitXzDirection * forwardFactor;
+
+  // if (state.cameraMode == CameraMode::FIRST_PERSON) {
+  //   defaultLookAtTarget += player.rotation.getDirection().unit().invert() * PLAYER_RADIUS;
+  // }
 
   if (state.cameraOverrideStartTime == 0.f) {
     // If we haven't started a camera transition yet,
