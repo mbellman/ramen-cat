@@ -619,6 +619,20 @@ internal void applyLevelSettings_Umimura(GmContext* context, GameState& state) {
   mesh("market-particles")->disabled = false;
 }
 
+internal void applyLevelSettings_Overworld(GmContext* context, GameState& state) {
+  auto& player = get_player();
+
+  player.position = Vec3f(-670.f, 4400.f, 2575.f);
+
+  context->scene.zFar = 150000.f;
+
+  Gm_EnableFlags(GammaFlags::RENDER_HORIZON_ATMOSPHERE);
+
+  mesh("ocean")->disabled = false;
+  mesh("ocean-floor")->disabled = false;
+  mesh("market-particles")->disabled = false;
+}
+
 internal void applyLevelSettings_Yukimura(GmContext* context, GameState& state) {
   auto& player = get_player();
 
@@ -743,6 +757,7 @@ void World::loadLevel(GmContext* context, GameState& state, const std::string& l
     std::map<std::string, LevelSettingsFunction> levelSettingsFunctionMap = {
       { "umimura-alpha", applyLevelSettings_UmimuraAlpha },
       { "umimura", applyLevelSettings_Umimura },
+      { "overworld", applyLevelSettings_Overworld },
       { "yukimura", applyLevelSettings_Yukimura }
     };
 

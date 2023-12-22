@@ -621,6 +621,7 @@ namespace Gamma {
 
       glShadowMap.buffer.write();
 
+      // @todo use 4th cascade
       for (u32 cascade = 0; cascade < 3; cascade++) {
         glShadowMap.buffer.writeToAttachment(cascade);
         Matrix4f matLightViewProjection = Gm_CreateCascadedLightViewProjectionMatrixGL(cascade, light.direction, camera);

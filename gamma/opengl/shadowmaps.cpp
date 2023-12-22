@@ -28,6 +28,7 @@ namespace Gamma {
     buffer.addColorAttachment(ColorFormat::R, 3);  // Cascade 0 (GL_TEXTURE3)
     buffer.addColorAttachment(ColorFormat::R, 4);  // Cascade 1 (GL_TEXTURE4)
     buffer.addColorAttachment(ColorFormat::R, 5);  // Cascade 2 (GL_TEXTURE5)
+    // @todo use 4th cascade
     buffer.addDepthAttachment();
     buffer.bindColorAttachments();
 
