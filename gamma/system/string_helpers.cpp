@@ -85,8 +85,18 @@ bool Gm_StringContains(const std::string& str, const std::string& term) {
   return str.find(term) != std::string::npos;
 }
 
+std::string Gm_ToString(float v) {
+  auto str = std::to_string(v);
+
+  str.pop_back();
+  str.pop_back();
+  str.pop_back();
+
+  return str;
+}
+
 std::string Gm_ToString(const Vec3f& v) {
-  return std::to_string(v.x) + "," + std::to_string(v.y) + "," + std::to_string(v.z);
+  return "{ x: " + Gm_ToString(v.x) + ", y: " + Gm_ToString(v.y) + ", z: " + Gm_ToString(v.z) + " }";
 }
 
 std::string Gm_ToString(const Quaternion& q) {

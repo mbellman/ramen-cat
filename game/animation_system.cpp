@@ -4,6 +4,8 @@
 #include "easing.h"
 #include "macros.h"
 
+// @todo @cleanup the code in here is completely insane.
+
 using namespace Gamma;
 
 #define PLAYER_HEAD 0
