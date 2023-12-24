@@ -85,7 +85,19 @@ bool Gm_StringContains(const std::string& str, const std::string& term) {
   return str.find(term) != std::string::npos;
 }
 
-std::string Gm_ToString(float v) {
+std::string Gm_Serialize(const Vec3f& v) {
+  return std::to_string(v.x) + "," + std::to_string(v.y) + "," + std::to_string(v.z);
+}
+
+std::string Gm_Serialize(const Quaternion& q) {
+  return std::to_string(q.w) + "," + std::to_string(q.x) + "," + std::to_string(q.y) + "," + std::to_string(q.z);
+}
+
+std::string Gm_Serialize(const pVec4& p) {
+  return std::to_string(p.r) + "," + std::to_string(p.g) + "," + std::to_string(p.b) + "," + std::to_string(p.a);
+}
+
+std::string Gm_ToDebugString(float v) {
   auto str = std::to_string(v);
 
   str.pop_back();
@@ -95,16 +107,12 @@ std::string Gm_ToString(float v) {
   return str;
 }
 
-std::string Gm_ToString(const Vec3f& v) {
-  return "{ x: " + Gm_ToString(v.x) + ", y: " + Gm_ToString(v.y) + ", z: " + Gm_ToString(v.z) + " }";
+std::string Gm_ToDebugString(const Vec3f& v) {
+  return "{ x: " + Gm_ToDebugString(v.x) + ", y: " + Gm_ToDebugString(v.y) + ", z: " + Gm_ToDebugString(v.z) + " }";
 }
 
-std::string Gm_ToString(const Quaternion& q) {
-  return std::to_string(q.w) + "," + std::to_string(q.x) + "," + std::to_string(q.y) + "," + std::to_string(q.z);
-}
-
-std::string Gm_ToString(const pVec4& p) {
-  return std::to_string(p.r) + "," + std::to_string(p.g) + "," + std::to_string(p.b) + "," + std::to_string(p.a);
+std::string Gm_ToDebugString(const Quaternion& q) {
+  return "{ w: "+ Gm_ToDebugString(q.w) + ", x: " + Gm_ToDebugString(q.x) + ", y: " + Gm_ToDebugString(q.y) + ", z: " + Gm_ToDebugString(q.z) + " }";
 }
 
 Gamma::Vec3f Gm_ParseVec3f(const std::string& str) {

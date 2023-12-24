@@ -919,10 +919,10 @@ internal void saveCollisionPlanesData(GmContext* context, GameState& state) {
   std::string data;
 
   for (auto& platform : objects("platform")) {
-    data += Gm_ToString(platform.position) + ",";
-    data += Gm_ToString(platform.scale) + ",";
-    data += Gm_ToString(platform.rotation) + ",";
-    data += Gm_ToString(platform.color) + "\n";
+    data += Gm_Serialize(platform.position) + ",";
+    data += Gm_Serialize(platform.scale) + ",";
+    data += Gm_Serialize(platform.rotation) + ",";
+    data += Gm_Serialize(platform.color) + "\n";
   }
 
   Gm_WriteFileContents("./game/levels/" + state.currentLevelName + "/data_collision_planes.txt", data);
@@ -944,10 +944,10 @@ internal void saveWorldObjectsData(GmContext* context, GameState& state) {
       auto* object = meshObjects.getById(i);
 
       if (object != nullptr) {
-        data += Gm_ToString(object->position) + ",";
-        data += Gm_ToString(object->scale) + ",";
-        data += Gm_ToString(object->rotation) + ",";
-        data += Gm_ToString(object->color) + "\n";        
+        data += Gm_Serialize(object->position) + ",";
+        data += Gm_Serialize(object->scale) + ",";
+        data += Gm_Serialize(object->rotation) + ",";
+        data += Gm_Serialize(object->color) + "\n";        
       }
     }
   }
@@ -961,11 +961,11 @@ internal void saveLightsData(GmContext* context, GameState& state) {
   for (auto* light : context->scene.lights) {
     if (light->serializable) {
       data += std::to_string(light->type) + ",";
-      data += Gm_ToString(light->position) + ",";
+      data += Gm_Serialize(light->position) + ",";
       data += std::to_string(light->radius) + ",";
-      data += Gm_ToString(light->color) + ",";
+      data += Gm_Serialize(light->color) + ",";
       data += std::to_string(light->basePower) + ",";
-      data += Gm_ToString(light->direction) + ",";
+      data += Gm_Serialize(light->direction) + ",";
       data += std::to_string(light->fov) + "\n";
     }
   }
@@ -1428,7 +1428,7 @@ namespace Editor {
     // Display editor info
     {
       add_debug_message(getEditorModeName(editor.mode) + " Editor");
-      add_debug_message("Camera position: " + Gm_ToString(camera.position));
+      add_debug_message("Camera position: " + Gm_ToDebugString(camera.position));
       add_debug_message("Action: " + getActionTypeName(editor.currentActionType));
 
       if (editor.mode == EditorMode::OBJECTS) {
@@ -1449,19 +1449,19 @@ namespace Editor {
           auto& light = *editor.selectedLight;
 
           add_debug_message("Active light:");
-          add_debug_message("Position: " + Gm_ToString(light.position));
+          add_debug_message("Position: " + Gm_ToDebugString(light.position));
           add_debug_message("Radius: " + std::to_string(light.radius));
-          add_debug_message("Color: " + Gm_ToString(light.color));
+          add_debug_message("Color: " + Gm_ToDebugString(light.color));
           add_debug_message("Power: " + std::to_string(light.power));
         } else {
           // Selected object
           auto& object = editor.selectedObject;
 
           add_debug_message("Active object:");
-          add_debug_message("Position: " + Gm_ToString(object.position));
-          add_debug_message("Scale: " + Gm_ToString(object.scale));
-          add_debug_message("Rotation: " + Gm_ToString(object.rotation));
-          add_debug_message("Color: " + Gm_ToString(object.color.toVec3f()));
+          add_debug_message("Position: " + Gm_ToDebugString(object.position));
+          add_debug_message("Scale: " + Gm_ToDebugString(object.scale));
+          add_debug_message("Rotation: " + Gm_ToDebugString(object.rotation));
+          add_debug_message("Color: " + Gm_ToDebugString(object.color.toVec3f()));
         }
       }
     }

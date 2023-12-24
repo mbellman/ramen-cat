@@ -153,8 +153,8 @@ void updateGame(GmContext* context, GameState& state, float dt) {
 
     // Show debug info
     {
-      add_debug_message("Player position: " + Gm_ToString(player.position));
-      add_debug_message("Player velocity: " + Gm_ToString(state.velocity));
+      add_debug_message("Player position: " + Gm_ToDebugString(player.position));
+      add_debug_message("Player velocity: " + Gm_ToDebugString(state.velocity));
       add_debug_message("Day/Night cycle time: " + std::to_string(state.dayNightCycleTime));
       add_debug_message("Game speed: " + std::to_string(state.gameSpeed));
     }

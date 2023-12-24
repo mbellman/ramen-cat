@@ -114,7 +114,7 @@ namespace Gamma {
   }
 
   void Vec3f::debug() const {
-    printf("{ %f, %f, %f }\n", x, y, z);
+    printf("{ x: %f, y: %f, z: %f }\n", x, y, z);
   }
 
   float Vec3f::dot(const Vec3f& v1, const Vec3f& v2) {
