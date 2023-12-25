@@ -10,11 +10,12 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
   {
     .name = "sphere",
     .create = []() {
-      return Mesh::Sphere(10);
+      return Mesh::Sphere(12);
     },
   },
   {
     .name = "cube",
+    .maxInstances = 10000,
     .create = []() {
       return Mesh::Cube();
     },

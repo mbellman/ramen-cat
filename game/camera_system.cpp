@@ -287,17 +287,18 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
     // @temporary
     float titleTransitionDuration = 3.f;
 
-    if (time_since(state.gameStartTime) > titleTransitionDuration) {
+    // @todo restore this later
+    // if (time_since(state.gameStartTime) > titleTransitionDuration) {
       point_camera_at(lookAtPosition);
-    } else {
-      // @temporary
-      float alpha = easeInOutQuart(time_since(state.gameStartTime) / titleTransitionDuration);
+    // } else {
+    //   // @temporary
+    //   float alpha = easeInOutQuart(time_since(state.gameStartTime) / titleTransitionDuration);
 
-      camera.position = Vec3f::lerp(CAMERA_TITLE_SCREEN_POSITION, targetCameraPosition, alpha);
-      camera.orientation.yaw = Gm_Lerpf(Gm_PI * 0.6f, Gm_PI, alpha);
-      camera.orientation.pitch = Gm_Lerpf(0.f, 0.1f, alpha);
-      camera.rotation = camera.orientation.toQuaternion();
-    }
+    //   camera.position = Vec3f::lerp(CAMERA_TITLE_SCREEN_POSITION, targetCameraPosition, alpha);
+    //   camera.orientation.yaw = Gm_Lerpf(Gm_PI * 0.6f, Gm_PI, alpha);
+    //   camera.orientation.pitch = Gm_Lerpf(0.f, 0.1f, alpha);
+    //   camera.rotation = camera.orientation.toQuaternion();
+    // }
   }
 
   // Adjust the field of view when moving at higher speeds

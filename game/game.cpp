@@ -129,11 +129,16 @@ void initializeGame(GmContext* context, GameState& state) {
   // Set title screen position
   // @todo do this per-level
   {
-    auto& camera = get_camera();
+    // @todo restore this later
+    // auto& camera = get_camera();
 
-    camera.position = CAMERA_TITLE_SCREEN_POSITION;
-    camera.orientation.yaw = Gm_PI * 0.6f;
-    camera.rotation = camera.orientation.toQuaternion();
+    // camera.position = CAMERA_TITLE_SCREEN_POSITION;
+    // camera.orientation.yaw = Gm_PI * 0.6f;
+    // camera.rotation = camera.orientation.toQuaternion();
+
+    // @temporary
+    context->scene.sceneTime = 3.f;
+    state.gameStartTime = 3.f;// get_scene_time();
   }
 }
 
