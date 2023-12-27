@@ -1211,11 +1211,11 @@ namespace Editor {
             auto distance = (camera.position - collision.point).magnitude();
 
             if (collision.hit && distance < closestDistance) {
-              // @todo none of the editor features should be enabled when not in developer mode anyway
+              // @todo none of the editor features should be enabled when not in developer mode anyway!
               #if GAMMA_DEVELOPER_MODE
                 auto* object = get_object_by_record(plane.sourceObjectRecord);
               #else
-                auto* object = nullptr;
+                Object* object = nullptr;
               #endif
 
               if (object != nullptr) {

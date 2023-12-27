@@ -1158,6 +1158,8 @@ namespace Gamma {
   }
 
   /**
+   * @bug @todo this shader is broken since we don't pass sky uniforms in!!!!
+   *
    * @todo description
    */
   void OpenGLRenderer::renderReflections() {

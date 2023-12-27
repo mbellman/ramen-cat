@@ -33,9 +33,8 @@ void Collisions::addObjectCollisionPlanes(const Object& object, std::vector<Plan
   for (auto& points : facePlanePoints) {
     Plane plane;
 
-    #if GAMMA_DEVELOPER_MODE
-      plane.sourceObjectRecord = object._record;
-    #endif
+    // @todo see comment on this within the Plane struct definition (game.h)
+    plane.sourceObjectRecord = object._record;
 
     // Determine the four points of the plane
     {

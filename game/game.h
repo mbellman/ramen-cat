@@ -15,9 +15,9 @@ struct Plane {
   float maxY = 0.f;
   float minY = 0.f;
 
-  #if GAMMA_DEVELOPER_MODE
-    Gamma::ObjectRecord sourceObjectRecord;
-  #endif
+  // @todo have separate collision structures for planes/cubes/spheres/cylinders etc.,
+  // rather than relating planes back to a collision cube scale + transform
+  Gamma::ObjectRecord sourceObjectRecord;
 };
 
 // @todo move to entity_system.h
@@ -160,7 +160,7 @@ struct GameState {
 
   std::vector<Gamma::Object> initialMovingObjects;
 
-  #if GAMMA_DEVELOPER_MODE == 1
+  #if GAMMA_DEVELOPER_MODE
     std::vector<Gamma::Vec3f> lastSolidGroundPositions;
     float gameSpeed = 1.f;
     bool isFreeCameraMode = false;

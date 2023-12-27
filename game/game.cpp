@@ -36,7 +36,6 @@ internal void handleTimeCommand(GmContext* context, GameState& state, const std:
 
 internal void handleLevelCommand(GmContext* context, GameState& state, const std::string& command) {
   std::string levelName;
-
   float time;
 
   try {
@@ -67,43 +66,46 @@ internal void initializeInputHandlers(GmContext* context, GameState& state) {
       Gm_UnfocusWindow();
     }
 
-    // @todo use in dev mode only
-    if (key == Key::L) {
-      Gm_ToggleFlag(GammaFlags::ENABLE_DEV_LIGHT_DISCS);
-    }
+    #if GAMMA_DEVELOPER_MODE
+      if (key == Key::L) {
+        Gm_ToggleFlag(GammaFlags::ENABLE_DEV_LIGHT_DISCS);
+      }
 
-    // @todo use in dev mode only
-    if (key == Key::T) {
-      Gm_ToggleFlag(GammaFlags::ENABLE_DEV_TOOLS);
-    }
+      // @todo use in dev mode only
+      if (key == Key::T) {
+        Gm_ToggleFlag(GammaFlags::ENABLE_DEV_TOOLS);
+      }
+    #endif
   });
 
   // @todo use in dev mode only
-  input.on<Key>("keystart", [&state, &input, context](Key key) {
-    if (key == Key::E) {
-      if (state.isEditorEnabled) {
-        Editor::disableGameEditor(context, state);
-      } else {
-        Editor::enableGameEditor(context, state);
+  #if GAMMA_DEVELOPER_MODE
+    input.on<Key>("keystart", [&state, &input, context](Key key) {
+      if (key == Key::E) {
+        if (state.isEditorEnabled) {
+          Editor::disableGameEditor(context, state);
+        } else {
+          Editor::enableGameEditor(context, state);
+        }
       }
-    }
 
-    if (key == Key::V && !input.isKeyHeld(Key::CONTROL)) {
-      if (Gm_IsFlagEnabled(GammaFlags::VSYNC)) {
-        Gm_DisableFlags(GammaFlags::VSYNC);
-      } else {
-        Gm_EnableFlags(GammaFlags::VSYNC);
+      if (key == Key::V && !input.isKeyHeld(Key::CONTROL)) {
+        if (Gm_IsFlagEnabled(GammaFlags::VSYNC)) {
+          Gm_DisableFlags(GammaFlags::VSYNC);
+        } else {
+          Gm_EnableFlags(GammaFlags::VSYNC);
+        }
       }
-    }
-  });
+    });
 
-  context->commander.on<std::string>("command", [&state, context](std::string command) {
-    if (Gm_StringStartsWith(command, "time")) {
-      handleTimeCommand(context, state, command);
-    } else if (Gm_StringStartsWith(command, "level")) {
-      handleLevelCommand(context, state, command);
-    }
-  });
+    context->commander.on<std::string>("command", [&state, context](std::string command) {
+      if (Gm_StringStartsWith(command, "time")) {
+        handleTimeCommand(context, state, command);
+      } else if (Gm_StringStartsWith(command, "level")) {
+        handleLevelCommand(context, state, command);
+      }
+    });
+  #endif
 }
 
 void initializeGame(GmContext* context, GameState& state) {
@@ -113,14 +115,14 @@ void initializeGame(GmContext* context, GameState& state) {
   initializeInputHandlers(context, state);
 
   World::initializeGameWorld(context, state);
-  World::loadLevel(context, state, "overworld");
+  World::loadLevel(context, state, "umimura");
   AnimationSystem::initializeAnimations(context, state);
   CameraSystem::initializeGameCamera(context, state);
   EntitySystem::initializeGameEntities(context, state);
   EffectsSystem::initializeGameEffects(context, state);
   UISystem::initializeUI(context, state);
 
-  #if GAMMA_DEVELOPER_MODE == 1
+  #if GAMMA_DEVELOPER_MODE
     Editor::initializeGameEditor(context, state);
   #endif
 
@@ -129,16 +131,17 @@ void initializeGame(GmContext* context, GameState& state) {
   // Set title screen position
   // @todo do this per-level
   {
-    // @todo restore this later
-    // auto& camera = get_camera();
+    #if GAMMA_DEVELOPER_MODE
+      // Skip the title screen transition
+      context->scene.sceneTime = 3.f;
+      state.gameStartTime = 3.f;
+    #else
+      auto& camera = get_camera();
 
-    // camera.position = CAMERA_TITLE_SCREEN_POSITION;
-    // camera.orientation.yaw = Gm_PI * 0.6f;
-    // camera.rotation = camera.orientation.toQuaternion();
-
-    // @temporary
-    context->scene.sceneTime = 3.f;
-    state.gameStartTime = 3.f;// get_scene_time();
+      camera.position = CAMERA_TITLE_SCREEN_POSITION;
+      camera.orientation.yaw = Gm_PI * 0.6f;
+      camera.rotation = camera.orientation.toQuaternion();
+    #endif
   }
 }
 
@@ -213,7 +216,7 @@ void updateGame(GmContext* context, GameState& state, float dt) {
     }
   }
 
-  #if GAMMA_DEVELOPER_MODE == 1
+  #if GAMMA_DEVELOPER_MODE
     // Keep track of our last solid ground positions so we can undo movements
     {
       if (

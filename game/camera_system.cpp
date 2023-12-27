@@ -3,6 +3,7 @@
 #include "macros.h"
 #include "easing.h"
 #include "game_constants.h"
+#include "gamma_flags.h"
 
 using namespace Gamma;
 
@@ -225,46 +226,53 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
     state.camera3p.azimuth = Gm_Modf(state.camera3p.azimuth, Gm_TAU);
   }
 
+  // @todo move to game_constants.h
+  const float titleTransitionDuration = 3.f;
+
   // Reposition the camera if necessary to avoid clipping inside walls
+  // @todo move this into its own function
   {
     auto& camera = get_camera();
     bool didRepositionCamera = false;
+    bool isTitleScreenTransition = time_since(state.gameStartTime) < titleTransitionDuration;
 
-    for (auto& plane : state.collisionPlanes) {
-      auto collision = Collisions::getLinePlaneCollision(lookAtPosition, targetCameraPosition, plane);
-      auto cDotN = Vec3f::dot(targetCameraPosition - collision.point, plane.normal);
+    if (!isTitleScreenTransition) {
+      for (auto& plane : state.collisionPlanes) {
+        auto collision = Collisions::getLinePlaneCollision(lookAtPosition, targetCameraPosition, plane);
+        auto cDotN = Vec3f::dot(targetCameraPosition - collision.point, plane.normal);
 
-      if (collision.hit && cDotN < 0.f) {
-        auto& collisionPlatform = *get_object_by_record(collision.plane.sourceObjectRecord);
-        auto& scale = collisionPlatform.scale;
-        auto matInverseRotation = collisionPlatform.rotation.toMatrix4f().inverse();
-        auto collisionPlatformToTargetCamera = targetCameraPosition - collisionPlatform.position;
-        auto target = matInverseRotation.transformVec3f(collisionPlatformToTargetCamera);
+        if (collision.hit && cDotN < 0.f) {
+          auto& collisionBox = *get_object_by_record(collision.plane.sourceObjectRecord);
+          auto& scale = collisionBox.scale;
+          auto matInverseRotation = collisionBox.rotation.toMatrix4f().inverse();
+          auto collisionBoxToTargetCamera = targetCameraPosition - collisionBox.position;
+          auto target = matInverseRotation.transformVec3f(collisionBoxToTargetCamera);
 
-        if (
-          // Check to see that the camera isn't currently being repositioned
-          // before we do our inside-collision-platform check. If the camera
-          // is already in a repositioned state, continue to reposition it.
-          !state.isRepositioningCamera && (
-          // Determine whether the target camera position would be outside
-          // of the actual collision platform bounding box, and skip if so.
-          // This way we can pan the camera 'around' collision platforms,
-          // allowing for more freeform motion.
-          target.x < -scale.x || target.x > scale.x ||
-          target.y < -scale.y || target.y > scale.y ||
-          target.z < -scale.z || target.z > scale.z
-        )) {
-          continue;
+          if (
+            // Check to see that the camera isn't currently being repositioned
+            // before we do our inside-collision-platform check. If the camera
+            // is already in a repositioned state, continue to reposition it.
+            !state.isRepositioningCamera && (
+            // Determine whether the target camera position would be outside
+            // of the actual collision platform bounding box, and skip if so.
+            // This way we can pan the camera 'around' collision platforms,
+            // allowing for more freeform motion.
+            target.x < -scale.x || target.x > scale.x ||
+            target.y < -scale.y || target.y > scale.y ||
+            target.z < -scale.z || target.z > scale.z
+          )) {
+            continue;
+          }
+
+          auto playerToCollision = collision.point - lookAtPosition;
+
+          targetCameraPosition = lookAtPosition + playerToCollision * 0.9f;
+          didRepositionCamera = true;
         }
-
-        auto playerToCollision = collision.point - lookAtPosition;
-
-        targetCameraPosition = lookAtPosition + playerToCollision * 0.9f;
-        didRepositionCamera = true;
       }
-    }
 
-    state.isRepositioningCamera = didRepositionCamera;
+      state.isRepositioningCamera = didRepositionCamera;
+    }
   }
 
   // Update the actual view camera position/orientation
@@ -284,21 +292,21 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
       camera.position = targetCameraPosition;
     }
 
-    // @temporary
-    float titleTransitionDuration = 3.f;
-
-    // @todo restore this later
-    // if (time_since(state.gameStartTime) > titleTransitionDuration) {
+    #if GAMMA_DEVELOPER_MODE
       point_camera_at(lookAtPosition);
-    // } else {
-    //   // @temporary
-    //   float alpha = easeInOutQuart(time_since(state.gameStartTime) / titleTransitionDuration);
+    #else
+      if (time_since(state.gameStartTime) > titleTransitionDuration) {
+        point_camera_at(lookAtPosition);
+      } else {
+        // @temporary
+        float alpha = easeInOutQuart(time_since(state.gameStartTime) / titleTransitionDuration);
 
-    //   camera.position = Vec3f::lerp(CAMERA_TITLE_SCREEN_POSITION, targetCameraPosition, alpha);
-    //   camera.orientation.yaw = Gm_Lerpf(Gm_PI * 0.6f, Gm_PI, alpha);
-    //   camera.orientation.pitch = Gm_Lerpf(0.f, 0.1f, alpha);
-    //   camera.rotation = camera.orientation.toQuaternion();
-    // }
+        camera.position = Vec3f::lerp(CAMERA_TITLE_SCREEN_POSITION, targetCameraPosition, alpha);
+        camera.orientation.yaw = Gm_Lerpf(Gm_PI * 0.6f, Gm_PI, alpha);
+        camera.orientation.pitch = Gm_Lerpf(0.f, 0.1f, alpha);
+        camera.rotation = camera.orientation.toQuaternion();
+      }
+    #endif
   }
 
   // Adjust the field of view when moving at higher speeds

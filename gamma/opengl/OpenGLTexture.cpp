@@ -7,7 +7,7 @@
 #include "system/assert.h"
 #include "system/flags.h"
 
-#if GAMMA_DEVELOPER_MODE == 1
+#if GAMMA_DEVELOPER_MODE
   #include "system/console.h"
   #include "system/file.h"
 #endif
@@ -20,7 +20,7 @@ namespace Gamma {
 
     initialize(enableMipmaps);
 
-    #if GAMMA_DEVELOPER_MODE == 1
+    #if GAMMA_DEVELOPER_MODE
       Gm_WatchFile(path.c_str(), [=]() {
         glDeleteTextures(1, &id);
         initialize(enableMipmaps);
@@ -43,7 +43,9 @@ namespace Gamma {
     SDL_Surface* surface = IMG_Load(path.c_str());
 
     if (surface == 0) {
-      Console::warn("[Gamma] Failed to load texture:", path);
+      #if GAMMA_DEVELOPER_MODE
+        Console::warn("[Gamma] Failed to load texture:", path);
+      #endif
 
       SDL_FreeSurface(surface);
 
