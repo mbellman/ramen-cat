@@ -9,6 +9,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
    */
   {
     .name = "sphere",
+    .hitboxScale = Vec3f(0.8f),
     .create = []() {
       return Mesh::Sphere(12);
     },

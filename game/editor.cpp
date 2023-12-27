@@ -37,6 +37,7 @@ static struct EditorState {
   Light* selectedLight = nullptr;
   bool isObservingObject = false;
   bool isObjectSelected = false;
+  bool isGiantMode = false;
   float lastClickTime = 0.f;
   EditorMode mode = EditorMode::OBJECTS;
   ActionType currentActionType = ActionType::POSITION;
@@ -429,6 +430,7 @@ internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mo
       } else if (input.isKeyHeld(Key::Q)) {
         axis = camera.orientation.getRightDirection().alignToAxis();
       } else if (input.isKeyHeld(Key::NUM_2)) {
+        // @todo make this a toggleable option
         axis = camera.orientation.getRightDirection();
       } else {
         axis = getMostSimilarObjectAxis(camera.orientation.getRightDirection(), object);
@@ -1189,8 +1191,9 @@ namespace Editor {
     // Find and focus the observed object
     {
       if (editor.currentActionType != ActionType::CREATE) {
+        const float MAX_DISTANCE = editor.isGiantMode ? 50000.f : 5000.f;
         Vec3f cameraDirection = camera.orientation.getDirection().unit();
-        Vec3f lineOfSightEnd = camera.position + cameraDirection * 10000.f;
+        Vec3f lineOfSightEnd = camera.position + cameraDirection * MAX_DISTANCE;
         Vec3f inverseCameraDirection = cameraDirection.invert();
         float closestDistance = Gm_FLOAT_MAX;
 
@@ -1230,6 +1233,7 @@ namespace Editor {
     {
       auto& mouseDelta = input.getMouseDelta();
 
+      // Handle mouse wheel/cycle through action types
       if (input.didMoveMouseWheel()) {
         if (input.getMouseWheelDirection() == MouseWheelEvent::Direction::UP) {
           cycleActionType(context, -1);
@@ -1238,6 +1242,7 @@ namespace Editor {
         }
       }
 
+      // Handle clicks
       if (input.didClickMouse()) {
         editor.lastClickTime = get_context_time();
 
@@ -1269,6 +1274,7 @@ namespace Editor {
       #define CTRL_Z input.isKeyHeld(Key::CONTROL) && input.didPressKey(Key::Z)
       #define CTRL_V input.isKeyHeld(Key::CONTROL) && input.didPressKey(Key::V)
 
+      // Handle shortcut keys
       if (CTRL_Z) {
         undoLastHistoryAction(context, state);
       } else if (CTRL_V && editor.isObjectSelected) {
@@ -1295,6 +1301,8 @@ namespace Editor {
         } else {
           editor.currentSelectedMeshIndex--;
         }
+      } else if (input.didPressKey(Key::G)) {
+        editor.isGiantMode = !editor.isGiantMode;
       }
 
       // Handle click-drag actions on objects
@@ -1316,11 +1324,15 @@ namespace Editor {
           actionDelta *= 10.f;
         }
 
+        if (editor.isGiantMode) {
+          actionDelta *= 20.f;
+        }
+
         if (editor.currentActionType == ActionType::POSITION) {
           originalObject.position += actionDelta;
         } else if (editor.currentActionType == ActionType::SCALE) {
           if (editor.mode == EditorMode::LIGHTS || input.isKeyHeld(Key::Q)) {
-            // Scale light spheres or objects while holding Q uniformly
+            // Scale light spheres, or objects while holding Q, uniformly
             originalObject.scale += actionDelta.magnitude() * actionDelta.sign();
           } else {
             // Scale objects/collision planes along the action axis
@@ -1398,9 +1410,13 @@ namespace Editor {
         } else {
           // Handle WASD free camera movement
           float speed =
-            input.isKeyHeld(Key::SPACE) ? 50000.f :
-            input.isKeyHeld(Key::SHIFT) ? 800.f :
-            6000.f;
+            input.isKeyHeld(Key::SPACE) ? 20000.f :
+            input.isKeyHeld(Key::SHIFT) ? 400.f :
+            3000.f;
+
+          if (editor.isGiantMode) {
+            speed *= 10.f;
+          }
 
           Gm_HandleFreeCameraMode(context, speed, dt);
         }
@@ -1427,7 +1443,7 @@ namespace Editor {
 
     // Display editor info
     {
-      add_debug_message(getEditorModeName(editor.mode) + " Editor");
+      add_debug_message(getEditorModeName(editor.mode) + " Editor" + (editor.isGiantMode ? " (GIANT)" : ""));
       add_debug_message("Camera position: " + Gm_ToDebugString(camera.position));
       add_debug_message("Action: " + getActionTypeName(editor.currentActionType));
 
