@@ -57,7 +57,7 @@ vec3 getDepthOfFieldColor(vec3 current_out_color, vec2 uv, float linear_frag_dep
   return mix(current_out_color, depth_of_field_color, depth_factor);
 }
 
-vec3 getAtmosphericsColor(vec3 current_out_color, vec2 uv, float frag_depth, float linear_frag_depth) {
+vec3 getAtmosphericsColor(vec3 current_out_color, vec2 uv, float frag_depth, float linear_frag_depth, vec3 world_position) {
   vec3 sky_position = getWorldPosition(1.0, uv, matInverseProjection, matInverseView) - cameraPosition;
   vec3 sky_direction = normalize(sky_position);
 
@@ -68,7 +68,9 @@ vec3 getAtmosphericsColor(vec3 current_out_color, vec2 uv, float frag_depth, flo
   vec2 sky_direction_2d = normalize(vec2(length(sky_direction.xz), sky_direction.y));
 
   float depth_divisor = frag_depth == 1.0 ? zFar : zFar * 0.85;
-  float atmosphere_factor = linear_frag_depth / depth_divisor;
+  float atmosphere_thickness = max(0, 1 - world_position.y / 20000.0);
+  float atmosphere_intensity = max((linear_frag_depth / depth_divisor), (cameraPosition.y - horizon_altitude) / 200000.0);
+  float atmosphere_factor = atmosphere_thickness * atmosphere_intensity;
 
   #if USE_HORIZON_ATMOSPHERE == 1
     atmosphere_factor *= sky_direction_2d.y < horizon_direction_2d.y ? 1.0 : pow(dot(sky_direction_2d, horizon_direction_2d), 100);
@@ -129,6 +131,7 @@ void main() {
   vec2 screen_warp_uv = (fragUv - 0.5) * (1.0 - screen_warp_displacement * 0.1) + 0.5;
   vec4 frag_color_and_depth = texture(texColorAndDepth, screen_warp_uv);
   float linear_frag_depth = getLinearizedDepth(frag_color_and_depth.w, zNear, zFar);
+  vec3 world_position = getWorldPosition(frag_color_and_depth.w, screen_warp_uv, matInverseProjection, matInverseView);
 
   out_color = frag_color_and_depth.rgb;
 
@@ -137,7 +140,7 @@ void main() {
   #endif
 
   // @todo make atmospherics optional via a flag
-  out_color = getAtmosphericsColor(out_color, screen_warp_uv, frag_color_and_depth.w, linear_frag_depth);
+  out_color = getAtmosphericsColor(out_color, screen_warp_uv, frag_color_and_depth.w, linear_frag_depth, world_position);
   out_color = getToonShadedColor(out_color, screen_warp_uv, frag_color_and_depth.w, linear_frag_depth);
 
   // Game-specific modifications below
@@ -145,7 +148,6 @@ void main() {
 
   // Redshifting/Torii Gate zones
   {
-    vec3 world_position = getWorldPosition(frag_color_and_depth.w, screen_warp_uv, matInverseProjection, matInverseView);
     vec3 normalized_frag_to_camera = normalize(cameraPosition - world_position);
     vec3 fragment_normal = normalize(texture(texNormalAndMaterial, screen_warp_uv).xyz);
     float nDotC = dot(normalized_frag_to_camera, fragment_normal);
