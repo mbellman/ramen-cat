@@ -19,11 +19,11 @@ struct Cascade {
 
 uniform sampler2D texColorAndDepth;
 uniform sampler2D texNormalAndMaterial;
-uniform sampler2D texShadowMaps[3];
+uniform sampler2D texShadowMaps[4];
 uniform vec3 cameraPosition;
 uniform mat4 matInverseProjection;
 uniform mat4 matInverseView;
-uniform mat4 lightMatrices[3];
+uniform mat4 lightMatrices[4];
 uniform DirectionalLight light;
 
 uniform float zNear;
@@ -35,6 +35,7 @@ layout (location = 0) out vec4 out_color_and_depth;
 
 const float cascade_depth_1 = 200.0;
 const float cascade_depth_2 = 1000.0;
+const float cascade_depth_3 = 5000.0;
 
 #include "utils/gl.glsl";
 #include "utils/conversion.glsl";
@@ -45,8 +46,10 @@ Cascade getCascadeByDepth(float linearized_depth) {
     return Cascade(0, lightMatrices[0], 0.0002, 8000.0, 70.0, 50.0);
   } else if (linearized_depth < cascade_depth_2) {
     return Cascade(1, lightMatrices[1], 0.0002, 2000.0, 15.0, 15.0);
-  } else {
+  } else if (linearized_depth < cascade_depth_3) {
     return Cascade(2, lightMatrices[2], 0.0001, 400.0, 4.0, 4.0);
+  } else {
+    return Cascade(3, lightMatrices[3], 0.001, 50.0, 1.0, 1.0);
   }
 }
 
@@ -119,8 +122,8 @@ float getLightIntensity(Cascade cascade, vec4 transform) {
 
   float fade_out_factor = 0.0;
   
-  if (cascade.index == 2) {
-    // Gracefully fade out third-cascade shadows
+  if (cascade.index == 3) {
+    // Gracefully fade out fourth-cascade shadows
     float x_distance = 1.0 - 2.0 * distance(transform.x, 0.5);
     float y_distance = 1.0 - 2.0 * distance(transform.y, 0.5);
     float z_distance = 1.0 - 2.0 * distance(transform.z, 0.5);

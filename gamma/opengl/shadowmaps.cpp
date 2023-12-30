@@ -10,10 +10,11 @@
 
 namespace Gamma {
   // { near, far }
-  const static float cascadeDepthRanges[3][2] = {
+  const static float cascadeDepthRanges[4][2] = {
     { 1.0f, 200.0f },
     { 200.0f, 1000.0f },
-    { 1000.0f, 5000.0f }
+    { 1000.0f, 5000.0f },
+    { 5000.f, 50000.f }
   };
 
   /**
@@ -25,10 +26,10 @@ namespace Gamma {
 
     buffer.init();
     buffer.setSize({ 2048, 2048 });
-    buffer.addColorAttachment(ColorFormat::R, 3);  // Cascade 0 (GL_TEXTURE3)
-    buffer.addColorAttachment(ColorFormat::R, 4);  // Cascade 1 (GL_TEXTURE4)
-    buffer.addColorAttachment(ColorFormat::R, 5);  // Cascade 2 (GL_TEXTURE5)
-    // @todo use 4th cascade
+    buffer.addColorAttachment(ColorFormat::R, 3);  // Cascade 1 (GL_TEXTURE3)
+    buffer.addColorAttachment(ColorFormat::R, 4);  // Cascade 2 (GL_TEXTURE4)
+    buffer.addColorAttachment(ColorFormat::R, 5);  // Cascade 3 (GL_TEXTURE5)
+    buffer.addColorAttachment(ColorFormat::R, 6);  // Cascade 4 (GL_TEXTURE6)
     buffer.addDepthAttachment();
     buffer.bindColorAttachments();
 
@@ -147,7 +148,7 @@ namespace Gamma {
     frustumCenter = (texelMatrix.inverse() * frustumCenter).homogenize();
 
     // Compute final light view matrix for rendering the shadow map
-    Matrix4f matProjection = Matrix4f::orthographic(radius, -radius, -radius, radius, -radius - 10000.0f, radius + 10000.f);
+    Matrix4f matProjection = Matrix4f::orthographic(radius, -radius, -radius, radius, -radius - 20000.0f, radius);
     Matrix4f matView = Matrix4f::lookAt(frustumCenter.gl(), lightDirection.invert().gl(), topVector);
 
     return (matProjection * matView).transpose();

@@ -13,6 +13,9 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     .create = []() {
       return Mesh::Sphere(12);
     },
+    .attributes = {
+      .maxCascade = 4
+    }
   },
   {
     .name = "cube",
@@ -20,6 +23,9 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     .create = []() {
       return Mesh::Cube();
     },
+    .attributes = {
+      .maxCascade = 4
+    }
   },
 
   /**

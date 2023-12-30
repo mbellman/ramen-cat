@@ -621,8 +621,7 @@ namespace Gamma {
 
       glShadowMap.buffer.write();
 
-      // @todo use 4th cascade
-      for (u32 cascade = 0; cascade < 3; cascade++) {
+      for (u32 cascade = 0; cascade < 4; cascade++) {
         glShadowMap.buffer.writeToAttachment(cascade);
         Matrix4f matLightViewProjection = Gm_CreateCascadedLightViewProjectionMatrixGL(cascade, light.direction, camera);
 
@@ -635,7 +634,11 @@ namespace Gamma {
         for (auto* glMesh : glMeshes) {
           auto& mesh = *glMesh->getSourceMesh();
 
-          if (mesh.type == MeshType::PARTICLES) {
+          if (
+            mesh.type == MeshType::PARTICLES ||
+            !mesh.canCastShadows ||
+            mesh.maxCascade < (cascade + 1)
+          ) {
             continue;
           }
 
@@ -646,9 +649,7 @@ namespace Gamma {
           shader.setFloat("animation.factor", animation.factor);
           shader.setBool("hasTexture", glMesh->hasTexture());
 
-          if (mesh.canCastShadows && mesh.maxCascade >= (cascade + 1)) {
-            glMesh->render(ctx.primitiveMode, true);
-          }
+          glMesh->render(ctx.primitiveMode, true);
         }
       }
     }
@@ -848,9 +849,11 @@ namespace Gamma {
       shader.setInt("texShadowMaps[0]", 3);
       shader.setInt("texShadowMaps[1]", 4);
       shader.setInt("texShadowMaps[2]", 5);
+      shader.setInt("texShadowMaps[3]", 6);
       shader.setMatrix4f("lightMatrices[0]", Gm_CreateCascadedLightViewProjectionMatrixGL(0, light.direction, camera));
       shader.setMatrix4f("lightMatrices[1]", Gm_CreateCascadedLightViewProjectionMatrixGL(1, light.direction, camera));
       shader.setMatrix4f("lightMatrices[2]", Gm_CreateCascadedLightViewProjectionMatrixGL(2, light.direction, camera));
+      shader.setMatrix4f("lightMatrices[3]", Gm_CreateCascadedLightViewProjectionMatrixGL(3, light.direction, camera));
       shader.setVec3f("cameraPosition", camera.position);
       shader.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
       shader.setMatrix4f("matInverseView", ctx.matInverseView);
@@ -1492,7 +1495,8 @@ namespace Gamma {
       shaders.directionalShadowMapDev.setInt("texCascade0", 3);
       shaders.directionalShadowMapDev.setInt("texCascade1", 4);
       shaders.directionalShadowMapDev.setInt("texCascade2", 5);
-      shaders.directionalShadowMapDev.setVec4f("transform", { 0.695f, yOffset, 0.266f, 0.15f });
+      shaders.directionalShadowMapDev.setInt("texCascade3", 6);
+      shaders.directionalShadowMapDev.setVec4f("transform", { 0.53f, yOffset, 0.43f, 0.11f });
 
       OpenGLScreenQuad::render();
     }
