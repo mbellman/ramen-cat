@@ -1,5 +1,7 @@
 #version 460 core
 
+#define BLOCK_SKYLIGHT_IN_SHADOW 1
+
 uniform vec2 screenSize;
 uniform sampler2D texColorAndDepth;
 uniform sampler2D texClouds;
@@ -8,6 +10,9 @@ uniform mat4 matView;
 uniform mat4 matInverseProjection;
 uniform mat4 matInverseView;
 uniform vec3 cameraPosition;
+
+uniform sampler2D texShadowMap;
+uniform mat4 matLightViewProjection;
 
 uniform float time;
 uniform float zNear;
@@ -96,6 +101,17 @@ vec3 getNormal(vec3 world_position) {
   vec3 tangent_normal = vec3(n.x, n.y, 1.0);
 
   return normalize(tbn_matrix * tangent_normal);
+}
+
+vec4 getLightSpaceTransform(mat4 matLight, vec3 position) {
+  // @hack invert Z
+  vec4 transform = matLight * glVec4(position);
+
+  transform.xyz /= transform.w;
+  transform.xyz *= 0.5;
+  transform.xyz += 0.5;
+
+  return transform;
 }
 
 void main() {
@@ -194,6 +210,18 @@ void main() {
   // @todo make configurable
   const vec3 BASE_WATER_COLOR = vec3(0, 0.4 - 0.2 * (1.0 - plane_fresnel), 1.0);
 
+  #if BLOCK_SKYLIGHT_IN_SHADOW == 1
+    // Substantially reduce the sky intensity in shadowed areas
+    // to avoid erroneously reflecting sunlight/clouds
+    float linearized_depth = getLinearizedDepth(gl_FragCoord.z, zNear, zFar);
+    vec4 transform = getLightSpaceTransform(matLightViewProjection, world_position);
+    float shadow_map_depth = texture(texShadowMap, transform.xy).r;
+
+    if (transform.z < 0.999 && shadow_map_depth < transform.z - 0.001) {
+      sky_intensity = 0.1;
+    }
+  #endif
+
   // Diminish reflections based on sky intensity
   reflection_color = mix(BASE_WATER_COLOR, reflection_color, sky_intensity);
 
@@ -203,6 +231,16 @@ void main() {
 
   // @hack Fade to aquamarine at grazing angles
   water_color += vec3(0, 1, 1) * pow(1.0 - plane_fresnel, 8);
+
+  // @todo cleanup
+  // Apply a simplex noise pattern to modulate the color of the ocean over great distances
+  float wx = world_position.x;
+  float wz = world_position.z;
+  float t = time;
+  float s = simplex_noise(vec2(wx * 0.00002, wz * 0.00002));
+  float s2 = simplex_noise(vec2(wx * 0.000013, wz * 0.000013));
+
+  water_color += vec3(0.1 * s, 0.8 * s, 0.5 * s2) * 0.1;
 
   out_color_and_depth = vec4(water_color, gl_FragCoord.z);
 }

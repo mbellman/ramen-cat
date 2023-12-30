@@ -1354,6 +1354,26 @@ namespace Gamma {
       shaders.water.setVec2f("screenSize", screenSize);
     #endif
 
+    // If there are any directional shadowcasters, use the shadow map
+    // and light view/projection matrix for the first to check for shadowed
+    // areas on the ocean surface. In the ocean shader, we artificially lower
+    // the sky intensity in shadowed areas to avoid sunlight and clouds
+    // being erroneously reflected at full intensity.
+    if (ctx.directionalShadowcasters.size() > 0) {
+      auto* light = ctx.directionalShadowcasters[0];
+      auto* glShadowMap = glDirectionalShadowMaps[0];
+
+      glShadowMap->buffer.read();
+
+      // Use the fourth shadow cascade by default, since we don't need the
+      // edges of the shadowed area to be smooth, and the fourth cascade
+      // covers the widest area/depth range
+      auto matLightViewProjection = Gm_CreateCascadedLightViewProjectionMatrixGL(3, light->direction, *ctx.activeCamera);
+
+      shaders.water.setInt("texShadowMap", 6);
+      shaders.water.setMatrix4f("matLightViewProjection", matLightViewProjection);
+    }
+
     if (ctx.cloudsTexture != nullptr) {
       ctx.cloudsTexture->bind();
     }
