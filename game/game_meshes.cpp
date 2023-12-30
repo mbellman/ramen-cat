@@ -310,6 +310,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       return Mesh::Cube();
     },
     .attributes = {
+      .maxCascade = 4,
       .roughness = 0.9f
     }
   },
@@ -346,6 +347,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       return Mesh::Model("./game/assets/building-1.obj");
     },
     .attributes = {
+      .maxCascade = 4,
       .roughness = 0.9f
     }
   },
@@ -392,6 +394,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     },
     .attributes = {
       .texture = "./game/assets/torii-gate.png",
+      .maxCascade = 4,
       .roughness = 0.4f
     }
   },
@@ -469,6 +472,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     },
     .attributes = {
       .normals = "./game/assets/metal-guard-normals.png",
+      .maxCascade = 4,
       .roughness = 0.8f
     }
   },
@@ -482,6 +486,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     },
     .attributes = {
       .normals = "./game/assets/metal-guard-normals.png",
+      .maxCascade = 4,
       .roughness = 0.8f
     }
   },
@@ -494,6 +499,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       return Mesh::Model("./game/assets/bathhouse-roof-spire.obj");
     },
     .attributes = {
+      .maxCascade = 4,
       .roughness = 0.3f
     }
   },
@@ -504,6 +510,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       return Mesh::Model("./game/assets/dome-roof.obj");
     },
     .attributes = {
+      .maxCascade = 4,
       .roughness = 0.1f
     }
   },
@@ -514,6 +521,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       return Mesh::Model("./game/assets/square-roof.obj");
     },
     .attributes = {
+      .maxCascade = 4,
       .roughness = 0.2f
     }
   },

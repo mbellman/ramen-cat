@@ -90,12 +90,12 @@ internal Vec3f getLookAtTargetPosition(GmContext* context, GameState& state) {
   auto cameraUnitXzDirection = camera.orientation.getDirection().xz().unit();
   float forwardFactor = Gm_Maxf(currentCameraRadius - CAMERA_NORMAL_BASE_RADIUS, 0.f) * 0.15f;
 
-  // @todo description
-  Vec3f defaultLookAtTarget = player.position + Vec3f(0, heightAbovePlayer, 0) + cameraUnitXzDirection * forwardFactor;
-
-  // if (state.cameraMode == CameraMode::FIRST_PERSON) {
-  //   defaultLookAtTarget += player.rotation.getDirection().unit().invert() * PLAYER_RADIUS;
+  // if (state.isOnSolidGround && camera.position.y < player.position.y) {
+  //   heightAbovePlayer += player.position.y - camera.position.y;
   // }
+
+  // @todo description
+  Vec3f defaultLookAtTarget = player.position + Vec3f(0, heightAbovePlayer, 0);
 
   if (state.cameraOverrideStartTime == 0.f) {
     // If we haven't started a camera transition yet,
