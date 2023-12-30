@@ -168,10 +168,10 @@ namespace Gamma {
     shaders.refractiveGeometry.fragment("./gamma/opengl/shaders/refractive-geometry.frag.glsl");
     shaders.refractiveGeometry.link();
 
-    shaders.water.init();
-    shaders.water.vertex("./gamma/opengl/shaders/geometry.vert.glsl");
-    shaders.water.fragment("./gamma/opengl/shaders/water.frag.glsl");
-    shaders.water.link();
+    shaders.ocean.init();
+    shaders.ocean.vertex("./gamma/opengl/shaders/geometry.vert.glsl");
+    shaders.ocean.fragment("./gamma/opengl/shaders/ocean.frag.glsl");
+    shaders.ocean.link();
 
     shaders.silhouette.init();
     shaders.silhouette.vertex("./gamma/opengl/shaders/geometry.vert.glsl");
@@ -224,7 +224,7 @@ namespace Gamma {
     shaders.reflectionsDenoise.destroy();
     shaders.refractivePrepass.destroy();
     shaders.refractiveGeometry.destroy();
-    shaders.water.destroy();
+    shaders.ocean.destroy();
     shaders.post.destroy();
 
     #if GAMMA_DEVELOPER_MODE

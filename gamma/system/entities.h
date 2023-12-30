@@ -121,7 +121,7 @@ namespace Gamma {
     /**
      * @todo description
      */
-    WATER = 0xFD,
+    OCEAN = 0xFD,
     /**
      * Defines standard Meshes without any unique rendering properties.
      */

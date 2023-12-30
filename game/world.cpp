@@ -688,7 +688,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
     add_mesh("ocean", 1, Mesh::Disc(12));
     add_mesh("ocean-floor", 1, Mesh::Disc(12));
 
-    mesh("ocean")->type = MeshType::WATER;
+    mesh("ocean")->type = MeshType::OCEAN;
     mesh("ocean")->canCastShadows = false;
     mesh("ocean-floor")->canCastShadows = false;
 

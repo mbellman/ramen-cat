@@ -44,7 +44,7 @@ namespace Gamma {
     OpenGLShader reflectionsDenoise;
     OpenGLShader refractivePrepass;
     OpenGLShader refractiveGeometry;
-    OpenGLShader water;
+    OpenGLShader ocean;
     OpenGLShader silhouette;
     OpenGLShader post;
 
@@ -66,7 +66,7 @@ namespace Gamma {
     bool hasEmissiveObjects;
     bool hasReflectiveObjects;
     bool hasRefractiveObjects;
-    bool hasWaterObjects;
+    bool hasOceanObjects;
     bool hasSilhouetteObjects;
     GLenum primitiveMode;
     std::vector<Light*> pointLights;
@@ -141,7 +141,7 @@ namespace Gamma {
     void renderParticles();
     void renderReflections();
     void renderRefractiveGeometry();
-    void renderWater();
+    void renderOcean();
     void renderSilhouettes();
     void renderPostEffects();
     void renderDevBuffers();

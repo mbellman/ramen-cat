@@ -113,8 +113,8 @@ namespace Gamma {
       shaders.refractiveGeometry.use();
       shaders.refractiveGeometry.setVec2f("screenSize", screenSize);
 
-      shaders.water.use();
-      shaders.water.setVec2f("screenSize", screenSize);
+      shaders.ocean.use();
+      shaders.ocean.setVec2f("screenSize", screenSize);
 
       // @todo set sampler2D texture units
     #endif
@@ -316,7 +316,7 @@ namespace Gamma {
     ctx.hasEmissiveObjects = false;
     ctx.hasReflectiveObjects = false;
     ctx.hasRefractiveObjects = false;
-    ctx.hasWaterObjects = false;
+    ctx.hasOceanObjects = false;
     ctx.hasSilhouetteObjects = false;
 
     for (auto* glMesh : glMeshes) {
@@ -329,8 +329,8 @@ namespace Gamma {
           ctx.hasReflectiveObjects = true;
         } else if (mesh.type == MeshType::REFRACTIVE) {
           ctx.hasRefractiveObjects = true;
-        } else if (mesh.type == MeshType::WATER) {
-          ctx.hasWaterObjects = true;
+        } else if (mesh.type == MeshType::OCEAN) {
+          ctx.hasOceanObjects = true;
         }
 
         if (mesh.silhouette) {
@@ -464,8 +464,8 @@ namespace Gamma {
       renderRefractiveGeometry();
     }
 
-    if (ctx.hasWaterObjects) {
-      renderWater();
+    if (ctx.hasOceanObjects) {
+      renderOcean();
     }
 
     // @todo if (ctx.hasParticles)
@@ -1323,7 +1323,7 @@ namespace Gamma {
   /**
    * @todo description
    */
-  void OpenGLRenderer::renderWater() {
+  void OpenGLRenderer::renderOcean() {
     auto& camera = *ctx.activeCamera;
     auto& scene = gmContext->scene;
 
@@ -1343,15 +1343,15 @@ namespace Gamma {
 
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
-    glStencilFunc(GL_ALWAYS, MeshType::WATER, 0xFF);
+    glStencilFunc(GL_ALWAYS, MeshType::OCEAN, 0xFF);
     glStencilMask(0xFF);
 
-    shaders.water.use();
+    shaders.ocean.use();
 
     #if GAMMA_DEVELOPER_MODE
       Vec2f screenSize((float)internalResolution.width, (float)internalResolution.height);
 
-      shaders.water.setVec2f("screenSize", screenSize);
+      shaders.ocean.setVec2f("screenSize", screenSize);
     #endif
 
     // If there are any directional shadowcasters, use the shadow map
@@ -1370,32 +1370,32 @@ namespace Gamma {
       // covers the widest area/depth range
       auto matLightViewProjection = Gm_CreateCascadedLightViewProjectionMatrixGL(3, light->direction, *ctx.activeCamera);
 
-      shaders.water.setInt("texShadowMap", 6);
-      shaders.water.setMatrix4f("matLightViewProjection", matLightViewProjection);
+      shaders.ocean.setInt("texShadowMap", 6);
+      shaders.ocean.setMatrix4f("matLightViewProjection", matLightViewProjection);
     }
 
     if (ctx.cloudsTexture != nullptr) {
       ctx.cloudsTexture->bind();
     }
 
-    shaders.water.setInt("texColorAndDepth", 0);
-    shaders.water.setInt("texClouds", 3);
-    shaders.water.setMatrix4f("matProjection", ctx.matProjection);
-    shaders.water.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
-    shaders.water.setMatrix4f("matView", ctx.matView);
-    shaders.water.setMatrix4f("matInverseView", ctx.matInverseView);
-    shaders.water.setVec3f("cameraPosition", camera.position);
-    shaders.water.setFloat("time", scene.sceneTime);
-    shaders.water.setFloat("zNear", scene.zNear);
-    shaders.water.setFloat("zFar", scene.zFar);
+    shaders.ocean.setInt("texColorAndDepth", 0);
+    shaders.ocean.setInt("texClouds", 3);
+    shaders.ocean.setMatrix4f("matProjection", ctx.matProjection);
+    shaders.ocean.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
+    shaders.ocean.setMatrix4f("matView", ctx.matView);
+    shaders.ocean.setMatrix4f("matInverseView", ctx.matInverseView);
+    shaders.ocean.setVec3f("cameraPosition", camera.position);
+    shaders.ocean.setFloat("time", scene.sceneTime);
+    shaders.ocean.setFloat("zNear", scene.zNear);
+    shaders.ocean.setFloat("zFar", scene.zFar);
 
-    shaders.water.setVec3f("sunDirection", scene.sky.sunDirection);
-    shaders.water.setVec3f("sunColor", scene.sky.sunColor);
-    shaders.water.setVec3f("atmosphereColor", scene.sky.atmosphereColor);
-    shaders.water.setFloat("altitude", scene.sky.altitude);
+    shaders.ocean.setVec3f("sunDirection", scene.sky.sunDirection);
+    shaders.ocean.setVec3f("sunColor", scene.sky.sunColor);
+    shaders.ocean.setVec3f("atmosphereColor", scene.sky.atmosphereColor);
+    shaders.ocean.setFloat("altitude", scene.sky.altitude);
 
     for (auto* glMesh : glMeshes) {
-      if (glMesh->isMeshType(MeshType::WATER)) {
+      if (glMesh->isMeshType(MeshType::OCEAN)) {
         glMesh->render(ctx.primitiveMode);
       }
     }
@@ -1404,15 +1404,14 @@ namespace Gamma {
     glDisable(GL_CULL_FACE);
 
     // Now that the current target accumulation buffer contains
-    // the rendered refractive geometry, swap the buffers so we
-    // can write water back into the original target accumulation
-    // buffer
+    // the rendered ocean objects, swap the buffers so we can
+    // write them back into the original target accumulation buffer
     swapAccumulationBuffers();
 
     ctx.accumulationSource->read();
     ctx.accumulationTarget->write();
 
-    glStencilFunc(GL_EQUAL, MeshType::WATER, 0xFF);
+    glStencilFunc(GL_EQUAL, MeshType::OCEAN, 0xFF);
 
     shaders.copyFrame.use();
     shaders.copyFrame.setVec4f("transform", FULL_SCREEN_TRANSFORM);

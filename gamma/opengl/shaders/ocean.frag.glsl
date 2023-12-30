@@ -124,7 +124,7 @@ void main() {
   // Fresnel effect
   float fresnel_factor = dot(normalized_fragment_to_camera, normal);
 
-  // Hack for when the camera is positioned below/inside the water,
+  // Hack for when the camera is positioned below/inside the ocean,
   // causing the fragment-to-camera vector to be pointed away from
   // the surface normal, resulting in a negative dot product and
   // inverting the refracted image color
@@ -157,10 +157,10 @@ void main() {
 
   vec4 refracted_color_and_depth = texture(texColorAndDepth, refracted_color_coords);
   vec3 refraction_color = refracted_color_and_depth.rgb;
-  vec3 water_color = vec3(0);
+  vec3 ocean_color = vec3(0);
   
   if (refracted_color_and_depth.w < gl_FragCoord.z) {
-    // Don't refract geometry in front of the water surface
+    // Don't refract geometry in front of the ocean surface
     refraction_color = sample_color_and_depth.rgb;
   }
 
@@ -208,7 +208,7 @@ void main() {
   float plane_fresnel = dot(normalize(fragNormal), normalized_fragment_to_camera);
 
   // @todo make configurable
-  const vec3 BASE_WATER_COLOR = vec3(0, 0.4 - 0.2 * (1.0 - plane_fresnel), 1.0);
+  const vec3 BASE_OCEAN_COLOR = vec3(0, 0.4 - 0.2 * (1.0 - plane_fresnel), 1.0);
 
   #if BLOCK_SKYLIGHT_IN_SHADOW == 1
     // Substantially reduce the sky intensity in shadowed areas
@@ -223,14 +223,14 @@ void main() {
   #endif
 
   // Diminish reflections based on sky intensity
-  reflection_color = mix(BASE_WATER_COLOR, reflection_color, sky_intensity);
+  reflection_color = mix(BASE_OCEAN_COLOR, reflection_color, sky_intensity);
 
   // @hack use the flat plane fresnel, and bias the mix factor
   // toward the reflection color for artistic effect
-  water_color = mix(refraction_color, reflection_color, pow(1.0 - plane_fresnel, 0.5));
+  ocean_color = mix(refraction_color, reflection_color, pow(1.0 - plane_fresnel, 0.5));
 
   // @hack Fade to aquamarine at grazing angles
-  water_color += vec3(0, 1, 1) * pow(1.0 - plane_fresnel, 8);
+  ocean_color += vec3(0, 1, 1) * pow(1.0 - plane_fresnel, 8);
 
   // @todo cleanup
   // Apply a simplex noise pattern to modulate the color of the ocean over great distances
@@ -240,7 +240,7 @@ void main() {
   float s = simplex_noise(vec2(wx * 0.00002, wz * 0.00002));
   float s2 = simplex_noise(vec2(wx * 0.000013, wz * 0.000013));
 
-  water_color += vec3(0.1 * s, 0.8 * s, 0.5 * s2) * 0.1;
+  ocean_color += vec3(0.1 * s, 0.8 * s, 0.5 * s2) * 0.1;
 
-  out_color_and_depth = vec4(water_color, gl_FragCoord.z);
+  out_color_and_depth = vec4(ocean_color, gl_FragCoord.z);
 }
