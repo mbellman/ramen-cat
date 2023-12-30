@@ -198,7 +198,7 @@ internal void handlePlayerParticles(GmContext* context, GameState& state, float 
       // proportionally adjust its scale, and then reset it.
       float currentScale = particle.scale.x;
       float alpha = 1.f - currentScale / DASH_PARTICLE_SIZE;
-      float scalingFactor = alpha < 0.1f ? 0.5f + 0.5f * alpha / 0.1f : 1.f - alpha;
+      float scalingFactor = alpha < 0.1f ? 0.2f + 0.8f * alpha / 0.1f : 1.f - alpha;
 
       particle.scale *= scalingFactor;
 
