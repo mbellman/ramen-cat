@@ -69,7 +69,7 @@ vec3 getNormal(vec3 world_position) {
   vec2 n = vec2(0);
 
   // @todo make configurable
-  n += createDirectionalWave(wx, wz, vec2(0.5, 1), 1, 0.01, 1);
+  n += createDirectionalWave(wx, wz, vec2(0.5, 1), 1, 0.01, 0.8);
   n += createDirectionalWave(wx, wz, vec2(0.1, 1), 0.6, 0.012, 0.4);
   n += createDirectionalWave(wx, wz, vec2(1, 0.3), 0.5, 0.006, 0.6);
   n += createDirectionalWave(wx, wz, vec2(0.5, 1), 0.3, 0.016, 0.7);
@@ -77,7 +77,7 @@ vec3 getNormal(vec3 world_position) {
   n += createDirectionalWave(wx, wz, vec2(0.2, 1), 1, 0.03, 0.5);
   n += createDirectionalWave(wx, wz, vec2(1, 0.6), 0.7, 0.03, 0.2);
 
-  n += vec2(simplex_noise(vec2(t * 0.03 + wx * 0.0005, t * 0.03 + wz * 0.0005))) * 0.2;
+  n += vec2(simplex_noise(vec2(t * 0.08 + wx * 0.0002, t * 0.1 + wz * 0.00005))) * 1;
   n += vec2(simplex_noise(vec2(t * 0.1 - wx * 0.001, t * 0.1 + wz * 0.001))) * 0.3;
   n += vec2(simplex_noise(vec2(t * 0.1 + wx * 0.007, t * 0.1 - wz * 0.007))) * 0.2;
 
@@ -161,10 +161,15 @@ void main() {
   #define PI 3.141592
   #define TAU PI * 2.0
 
+  // @hack use altitude to adjust from where we sample the cloud texture,
+  // creating the illusion that the far plane represents the horizon line
+  float altitude_above_horizon = altitude - (-2000.0);
+  float altitude_reflection_adjustment_factor = 1 - altitude_above_horizon / 50000.0;
+
   // @todo refactor
   vec2 cloudsUv = vec2(
     -(atan(reflection_ray.z, reflection_ray.x) + PI) / TAU + time * CLOUD_MOVEMENT_RATE,
-    -reflection_ray.y - 0.5
+    -reflection_ray.y - 0.5 * altitude_reflection_adjustment_factor
   );
 
   // @todo refactor

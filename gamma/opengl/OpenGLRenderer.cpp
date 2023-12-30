@@ -1365,7 +1365,7 @@ namespace Gamma {
     shaders.water.setMatrix4f("matView", ctx.matView);
     shaders.water.setMatrix4f("matInverseView", ctx.matInverseView);
     shaders.water.setVec3f("cameraPosition", camera.position);
-    shaders.water.setFloat("time", gmContext->contextTime);
+    shaders.water.setFloat("time", scene.sceneTime);
     shaders.water.setFloat("zNear", scene.zNear);
     shaders.water.setFloat("zFar", scene.zFar);
 
