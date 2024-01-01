@@ -185,7 +185,7 @@ void main() {
   // @todo refactor
   vec2 cloudsUv = vec2(
     -(atan(reflection_ray.z, reflection_ray.x) + PI) / TAU + time * CLOUD_MOVEMENT_RATE,
-    -reflection_ray.y - 0.5 * altitude_reflection_adjustment_factor
+    -reflection_ray.y + 0.5 * altitude_reflection_adjustment_factor
   );
 
   // @todo refactor
@@ -208,7 +208,7 @@ void main() {
   float plane_fresnel = dot(normalize(fragNormal), normalized_fragment_to_camera);
 
   // @todo make configurable
-  const vec3 BASE_OCEAN_COLOR = vec3(0, 0.4 - 0.2 * (1.0 - plane_fresnel), 1.0);
+  vec3 BASE_OCEAN_COLOR = vec3(0, 0.4 - 0.2 * (1.0 - plane_fresnel), 1.0);
 
   #if BLOCK_SKYLIGHT_IN_SHADOW == 1
     // Substantially reduce the sky intensity in shadowed areas
@@ -217,8 +217,20 @@ void main() {
     vec4 transform = getLightSpaceTransform(matLightViewProjection, world_position);
     float shadow_map_depth = texture(texShadowMap, transform.xy).r;
 
+    // Gracefully fade out fourth-cascade shadows
+    float x_distance = 1.0 - 2.0 * distance(transform.x, 0.5);
+    float y_distance = 1.0 - 2.0 * distance(transform.y, 0.5);
+    float z_distance = 1.0 - 2.0 * distance(transform.z, 0.5);
+
+    float fade_out_factor = pow(1.0 - (x_distance * y_distance * z_distance), 10);
+
+    fade_out_factor = isnan(fade_out_factor) ? 0.0 : fade_out_factor;
+
     if (transform.z < 0.999 && shadow_map_depth < transform.z - 0.001) {
-      sky_intensity = 0.1;
+      sky_intensity *= (0.2 + 0.8 * fade_out_factor);
+
+      // @todo apply fade-out factor
+      BASE_OCEAN_COLOR.xyz *= vec3(0.4, 0.6, 0.8);
     }
   #endif
 

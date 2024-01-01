@@ -71,14 +71,12 @@ internal void initializeInputHandlers(GmContext* context, GameState& state) {
         Gm_ToggleFlag(GammaFlags::ENABLE_DEV_LIGHT_DISCS);
       }
 
-      // @todo use in dev mode only
       if (key == Key::T) {
         Gm_ToggleFlag(GammaFlags::ENABLE_DEV_TOOLS);
       }
     #endif
   });
 
-  // @todo use in dev mode only
   #if GAMMA_DEVELOPER_MODE
     input.on<Key>("keystart", [&state, &input, context](Key key) {
       if (key == Key::E) {

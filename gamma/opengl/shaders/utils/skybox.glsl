@@ -3,7 +3,7 @@ const float CLOUD_MOVEMENT_RATE = 0.001;
 vec4 getSkyColor(vec3 sky_direction, vec3 sun_direction, vec3 base_sun_color, vec3 atmosphere_color, float altitude) {
   float sunlight_factor = 1.5;
   float moonlight_factor = 2.0;
-  float altitude_y_offset = altitude / 100000.0;
+  float altitude_y_offset = altitude / 200000.0;
 
   float y = sky_direction.y + altitude_y_offset;
   float cos_y = max(0.0, cos(y));

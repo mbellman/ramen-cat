@@ -68,8 +68,9 @@ vec3 getAtmosphericsColor(vec3 current_out_color, vec2 uv, float frag_depth, flo
   vec2 sky_direction_2d = normalize(vec2(length(sky_direction.xz), sky_direction.y));
 
   float depth_divisor = frag_depth == 1.0 ? zFar : zFar * 0.85;
-  float atmosphere_thickness = max((linear_frag_depth / depth_divisor), saturate(1 - world_position.y / 20000.0));
-  float atmosphere_intensity = max((linear_frag_depth / depth_divisor), (cameraPosition.y - horizon_altitude) / 200000.0);
+  float frag_distance = frag_depth == 1.0 ? linear_frag_depth : distance(world_position, cameraPosition);
+  float atmosphere_thickness = max((frag_distance / depth_divisor), saturate(1 - world_position.y / 20000.0));
+  float atmosphere_intensity = max((frag_distance / depth_divisor), (cameraPosition.y - horizon_altitude) / 200000.0);
   float atmosphere_factor = atmosphere_thickness * atmosphere_intensity;
 
   #if USE_HORIZON_ATMOSPHERE == 1
