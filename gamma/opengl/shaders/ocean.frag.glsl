@@ -74,7 +74,7 @@ vec3 getNormal(vec3 world_position) {
   vec2 n = vec2(0);
 
   // @todo make configurable
-  n += createDirectionalWave(wx, wz, vec2(0.5, 1), 1, 0.01, 0.8);
+  n += createDirectionalWave(wx, wz, vec2(0.5, 1), 1, 0.005, 0.8);
   n += createDirectionalWave(wx, wz, vec2(0.1, 1), 0.6, 0.012, 0.4);
   n += createDirectionalWave(wx, wz, vec2(1, 0.3), 0.5, 0.006, 0.6);
   n += createDirectionalWave(wx, wz, vec2(0.5, 1), 0.3, 0.016, 0.7);
@@ -82,11 +82,11 @@ vec3 getNormal(vec3 world_position) {
   n += createDirectionalWave(wx, wz, vec2(0.2, 1), 1, 0.03, 0.5);
   n += createDirectionalWave(wx, wz, vec2(1, 0.6), 0.7, 0.03, 0.2);
 
-  n += vec2(simplex_noise(vec2(t * 0.08 + wx * 0.0002, t * 0.1 + wz * 0.00005))) * 1;
-  n += vec2(simplex_noise(vec2(t * 0.1 - wx * 0.001, t * 0.1 + wz * 0.001))) * 0.3;
-  n += vec2(simplex_noise(vec2(t * 0.1 + wx * 0.007, t * 0.1 - wz * 0.007))) * 0.2;
+  n += vec2(simplex_noise(vec2(t * 0.08 + wx * 0.0002, t * 0.1 + wz * 0.00005)));
+  n += vec2(simplex_noise(vec2(t * 0.1 - wx * 0.0005, t * 0.1 - wz * 0.0005))) * 0.3;
+  n += vec2(simplex_noise(vec2(t * 0.1 + wx * 0.002, t * 0.1 - wz * 0.002))) * 0.2;
 
-  n *= 0.15;
+  n *= 0.5 + 0.5 * pow(distance(world_position, cameraPosition) / zFar, 1.0 / 5.0);
 
   vec3 n_normal = normalize(fragNormal);
   vec3 n_tangent = normalize(fragTangent);
@@ -180,17 +180,21 @@ void main() {
   // @hack use altitude to adjust from where we sample the cloud texture,
   // creating the illusion that the far plane represents the horizon line
   float altitude_above_horizon = altitude - (-2000.0);
-  float altitude_reflection_adjustment_factor = 1 - altitude_above_horizon / 50000.0;
+  float altitude_reflection_adjustment_factor = 1 - altitude_above_horizon / 100000.0;
 
   // @todo refactor
   vec2 cloudsUv = vec2(
     -(atan(reflection_ray.z, reflection_ray.x) + PI) / TAU + time * CLOUD_MOVEMENT_RATE,
-    -reflection_ray.y + 0.5 * altitude_reflection_adjustment_factor
+    -reflection_ray.y + 0.5 - altitude_reflection_adjustment_factor
   );
 
   // @todo refactor
   vec4 clouds = texture(texClouds, cloudsUv);
   vec3 clouds_color = mix(clouds.rgb, sky_color, 0.3) * clouds.a;
+
+  if (clouds.a > 0.5 && sky_intensity < clouds.a * 0.2) {
+    sky_intensity = clouds.a * 0.2;
+  }
 
   if (isOffScreen(reflected_color_coords, 0)) {
     reflection_color = sky_color + clouds_color;
@@ -227,7 +231,7 @@ void main() {
     fade_out_factor = isnan(fade_out_factor) ? 0.0 : fade_out_factor;
 
     if (transform.z < 0.999 && shadow_map_depth < transform.z - 0.001) {
-      sky_intensity *= (0.2 + 0.8 * fade_out_factor);
+      sky_intensity *= (0.1 + 0.9 * fade_out_factor);
 
       // @todo apply fade-out factor
       BASE_OCEAN_COLOR.xyz *= vec3(0.4, 0.6, 0.8);
@@ -249,10 +253,10 @@ void main() {
   float wx = world_position.x;
   float wz = world_position.z;
   float t = time;
-  float s = simplex_noise(vec2(wx * 0.00002, wz * 0.00002));
+  float s = simplex_noise(vec2(wx * 0.00001, wz * 0.00001));
   float s2 = simplex_noise(vec2(wx * 0.000013, wz * 0.000013));
 
-  ocean_color += vec3(0.1 * s, 0.8 * s, 0.5 * s2) * 0.1;
+  ocean_color += vec3(0.1 * s, 0.8 * s, 0.5 * s2) * 0.2;
 
   out_color_and_depth = vec4(ocean_color, gl_FragCoord.z);
 }
