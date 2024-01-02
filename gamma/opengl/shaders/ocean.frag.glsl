@@ -233,8 +233,7 @@ void main() {
     if (transform.z < 0.999 && shadow_map_depth < transform.z - 0.001) {
       sky_intensity *= (0.1 + 0.9 * fade_out_factor);
 
-      // @todo apply fade-out factor
-      BASE_OCEAN_COLOR.xyz *= vec3(0.4, 0.6, 0.8);
+      BASE_OCEAN_COLOR.xyz *= (1 - vec3(0.8, 0.6, 0.2) * (1 - fade_out_factor));
     }
   #endif
 
