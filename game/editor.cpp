@@ -190,21 +190,30 @@ internal void rebuildCollisionPlanes(GmContext* context, GameState& state) {
   u64 start = Gm_GetMicroseconds();
 
   state.collisionPlanes.clear();
+
   editor.objectCollisionPlanes.clear();
   editor.lightCollisionPlanes.clear();
 
-  for (auto& platform : objects("platform")) {
-    Collisions::addObjectCollisionPlanes(platform, state.collisionPlanes);
-  }
-
-  for (auto& asset : GameMeshes::meshAssets) {
-    for (auto& object : mesh(asset.name)->objects) {
-      Collisions::addObjectCollisionPlanes(object, editor.objectCollisionPlanes, asset.hitboxScale, asset.hitboxOffset);
+  // Rebuild static and dynamic gameplay collision planes
+  {
+    for (auto& platform : objects("platform")) {
+      Collisions::addObjectCollisionPlanes(platform, state.collisionPlanes);
     }
+
+    World::rebuildDynamicCollisionPlanes(context, state);
   }
 
-  for (auto& sphere : objects("light-sphere")) {
-    Collisions::addObjectCollisionPlanes(sphere, editor.lightCollisionPlanes);
+  // Rebuild editor collision planes (objects + lights)
+  {
+    for (auto& asset : GameMeshes::meshAssets) {
+      for (auto& object : mesh(asset.name)->objects) {
+        Collisions::addObjectCollisionPlanes(object, editor.objectCollisionPlanes, asset.hitboxScale, asset.hitboxOffset);
+      }
+    }
+
+    for (auto& sphere : objects("light-sphere")) {
+      Collisions::addObjectCollisionPlanes(sphere, editor.lightCollisionPlanes);
+    }
   }
 
   u32 total = state.collisionPlanes.size() + editor.objectCollisionPlanes.size() + editor.lightCollisionPlanes.size();
@@ -288,6 +297,7 @@ internal void cycleEditorMode(GmContext* context, s8 delta) {
   if (editor.mode == EditorMode::COLLISION_PLANES) {
     // When entering COLLISION_PLANES mode, ensure that collision planes are visible
     mesh("platform")->disabled = false;
+    mesh("dynamic_collision_box")->disabled = false;
   }
 
   if (editor.mode == EditorMode::OBJECTS) {
@@ -1080,6 +1090,7 @@ namespace Editor {
         !input.isKeyHeld(Key::SHIFT)
       ) {
         toggle_mesh("platform");
+        toggle_mesh("dynamic_collision_box");
 
         if (state.isEditorEnabled) {
           editor.currentActionType = ActionType::POSITION;
@@ -1218,7 +1229,10 @@ namespace Editor {
                 Object* object = nullptr;
               #endif
 
-              if (object != nullptr) {
+              if (
+                object != nullptr &&
+                context->scene.meshes[object->_record.meshIndex]->name != "dynamic_collision_box"
+              ) {
                 observeObject(context, *object);
 
                 closestDistance = distance;
@@ -1392,6 +1406,7 @@ namespace Editor {
             point_camera_at(selectedObject);
           }
 
+          // SHIFT + C
           if (input.didPressKey(Key::C)) {
             // Create a new collision plane aligned with the selected object
             Vec3f hitboxScale = GameMeshes::meshAssets[editor.currentSelectedMeshIndex].hitboxScale;

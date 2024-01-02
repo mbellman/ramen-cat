@@ -15,14 +15,13 @@ struct Platform {
   Vec3f color;
 };
 
-internal void loadCollisionPlanes(GmContext* context, GameState& state, const std::string& levelName) {
+internal void loadStaticCollisionPlanes(GmContext* context, GameState& state, const std::string& levelName) {
   u64 start = Gm_GetMicroseconds();
 
   // @todo eventually store as binary data
   auto worldData = Gm_LoadFileContents("./game/levels/" + levelName + "/data_collision_planes.txt");
   auto lines = Gm_SplitString(worldData, "\n");
 
-  state.collisionPlanes.clear();
   objects("platform").reset();
 
   for (auto& line : lines) {
@@ -49,7 +48,7 @@ internal void loadCollisionPlanes(GmContext* context, GameState& state, const st
   Console::log("Loaded collision planes in", Gm_GetMicroseconds() - start, "us");
 }
 
-internal void loadWorldObjects(GmContext* context, const std::string& levelName) {
+internal void loadWorldObjects(GmContext* context, GameState& state, const std::string& levelName) {
   u64 start = Gm_GetMicroseconds();
 
   // @todo eventually store as binary data
@@ -671,8 +670,12 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
 
   // Global meshes
   {
+    // @todo rename static_collision_box, increase total instances
     add_mesh("platform", 1000, Mesh::Cube());
     mesh("platform")->disabled = true;
+
+    add_mesh("dynamic_collision_box", 10000, Mesh::Cube());
+    mesh("dynamic_collision_box")->disabled = true;
 
     add_mesh("player", 1, Mesh::Model("./game/assets/cat.obj"));
     mesh("player")->texture = "./game/assets/cat.png";
@@ -750,6 +753,25 @@ void World::rebuildDynamicMeshes(GmContext* context) {
   rebuildWindTurbines(context);
 }
 
+void World::rebuildDynamicCollisionPlanes(GmContext* context, GameState& state) {
+  objects("dynamic_collision_box").reset();
+
+  for (auto& cube : objects("cube")) {
+    auto& box = create_object_from("dynamic_collision_box");
+
+    box.position = cube.position;
+    box.rotation = cube.rotation;
+    box.scale = cube.scale;
+    box.color = Vec3f(0.5f, 0.5f, 1.f);
+
+    commit(box);
+  }
+
+  for (auto& box : objects("dynamic_collision_box")) {
+    Collisions::addObjectCollisionPlanes(box, state.collisionPlanes);
+  }
+}
+
 void World::loadLevel(GmContext* context, GameState& state, const std::string& levelName) {
   unloadCurrentLevel(context, state);
 
@@ -787,13 +809,14 @@ void World::loadLevel(GmContext* context, GameState& state, const std::string& l
     }
   }
 
-  loadCollisionPlanes(context, state, levelName);
-  loadWorldObjects(context, levelName);
+  loadStaticCollisionPlanes(context, state, levelName);
+  loadWorldObjects(context, state, levelName);
   loadLights(context, levelName);
   loadNpcData(context, state, levelName);
   loadEntityData(context, state, levelName);
 
   World::rebuildDynamicMeshes(context);
+  World::rebuildDynamicCollisionPlanes(context, state);
 
   // Save initial reference copies of moving objects
   {

@@ -25,6 +25,7 @@ internal bool isInBetween(float n, float a, float b) {
   return n >= min(a, b) && n <= max(a, b);
 }
 
+// @todo rename addObjectBoundingBoxCollisionPlanes (or similar)
 void Collisions::addObjectCollisionPlanes(const Object& object, std::vector<Plane>& planes, const Vec3f& hitboxScale, const Vec3f& hitboxOffset) {
   Matrix4f rotation = object.rotation.toMatrix4f();
   Vec3f adjustedScale = object.scale * hitboxScale;
