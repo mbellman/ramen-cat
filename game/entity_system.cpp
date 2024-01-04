@@ -624,21 +624,6 @@ internal void handleJetstreams(GmContext* context, GameState& state, float dt) {
   }
 }
 
-internal void handleOcean(GmContext* context) {
-  auto& camera = get_camera();
-  auto& ocean = objects("ocean")[0];
-  auto& floor = objects("ocean-floor")[0];
-
-  ocean.position.x = camera.position.x;
-  floor.position.x = camera.position.x;
-
-  ocean.position.z = camera.position.z;
-  floor.position.z = camera.position.z;
-
-  commit(ocean);
-  commit(floor);
-}
-
 internal void handleToriiGates(GmContext* context, GameState& state) {
   auto& player = get_player();
 
@@ -897,6 +882,21 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   handleGlider(context, state);
 
   LOG_TIME();
+}
+
+void EntitySystem::handleOcean(GmContext* context) {
+  auto& camera = get_camera();
+  auto& ocean = objects("ocean")[0];
+  auto& floor = objects("ocean-floor")[0];
+
+  ocean.position.x = camera.position.x;
+  floor.position.x = camera.position.x;
+
+  ocean.position.z = camera.position.z;
+  floor.position.z = camera.position.z;
+
+  commit(ocean);
+  commit(floor);
 }
 
 bool EntitySystem::isInteractingWithEntity(GmContext* context, GameState& state) {

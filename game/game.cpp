@@ -147,6 +147,7 @@ void updateGame(GmContext* context, GameState& state, float dt) {
   // @todo check in dev mode only
   if (state.isEditorEnabled) {
     Editor::handleGameEditor(context, state, dt);
+    EntitySystem::handleOcean(context);
 
     // Update our 'altitude' parameter so height-based lighting changes take effect in the editor
     context->scene.sky.altitude = get_camera().position.y - OCEAN_PLANE_Y_POSITION;
