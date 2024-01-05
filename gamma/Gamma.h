@@ -10,6 +10,7 @@
 #include "system/entities.h"
 #include "system/file.h"
 #include "system/flags.h"
+#include "system/immediate_ui.h"
 #include "system/macros.h"
 #include "system/random.h"
 #include "system/scene.h"

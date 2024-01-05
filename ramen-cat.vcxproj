@@ -152,6 +152,7 @@
     <ClCompile Include="gamma\system\entities.cpp" />
     <ClCompile Include="gamma\system\file.cpp" />
     <ClCompile Include="gamma\system\flags.cpp" />
+    <ClCompile Include="gamma\system\immediate_ui.cpp" />
     <ClCompile Include="gamma\system\InputSystem.cpp" />
     <ClCompile Include="gamma\system\ObjectPool.cpp" />
     <ClCompile Include="gamma\system\ObjLoader.cpp" />
@@ -297,6 +298,7 @@
     <ClInclude Include="gamma\system\entities.h" />
     <ClInclude Include="gamma\system\file.h" />
     <ClInclude Include="gamma\system\flags.h" />
+    <ClInclude Include="gamma\system\immediate_ui.h" />
     <ClInclude Include="gamma\system\InputSystem.h" />
     <ClInclude Include="gamma\system\macros.h" />
     <ClInclude Include="gamma\system\ObjectPool.h" />

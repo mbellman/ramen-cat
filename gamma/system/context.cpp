@@ -12,11 +12,15 @@
 #include "system/context.h"
 #include "system/file.h"
 #include "system/flags.h"
+#include "system/immediate_ui.h"
 #include "system/scene.h"
 
 using namespace Gamma;
 
 #define String(value) std::to_string(value)
+
+SDL_Surface* consoleOuterFrame = nullptr;
+SDL_Surface* consoleInnerFrame = nullptr;
 
 static void Gm_DisplayDevtools(GmContext* context) {
   using namespace Gamma;
@@ -85,6 +89,9 @@ static void Gm_DisplayDevtools(GmContext* context) {
 
     // Display console messages
     {
+      renderer.renderSurface(consoleOuterFrame, 25, window.size.height - 155, consoleOuterFrame->w, consoleOuterFrame->h, Vec3f(1.f), Vec4f(0.f));
+      renderer.renderSurface(consoleInnerFrame, 30, window.size.height - 150, consoleInnerFrame->w, consoleInnerFrame->h, Vec3f(1.f), Vec4f(0.f));
+
       auto* message = Console::getFirstMessage();
       u8 messageIndex = 0;
 
@@ -92,7 +99,7 @@ static void Gm_DisplayDevtools(GmContext* context) {
       while (message != nullptr) {
         auto color = message->warning ? Vec3f(0.8f, 0, 0) : Vec3f(1.f);
 
-        renderer.renderText(font_sm, message->text.c_str(), 25, window.size.height - 150 + (messageIndex++) * 25, color);
+        renderer.renderText(font_sm, message->text.c_str(), 35, window.size.height - 150 + (messageIndex++) * 25, color);
 
         message = message->next;
       }
@@ -134,6 +141,9 @@ GmContext* Gm_CreateContext() {
 
   context->window.font_sm = TTF_OpenFont("./fonts/OpenSans-Regular.ttf", 16);
   context->window.font_lg = TTF_OpenFont("./fonts/OpenSans-Regular.ttf", 22);
+
+  consoleOuterFrame = Gm_CreateRectangle(1010, 135, 0xFFFFFF55);
+  consoleInnerFrame = Gm_CreateRectangle(1000, 125, 0x2233AAAA);
 
   return context;
 }
@@ -276,6 +286,9 @@ void Gm_DestroyContext(GmContext* context) {
   TTF_CloseFont(context->window.font_sm);
   TTF_CloseFont(context->window.font_lg);
   TTF_Quit();
+
+  SDL_FreeSurface(consoleOuterFrame);
+  SDL_FreeSurface(consoleInnerFrame);
 
   SDL_DestroyWindow(context->window.sdl_window);
   SDL_Quit();
