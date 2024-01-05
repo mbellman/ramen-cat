@@ -1092,6 +1092,12 @@ namespace Editor {
         toggle_mesh("platform");
         toggle_mesh("dynamic_collision_box");
 
+        if (mesh("dynamic_collision_box")->disabled) {
+          Console::log("Collision viewer disabled");
+        } else {
+          Console::log("Collision viewer enabled");
+        }
+
         if (state.isEditorEnabled) {
           editor.currentActionType = ActionType::POSITION;
 

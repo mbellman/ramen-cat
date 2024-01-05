@@ -142,8 +142,8 @@ GmContext* Gm_CreateContext() {
   context->window.font_sm = TTF_OpenFont("./fonts/OpenSans-Regular.ttf", 16);
   context->window.font_lg = TTF_OpenFont("./fonts/OpenSans-Regular.ttf", 22);
 
-  consoleOuterFrame = Gm_CreateRectangle(1010, 135, 0xFFFFFF55);
-  consoleInnerFrame = Gm_CreateRectangle(1000, 125, 0x2233AAAA);
+  consoleOuterFrame = Gm_CreateRectangle(810, 135, 0xFFFFFF55);
+  consoleInnerFrame = Gm_CreateRectangle(800, 125, 0x2233AAAA);
 
   return context;
 }

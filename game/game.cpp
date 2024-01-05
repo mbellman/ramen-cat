@@ -74,6 +74,10 @@ internal void initializeInputHandlers(GmContext* context, GameState& state) {
       if (key == Key::T) {
         Gm_ToggleFlag(GammaFlags::ENABLE_DEV_TOOLS);
       }
+
+      if (key == Key::B) {
+        Gm_ToggleFlag(GammaFlags::ENABLE_DEV_BUFFERS);
+      }
     #endif
   });
 
@@ -82,8 +86,10 @@ internal void initializeInputHandlers(GmContext* context, GameState& state) {
       if (key == Key::E) {
         if (state.isEditorEnabled) {
           Editor::disableGameEditor(context, state);
+          Console::log("Exiting editor mode");
         } else {
           Editor::enableGameEditor(context, state);
+          Console::log("Entering editor mode");
         }
       }
 
