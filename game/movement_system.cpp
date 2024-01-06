@@ -216,22 +216,24 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
     rate *= 0.05f;
   }
 
-  if (input.isKeyHeld(Key::W)) {
-    acceleration += forward * rate;
-  }
+  if (time_since(state.lastLedgeTurnaroundTime) > 0.5f) {    
+    if (input.isKeyHeld(Key::W)) {
+      acceleration += forward * rate;
+    }
 
-  if (input.isKeyHeld(Key::S)) {
-    // @todo fix player model orientation
-    acceleration += forward.invert() * rate;
-  }
+    if (input.isKeyHeld(Key::S)) {
+      // @todo fix player model orientation
+      acceleration += forward.invert() * rate;
+    }
 
-  if (input.isKeyHeld(Key::A)) {
-    acceleration += left * rate;
-  }
+    if (input.isKeyHeld(Key::A)) {
+      acceleration += left * rate;
+    }
 
-  if (input.isKeyHeld(Key::D)) {
-    // @todo fix player model orientation
-    acceleration += left.invert() * rate;
+    if (input.isKeyHeld(Key::D)) {
+      // @todo fix player model orientation
+      acceleration += left.invert() * rate;
+    }
   }
 
   // Directional change handling/turn factor determination
@@ -550,6 +552,14 @@ namespace MovementSystem {
         state.lastHardLandingPosition = player.position - Vec3f(0, PLAYER_RADIUS * 0.5f, 0);
         state.lastHardLandingTime = get_scene_time();
       }
+    }
+
+    if (state.wasOnSolidGroundLastFrame && !state.isOnSolidGround && time_since(state.lastJumpTime) > 0.1f) {
+      player.position = state.lastSolidGroundPosition;
+
+      state.velocity.x *= -1.f * 0.5f;
+      state.velocity.z *= -1.f * 0.5f;
+      state.lastLedgeTurnaroundTime = get_scene_time();
     }
 
     if (state.isOnSolidGround && !state.isMovingPlayerThisFrame) {

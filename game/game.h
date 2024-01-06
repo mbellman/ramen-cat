@@ -81,6 +81,7 @@ struct GameState {
   float lastWallKickTime = 0.f;
   float lastAirDashTime = 0.f;
   float lastHardLandingTime = 0.f;
+  float lastLedgeTurnaroundTime = 0.f;
   float lastGroundParticleSpawnTime = 0.f;
   float lastAirParticleSpawnTime = 0.f;
   float lastGliderChangeTime = 0.f;

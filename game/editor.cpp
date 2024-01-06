@@ -790,6 +790,9 @@ internal void respawnPlayer(GmContext* context, GameState& state) {
   // Prevent respawning in a lower area from erroneously
   // triggering fall position reset behavior
   state.lastTimeOnSolidGround = get_context_time();
+  // Prevent triggering 'ledge turnaround' behavior in case
+  // we respawn in midair after being on solid ground
+  state.wasOnSolidGroundLastFrame = false;
 }
 
 internal void handleColorCommand(GmContext* context, const std::string& command) {
