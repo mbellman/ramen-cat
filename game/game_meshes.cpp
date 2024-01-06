@@ -29,6 +29,31 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
   },
 
   /**
+   * Buildings
+   * ---------
+   */
+  {
+    .name = "b1",
+    .hitboxScale = Vec3f(1.f, 1.5f, 1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/building-1.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    }
+  },
+  {
+    .name = "cylinder-tower",
+    .hitboxScale = Vec3f(0.2f, 1.f, 0.2f),
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/cylinder-tower.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    }
+  },
+
+  /**
    * Lights
    * ------
    */
