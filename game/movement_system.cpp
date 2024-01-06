@@ -478,7 +478,10 @@ namespace MovementSystem {
 
     START_TIMING("handlePlayerMovementInput");
 
-    if (get_input().didPressKey(Key::SHIFT)) {
+    if (
+      get_input().didPressKey(Key::SHIFT) &&
+      !state.isOnSolidGround
+    ) {
       state.isGliding = !state.isGliding;
       state.lastGliderChangeTime = get_scene_time();
     }
