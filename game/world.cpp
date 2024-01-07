@@ -788,10 +788,12 @@ void World::loadLevel(GmContext* context, GameState& state, const std::string& l
 
     if (levelSettingsFunctionMap.find(levelName) != levelSettingsFunctionMap.end()) {
       auto applyLevelSettings = levelSettingsFunctionMap.at(levelName);
+      auto& player = get_player();
 
       applyLevelSettings(context, state);
 
-      state.previousPlayerPosition = get_player().position;
+      state.previousPlayerPosition = player.position;
+      state.levelSpawnPosition = player.position;
     }
   }
 

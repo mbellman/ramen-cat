@@ -126,11 +126,24 @@ void initializeGame(GmContext* context, GameState& state) {
   EffectsSystem::initializeGameEffects(context, state);
   UISystem::initializeUI(context, state);
 
+  // @todo we already do this in loadLevel(); is this needed here?
+  state.previousPlayerPosition = get_player().position;
+
   #if GAMMA_DEVELOPER_MODE
     Editor::initializeGameEditor(context, state);
-  #endif
 
-  state.previousPlayerPosition = get_player().position;
+    auto& player = get_player();
+
+    // Allow resetting to the original level spawn position with R
+    get_input().on<Key>("keystart", [&](Key key) {
+      if (!state.isEditorEnabled && key == Key::R) {
+        player.position = state.levelSpawnPosition;
+
+        state.velocity = Vec3f(0.f);
+        state.previousPlayerPosition = state.levelSpawnPosition;
+      }
+    });
+  #endif
 
   // Set title screen position
   // @todo do this per-level
