@@ -191,7 +191,7 @@ namespace Gamma {
     renderPostEffects();
 
     #if GAMMA_DEVELOPER_MODE
-      if (Gm_IsFlagEnabled(GammaFlags::ENABLE_DEV_TOOLS) && Gm_IsFlagEnabled(GammaFlags::ENABLE_DEV_BUFFERS)) {
+      if (Gm_IsFlagEnabled(GammaFlags::ENABLE_DEV_BUFFERS)) {
         renderDevBuffers();
       }
     #endif

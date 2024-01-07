@@ -86,8 +86,6 @@ vec3 getNormal(vec3 world_position) {
   n += vec2(simplex_noise(vec2(t * 0.1 - wx * 0.0005, t * 0.1 - wz * 0.0005))) * 0.3;
   n += vec2(simplex_noise(vec2(t * 0.1 + wx * 0.002, t * 0.1 - wz * 0.002))) * 0.2;
 
-  n *= 0.5 + 0.5 * pow(distance(world_position, cameraPosition) / zFar, 1.0 / 5.0);
-
   vec3 n_normal = normalize(fragNormal);
   vec3 n_tangent = normalize(fragTangent);
   vec3 n_bitangent = normalize(fragBitangent);
@@ -255,7 +253,7 @@ void main() {
   float s = simplex_noise(vec2(wx * 0.00001, wz * 0.00001));
   float s2 = simplex_noise(vec2(wx * 0.000013, wz * 0.000013));
 
-  ocean_color += vec3(0.1 * s, 0.8 * s, 0.5 * s2) * 0.2;
+  ocean_color += vec3(0.1 * s, 0.8 * s, 0.5 * s2) * 0.3;
 
   out_color_and_depth = vec4(ocean_color, gl_FragCoord.z);
 }
