@@ -4,7 +4,6 @@
 namespace Gamma {
   static u32 internalFlags =
     GammaFlags::ENABLE_DENOISING |
-    GammaFlags::ENABLE_DEV_BUFFERS |
     GammaFlags::ENABLE_DEV_TOOLS |
     GammaFlags::RENDER_REFLECTIONS |
     GammaFlags::RENDER_REFRACTIVE_GEOMETRY |
