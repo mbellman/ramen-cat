@@ -534,6 +534,12 @@ namespace Gamma {
       if (glMesh->isMeshType(MeshType::DEFAULT)) {
         auto& mesh = *glMesh->getSourceMesh();
 
+        if (mesh.silhouette) {
+          glStencilMask(MeshType::SILHOUETTE);
+        } else {
+          glStencilMask(MeshType::DEFAULT);
+        }
+
         shaders.geometry.setBool("hasTexture", glMesh->hasTexture());
         shaders.geometry.setBool("hasNormalMap", glMesh->hasNormalMap());
         shaders.geometry.setBool("useCloseTranslucency", mesh.useCloseTranslucency);
@@ -1423,8 +1429,8 @@ namespace Gamma {
   void OpenGLRenderer::renderSilhouettes() {
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
-    glDisable(GL_STENCIL_TEST);
     glDepthFunc(GL_GREATER);
+    glStencilFunc(GL_LESS, MeshType::SILHOUETTE, 0xFF);
 
     shaders.silhouette.use();
 
@@ -1440,7 +1446,6 @@ namespace Gamma {
 
     glDisable(GL_CULL_FACE);
     glDisable(GL_DEPTH_TEST);
-    glEnable(GL_STENCIL_TEST);
     glDepthFunc(GL_LESS);
   }
 

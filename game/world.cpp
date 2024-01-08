@@ -683,6 +683,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
     mesh("player")->emissivity = 0.3f;
     mesh("player")->useMipmaps = false;
     mesh("player")->useCloseTranslucency = true;
+    mesh("player")->silhouette = true;
 
     add_mesh("glider", 1, Mesh::Model("./game/assets/glider.obj"));
     mesh("glider")->roughness = 0.4f;

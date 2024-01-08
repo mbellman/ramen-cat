@@ -106,6 +106,10 @@ namespace Gamma {
      */
     REFRACTIVE = 0xF0,
     /**
+     * @todo description
+     */
+    SILHOUETTE = 0xF1,
+    /**
      * Defines Meshes which reflect surrounding geometry in
      * screen space, or the sky where geometry is not reflected.
      */
