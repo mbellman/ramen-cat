@@ -60,12 +60,12 @@ vec3 getDepthOfFieldColor(vec3 current_out_color, vec2 uv, float linear_frag_dep
 vec3 getAtmosphericsColor(vec3 current_out_color, vec2 uv, float frag_depth, float linear_frag_depth, vec3 world_position) {
   // @todo make configurable
   const float atmosphere_density = 1.5;
+  const float max_atmosphere_altitude = 20000.0;
+  const float horizon_altitude = -2000.0;
 
   vec3 sky_position = getWorldPosition(1.0, uv, matInverseProjection, matInverseView) - cameraPosition;
   vec3 sky_direction = normalize(sky_position);
 
-  // @todo make configurable
-  const float horizon_altitude = -2000.0;
   float altitude_above_horizon = cameraPosition.y - horizon_altitude;
   vec2 horizon_direction_2d = normalize(vec2(zFar, -altitude_above_horizon));
   vec2 sky_direction_2d = normalize(vec2(length(sky_direction.xz), sky_direction.y));
@@ -73,11 +73,11 @@ vec3 getAtmosphericsColor(vec3 current_out_color, vec2 uv, float frag_depth, flo
   float depth_divisor = frag_depth == 1.0 ? zFar : zFar * 0.85;
   float frag_distance = frag_depth == 1.0 ? linear_frag_depth : distance(world_position, cameraPosition);
   float frag_depth_ratio = frag_distance / depth_divisor;
-  float atmosphere_altitude_thickness = max(frag_depth_ratio, saturate(1 - world_position.y / 20000.0));
-  float atmosphere_intensity = pow(max(frag_depth_ratio, (cameraPosition.y - horizon_altitude) / 200000.0), 1.0 / atmosphere_density);
+  float atmosphere_altitude_thickness = max(frag_depth_ratio, saturate(1 - world_position.y / max_atmosphere_altitude));
+  float atmosphere_intensity = pow(frag_depth_ratio, 1.0 / atmosphere_density);
   float atmosphere_factor = atmosphere_altitude_thickness * atmosphere_intensity;
 
-  atmosphere_factor *= sky_direction_2d.y < horizon_direction_2d.y ? 1.0 : pow(dot(sky_direction_2d, horizon_direction_2d), 100);
+  atmosphere_factor *= sky_direction_2d.y < horizon_direction_2d.y ? 1.0 : pow(dot(sky_direction_2d, horizon_direction_2d), 20);
   atmosphere_factor = atmosphere_factor > 1 ? 1 : atmosphere_factor;
   atmosphere_factor = isnan(atmosphere_factor) ? 0 : atmosphere_factor;
 

@@ -78,4 +78,4 @@ constexpr static float DASH_PARTICLE_SIZE = 3.5f;
 constexpr static u16 TOTAL_TORII_GATE_ZONE_PARTICLES = 500;
 constexpr static float TORII_GATE_ZONE_PARTICLE_SIZE = 10.f;
 
-constexpr static float INITIAL_DAY_NIGHT_CYCLE_TIME = 1.5f;
+constexpr static float INITIAL_DAY_NIGHT_CYCLE_TIME = 2.f;
