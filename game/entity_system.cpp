@@ -466,7 +466,7 @@ internal void handleWindmillWheels(GmContext* context, GameState& state, float d
   for_moving_objects("windmill-wheel", {
     auto rotationAxis = initial.rotation.getDirection();
     // Rotate larger windmill wheels more slowly
-    float scaleRatio = Gm_Clampf(initial.scale.magnitude() / 500.f, 0.f, 1.f);
+    float scaleRatio = Gm_Clampf(initial.scale.magnitude() / 1000.f, 0.f, 1.f);
     float rotationSpeedFactor = Gm_Lerpf(2.f, 0.2f, scaleRatio);
     float angle = rotationSpeedFactor * get_scene_time();
 
