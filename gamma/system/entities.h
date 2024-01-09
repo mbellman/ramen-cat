@@ -106,9 +106,12 @@ namespace Gamma {
      */
     REFRACTIVE = 0xF0,
     /**
-     * @todo description
+     * Defines standard Meshes which should render silhouettes
+     * when occluded by other geometry. We set this value as
+     * lower than all other opaque mesh types so that we can
+     * render silhouetted objects "behind" them.
      */
-    SILHOUETTE = 0xF1,
+    DEFAULT_WITH_OCCLUSION_SILHOUETTE = 0xF1,
     /**
      * Defines Meshes which reflect surrounding geometry in
      * screen space, or the sky where geometry is not reflected.
@@ -266,11 +269,6 @@ namespace Gamma {
      * to shadow maps, enabling them to cast shadows.
      */
     bool canCastShadows = true;
-    /**
-     * Controls whether the mesh instances should render silhouettes
-     * when occluded by other geometry.
-     */
-    bool silhouette = false;
     /**
      * Controls whether we should use mipmaps for the mesh textures.
      */

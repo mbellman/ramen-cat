@@ -284,7 +284,6 @@ internal void copyMeshAttributes(Mesh& mesh, const MeshAttributes& attributes) {
   mesh.emissivity = attributes.emissivity;
   mesh.roughness = attributes.roughness;
   mesh.canCastShadows = attributes.canCastShadows;
-  mesh.silhouette = attributes.silhouette;
   mesh.useMipmaps = attributes.useMipmaps;
   mesh.useCloseTranslucency = attributes.useCloseTranslucency;
   mesh.useXzPlaneTexturing = attributes.useXzPlaneTexturing;
@@ -678,12 +677,12 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
     mesh("dynamic_collision_box")->disabled = true;
 
     add_mesh("player", 1, Mesh::Model("./game/assets/cat.obj"));
+    mesh("player")->type = MeshType::DEFAULT_WITH_OCCLUSION_SILHOUETTE;
     mesh("player")->texture = "./game/assets/cat.png";
     mesh("player")->roughness = 0.9f;
     mesh("player")->emissivity = 0.3f;
     mesh("player")->useMipmaps = false;
     mesh("player")->useCloseTranslucency = true;
-    mesh("player")->silhouette = true;
 
     add_mesh("glider", 1, Mesh::Model("./game/assets/glider.obj"));
     mesh("glider")->roughness = 0.4f;

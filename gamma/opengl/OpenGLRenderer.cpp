@@ -331,9 +331,7 @@ namespace Gamma {
           ctx.hasRefractiveObjects = true;
         } else if (mesh.type == MeshType::OCEAN) {
           ctx.hasOceanObjects = true;
-        }
-
-        if (mesh.silhouette) {
+        } else if (mesh.type == MeshType::DEFAULT_WITH_OCCLUSION_SILHOUETTE) {
           ctx.hasSilhouetteObjects = true;
         }
       }
@@ -528,26 +526,35 @@ namespace Gamma {
     }
 
     // Render objects of the default mesh type
-    glStencilMask(MeshType::DEFAULT);
+    #define render_default_mesh()\
+      shaders.geometry.setBool("hasTexture", glMesh->hasTexture());\
+      shaders.geometry.setBool("hasNormalMap", glMesh->hasNormalMap());\
+      shaders.geometry.setBool("useCloseTranslucency", mesh.useCloseTranslucency);\
+      shaders.geometry.setBool("useXzPlaneTexturing", mesh.useXzPlaneTexturing);\
+      shaders.geometry.setFloat("emissivity", mesh.emissivity);\
+      shaders.geometry.setFloat("roughness", mesh.roughness);\
+      glMesh->render(ctx.primitiveMode)\
+
+    // Render silhouettes first, since rendering them second would not affect
+    // stencil buffer pixels already written with 0xFF (MeshType::DEFAULT)
+    glStencilMask(MeshType::DEFAULT_WITH_OCCLUSION_SILHOUETTE);
 
     for (auto* glMesh : glMeshes) {
-      if (glMesh->isMeshType(MeshType::DEFAULT)) {
-        auto& mesh = *glMesh->getSourceMesh();
+      auto& mesh = *glMesh->getSourceMesh();
 
-        if (mesh.silhouette) {
-          glStencilMask(MeshType::SILHOUETTE);
-        } else {
-          glStencilMask(MeshType::DEFAULT);
-        }
+      if (mesh.type == MeshType::DEFAULT_WITH_OCCLUSION_SILHOUETTE) {
+        render_default_mesh();
+      }
+    }
 
-        shaders.geometry.setBool("hasTexture", glMesh->hasTexture());
-        shaders.geometry.setBool("hasNormalMap", glMesh->hasNormalMap());
-        shaders.geometry.setBool("useCloseTranslucency", mesh.useCloseTranslucency);
-        shaders.geometry.setBool("useXzPlaneTexturing", mesh.useXzPlaneTexturing);
-        shaders.geometry.setFloat("emissivity", mesh.emissivity);
-        shaders.geometry.setFloat("roughness", mesh.roughness);
+    // Render non-silhouettes last
+    glStencilMask(MeshType::DEFAULT);
 
-        glMesh->render(ctx.primitiveMode);
+    for (auto* glMesh : glMeshes) {      
+      auto& mesh = *glMesh->getSourceMesh();
+
+      if (mesh.type == MeshType::DEFAULT) {
+        render_default_mesh();
       }
     }
 
@@ -575,6 +582,7 @@ namespace Gamma {
       }
     }
 
+    // Render probe reflectors
     // @todo use ctx.hasProbeReflectors
     // @todo render probe reflectors, sans reflections, within probe cubemaps
     if (areProbesRendered) {
@@ -1430,7 +1438,7 @@ namespace Gamma {
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_GREATER);
-    glStencilFunc(GL_LESS, MeshType::SILHOUETTE, 0xFF);
+    glStencilFunc(GL_LESS, MeshType::DEFAULT_WITH_OCCLUSION_SILHOUETTE, 0xFF);
 
     shaders.silhouette.use();
 
@@ -1439,7 +1447,7 @@ namespace Gamma {
     shaders.silhouette.setInt("meshTexture", 0);
 
     for (auto* glMesh : glMeshes) {
-      if (glMesh->getSourceMesh()->silhouette) {
+      if (glMesh->getSourceMesh()->type == MeshType::DEFAULT_WITH_OCCLUSION_SILHOUETTE) {
         glMesh->render(ctx.primitiveMode);
       }
     }
