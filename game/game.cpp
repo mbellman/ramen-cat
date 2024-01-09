@@ -328,6 +328,10 @@ void updateGame(GmContext* context, GameState& state, float dt) {
     player.rotation *= Quaternion::fromAxisAngle(player.rotation.getLeftDirection(), -alpha);
   }
 
+  // @hack position player slightly higher to avoid feet clipping into the ground.
+  // This is purely a cosmetic technique to minimize silhouetting at the base.
+  player.position += Vec3f(0, 1.f, 0);
+
   // Commit any changes to the player object
   commit(player);
 
