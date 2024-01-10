@@ -553,6 +553,28 @@ internal void rebuildDynamicBuildings(GmContext* context) {
 
     commit(frame);
   }
+
+  objects("b2-base").reset();
+  objects("b2-levels").reset();
+  objects("b2-columns").reset();
+
+  for (auto& b : objects("b2")) {
+    auto& base = create_object_from("b2-base");
+    auto& levels = create_object_from("b2-levels");
+    auto& columns = create_object_from("b2-columns");
+
+    base.position = levels.position = columns.position = b.position;
+    base.scale = levels.scale = columns.scale = b.scale;
+    base.rotation = levels.rotation = columns.rotation = b.rotation;
+
+    base.color = Vec3f::lerp(b.color.toVec3f(), Vec3f(1.f), 0.5f);
+    levels.color = Vec3f(1.f);
+    columns.color = b.color;
+
+    commit(base);
+    commit(levels);
+    commit(columns);
+  }
 }
 
 internal void rebuildAcUnitFans(GmContext* context) {
