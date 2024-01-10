@@ -72,6 +72,17 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .maxCascade = 4
     }
   },
+    {
+    .name = "wood-tower",
+    .defaultColor = Vec3f(1.f, 0.8f, 0.4f),
+    .hitboxScale = Vec3f(1.f, 1.2f, 1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/wood-tower.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    }
+  },
   {
     .name = "cylinder-tower",
     .hitboxScale = Vec3f(0.2f, 1.f, 0.2f),
