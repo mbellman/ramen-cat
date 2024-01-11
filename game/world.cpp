@@ -489,8 +489,9 @@ internal void rebuildElectricalPoleWires(GmContext* context) {
   #endif
 }
 
+// @todo allow dynamic meshes to define their own parts,
+// and behavior for generating parts
 internal void rebuildDynamicBuildings(GmContext* context) {
-  // @todo generalize this
   objects("building-1-body").reset();
   objects("building-1-frame").reset();
 
@@ -512,7 +513,6 @@ internal void rebuildDynamicBuildings(GmContext* context) {
     commit(frame);
   }
 
-  // @todo generalize this
   objects("yuki-building-1-frame").reset();
 
   for (auto& building : objects("yuki-building-1")) {
@@ -526,7 +526,6 @@ internal void rebuildDynamicBuildings(GmContext* context) {
     commit(frame);
   }
 
-  // @todo generalize this
   objects("yuki-building-2-frame").reset();
 
   for (auto& building : objects("yuki-building-2")) {
@@ -540,7 +539,6 @@ internal void rebuildDynamicBuildings(GmContext* context) {
     commit(frame);
   }
 
-  // @todo generalize this
   objects("yuki-building-3-frame").reset();
 
   for (auto& building : objects("yuki-building-3")) {
@@ -562,6 +560,28 @@ internal void rebuildDynamicBuildings(GmContext* context) {
     auto& base = create_object_from("b2-base");
     auto& levels = create_object_from("b2-levels");
     auto& columns = create_object_from("b2-columns");
+
+    base.position = levels.position = columns.position = b.position;
+    base.scale = levels.scale = columns.scale = b.scale;
+    base.rotation = levels.rotation = columns.rotation = b.rotation;
+
+    base.color = Vec3f::lerp(b.color.toVec3f(), Vec3f(1.f), 0.5f);
+    levels.color = Vec3f(1.f);
+    columns.color = b.color;
+
+    commit(base);
+    commit(levels);
+    commit(columns);
+  }
+
+  objects("b3-base").reset();
+  objects("b3-levels").reset();
+  objects("b3-columns").reset();
+
+  for (auto& b : objects("b3")) {
+    auto& base = create_object_from("b3-base");
+    auto& levels = create_object_from("b3-levels");
+    auto& columns = create_object_from("b3-columns");
 
     base.position = levels.position = columns.position = b.position;
     base.scale = levels.scale = columns.scale = b.scale;

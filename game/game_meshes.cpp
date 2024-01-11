@@ -55,9 +55,10 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
   },
   {
     .name = "b3",
+    .dynamic = true,
     .hitboxScale = Vec3f(1.f, 1.2f, 1.f),
     .create = []() {
-      return Mesh::Model("./game/assets/buildings/building-3.obj");
+      return Mesh::Model("./game/assets/buildings/b3-base.obj");
     },
     .attributes = {
       .maxCascade = 4
@@ -1257,7 +1258,7 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
     }
   },
 
-  // Building pieces
+  // b2
   {
     .name = "b2-base",
     .create = []() {
@@ -1280,6 +1281,35 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
     .name = "b2-columns",
     .create = []() {
       return Mesh::Model("./game/assets/buildings/b2-columns.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    }
+  },
+
+  // b3
+  {
+    .name = "b3-base",
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/b3-base.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    }
+  },
+  {
+    .name = "b3-levels",
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/b3-levels.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    }
+  },
+  {
+    .name = "b3-columns",
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/b3-columns.obj");
     },
     .attributes = {
       .maxCascade = 4
