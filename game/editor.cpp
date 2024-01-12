@@ -992,6 +992,10 @@ namespace Editor {
   void enableGameEditor(GmContext* context, GameState& state) {
     state.isEditorEnabled = true;
 
+    // Reset free camera motion to avoid residual deceleration from occuring
+    // (e.g. exiting the editor when still decelerating in free camera mode)
+    context->scene.freeCameraVelocity = Vec3f(0.f);
+
     if (mesh(GameMeshes::meshAssets[0].name)->disabled) {
       if (mesh("platform")->disabled) {
         // If game meshes and collision plane meshes are disabled,
@@ -1395,6 +1399,9 @@ namespace Editor {
           auto selectedObjectDistance = selectedObjectToCamera.magnitude();
 
           smoothly_point_camera_at(selectedObject, 25.f * dt);
+
+          // Zero out free camera motion so we don't resume deceleration when releasing SHIFT
+          context->scene.freeCameraVelocity = Vec3f(0.f);
 
           // @todo create_object_third_person_camera(object)
           ThirdPersonCamera objectCamera;

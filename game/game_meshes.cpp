@@ -27,6 +27,16 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .maxCascade = 4
     }
   },
+  {
+    .name = "cylinder",
+    .create = []() {
+      // @todo Mesh::Cylinder()
+      return Mesh::Model("./game/assets/cylinder.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    }
+  },
 
   /**
    * Buildings
@@ -197,6 +207,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     .attributes = {
       .type = MeshType::PRESET_ANIMATED,
       .texture = "./game/assets/bush.png",
+      .maxCascade = 4,
       .animation = {
         .type = PresetAnimationType::FLOWER,
         .factor = 5.f
@@ -302,6 +313,17 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .animation = {
         .type = PresetAnimationType::LEAF
       },
+      .roughness = 0.8f
+    }
+  },
+  {
+    .name = "branch-1",
+    .defaultColor = Vec3f(0.7f, 0.5f, 0.3f),
+    .create = []() {
+      return Mesh::Model("./game/assets/branch-1.obj");
+    },
+    .attributes = {
+      .maxCascade = 4,
       .roughness = 0.8f
     }
   },
