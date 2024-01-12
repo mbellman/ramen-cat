@@ -552,26 +552,47 @@ internal void rebuildDynamicBuildings(GmContext* context) {
     commit(frame);
   }
 
+  objects("b1-base").reset();
+  objects("b1-windows").reset();
+
+  for (auto& b : objects("b1")) {
+    auto& base = create_object_from("b1-base");
+    auto& windows = create_object_from("b1-windows");
+
+    base.position = windows.position = b.position;
+    base.scale = windows.scale = b.scale;
+    base.rotation = windows.rotation = b.rotation;
+
+    windows.color = Vec3f(0.5f, 0.75f, 1.f);
+
+    commit(base);
+    commit(windows);
+  }
+
   objects("b2-base").reset();
   objects("b2-levels").reset();
   objects("b2-columns").reset();
+  objects("b2-windows").reset();
 
   for (auto& b : objects("b2")) {
     auto& base = create_object_from("b2-base");
     auto& levels = create_object_from("b2-levels");
     auto& columns = create_object_from("b2-columns");
+    auto& windows = create_object_from("b2-windows");
 
-    base.position = levels.position = columns.position = b.position;
-    base.scale = levels.scale = columns.scale = b.scale;
-    base.rotation = levels.rotation = columns.rotation = b.rotation;
+    base.position = levels.position = columns.position = windows.position = b.position;
+    base.scale = levels.scale = columns.scale = windows.scale = b.scale;
+    base.rotation = levels.rotation = columns.rotation = windows.rotation = b.rotation;
 
     base.color = Vec3f::lerp(b.color.toVec3f(), Vec3f(1.f), 0.5f);
     levels.color = Vec3f(1.f);
     columns.color = b.color;
+    windows.color = Vec3f(0.5f, 0.75f, 1.f);
 
     commit(base);
     commit(levels);
     commit(columns);
+    commit(windows);
   }
 
   objects("b3-base").reset();
