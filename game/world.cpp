@@ -553,19 +553,23 @@ internal void rebuildDynamicBuildings(GmContext* context) {
   }
 
   objects("b1-base").reset();
+  objects("b1-levels").reset();
   objects("b1-windows").reset();
 
   for (auto& b : objects("b1")) {
     auto& base = create_object_from("b1-base");
+    auto& levels = create_object_from("b1-levels");
     auto& windows = create_object_from("b1-windows");
 
-    base.position = windows.position = b.position;
-    base.scale = windows.scale = b.scale;
-    base.rotation = windows.rotation = b.rotation;
+    base.position = levels.position = windows.position = b.position;
+    base.scale = levels.scale = windows.scale = b.scale;
+    base.rotation = levels.rotation = windows.rotation = b.rotation;
 
+    levels.color = b.color;
     windows.color = Vec3f(0.5f, 0.75f, 1.f);
 
     commit(base);
+    commit(levels);
     commit(windows);
   }
 

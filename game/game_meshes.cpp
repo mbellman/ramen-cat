@@ -85,12 +85,23 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .maxCascade = 4
     }
   },
-    {
+  {
     .name = "wood-tower",
     .defaultColor = Vec3f(1.f, 0.8f, 0.4f),
     .hitboxScale = Vec3f(1.f, 1.2f, 1.f),
     .create = []() {
       return Mesh::Model("./game/assets/buildings/wood-tower.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    }
+  },
+  {
+    .name = "wood-tower-top",
+    .defaultColor = Vec3f(0.6f, 0.4f, 0.2f),
+    .hitboxScale = Vec3f(1.f, 1.4f, 1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/wood-tower-top.obj");
     },
     .attributes = {
       .maxCascade = 4
@@ -1286,6 +1297,15 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
     .name = "b1-base",
     .create = []() {
       return Mesh::Model("./game/assets/buildings/b1-base.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    }
+  },
+  {
+    .name = "b1-levels",
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/b1-levels.obj");
     },
     .attributes = {
       .maxCascade = 4
