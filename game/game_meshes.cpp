@@ -339,6 +339,22 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .roughness = 0.8f
     }
   },
+  {
+    .name = "leaves",
+    .create = []() {
+      return Mesh::Model("./game/assets/leaves.obj");
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .texture = "./game/assets/leaves.png",
+      .maxCascade = 4,
+      .animation = {
+        .type = PresetAnimationType::FLOWER,
+        .factor = 5.f
+      },
+      .useMipmaps = false
+    }
+  },
 
   /**
    * Animals
