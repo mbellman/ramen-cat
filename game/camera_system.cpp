@@ -346,6 +346,16 @@ void CameraSystem::handleVisibilityCullingAndLevelsOfDetail(GmContext* context, 
   use_distance_culling(3000.f, { "flower" });
   use_distance_culling(5000.f, { "onigiri", "nitamago", "chashu" });
 
+  // @todo rename/store somewhere as a constant
+  static std::initializer_list<std::string> meshes = {
+    "b1-base", "b1-levels", "b1-windows",
+    "b2-base", "b2-levels", "b2-columns", "b2-windows",
+    "b3-base", "b3-levels", "b3-columns",
+    "branch-1", "leaves"
+  };
+
+  use_frustum_culling_by_distance(10000.f, meshes);
+
   LOG_TIME();
 }
 

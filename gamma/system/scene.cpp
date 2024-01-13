@@ -405,11 +405,11 @@ void Gm_HandleFreeCameraMode(GmContext* context, float speed, float dt) {
   }
 }
 
-void Gm_UseFrustumCulling(GmContext* context, const std::initializer_list<std::string>& meshNames) {
+void Gm_UseFrustumCulling(GmContext* context, const std::initializer_list<std::string>& meshNames, float distanceThreshold) {
   auto& meshMap = context->scene.meshMap;
 
   for (auto& meshName : meshNames) {
-    meshMap[meshName]->objects.partitionByVisibility(context->scene.camera);
+    meshMap[meshName]->objects.partitionByVisibility(context->scene.camera, distanceThreshold);
   }
 }
 
@@ -419,7 +419,7 @@ void Gm_UseDistanceCulling(GmContext* context, float distance, const std::initia
 
   for (auto& meshName : meshNames) {
     auto& objects = meshMap[meshName]->objects;
-    auto totalVisible = objects.partitionByDistance(0, distance, camera.position, true);
+    auto totalVisible = objects.partitionByDistance(0, distance, camera.position, /* checkAllObjects */ true);
 
     objects.setTotalVisible(totalVisible);
   }

@@ -31,6 +31,7 @@
 #define smoothly_point_camera_at(...) Gm_SmoothlyPointCameraAt(context, __VA_ARGS__)
 
 #define use_frustum_culling(...) Gm_UseFrustumCulling(context, __VA_ARGS__)
+#define use_frustum_culling_by_distance(distanceThreshold, meshNames) Gm_UseFrustumCulling(context, meshNames, distanceThreshold)
 #define use_distance_culling(...) Gm_UseDistanceCulling(context, __VA_ARGS__)
 #define use_lod_by_distance(distance, ...) Gm_UseLodByDistance(context, distance, __VA_ARGS__)
 
@@ -144,7 +145,7 @@ void Gm_SmoothlyPointCameraAt(GmContext* context, const Gamma::Object& object, f
 void Gm_SmoothlyPointCameraAt(GmContext* context, const Gamma::Vec3f& position, float alpha, bool upsideDown = false);
 void Gm_HandleFreeCameraMode(GmContext* context, float speed, float dt);
 
-void Gm_UseFrustumCulling(GmContext* context, const std::initializer_list<std::string>& meshNames);
+void Gm_UseFrustumCulling(GmContext* context, const std::initializer_list<std::string>& meshNames, float distanceThreshold = 0.f);
 void Gm_UseDistanceCulling(GmContext* context, float distance, const std::initializer_list<std::string>& meshNames);
 void Gm_UseLodByDistance(GmContext* context, float distance, const std::initializer_list<std::string>& meshNames);
 

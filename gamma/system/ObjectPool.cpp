@@ -143,23 +143,35 @@ namespace Gamma {
 
   // @todo accept a distance threshold to avoid culling partially
   // in-frame/partially out-of-frame objects
-  void ObjectPool::partitionByVisibility(const Camera& camera) {
+  void ObjectPool::partitionByVisibility(const Camera& camera, float distanceThreshold) {
     u16 current = 0;
     u16 end = totalActive();
     Vec3f cameraDirection = camera.orientation.getDirection();
 
+    // @todo use camera FoV to determine dot product threshold
+    constexpr static float DOT_THRESHOLD = 0.7f;
+
     while (end > current) {
-      Vec3f objectUnitViewPosition = (objects[current].position - camera.position).unit();
+      Vec3f cameraToObject = objects[current].position - camera.position;
+      float distance = cameraToObject.magnitude();
+      Vec3f unitCameraToObject = cameraToObject / distance;
 
       // @todo use camera FoV to determine dot product threshold
-      if (Vec3f::dot(cameraDirection, objectUnitViewPosition) >= 0.7f) {
+      if (Vec3f::dot(cameraDirection, unitCameraToObject) >= DOT_THRESHOLD || distance < distanceThreshold) {
         current++;
       } else {
-        Vec3f endObjectUnitViewPosition;
+        float endDistance = 0.f;
+        Vec3f endUnitCameraToObject;
 
         do {
-          endObjectUnitViewPosition = (objects[--end].position - camera.position).unit();
-        } while (Vec3f::dot(cameraDirection, endObjectUnitViewPosition) < 0.7f && end > current);
+          Vec3f endCameraToObject = (objects[--end].position - camera.position);
+          endDistance = endCameraToObject.magnitude();
+          endUnitCameraToObject = endCameraToObject / endDistance;
+        } while (
+          Vec3f::dot(cameraDirection, endUnitCameraToObject) < DOT_THRESHOLD &&
+          endDistance > distanceThreshold &&
+          end > current
+        );
 
         if (current != end) {
           swapObjects(current, end);

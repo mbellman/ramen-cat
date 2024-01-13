@@ -39,7 +39,7 @@ namespace Gamma {
     Matrix4f* getMatrices() const;
     u16 max() const;
     u16 partitionByDistance(u16 start, float distance, const Vec3f& cameraPosition, bool checkAllObjects = false);
-    void partitionByVisibility(const Camera& camera);
+    void partitionByVisibility(const Camera& camera, float distanceThreshold = 0.f);
     void removeById(u16 objectId);
     void reset();
     void reserve(u16 size);
