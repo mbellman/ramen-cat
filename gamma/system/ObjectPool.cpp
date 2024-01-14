@@ -141,8 +141,6 @@ namespace Gamma {
     return current;
   }
 
-  // @todo accept a distance threshold to avoid culling partially
-  // in-frame/partially out-of-frame objects
   void ObjectPool::partitionByVisibility(const Camera& camera, float distanceThreshold) {
     u16 current = 0;
     u16 end = totalActive();
