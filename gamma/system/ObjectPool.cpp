@@ -154,7 +154,6 @@ namespace Gamma {
       float distance = cameraToObject.magnitude();
       Vec3f unitCameraToObject = cameraToObject / distance;
 
-      // @todo use camera FoV to determine dot product threshold
       if (Vec3f::dot(cameraDirection, unitCameraToObject) >= visibilityDotThreshold || distance < distanceThreshold) {
         current++;
       } else {
