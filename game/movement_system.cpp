@@ -524,6 +524,12 @@ namespace MovementSystem {
         state.velocity.y -= gravity;
       }
 
+      if (state.velocity.y < -3000.f) {
+        state.velocity.y = -3000.f;
+        state.velocity.x *= 1.f - 0.5f * dt;
+        state.velocity.z *= 1.f - 0.5f * dt;
+      }
+
       player.position += state.velocity * dt;
     }
 
