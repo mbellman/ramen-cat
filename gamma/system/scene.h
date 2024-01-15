@@ -31,7 +31,7 @@
 #define smoothly_point_camera_at(...) Gm_SmoothlyPointCameraAt(context, __VA_ARGS__)
 
 #define use_frustum_culling(...) Gm_UseFrustumCulling(context, __VA_ARGS__)
-#define use_frustum_culling_by_distance(distanceThreshold, meshNames) Gm_UseFrustumCulling(context, meshNames, distanceThreshold)
+#define use_frustum_culling_at_distance(distanceThreshold, meshNames) Gm_UseFrustumCulling(context, meshNames, distanceThreshold)
 #define use_distance_culling(...) Gm_UseDistanceCulling(context, __VA_ARGS__)
 #define use_lod_by_distance(distance, ...) Gm_UseLodByDistance(context, distance, __VA_ARGS__)
 

@@ -142,12 +142,12 @@ namespace Gamma {
   }
 
   void ObjectPool::partitionByVisibility(const Camera& camera, float distanceThreshold) {
+    const float visibilityDotThreshold = 1.f - camera.fov / 90.f;
+
     u16 current = 0;
     u16 end = totalActive();
     Vec3f cameraDirection = camera.orientation.getDirection();
 
-    // @todo use camera FoV to determine dot product threshold
-    constexpr static float DOT_THRESHOLD = 0.7f;
 
     while (end > current) {
       Vec3f cameraToObject = objects[current].position - camera.position;
@@ -155,7 +155,7 @@ namespace Gamma {
       Vec3f unitCameraToObject = cameraToObject / distance;
 
       // @todo use camera FoV to determine dot product threshold
-      if (Vec3f::dot(cameraDirection, unitCameraToObject) >= DOT_THRESHOLD || distance < distanceThreshold) {
+      if (Vec3f::dot(cameraDirection, unitCameraToObject) >= visibilityDotThreshold || distance < distanceThreshold) {
         current++;
       } else {
         float endDistance = 0.f;
@@ -166,7 +166,7 @@ namespace Gamma {
           endDistance = endCameraToObject.magnitude();
           endUnitCameraToObject = endCameraToObject / endDistance;
         } while (
-          Vec3f::dot(cameraDirection, endUnitCameraToObject) < DOT_THRESHOLD &&
+          Vec3f::dot(cameraDirection, endUnitCameraToObject) < visibilityDotThreshold &&
           endDistance > distanceThreshold &&
           end > current
         );

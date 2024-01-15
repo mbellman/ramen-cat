@@ -108,10 +108,35 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
+    .name = "bridge-1",
+    .hitboxScale = Vec3f(0.7f, 0.7f, 1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/bridge-1.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    }
+  },
+  {
     .name = "cylinder-tower",
     .hitboxScale = Vec3f(0.2f, 1.f, 0.2f),
     .create = []() {
       return Mesh::Model("./game/assets/buildings/cylinder-tower.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    }
+  },
+
+  /**
+   * Unique meshes
+   * -------------
+   */
+  {
+    .name = "big-tree-trunk",
+    .hitboxScale = Vec3f(0.3f, 1.f, 0.3f),
+    .create = []() {
+      return Mesh::Model("./game/assets/uniques/big-tree-trunk.obj");
     },
     .attributes = {
       .maxCascade = 4
@@ -341,6 +366,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
   },
   {
     .name = "leaves",
+    .hitboxScale = Vec3f(0.5f, 1.f, 0.5f),
     .create = []() {
       return Mesh::Model("./game/assets/leaves.obj");
     },
@@ -350,7 +376,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .maxCascade = 4,
       .animation = {
         .type = PresetAnimationType::FLOWER,
-        .factor = 5.f
+        .factor = 15.f
       },
       .useMipmaps = false
     }
