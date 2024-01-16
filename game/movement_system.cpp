@@ -295,7 +295,7 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
     }
 
     if (input.didPressKey(Key::SPACE)) {
-      float time = get_scene_time();
+      float sceneTime = get_scene_time();
 
       if (state.isOnSolidGround) {
         // Regular jump
@@ -305,7 +305,11 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
           1.f
         );
 
-        if (time_since(state.lastAirDashTime) < SUPER_JUMP_WINDOW_DURATION || state.superjumpChargeTime != 0.f) {
+        if (
+          time_since(state.lastHardLandingTime) < SUPER_JUMP_WINDOW_DURATION ||
+          time_since(state.lastAirDashTime) < SUPER_JUMP_WINDOW_DURATION ||
+          state.superjumpChargeTime != 0.f
+        ) {
           // Super jump
           jumpFactor *= 2.f;
 
@@ -320,14 +324,14 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
             jumpFactor *= alpha;
           }
 
-          context->scene.fx.screenWarpTime = time;
+          context->scene.fx.screenWarpTime = sceneTime;
 
           state.lastHardLandingPosition = player.position;
-          state.lastHardLandingTime = time;
+          state.lastHardLandingTime = sceneTime;
         }
 
         state.velocity.y = DEFAULT_JUMP_Y_VELOCITY * jumpFactor;
-        state.lastJumpTime = time;
+        state.lastJumpTime = sceneTime;
 
         state.isOnSolidGround = false;
         state.canPerformAirDash = true;
@@ -342,12 +346,12 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
         Vec3f kickDirection = (state.lastWallBumpNormal + Vec3f(0, 1.f, 0)).unit();
 
         state.velocity = wallPlaneVelocity + kickDirection * state.lastWallBumpVelocity.magnitude();
-        state.lastWallKickTime = time;
+        state.lastWallKickTime = sceneTime;
 
         state.canPerformAirDash = true;
         state.canPerformWallKick = true;
 
-        context->scene.fx.screenWarpTime = time;
+        context->scene.fx.screenWarpTime = sceneTime;
       } else if (state.canPerformAirDash) {
         // Air dash
         Vec3f airDashDirection = camera.orientation.getDirection();
@@ -373,12 +377,12 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
           state.dashLevel++;
         }
 
-        state.lastAirDashTime = time;
+        state.lastAirDashTime = sceneTime;
         state.airDashSpinStartYaw = state.currentYaw;
         state.airDashSpinEndYaw = atan2(airDashDirection.x, airDashDirection.z) + Gm_PI;
         if (state.airDashSpinEndYaw - state.airDashSpinStartYaw < Gm_PI) state.airDashSpinEndYaw += Gm_TAU;
 
-        context->scene.fx.screenWarpTime = time;
+        context->scene.fx.screenWarpTime = sceneTime;
       }
     }
   }
