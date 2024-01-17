@@ -8,7 +8,9 @@
 #include "animation_system.h"
 
 struct Plane {
+  // Plane points
   Gamma::Vec3f p1, p2, p3, p4;
+  // Plane tangents
   Gamma::Vec3f t1, t2, t3, t4;
   Gamma::Vec3f normal;
   float nDotU = 0.f;
@@ -72,6 +74,7 @@ struct GameState {
   Gamma::Vec3f lastHardLandingPosition;
   Gamma::Vec3f lastWallBumpNormal;
   Gamma::Vec3f lastWallBumpVelocity;
+  Plane lastPlaneCollidedWith;
 
   CameraMode cameraMode = CameraMode::NORMAL;
 
@@ -98,6 +101,9 @@ struct GameState {
   bool isRepositioningCamera = false;
   bool isGliding = false;
 
+  // @todo wall kicks are currently automatic. It may be worthwhile to restore
+  // the original behavior, or use a system of briefly running along walls and
+  // allowing wall kicks to be performed during this window.
   bool canPerformWallKick = false;
   bool canPerformAirDash = false;
 
@@ -139,18 +145,17 @@ struct GameState {
   bool isEditorEnabled = false;
 
   std::vector<Plane> collisionPlanes;
-
+  std::vector<Gamma::Object> initialMovingObjects;
   std::vector<NonPlayerCharacter> npcs;
-
   std::vector<Slingshot> slingshots;
+  std::vector<Jetstream> jetstreams;
+
   // @todo define a struct for this
   float lastSlingshotInteractionTime = 0.f;
   Gamma::ObjectRecord activeSlingshotRecord;
   Gamma::Vec3f slingshotVelocity;
   float startingSlingshotAngle = 0.f;
   float targetSlingshotAngle = 0.f;
-
-  std::vector<Jetstream> jetstreams;
 
   // Torii Gates
   bool isInToriiGateZone = false;
@@ -159,8 +164,6 @@ struct GameState {
   // Boost rings
   Gamma::Object lastUsedBoostRing;
   float lastBoostRingLaunchTime = 0.f;
-
-  std::vector<Gamma::Object> initialMovingObjects;
 
   #if GAMMA_DEVELOPER_MODE
     std::vector<Gamma::Vec3f> lastSolidGroundPositions;

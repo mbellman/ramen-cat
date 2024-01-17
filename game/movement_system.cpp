@@ -97,12 +97,18 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
       continue;
     }
 
+    // @bug if we strictly consider lines through the player along the plane normal,
+    // we can phase through floors if we're moving fast enough!
+    // @todo double check if this can still occur with a terminal fall velocity
     Vec3f lineStart = player.position - plane.normal * PLAYER_RADIUS;
     Vec3f lineEnd = player.position + plane.normal * PLAYER_RADIUS;
     auto collision = Collisions::getLinePlaneCollision(lineStart, lineEnd, plane);
 
     if (collision.hit) {
+      // Resolve any standard motion collisions
       resolveSingleCollision(context, state, collision, dt);
+
+      state.lastPlaneCollidedWith = plane;
 
       if (collision.plane.nDotU > 0.7f) {
         didCollideWithSolidGround = true;
@@ -113,6 +119,7 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
       !didJustAirDash &&
       plane.nDotU > 0.6f
     ) {
+      // Snap the player to floors
       Vec3f fallCollisionLineEnd = player.position - plane.normal * 200.f;
       auto fallCollision = Collisions::getLinePlaneCollision(player.position, fallCollisionLineEnd, plane);
 
@@ -122,6 +129,7 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
         state.velocity.y = 0.f;
         state.lastSolidGroundPosition = player.position;
         state.lastTimeOnSolidGround = get_scene_time();
+        state.lastPlaneCollidedWith = plane;
 
         didCollideWithSolidGround = true;
       }
@@ -216,7 +224,7 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
     rate *= 0.05f;
   }
 
-  if (time_since(state.lastLedgeTurnaroundTime) > 0.5f) {    
+  if (time_since(state.lastLedgeTurnaroundTime) > 0.2f) {    
     if (input.isKeyHeld(Key::W)) {
       acceleration += forward * rate;
     }
@@ -564,11 +572,43 @@ namespace MovementSystem {
       }
     }
 
-    if (state.wasOnSolidGroundLastFrame && !state.isOnSolidGround && time_since(state.lastJumpTime) > 0.1f) {
+    if (
+      state.wasOnSolidGroundLastFrame &&
+      !state.isOnSolidGround &&
+      time_since(state.lastJumpTime) > 0.1f
+    ) {
+      // Prevent the player from inadvertently walking off ledges
       player.position = state.lastSolidGroundPosition;
 
-      state.velocity.x *= -1.f * 0.5f;
-      state.velocity.z *= -1.f * 0.5f;
+      // @todo description
+      auto plane = state.lastPlaneCollidedWith;
+      float max = Gm_FLOAT_MAX, dot;
+      Vec3f tangent;
+
+      if ((dot = Vec3f::dot(player.position - plane.p1, plane.t1)) < max) {
+        tangent = plane.t1;
+        max = dot;
+      }
+
+      if ((dot = Vec3f::dot(player.position - plane.p2, plane.t2)) < max) {
+        tangent = plane.t2;
+        max = dot;
+      }
+
+      if ((dot = Vec3f::dot(player.position - plane.p3, plane.t3)) < max) {
+        tangent = plane.t3;
+        max = dot;
+      }
+
+      if ((dot = Vec3f::dot(player.position - plane.p4, plane.t4)) < max) {
+        tangent = plane.t4;
+        max = dot;
+      }
+
+      auto redirectedVelocity = Vec3f::reflect(state.velocity, tangent.unit());
+
+      state.velocity.x = redirectedVelocity.x;
+      state.velocity.z = redirectedVelocity.z;
       state.lastLedgeTurnaroundTime = get_scene_time();
     }
 
