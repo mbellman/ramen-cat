@@ -108,6 +108,17 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
+    .name = "wood-electrical-pole",
+    .defaultColor = Vec3f(1.f, 0.8f, 0.4f),
+    .hitboxScale = Vec3f(0.5f, 1.4f, 0.5f),
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/wood-electrical-pole.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    }
+  },
+  {
     .name = "bridge-1",
     .dynamic = true,
     .hitboxScale = Vec3f(0.7f, 0.7f, 1.f),
@@ -138,6 +149,21 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     .hitboxScale = Vec3f(0.2f, 1.f, 0.05f),
     .create = []() {
       return Mesh::Model("./game/assets/decorations/vertical-banner.obj");
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .animation = {
+        .type = PresetAnimationType::CLOTH,
+        .factor = 4.f
+      },
+      .roughness = 0.4f
+    }
+  },
+  {
+    .name = "triangle-flag",
+    .hitboxScale = Vec3f(0.7f, 1.f, 0.05f),
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/triangle-flag.obj");
     },
     .attributes = {
       .type = MeshType::PRESET_ANIMATED,
