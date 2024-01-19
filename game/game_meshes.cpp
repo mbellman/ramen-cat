@@ -169,7 +169,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .type = MeshType::PRESET_ANIMATED,
       .animation = {
         .type = PresetAnimationType::CLOTH,
-        .factor = 4.f
+        .factor = 8.f
       },
       .roughness = 0.4f
     }

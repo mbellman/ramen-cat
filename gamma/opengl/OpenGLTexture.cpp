@@ -13,7 +13,6 @@
 #endif
 
 namespace Gamma {
-  // @todo add hot-reloading in dev mode
   OpenGLTexture::OpenGLTexture(const std::string& path, GLenum unit, bool enableMipmaps) {
     this->unit = unit;
     this->path = path;
@@ -21,7 +20,7 @@ namespace Gamma {
     initialize(enableMipmaps);
 
     #if GAMMA_DEVELOPER_MODE
-      Gm_WatchFile(path.c_str(), [=]() {
+      Gm_WatchFile(path, [=]() {
         glDeleteTextures(1, &id);
         initialize(enableMipmaps);
 

@@ -60,6 +60,7 @@ vec3 getDepthOfFieldColor(vec3 current_out_color, vec2 uv, float linear_frag_dep
 vec3 getAtmosphericsColor(vec3 current_out_color, vec2 uv, float frag_depth, float linear_frag_depth, vec3 world_position) {
   // @todo make configurable
   const float atmosphere_density = 1.5;
+  const float atmosphere_distance_limit = 0.8;
   const float max_atmosphere_altitude = 20000.0;
   const float horizon_altitude = -2000.0;
 
@@ -70,9 +71,9 @@ vec3 getAtmosphericsColor(vec3 current_out_color, vec2 uv, float frag_depth, flo
   vec2 horizon_direction_2d = normalize(vec2(zFar, -altitude_above_horizon));
   vec2 sky_direction_2d = normalize(vec2(length(sky_direction.xz), sky_direction.y));
 
-  float depth_divisor = frag_depth == 1.0 ? zFar : zFar * 0.85;
+  float depth_divisor = (frag_depth == 1.0 ? zFar : zFar * 0.85) * atmosphere_distance_limit;
   float frag_distance = frag_depth == 1.0 ? linear_frag_depth : distance(world_position, cameraPosition);
-  float frag_depth_ratio = frag_distance / depth_divisor;
+  float frag_depth_ratio = min(1.0, frag_distance / depth_divisor);
   float atmosphere_altitude_thickness = max(frag_depth_ratio, saturate(1 - world_position.y / max_atmosphere_altitude));
   float atmosphere_intensity = pow(frag_depth_ratio, 1.0 / atmosphere_density);
   float atmosphere_factor = atmosphere_altitude_thickness * atmosphere_intensity;
@@ -142,12 +143,12 @@ void main() {
     out_color = getDepthOfFieldColor(out_color, screen_warp_uv, linear_frag_depth);
   #endif
 
+  out_color = getToonShadedColor(out_color, screen_warp_uv, frag_color_and_depth.w, linear_frag_depth);
+
   // @todo make atmospherics optional via a flag
   #if USE_HORIZON_ATMOSPHERE == 1
     out_color = getAtmosphericsColor(out_color, screen_warp_uv, frag_color_and_depth.w, linear_frag_depth, world_position);
   #endif
-
-  out_color = getToonShadedColor(out_color, screen_warp_uv, frag_color_and_depth.w, linear_frag_depth);
 
   // Game-specific modifications below
   // ---------------------------------
