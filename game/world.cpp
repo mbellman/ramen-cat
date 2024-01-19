@@ -415,7 +415,7 @@ internal void rebuildStreetlampLights(GmContext* context) {
   }
 }
 
-internal void rebuildElectricalPoleWires(GmContext* context) {
+internal void rebuildWires(GmContext* context) {
   objects("wire").reset();
 
   for (auto& pole : objects("electrical-pole")) {
@@ -620,6 +620,28 @@ internal void rebuildDynamicBuildings(GmContext* context) {
     commit(levels);
     commit(columns);
   }
+
+  objects("bridge-1-floor").reset();
+  objects("bridge-1-supports").reset();
+  objects("bridge-1-roof").reset();
+
+  for (auto& bridge : objects("bridge-1")) {
+    auto& floor = create_object_from("bridge-1-floor");
+    auto& supports = create_object_from("bridge-1-supports");
+    auto& roof = create_object_from("bridge-1-roof");
+
+    floor.position = supports.position = roof.position = bridge.position;
+    floor.scale = supports.scale = roof.scale = bridge.scale;
+    floor.rotation = supports.rotation = roof.rotation = bridge.rotation;
+
+    floor.color = Vec3f(0.75f);
+    supports.color = Vec3f(1.f, 0.7f, 0.3f);
+    roof.color = Vec3f(0.8f, 0.6f, 0.4f);
+
+    commit(floor);
+    commit(supports);
+    commit(roof);
+  }
 }
 
 internal void rebuildAcUnitFans(GmContext* context) {
@@ -814,7 +836,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
 void World::rebuildDynamicMeshes(GmContext* context) {
   rebuildDynamicStaircases(context);
   rebuildStreetlampLights(context);
-  rebuildElectricalPoleWires(context);
+  rebuildWires(context);
   rebuildDynamicBuildings(context);
   rebuildAcUnitFans(context);
   rebuildWindTurbines(context);

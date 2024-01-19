@@ -56,7 +56,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
   {
     .name = "b2",
     .dynamic = true,
-    .hitboxScale = Vec3f(1.f, 1.2f, 1.f),
+    .hitboxScale = Vec3f(0.9f, 1.2f, 0.8f),
     .create = []() {
       return Mesh::Model("./game/assets/buildings/b2-base.obj");
     },
@@ -109,6 +109,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
   },
   {
     .name = "bridge-1",
+    .dynamic = true,
     .hitboxScale = Vec3f(0.7f, 0.7f, 1.f),
     .create = []() {
       return Mesh::Model("./game/assets/buildings/bridge-1.obj");
@@ -125,6 +126,26 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     },
     .attributes = {
       .maxCascade = 4
+    }
+  },
+
+  /**
+   * Decorations
+   * -----------
+   */
+  {
+    .name = "vertical-banner",
+    .hitboxScale = Vec3f(0.2f, 1.f, 0.05f),
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/vertical-banner.obj");
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .animation = {
+        .type = PresetAnimationType::CLOTH,
+        .factor = 4.f
+      },
+      .roughness = 0.4f
     }
   },
 
@@ -1428,6 +1449,36 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
     },
     .attributes = {
       .maxCascade = 4
+    }
+  },
+
+  // bridge-1
+  {
+    .name = "bridge-1-floor",
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/bridge-1-floor.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    }
+  },
+  {
+    .name = "bridge-1-supports",
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/bridge-1-supports.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    }
+  },
+  {
+    .name = "bridge-1-roof",
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/bridge-1-roof.obj");
+    },
+    .attributes = {
+      .maxCascade = 4,
+      .roughness = 0.3f
     }
   },
 };
