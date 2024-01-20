@@ -157,8 +157,6 @@ void main() {
   {
     vec3 normalized_frag_to_camera = normalize(cameraPosition - world_position);
     vec3 fragment_normal = normalize(texture(texNormalAndMaterial, screen_warp_uv).xyz);
-    float nDotC = dot(normalized_frag_to_camera, fragment_normal);
-    float redshift = frag_color_and_depth.w == 1.0 ? 1.0 : pow(1.0 - max(0.0, nDotC), 4);
     float in_progress = min(1.0, redshiftInProgress);
     float out_progress = min(1.0, redshiftOutProgress);
     float redshift_in_radius = zFar * (redshiftInProgress < 1.0 ? pow(redshiftInProgress, 3) : redshiftInProgress);
@@ -167,11 +165,16 @@ void main() {
     float distance_from_redshift_spawn = distance(redshiftSpawn, world_position);
 
     if (distance_from_redshift_spawn < redshift_in_radius) {
+      float nDotC = dot(normalized_frag_to_camera, fragment_normal);
+      float frag_distance = frag_color_and_depth.w == 1.0 ? linear_frag_depth : distance(world_position, cameraPosition);
+      float view_angle_redshift = frag_color_and_depth.w == 1.0 ? 1.0 : pow(1.0 - max(0.0, nDotC), 4);
+      float distance_redshift = frag_color_and_depth.w == 1.0 ? 1.0 : saturate(1.5 * (frag_distance / zFar));
+      float redshift = 1.5 * max(view_angle_redshift, distance_redshift);
       float alpha = 1.0 - pow(distance_from_redshift_spawn / redshift_in_radius, 3);
       vec3 redshifted_out_color = out_color;
 
       redshifted_out_color *= vec3(0.3, 0.4, 0.5);
-      redshifted_out_color += vec3(redshift * 1.5, 0, 0);
+      redshifted_out_color += vec3(redshift, 0, 0);
 
       out_color = mix(out_color, redshifted_out_color, alpha);
     }
