@@ -679,6 +679,28 @@ internal void rebuildDynamicBuildings(GmContext* context) {
     commit(supports);
     commit(roof);
   }
+
+  objects("dynamic-wave-sign").reset();
+
+  for (auto& sign : objects("wave-sign")) {
+    auto& s = create_object_from("dynamic-wave-sign");
+    auto& s2 = create_object_from("dynamic-wave-sign");
+
+    s.position = sign.position;
+    // @todo consider rotation
+    s2.position = sign.position + Vec3f(0, sign.scale.y * 0.25f, 0);
+
+    s.scale = sign.scale;
+    s2.scale = sign.scale * Vec3f(1.f, 0.7f, 1.f);
+
+    s.rotation = s2.rotation = sign.rotation;
+
+    s.color = sign.color;
+    s2.color = Vec3f::lerp(sign.color.toVec3f(), Vec3f(1.f), 0.5f);
+
+    commit(s);
+    commit(s2);
+  }
 }
 
 internal void rebuildAcUnitFans(GmContext* context) {

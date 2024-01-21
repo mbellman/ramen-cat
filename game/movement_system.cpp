@@ -132,6 +132,8 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
         state.lastPlaneCollidedWith = plane;
 
         didCollideWithSolidGround = true;
+
+        printf("Snap to floor?\n");
       }
     }
   }

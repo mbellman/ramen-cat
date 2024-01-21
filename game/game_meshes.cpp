@@ -141,6 +141,37 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
   },
 
   /**
+   * Signs/building structures
+   * -------------------------
+   */
+  {
+    .name = "wave-sign",
+    .dynamic = true,
+    .hitboxScale = Vec3f(1.f, 0.2f, 1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/wave-sign.obj");
+    }
+  },
+  {
+    .name = "spiral-roof",
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/spiral-roof.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    }
+  },
+  {
+    .name = "sign-roof",
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/sign-roof.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    }
+  },
+
+  /**
    * Decorations
    * -----------
    */
@@ -187,6 +218,17 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     },
     .attributes = {
       .maxCascade = 4
+    }
+  },
+  {
+    .name = "water-tower-pipe",
+    .hitboxScale = Vec3f(0.2f, 0.6f, 1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/uniques/water-tower-pipe.obj");
+    },
+    .attributes = {
+      .maxCascade = 4,
+      .roughness = 0.2f
     }
   },
 
@@ -1505,6 +1547,17 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
     .attributes = {
       .maxCascade = 4,
       .roughness = 0.3f
+    }
+  },
+
+  // wave-sign
+    {
+    .name = "dynamic-wave-sign",
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/wave-sign.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
     }
   },
 };

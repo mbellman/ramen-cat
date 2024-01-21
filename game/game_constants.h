@@ -64,7 +64,9 @@ constexpr static float CAMERA_FOV_SPEED_INTERVAL = 500.f;
  * Effects constants
  * -----------------
  */
+// @todo change to 0.f!!!
 constexpr static float OCEAN_PLANE_Y_POSITION = -2000.f;
+constexpr static float INITIAL_DAY_NIGHT_CYCLE_TIME = 1.8f;
 
 constexpr static u16 TOTAL_GROUND_PARTICLES = 42;
 constexpr static u16 TOTAL_HARD_LANDING_PARTICLES = 12;
@@ -77,5 +79,3 @@ constexpr static float DASH_PARTICLE_SIZE = 3.5f;
 
 constexpr static u16 TOTAL_TORII_GATE_ZONE_PARTICLES = 500;
 constexpr static float TORII_GATE_ZONE_PARTICLE_SIZE = 10.f;
-
-constexpr static float INITIAL_DAY_NIGHT_CYCLE_TIME = 2.f;
