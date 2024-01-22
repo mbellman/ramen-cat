@@ -183,13 +183,13 @@ internal void handlePlayerMidairAnimation(GmContext* context, GameState& state, 
   float s_alpha = sinf(airTime * 5.f);
   float c_alpha = cosf(airTime * 5.f);
 
-  rig.joints[PLAYER_HEAD].rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), state.turnFactor + periodicHeadTurn);
-  rig.joints[PLAYER_HEAD].rotation *= somersaultRotation;
   rig.joints[PLAYER_HEAD].offset = turnOffset + somersaultOffset;
+  rig.joints[PLAYER_HEAD].rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), state.turnFactor * 1.5f + periodicHeadTurn);
+  rig.joints[PLAYER_HEAD].rotation *= somersaultRotation;
 
+  rig.joints[PLAYER_NECK].offset = turnOffset + somersaultOffset;
   rig.joints[PLAYER_NECK].rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), state.turnFactor * 0.5f + periodicHeadTurn * 0.5f);
   rig.joints[PLAYER_NECK].rotation *= somersaultRotation;
-  rig.joints[PLAYER_NECK].offset = turnOffset + somersaultOffset;
 
   rig.joints[PLAYER_TORSO].offset = turnOffset + somersaultOffset;
   rig.joints[PLAYER_TORSO].rotation = somersaultRotation;

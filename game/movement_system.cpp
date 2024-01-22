@@ -82,16 +82,16 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
   START_TIMING("resolveAllPlaneCollisions");
 
   auto& player = get_player();
-  bool isFalling = state.previousPlayerPosition.y - player.position.y > 0.f;
   bool wasRecentlyOnSolidGround = time_since(state.lastTimeOnSolidGround) < 0.2f;
+  bool didJustJump = time_since(state.lastJumpTime) < 0.1f;
   bool didJustAirDash = time_since(state.lastAirDashTime) < 0.1f;
   bool didCollideWithSolidGround = false;
 
   // @todo implement world chunks + only consider collision planes local to the player
   for (auto& plane : state.collisionPlanes) {
     if (
-      player.position.y > plane.maxY + PLAYER_RADIUS ||
-      player.position.y < plane.minY - PLAYER_RADIUS
+      player.position.y > plane.maxY + 2.f * PLAYER_RADIUS ||
+      player.position.y < plane.minY - 2.f * PLAYER_RADIUS
     ) {
       // Early out for collision planes not local to the player y position
       continue;
@@ -114,8 +114,8 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
         didCollideWithSolidGround = true;
       }
     } else if (
-      isFalling &&
       wasRecentlyOnSolidGround &&
+      !didJustJump &&
       !didJustAirDash &&
       plane.nDotU > 0.6f
     ) {
@@ -132,8 +132,6 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
         state.lastPlaneCollidedWith = plane;
 
         didCollideWithSolidGround = true;
-
-        printf("Snap to floor?\n");
       }
     }
   }
