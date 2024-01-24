@@ -82,6 +82,7 @@ namespace Gamma {
     Matrix4f matView;
     Matrix4f matInverseView;
     Matrix4f matPreviousView;
+    Matrix4f matViewProjection;
     OpenGLFrameBuffer* accumulationSource = nullptr;
     OpenGLFrameBuffer* accumulationTarget = nullptr;
     // @todo target (fbo)
@@ -148,9 +149,9 @@ namespace Gamma {
 
     void createAndRenderProbe(const std::string& name, const Vec3f& position);
     void handleSettingsChanges();
-    void initializeRendererContext();
-    void initializeLightArrays();
     void renderToAccumulationBuffer();
     void swapAccumulationBuffers();
+    void updateRendererContext();
+    void updateLightArrays();
   };
 }

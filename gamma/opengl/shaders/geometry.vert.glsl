@@ -1,7 +1,6 @@
 #version 460 core
 
-uniform mat4 matProjection;
-uniform mat4 matView;
+uniform mat4 matViewProjection;
 uniform bool useXzPlaneTexturing = false;
 
 layout (location = 0) in vec3 vertexPosition;
@@ -47,7 +46,7 @@ void main() {
   vec4 world_position = glVec4(modelMatrix * vec4(vertexPosition, 1.0));
   mat3 normal_matrix = transpose(inverse(mat3(modelMatrix)));
 
-  gl_Position = matProjection * matView * world_position;
+  gl_Position = matViewProjection * world_position;
 
   fragColor = unpack(modelColor);
   // @hack invert Z

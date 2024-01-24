@@ -164,8 +164,8 @@ namespace Gamma {
       Gm_DisableFlags(GammaFlags::RENDER_GLOBAL_ILLUMINATION);
 
       handleSettingsChanges();
-      initializeRendererContext();
-      initializeLightArrays();
+      updateRendererContext();
+      updateLightArrays();
 
       for (auto& [ name, position ] : scene.probeMap) {
         createAndRenderProbe(name, position);
@@ -185,8 +185,8 @@ namespace Gamma {
     }
 
     handleSettingsChanges();
-    initializeRendererContext();
-    initializeLightArrays();
+    updateRendererContext();
+    updateLightArrays();
     renderToAccumulationBuffer();
     renderPostEffects();
 
@@ -282,7 +282,7 @@ namespace Gamma {
   /**
    * @todo description
    */
-  void OpenGLRenderer::initializeRendererContext() {
+  void OpenGLRenderer::updateRendererContext() {
     auto& scene = gmContext->scene;
 
     // Accumulation buffers
@@ -311,6 +311,7 @@ namespace Gamma {
 
     ctx.matInverseProjection = ctx.matProjection.inverse();
     ctx.matInverseView = ctx.matView.inverse();
+    ctx.matViewProjection = ctx.matView * ctx.matProjection;
 
     // Track special object types
     ctx.hasEmissiveObjects = false;
@@ -341,7 +342,7 @@ namespace Gamma {
   /**
    * @todo description
    */
-  void OpenGLRenderer::initializeLightArrays() {
+  void OpenGLRenderer::updateLightArrays() {
     ctx.pointLights.clear();
     ctx.pointShadowcasters.clear();
     ctx.directionalLights.clear();
@@ -496,8 +497,7 @@ namespace Gamma {
     glBlendFuncSeparate(GL_ONE, GL_ONE, GL_ONE, GL_ZERO);
 
     shaders.geometry.use();
-    shaders.geometry.setMatrix4f("matProjection", ctx.matProjection);
-    shaders.geometry.setMatrix4f("matView", ctx.matView);
+    shaders.geometry.setMatrix4f("matViewProjection", ctx.matViewProjection);
     shaders.geometry.setInt("meshTexture", 0);
     shaders.geometry.setInt("meshNormalMap", 1);
 
@@ -560,8 +560,7 @@ namespace Gamma {
 
     // Render preset animated meshes
     shaders.presetAnimation.use();
-    shaders.presetAnimation.setMatrix4f("matProjection", ctx.matProjection);
-    shaders.presetAnimation.setMatrix4f("matView", ctx.matView);
+    shaders.presetAnimation.setMatrix4f("matViewProjection", ctx.matViewProjection);
     shaders.presetAnimation.setInt("meshTexture", 0);
     shaders.presetAnimation.setInt("meshNormalMap", 1);
     shaders.presetAnimation.setFloat("time", gmContext->contextTime);
@@ -590,8 +589,7 @@ namespace Gamma {
       glStencilMask(0xFF);
 
       shaders.probeReflector.use();
-      shaders.probeReflector.setMatrix4f("matProjection", ctx.matProjection);
-      shaders.probeReflector.setMatrix4f("matView", ctx.matView);
+      shaders.probeReflector.setMatrix4f("matViewProjection", ctx.matViewProjection);
       shaders.probeReflector.setInt("meshTexture", 0);
       shaders.probeReflector.setInt("meshNormalMap", 1);
       shaders.probeReflector.setInt("probeMap", 3);
@@ -1155,7 +1153,6 @@ namespace Gamma {
     // Render instanced particle meshes
     {
       shaders.particle.use();
-
       shaders.particle.setMatrix4f("matProjection", ctx.matProjection);
       shaders.particle.setMatrix4f("matView", ctx.matView);
 
@@ -1201,8 +1198,7 @@ namespace Gamma {
       #endif
 
       shaders.refractivePrepass.setInt("texColorAndDepth", 0);
-      shaders.refractivePrepass.setMatrix4f("matProjection", ctx.matProjection);
-      shaders.refractivePrepass.setMatrix4f("matView", ctx.matView);
+      shaders.refractivePrepass.setMatrix4f("matViewProjection", ctx.matViewProjection);
       shaders.refractivePrepass.setFloat("zNear", gmContext->scene.zNear);
       shaders.refractivePrepass.setFloat("zFar", gmContext->scene.zFar);
 
@@ -1294,6 +1290,7 @@ namespace Gamma {
 
     shaders.refractiveGeometry.setInt("texColorAndDepth", 0);
     shaders.refractiveGeometry.setInt("meshNormalMap", 1);
+    shaders.refractiveGeometry.setMatrix4f("matViewProjection", ctx.matViewProjection);
     shaders.refractiveGeometry.setMatrix4f("matProjection", ctx.matProjection);
     shaders.refractiveGeometry.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
     shaders.refractiveGeometry.setMatrix4f("matView", ctx.matView);
@@ -1394,6 +1391,7 @@ namespace Gamma {
 
     shaders.ocean.setInt("texColorAndDepth", 0);
     shaders.ocean.setInt("texClouds", 3);
+    shaders.ocean.setMatrix4f("matViewProjection", ctx.matViewProjection);
     shaders.ocean.setMatrix4f("matProjection", ctx.matProjection);
     shaders.ocean.setMatrix4f("matInverseProjection", ctx.matInverseProjection);
     shaders.ocean.setMatrix4f("matView", ctx.matView);
@@ -1441,9 +1439,7 @@ namespace Gamma {
     glStencilFunc(GL_LESS, MeshType::DEFAULT_WITH_OCCLUSION_SILHOUETTE, 0xFF);
 
     shaders.silhouette.use();
-
-    shaders.silhouette.setMatrix4f("matProjection", ctx.matProjection);
-    shaders.silhouette.setMatrix4f("matView", ctx.matView);
+    shaders.silhouette.setMatrix4f("matViewProjection", ctx.matViewProjection);
     shaders.silhouette.setInt("meshTexture", 0);
 
     for (auto* glMesh : glMeshes) {

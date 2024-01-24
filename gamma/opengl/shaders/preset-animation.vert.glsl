@@ -1,7 +1,6 @@
 #version 460 core
 
-uniform mat4 matProjection;
-uniform mat4 matView;
+uniform mat4 matViewProjection;
 
 layout (location = 0) in vec3 vertexPosition;
 layout (location = 1) in vec3 vertexNormal;
@@ -66,7 +65,7 @@ void main() {
       break;
   }
 
-  gl_Position = matProjection * matView * world_position;
+  gl_Position = matViewProjection * world_position;
 
   fragColor = unpack(modelColor);
   // @hack invert Z
