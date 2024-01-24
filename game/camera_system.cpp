@@ -351,7 +351,8 @@ void CameraSystem::handleVisibilityCullingAndLevelsOfDetail(GmContext* context, 
     "b1-base", "b1-levels", "b1-windows",
     "b2-base", "b2-levels", "b2-columns", "b2-windows",
     "b3-base", "b3-levels", "b3-columns",
-    "branch-1", "leaves"
+    "branch-1", "leaves",
+    "dynamic-wave-sign"
   };
 
   use_frustum_culling_at_distance(10000.f, meshesToFrustumCullAtDistance);

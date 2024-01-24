@@ -737,6 +737,48 @@ internal void rebuildWindTurbines(GmContext* context) {
   }
 }
 
+internal void rebuildSignRoofs(GmContext* context) {
+  objects("sign-roof-supports").reset();
+  objects("sign-roof-signs").reset();
+
+  for (auto& base : objects("sign-roof")) {
+    auto& supports = create_object_from("sign-roof-supports");
+    auto& signs = create_object_from("sign-roof-signs");
+
+    supports.position = signs.position = base.position;
+    supports.rotation = signs.rotation = base.rotation;
+    supports.scale = signs.scale = base.scale;
+
+    supports.color = Vec3f(0.9f, 0.6f, 0.3f);
+    signs.color = base.color;
+
+    commit(supports);
+    commit(signs);
+  }
+}
+
+internal void rebuildPetals(GmContext* context) {
+  objects("petal").reset();
+
+  for (auto& spawn : objects("petal-spawn")) {
+    for (u16 i = 0; i < 1000; i++) {
+      auto& petal = create_object_from("petal");
+
+      petal.position = spawn.position + Vec3f(
+        Gm_Randomf(-5000.f, 5000.f),
+        Gm_Randomf(-5000.f, 5000.f),
+        Gm_Randomf(-5000.f, 5000.f)
+      );
+
+      petal.color = Vec3f(1.f, 0.5f, 0.5f);
+      petal.rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 1.f), Gm_Randomf(0.f, Gm_PI));
+      petal.scale = Vec3f(10.f);
+
+      commit(petal);
+    }
+  }
+}
+
 internal void applyLevelSettings_UmimuraAlpha(GmContext* context, GameState& state) {
   auto& player = get_player();
 
@@ -899,6 +941,8 @@ void World::rebuildDynamicMeshes(GmContext* context) {
   rebuildDynamicBuildings(context);
   rebuildAcUnitFans(context);
   rebuildWindTurbines(context);
+  rebuildSignRoofs(context);
+  rebuildPetals(context);
 }
 
 void World::rebuildDynamicCollisionPlanes(GmContext* context, GameState& state) {

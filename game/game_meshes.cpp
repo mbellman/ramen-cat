@@ -163,6 +163,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
   },
   {
     .name = "sign-roof",
+    .dynamic = true,
     .create = []() {
       return Mesh::Model("./game/assets/buildings/sign-roof.obj");
     },
@@ -187,6 +188,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
         .type = PresetAnimationType::CLOTH,
         .factor = 4.f
       },
+      .emissivity = 0.1f,
       .roughness = 0.4f
     }
   },
@@ -202,6 +204,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
         .type = PresetAnimationType::CLOTH,
         .factor = 8.f
       },
+      .emissivity = 0.1f,
       .roughness = 0.4f
     }
   },
@@ -229,6 +232,18 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     .attributes = {
       .maxCascade = 4,
       .roughness = 0.2f
+    }
+  },
+
+  /**
+   * Spawns
+   * ------
+   */
+  {
+    .name = "petal-spawn",
+    .dynamic = true,
+    .create = []() {
+      return Mesh::Cube();
     }
   },
 
@@ -1551,7 +1566,7 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
   },
 
   // wave-sign
-    {
+  {
     .name = "dynamic-wave-sign",
     .create = []() {
       return Mesh::Model("./game/assets/buildings/wave-sign.obj");
@@ -1560,4 +1575,38 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
       .maxCascade = 4
     }
   },
+
+  // sign-roof
+  {
+    .name = "sign-roof-supports",
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/sign-roof-supports.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    }
+  },
+  {
+    .name = "sign-roof-signs",
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/sign-roof-signs.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    }
+  },
+
+  // particles
+  {
+    .name = "petal",
+    .moving = true,
+    .maxInstances = 0xffff,
+    .create = []() {
+      return Mesh::Model("./game/assets/petal.obj");
+    },
+    .attributes = {
+      .maxCascade = 2,
+      .emissivity = 0.8f
+    }
+  }
 };

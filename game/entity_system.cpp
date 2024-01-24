@@ -345,6 +345,28 @@ internal void handleFireflies(GmContext* context, GameState& state, float dt) {
   });
 }
 
+internal void handleAmbientParticles(GmContext* context, GameState& state, float dt) {
+  auto t = get_scene_time();
+
+  for_moving_objects("petal", {
+    float alpha = t + float(object._record.id);
+    float progress = Gm_Modf(alpha, 5.f) / 5.f;
+    float piProgress = progress * Gm_PI;
+
+    float x = progress * 1000.f;
+    float y = -(progress * 250.f) + sin(alpha) * 50.f;
+    float z = -(progress * 100.f);
+
+    auto offset = Vec3f(x, y, z);
+
+    object.position = initial.position + offset;
+    object.rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 1.f), alpha);
+    object.scale = Vec3f(15.f * sinf(piProgress));
+
+    commit(object);
+  });
+}
+
 internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
   auto& player = get_player();
   auto& input = get_input();
@@ -861,6 +883,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   handleBirds(context, state, dt);
   handleSeagulls(context, state, dt);
   handleFireflies(context, state, dt);
+  handleAmbientParticles(context, state, dt);
   handleLanterns(context, state, dt);
   handleWindmillWheels(context, state, dt);
   handleWindTurbines(context, state, dt);

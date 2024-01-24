@@ -83,7 +83,7 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
 
   auto& player = get_player();
   bool wasRecentlyOnSolidGround = time_since(state.lastTimeOnSolidGround) < 0.2f;
-  bool didJustJump = time_since(state.lastJumpTime) < 0.1f;
+  bool didJustJump = time_since(state.lastJumpTime) < 0.5f;
   bool didJustAirDash = time_since(state.lastAirDashTime) < 0.1f;
   bool didCollideWithSolidGround = false;
 
