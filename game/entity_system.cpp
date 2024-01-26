@@ -348,23 +348,26 @@ internal void handleFireflies(GmContext* context, GameState& state, float dt) {
 internal void handleAmbientParticles(GmContext* context, GameState& state, float dt) {
   auto t = get_scene_time();
 
-  for_moving_objects("petal", {
-    float alpha = t + float(object._record.id);
-    float progress = Gm_Modf(alpha, 5.f) / 5.f;
-    float piProgress = progress * Gm_PI;
+  // Flower petals
+  {
+    for_moving_objects("petal", {
+      float alpha = t + float(object._record.id);
+      float progress = Gm_Modf(alpha, 5.f) / 5.f;
+      float piProgress = progress * Gm_PI;
 
-    float x = progress * 1000.f;
-    float y = -(progress * 250.f) + sin(alpha) * 50.f;
-    float z = -(progress * 100.f);
+      float x = progress * 1000.f;
+      float y = -(progress * 250.f) + sin(alpha) * 50.f;
+      float z = -(progress * 100.f);
 
-    auto offset = Vec3f(x, y, z);
+      auto offset = Vec3f(x, y, z);
 
-    object.position = initial.position + offset;
-    object.rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 1.f), alpha);
-    object.scale = Vec3f(15.f * sinf(piProgress));
+      object.position = initial.position + offset;
+      object.rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 1.f), alpha);
+      object.scale = Vec3f(12.f * sinf(piProgress));
 
-    commit(object);
-  });
+      commit(object);
+    });
+  }
 }
 
 internal void handleSlingshots(GmContext* context, GameState& state, float dt) {

@@ -327,7 +327,7 @@ internal void rebuildDynamicStaircases(GmContext* context) {
     auto& scale = staircase.scale;
     auto rotation = staircase.rotation.toMatrix4f();
     Vec3f rotationDirectionXz = staircase.rotation.getDirection().xz();
-    float yRotation = -1.f * atan2f(rotationDirectionXz.z, rotationDirectionXz.x);
+    float yRotation = -1.f * atan2f(rotationDirectionXz.z, rotationDirectionXz.x) - Gm_PI * 0.5f;
 
     t_points.clear();
 
@@ -367,14 +367,13 @@ internal void rebuildDynamicStaircases(GmContext* context) {
         auto& step = create_object_from("stair-step");
 
         step.position = Vec3f::lerp(start, end, i / float(totalSteps));
-        step.color = Vec3f(0.f);
         step.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), yRotation);
 
         // Scale the steps to the width of the staircase platform
         if (staircase.scale.x > staircase.scale.z) {
-          step.scale = Vec3f(staircase.scale.z, 3.f, 10.f);
+          step.scale = Vec3f(50.f, 50.f, staircase.scale.z);
         } else {
-          step.scale = Vec3f(10.f, 3.f, staircase.scale.x);
+          step.scale = Vec3f(staircase.scale.x, 50.f, 50.f);
         }
 
         commit(step);
@@ -658,6 +657,42 @@ internal void rebuildDynamicBuildings(GmContext* context) {
     commit(columns);
   }
 
+  objects("wood-house-base").reset();
+  objects("wood-house-roof").reset();
+
+  for (auto& house : objects("wood-house")) {
+    auto& base = create_object_from("wood-house-base");
+    auto& roof = create_object_from("wood-house-roof");
+
+    base.position = roof.position = house.position;
+    base.scale = roof.scale = house.scale;
+    base.rotation = roof.rotation = house.rotation;
+
+    base.color = Vec3f(0.8f, 0.6f, 0.4f);
+    roof.color = Vec3f(1.f, 0.6f, 0.2f);
+
+    commit(base);
+    commit(roof);
+  }
+
+  objects("wood-facade-base").reset();
+  objects("wood-facade-cover").reset();
+
+  for (auto& it : objects("wood-facade")) {
+    auto& base = create_object_from("wood-facade-base");
+    auto& cover = create_object_from("wood-facade-cover");
+
+    base.position = cover.position = it.position;
+    base.scale = cover.scale = it.scale;
+    base.rotation = cover.rotation = it.rotation;
+
+    base.color = Vec3f(1.f, 0.8f, 0.6f);
+    cover.color = Vec3f(0.8f, 0.4f, 0.1f);
+
+    commit(base);
+    commit(cover);
+  }
+
   objects("bridge-1-floor").reset();
   objects("bridge-1-supports").reset();
   objects("bridge-1-roof").reset();
@@ -771,8 +806,6 @@ internal void rebuildPetals(GmContext* context) {
       );
 
       petal.color = Vec3f(1.f, 0.5f, 0.5f);
-      petal.rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 1.f), Gm_Randomf(0.f, Gm_PI));
-      petal.scale = Vec3f(10.f);
 
       commit(petal);
     }

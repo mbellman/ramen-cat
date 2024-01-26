@@ -76,6 +76,13 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
+    .name = "wood-house",
+    .dynamic = true,
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/wood-house-base.obj");
+    }
+  },
+  {
     .name = "wood-awning",
     .hitboxScale = Vec3f(1.f, 1.2f, 1.f),
     .create = []() {
@@ -116,6 +123,14 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     },
     .attributes = {
       .maxCascade = 4
+    }
+  },
+  {
+    .name = "wood-facade",
+    .dynamic = true,
+    .hitboxScale = Vec3f(1.f, 1.f, 0.1f),
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/wood-facade-base.obj");
     }
   },
   {
@@ -1344,7 +1359,12 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
     .name = "stair-step",
     .maxInstances = 10000,
     .create = []() {
-      return Mesh::Cube();
+      return Mesh::Model("./game/assets/stair-step.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/stairs-1.png",
+      .normals = "./game/assets/stairs-1-normals.png",
+      .roughness = 0.3f
     }
   },
   {
@@ -1532,6 +1552,40 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
     },
     .attributes = {
       .maxCascade = 4
+    }
+  },
+
+  // wood-house
+  {
+    .name = "wood-house-base",
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/wood-house-base.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    }
+  },
+  {
+    .name = "wood-house-roof",
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/wood-house-roof.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    }
+  },
+
+  // wood-facade
+  {
+    .name = "wood-facade-base",
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/wood-facade-base.obj");
+    }
+  },
+  {
+    .name = "wood-facade-cover",
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/wood-facade-cover.obj");
     }
   },
 
