@@ -226,8 +226,13 @@ internal void loadEntityData(GmContext* context, GameState& state, const std::st
 internal void unloadCurrentLevel(GmContext* context, GameState& state) {
   for (auto& asset : GameMeshes::meshAssets) {
     mesh(asset.name)->objects.reset();
+
+    for (auto& piece : asset.pieces) {
+      mesh(piece.name)->objects.reset();
+    }
   }
 
+  // @todo remove
   for (auto& asset : GameMeshes::dynamicMeshPieces) {
     mesh(asset.name)->objects.reset();
   }
@@ -297,8 +302,22 @@ internal void loadGameMeshes(GmContext* context, GameState& state) {
     auto& attributes = asset.attributes;
 
     copyMeshAttributes(mesh, attributes);
+
+    for (auto& piece : asset.pieces) {
+      add_mesh(piece.name, piece.maxInstances, piece.create());
+
+      auto& pieceMesh = *mesh(piece.name);
+      auto& attributes = piece.attributes;
+
+      copyMeshAttributes(pieceMesh, attributes);
+
+      // Inherit additional properties from the base mesh
+      pieceMesh.maxCascade = mesh.maxCascade;
+      pieceMesh.canCastShadows = mesh.canCastShadows;
+    }
   }
 
+  // @todo remove
   for (auto& asset : GameMeshes::dynamicMeshPieces) {
     add_mesh(asset.name, asset.maxInstances, asset.create());
 
@@ -525,9 +544,27 @@ internal void rebuildWires(GmContext* context) {
   #endif
 }
 
-// @todo allow dynamic meshes to define their own parts,
-// and behavior for generating parts
 internal void rebuildDynamicBuildings(GmContext* context) {
+  for (auto& asset : GameMeshes::meshAssets) {
+    for (auto& piece : asset.pieces) {
+      objects(piece.name).reset();
+
+      if (piece.rebuild != nullptr) {
+        for (auto& source : objects(asset.name)) {
+          auto& pieceObject = create_object_from(piece.name);
+
+          pieceObject.position = source.position;
+          pieceObject.scale = source.scale;
+          pieceObject.rotation = source.rotation;
+
+          piece.rebuild(source, pieceObject);
+
+          commit(pieceObject);
+        }
+      }
+    }
+  }
+
   objects("building-1-body").reset();
   objects("building-1-frame").reset();
 
@@ -586,75 +623,6 @@ internal void rebuildDynamicBuildings(GmContext* context) {
     frame.color = Vec3f(0.3f, 0.25f, 0.2f);
 
     commit(frame);
-  }
-
-  objects("b1-base").reset();
-  objects("b1-levels").reset();
-  objects("b1-windows").reset();
-
-  for (auto& b : objects("b1")) {
-    auto& base = create_object_from("b1-base");
-    auto& levels = create_object_from("b1-levels");
-    auto& windows = create_object_from("b1-windows");
-
-    base.position = levels.position = windows.position = b.position;
-    base.scale = levels.scale = windows.scale = b.scale;
-    base.rotation = levels.rotation = windows.rotation = b.rotation;
-
-    levels.color = b.color;
-    windows.color = Vec3f(0.5f, 0.75f, 1.f);
-
-    commit(base);
-    commit(levels);
-    commit(windows);
-  }
-
-  objects("b2-base").reset();
-  objects("b2-levels").reset();
-  objects("b2-columns").reset();
-  objects("b2-windows").reset();
-
-  for (auto& b : objects("b2")) {
-    auto& base = create_object_from("b2-base");
-    auto& levels = create_object_from("b2-levels");
-    auto& columns = create_object_from("b2-columns");
-    auto& windows = create_object_from("b2-windows");
-
-    base.position = levels.position = columns.position = windows.position = b.position;
-    base.scale = levels.scale = columns.scale = windows.scale = b.scale;
-    base.rotation = levels.rotation = columns.rotation = windows.rotation = b.rotation;
-
-    base.color = Vec3f::lerp(b.color.toVec3f(), Vec3f(1.f), 0.5f);
-    levels.color = Vec3f(1.f);
-    columns.color = b.color;
-    windows.color = Vec3f(0.5f, 0.75f, 1.f);
-
-    commit(base);
-    commit(levels);
-    commit(columns);
-    commit(windows);
-  }
-
-  objects("b3-base").reset();
-  objects("b3-levels").reset();
-  objects("b3-columns").reset();
-
-  for (auto& b : objects("b3")) {
-    auto& base = create_object_from("b3-base");
-    auto& levels = create_object_from("b3-levels");
-    auto& columns = create_object_from("b3-columns");
-
-    base.position = levels.position = columns.position = b.position;
-    base.scale = levels.scale = columns.scale = b.scale;
-    base.rotation = levels.rotation = columns.rotation = b.rotation;
-
-    base.color = Vec3f::lerp(b.color.toVec3f(), Vec3f(1.f), 0.5f);
-    levels.color = Vec3f(1.f);
-    columns.color = b.color;
-
-    commit(base);
-    commit(levels);
-    commit(columns);
   }
 
   objects("wood-house-base").reset();
@@ -968,6 +936,8 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
 }
 
 void World::rebuildDynamicMeshes(GmContext* context) {
+  auto start = Gm_GetMicroseconds();
+
   rebuildDynamicStaircases(context);
   rebuildStreetlampLights(context);
   rebuildWires(context);
@@ -976,6 +946,8 @@ void World::rebuildDynamicMeshes(GmContext* context) {
   rebuildWindTurbines(context);
   rebuildSignRoofs(context);
   rebuildPetals(context);
+
+  Console::log("Rebuilt dynamic meshes in", (Gm_GetMicroseconds() - start), "us");
 }
 
 void World::rebuildDynamicCollisionPlanes(GmContext* context, GameState& state) {
@@ -1053,8 +1025,17 @@ void World::loadLevel(GmContext* context, GameState& state, const std::string& l
           state.initialMovingObjects.push_back(object);
         }
       }
+
+      for (auto& piece : asset.pieces) {
+        if (piece.moving) {
+          for (auto& object : objects(piece.name)) {
+            state.initialMovingObjects.push_back(object);
+          }
+        }
+      }
     }
 
+    // @todo remove
     for (auto& asset : GameMeshes::dynamicMeshPieces) {
       if (asset.moving) {
         for (auto& object : objects(asset.name)) {

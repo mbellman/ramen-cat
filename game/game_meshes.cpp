@@ -51,6 +51,35 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     },
     .attributes = {
       .maxCascade = 4
+    },
+    .pieces = {
+      {
+        .name = "b1-base",
+        .create = []() {
+          return Mesh::Model("./game/assets/buildings/b1-base.obj");
+        }
+      },
+      {
+        .name = "b1-levels",
+        .create = []() {
+          return Mesh::Model("./game/assets/buildings/b1-levels.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = source.color;
+        }
+      },
+      {
+        .name = "b1-windows",
+        .create = []() {
+          return Mesh::Model("./game/assets/buildings/b1-windows.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(0.5f, 0.75f, 1.f);
+        },
+        .attributes = {
+          .roughness = 0.1f
+        }
+      }
     }
   },
   {
@@ -62,6 +91,47 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     },
     .attributes = {
       .maxCascade = 4
+    },
+    .pieces = {
+      {
+        .name = "b2-base",
+        .create = []() {
+          return Mesh::Model("./game/assets/buildings/b2-base.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f::lerp(source.color.toVec3f(), Vec3f(1.f), 0.5f);
+        }
+      },
+      {
+        .name = "b2-levels",
+        .create = []() {
+          return Mesh::Model("./game/assets/buildings/b2-levels.obj");
+        },
+        .rebuild = [](auto& base, auto& piece) {
+          piece.color = Vec3f(1.f);
+        }
+      },
+      {
+        .name = "b2-columns",
+        .create = []() {
+          return Mesh::Model("./game/assets/buildings/b2-columns.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = source.color;
+        }
+      },
+      {
+        .name = "b2-windows",
+        .create = []() {
+          return Mesh::Model("./game/assets/buildings/b2-windows.obj");
+        },
+        .rebuild = [](auto& base, auto& piece) {
+          piece.color = Vec3f(0.5f, 0.75f, 1.f);
+        },
+        .attributes = {
+          .roughness = 0.1f
+        }
+      }
     }
   },
   {
@@ -73,6 +143,35 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     },
     .attributes = {
       .maxCascade = 4
+    },
+    .pieces = {
+      {
+        .name = "b3-base",
+        .create = []() {
+          return Mesh::Model("./game/assets/buildings/b3-base.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f::lerp(source.color.toVec3f(), Vec3f(1.f), 0.5f);
+        }
+      },
+      {
+        .name = "b3-levels",
+        .create = []() {
+          return Mesh::Model("./game/assets/buildings/b3-levels.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(1.f);
+        }
+      },
+      {
+        .name = "b3-columns",
+        .create = []() {
+          return Mesh::Model("./game/assets/buildings/b3-columns.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = source.color;
+        }
+      }
     }
   },
   {
@@ -1455,103 +1554,6 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
     },
     .attributes = {
       .roughness = 0.8f
-    }
-  },
-
-  // b1
-  {
-    .name = "b1-base",
-    .create = []() {
-      return Mesh::Model("./game/assets/buildings/b1-base.obj");
-    },
-    .attributes = {
-      .maxCascade = 4
-    }
-  },
-  {
-    .name = "b1-levels",
-    .create = []() {
-      return Mesh::Model("./game/assets/buildings/b1-levels.obj");
-    },
-    .attributes = {
-      .maxCascade = 4
-    }
-  },
-  {
-    .name = "b1-windows",
-    .create = []() {
-      return Mesh::Model("./game/assets/buildings/b1-windows.obj");
-    },
-    .attributes = {
-      .maxCascade = 4
-    }
-  },
-
-  // b2
-  {
-    .name = "b2-base",
-    .create = []() {
-      return Mesh::Model("./game/assets/buildings/b2-base.obj");
-    },
-    .attributes = {
-      .maxCascade = 4
-    }
-  },
-  {
-    .name = "b2-levels",
-    .create = []() {
-      return Mesh::Model("./game/assets/buildings/b2-levels.obj");
-    },
-    .attributes = {
-      .maxCascade = 4
-    }
-  },
-  {
-    .name = "b2-columns",
-    .create = []() {
-      return Mesh::Model("./game/assets/buildings/b2-columns.obj");
-    },
-    .attributes = {
-      .maxCascade = 4
-    }
-  },
-  {
-    .name = "b2-windows",
-    .create = []() {
-      return Mesh::Model("./game/assets/buildings/b2-windows.obj");
-    },
-    .attributes = {
-      .maxCascade = 4,
-      .roughness = 0.2f
-    }
-  },
-
-  // b3
-  {
-    .name = "b3-base",
-    .create = []() {
-      return Mesh::Model("./game/assets/buildings/b3-base.obj");
-    },
-    .attributes = {
-      .maxCascade = 4
-    }
-  },
-  {
-    .name = "b3-levels",
-    .create = []() {
-      return Mesh::Model("./game/assets/buildings/b3-levels.obj");
-    },
-    .attributes = {
-      .maxCascade = 4
-    }
-  },
-  {
-    .name = "b3-columns",
-    .create = []() {
-      return Mesh::Model("./game/assets/buildings/b3-columns.obj");
-    },
-    .attributes = {
-      .maxCascade = 4
     }
   },
 

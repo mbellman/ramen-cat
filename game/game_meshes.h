@@ -2,10 +2,12 @@
 
 #include <functional>
 #include <vector>
+#include <string>
 
 #include "Gamma.h"
 
 typedef std::function<Gamma::Mesh*()> MeshCreator;
+typedef std::function<void(Gamma::Object&, Gamma::Object&)> PieceBuilder;
 
 struct MeshAsset {
   std::string name;
@@ -20,7 +22,9 @@ struct MeshAsset {
   Gamma::Vec3f hitboxOffset = Gamma::Vec3f(0.f);
   u16 maxInstances = 1000;
   MeshCreator create = nullptr;
+  PieceBuilder rebuild = nullptr;
   Gamma::MeshAttributes attributes;
+  std::vector<MeshAsset> pieces;
 };
 
 namespace GameMeshes {

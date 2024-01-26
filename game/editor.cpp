@@ -251,8 +251,17 @@ internal void rebuildInitialMovingObjects(GmContext* context, GameState& state) 
         state.initialMovingObjects.push_back(object);
       }
     }
+
+    for (auto& piece : asset.pieces) {
+      if (piece.moving) {
+        for (auto& object : objects(asset.name)) {
+          state.initialMovingObjects.push_back(object);
+        }
+      }
+    }
   }
 
+  // @todo remove
   for (auto& asset : GameMeshes::dynamicMeshPieces) {
     if (asset.moving) {
       for (auto& object : objects(asset.name)) {
@@ -1025,8 +1034,15 @@ namespace Editor {
         if (!asset.dynamic) {
           mesh(asset.name)->objects.showAll();
         }
+
+        for (auto& piece : asset.pieces) {
+          if (!piece.dynamic) {
+            mesh(piece.name)->objects.showAll();
+          }
+        }
       }
 
+      // @todo remove
       for (auto& asset : GameMeshes::dynamicMeshPieces) {
         if (!asset.dynamic) {
           mesh(asset.name)->objects.showAll();
@@ -1073,8 +1089,13 @@ namespace Editor {
     {
       for (auto& asset : GameMeshes::meshAssets) {
         mesh(asset.name)->disabled = asset.dynamic;
+
+        for (auto& piece : asset.pieces) {
+          mesh(piece.name)->disabled = false;
+        }
       }
 
+      // @todo remove
       for (auto& asset : GameMeshes::dynamicMeshPieces) {
         mesh(asset.name)->disabled = false;
       }
@@ -1132,9 +1153,16 @@ namespace Editor {
           if (!asset.dynamic) {
             toggle_mesh(asset.name);
           }
+
+          for (auto& piece : asset.pieces) {
+            // @todo is this correct? mesh pieces should also be toggled off regardless of the editor being enabled
+            mesh(piece.name)->disabled = !mesh(piece.name)->disabled || state.isEditorEnabled;
+          }
         }
 
+        // @todo remove
         for (auto& asset : GameMeshes::dynamicMeshPieces) {
+          // @todo is this correct? mesh pieces should also be toggled off regardless of the editor being enabled
           mesh(asset.name)->disabled = !mesh(asset.name)->disabled || state.isEditorEnabled;
         }
       }
