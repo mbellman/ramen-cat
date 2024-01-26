@@ -179,6 +179,29 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     .dynamic = true,
     .create = []() {
       return Mesh::Model("./game/assets/buildings/wood-house-base.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    },
+    .pieces = {
+      {
+        .name = "wood-house-base",
+        .create = []() {
+          return Mesh::Model("./game/assets/buildings/wood-house-base.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(0.8f, 0.6f, 0.4f);
+        }
+      },
+      {
+        .name = "wood-house-roof",
+        .create = []() {
+          return Mesh::Model("./game/assets/buildings/wood-house-roof.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(1.f, 0.6f, 0.2f);
+        }
+      },
     }
   },
   {
@@ -1554,26 +1577,6 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
     },
     .attributes = {
       .roughness = 0.8f
-    }
-  },
-
-  // wood-house
-  {
-    .name = "wood-house-base",
-    .create = []() {
-      return Mesh::Model("./game/assets/buildings/wood-house-base.obj");
-    },
-    .attributes = {
-      .maxCascade = 4
-    }
-  },
-  {
-    .name = "wood-house-roof",
-    .create = []() {
-      return Mesh::Model("./game/assets/buildings/wood-house-roof.obj");
-    },
-    .attributes = {
-      .maxCascade = 4
     }
   },
 

@@ -625,24 +625,6 @@ internal void rebuildDynamicBuildings(GmContext* context) {
     commit(frame);
   }
 
-  objects("wood-house-base").reset();
-  objects("wood-house-roof").reset();
-
-  for (auto& house : objects("wood-house")) {
-    auto& base = create_object_from("wood-house-base");
-    auto& roof = create_object_from("wood-house-roof");
-
-    base.position = roof.position = house.position;
-    base.scale = roof.scale = house.scale;
-    base.rotation = roof.rotation = house.rotation;
-
-    base.color = Vec3f(0.8f, 0.6f, 0.4f);
-    roof.color = Vec3f(1.f, 0.6f, 0.2f);
-
-    commit(base);
-    commit(roof);
-  }
-
   objects("wood-facade-base").reset();
   objects("wood-facade-cover").reset();
 
