@@ -323,7 +323,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .type = MeshType::PRESET_ANIMATED,
       .animation = {
         .type = PresetAnimationType::CLOTH,
-        .factor = 4.f
+        .factor = 6.f
       },
       .emissivity = 0.1f,
       .roughness = 0.4f
@@ -345,6 +345,44 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .roughness = 0.4f
     }
   },
+  {
+    .name = "circle-sign",
+    .dynamic = true,
+    .hitboxScale = Vec3f(1.f, 1.f, 0.2f),
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/circle-sign-frame.obj");
+    },
+    .pieces = {
+      {
+        .name = "circle-sign-frame",
+        .create = []() {
+          return Mesh::Model("./game/assets/decorations/circle-sign-frame.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = source.color;
+        }
+      },
+      {
+        .name = "circle-sign-board",
+        .create = []() {
+          return Mesh::Model("./game/assets/decorations/circle-sign-board.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f::lerp(source.color.toVec3f(), Vec3f(1.f, 0.7f, 0.4f), 0.7f);
+        }
+      }
+    }
+  },
+  {
+    .name = "gate-sign",
+    .hitboxScale = Vec3f(1.f, 0.5f, 0.05f),
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/gate-sign.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    }
+  },
 
   /**
    * Unique meshes
@@ -362,7 +400,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
   },
   {
     .name = "water-tower-pipe",
-    .hitboxScale = Vec3f(0.2f, 0.6f, 1.f),
+    .hitboxScale = Vec3f(0.2f, 0.3f, 1.f),
     .create = []() {
       return Mesh::Model("./game/assets/uniques/water-tower-pipe.obj");
     },

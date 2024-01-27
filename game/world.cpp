@@ -549,18 +549,18 @@ internal void rebuildDynamicBuildings(GmContext* context) {
     for (auto& piece : asset.pieces) {
       objects(piece.name).reset();
 
-      if (piece.rebuild != nullptr) {
-        for (auto& source : objects(asset.name)) {
-          auto& pieceObject = create_object_from(piece.name);
+      for (auto& source : objects(asset.name)) {
+        auto& pieceObject = create_object_from(piece.name);
 
-          pieceObject.position = source.position;
-          pieceObject.scale = source.scale;
-          pieceObject.rotation = source.rotation;
+        pieceObject.position = source.position;
+        pieceObject.scale = source.scale;
+        pieceObject.rotation = source.rotation;
 
+        if (piece.rebuild != nullptr) {
           piece.rebuild(source, pieceObject);
-
-          commit(pieceObject);
         }
+
+        commit(pieceObject);
       }
     }
   }
