@@ -295,6 +295,8 @@ internal void copyMeshAttributes(Mesh& mesh, const MeshAttributes& attributes) {
 }
 
 internal void loadGameMeshes(GmContext* context, GameState& state) {
+  GameMeshes::loadAllMeshAssets();
+
   for (auto& asset : GameMeshes::meshAssets) {
     add_mesh(asset.name, asset.maxInstances, asset.create());
 

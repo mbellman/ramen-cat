@@ -153,6 +153,21 @@
     <ClCompile Include="game\inventory_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="gamma\system\immediate_ui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="game\mesh_library\overworld_city.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="game\mesh_library\overworld_crossing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="game\mesh_library\overworld_stack.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="game\mesh_library\overworld_station.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="external\glew\include\eglew.h">
@@ -597,6 +612,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="game\inventory_system.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gamma\system\immediate_ui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\mesh_library\mesh_asset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\mesh_library\overworld_city.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\mesh_library\overworld_crossing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\mesh_library\overworld_stack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\mesh_library\overworld_station.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
