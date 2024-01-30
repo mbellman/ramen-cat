@@ -4,6 +4,7 @@
 #include "mesh_library/overworld_stack.h"
 #include "mesh_library/overworld_crossing.h"
 #include "mesh_library/overworld_station.h"
+#include "mesh_library/overworld_stairs.h"
 
 using namespace Gamma;
 
@@ -981,8 +982,6 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       return Mesh::Model("./game/assets/pipe-1.obj");
     },
     .attributes = {
-      .texture = "./game/assets/pipe-1.png",
-      .normals = "./game/assets/pipe-1-normals.png",
       .roughness = 0.1f
     }
   },
@@ -1451,4 +1450,5 @@ void GameMeshes::loadAllMeshAssets() {
   add_mesh_assets(assets, overworld_stack_meshes);
   add_mesh_assets(assets, overworld_crossing_meshes);
   add_mesh_assets(assets, overworld_station_meshes);
+  add_mesh_assets(assets, overworld_stairs_meshes);
 }
