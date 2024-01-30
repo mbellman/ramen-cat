@@ -786,7 +786,8 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       return Mesh::Model("./game/assets/windmill-wheel.obj");
     },
     .attributes = {
-      .texture = "./game/assets/wood-beam.png"
+      .texture = "./game/assets/wood-beam.png",
+      .maxCascade = 4
     }
   },
   {

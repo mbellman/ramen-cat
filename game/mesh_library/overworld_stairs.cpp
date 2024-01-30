@@ -13,5 +13,14 @@ std::vector<MeshAsset> overworld_stairs_meshes = {
     .attributes = {
       .maxCascade = 4
     }
+  },
+  {
+    .name = "concrete-b1",
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/concrete-b1.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    }
   }
 };

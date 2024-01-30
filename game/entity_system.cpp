@@ -486,13 +486,16 @@ internal void handleLanterns(GmContext* context, GameState& state, float dt) {
 }
 
 internal void handleWindmillWheels(GmContext* context, GameState& state, float dt) {
+  const static float MAX_SPEED = 1.f;
+  const static float MIN_SPEED = 0.1f;
+
   float t = get_scene_time();
 
   for_moving_objects("windmill-wheel", {
     auto rotationAxis = initial.rotation.getDirection();
     // Rotate larger windmill wheels more slowly
-    float scaleRatio = Gm_Clampf(initial.scale.magnitude() / 1000.f, 0.f, 1.f);
-    float rotationSpeedFactor = Gm_Lerpf(2.f, 0.2f, scaleRatio);
+    float scaleRatio = Gm_Clampf(initial.scale.magnitude() / 2000.f, 0.f, 1.f);
+    float rotationSpeedFactor = Gm_Lerpf(MAX_SPEED, MIN_SPEED, scaleRatio);
     float angle = rotationSpeedFactor * get_scene_time();
 
     object.rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initial.rotation;
