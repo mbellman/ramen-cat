@@ -159,8 +159,9 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
   {
     .name = "petal-spawn",
     .dynamic = true,
+    .defaultColor = Vec3f(1.f, 0.5f, 0.5f),
     .create = []() {
-      return Mesh::Cube();
+      return Mesh::Sphere(8);
     }
   },
 

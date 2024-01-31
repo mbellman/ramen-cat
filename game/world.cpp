@@ -999,6 +999,8 @@ void World::rebuildDynamicMeshes(GmContext* context) {
 }
 
 void World::rebuildDynamicCollisionPlanes(GmContext* context, GameState& state) {
+  const static Vec3f DEFAULT_COLOR = Vec3f(0.5f, 0.5f, 1.f);
+
   objects("dynamic_collision_box").reset();
 
   for (auto& cube : objects("cube")) {
@@ -1007,7 +1009,43 @@ void World::rebuildDynamicCollisionPlanes(GmContext* context, GameState& state) 
     box.position = cube.position;
     box.rotation = cube.rotation;
     box.scale = cube.scale;
-    box.color = Vec3f(0.5f, 0.5f, 1.f);
+    box.color = DEFAULT_COLOR;
+
+    commit(box);
+  }
+
+  for (auto& b1 : objects("b1")) {
+    auto& box = create_object_from("dynamic_collision_box");
+
+    box.position = b1.position;
+    box.rotation = b1.rotation;
+    box.scale = b1.scale * Vec3f(1.1f, 2.055f, 1.1f);
+    box.color = DEFAULT_COLOR;
+
+    commit(box);
+  }
+
+  for (auto& b2 : objects("b2")) {
+    auto& box = create_object_from("dynamic_collision_box");
+    auto& box2 = create_object_from("dynamic_collision_box");
+
+    box.position = box2.position = b2.position;
+    box.rotation = box2.rotation = b2.rotation;
+    box.scale = b2.scale * Vec3f(0.925f, 1.245f, 0.79f);
+    box2.scale = b2.scale * Vec3f(0.8f, 1.41f, 0.68f);
+    box.color = box2.color = DEFAULT_COLOR;
+
+    commit(box);
+    commit(box2);
+  }
+
+  for (auto& b3 : objects("b3")) {
+    auto& box = create_object_from("dynamic_collision_box");
+
+    box.position = b3.position;
+    box.rotation = b3.rotation;
+    box.scale = b3.scale * Vec3f(1.025f, 1.345f, 1.018f);
+    box.color = box.color = DEFAULT_COLOR;
 
     commit(box);
   }
@@ -1015,6 +1053,12 @@ void World::rebuildDynamicCollisionPlanes(GmContext* context, GameState& state) 
   for (auto& box : objects("dynamic_collision_box")) {
     Collisions::addObjectCollisionPlanes(box, state.collisionPlanes);
   }
+
+  #if GAMMA_DEVELOPER_MODE
+    u16 total = objects("dynamic_collision_box").totalActive();
+
+    Console::log("Rebuilt ", std::to_string(total), " dynamic collision boxes");
+  #endif
 }
 
 void World::loadLevel(GmContext* context, GameState& state, const std::string& levelName) {

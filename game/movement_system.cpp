@@ -224,6 +224,7 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
     rate *= 0.05f;
   }
 
+  // Directional movement
   if (time_since(state.lastLedgeTurnaroundTime) > 0.2f) {    
     if (input.isKeyHeld(Key::W)) {
       acceleration += forward * rate;
