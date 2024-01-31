@@ -481,11 +481,9 @@ internal void buildWireFromStartToEnd(GmContext* context, const Vec3f& start, co
   }
 }
 
-internal void rebuildWires(GmContext* context) {
-  objects("wire").reset();
+#define is_same_object(a, b) a._record.id == b._record.id && a._record.generation == b._record.generation
 
-  #define is_same_object(a, b) a._record.id == b._record.id && a._record.generation == b._record.generation
-
+internal void rebuildElectricalWires(GmContext* context) {
   // Electrical pole wires
   for (auto& p1 : objects("electrical-pole")) {
     for (auto& p2 : objects("electrical-pole")) {
@@ -538,11 +536,59 @@ internal void rebuildWires(GmContext* context) {
       }
     }
   }
+}
+
+internal void rebuildMiniFlagWires(GmContext* context) {
+  const static auto FLAG_COLORS = {
+    Vec3f(1.f, 0.5f, 0.2f),
+    Vec3f(1.f, 0.2f, 0.1f),
+    Vec3f(0.2f, 0.5f, 1.f)
+  };
+
+  objects("mini-flag").reset();
+
+  for (auto& s1 : objects("flag-wire-spawn")) {
+    for (auto& s2 : objects("flag-wire-spawn")) {
+      if (is_same_object(s1, s2)) {
+        continue;
+      }
+
+      float distance = (s1.position - s2.position).magnitude();
+      float yDistance = s1.position.y - s2.position.y;
+
+      if (distance < 3000.f && yDistance > 0.f && yDistance < 1000.f) {
+        auto& start = s1.position;
+        auto& end = s2.position;
+
+        // Construct the wire
+        buildWireFromStartToEnd(context, start, end, 4.f, Vec3f(0.5f));
+
+        // Add mini flag decorations
+        std::vector<Vec3f> points;
+        u8 totalWirePieces = 10;
+        float sagDistance = (end - start).magnitude() / 10.f;
+
+        // Define a discrete set of points forming the wire curve
+        for (u8 i = 1; i < totalWirePieces; i++) {
+          float alpha = float(i) / float(totalWirePieces);
+          float sag = (1.f - powf(alpha * 2.f - 1.f, 2)) * sagDistance;
+          Vec3f point = Vec3f::lerp(start, end, alpha) - Vec3f(0, sag, 0);
+          u8 colorIndex = u8(Gm_Modf(point.x, 3.f));
+
+          auto& flag = create_object_from("mini-flag");
+
+          flag.position = point - Vec3f(0, 55.f, 0);
+          flag.scale = Vec3f(60.f);
+          flag.color = *(FLAG_COLORS.begin() + colorIndex);
+
+          commit(flag);
+        }
+      }
+    }
+  }
 
   #if GAMMA_DEVELOPER_MODE
-    u16 totalWires = objects("wire").totalActive();
-
-    Console::log("Generated", std::to_string(totalWires), "wire pieces");
+    Console::log("Generated", objects("mini-flag").totalActive(), "mini flags");
   #endif
 }
 
@@ -924,12 +970,18 @@ void World::rebuildDynamicMeshes(GmContext* context) {
 
   rebuildDynamicStaircases(context);
   rebuildStreetlampLights(context);
-  rebuildWires(context);
   rebuildDynamicBuildings(context);
   rebuildAcUnitFans(context);
   rebuildWindTurbines(context);
   rebuildSignRoofs(context);
   rebuildPetals(context);
+
+  {
+    objects("wire").reset();
+
+    rebuildElectricalWires(context);
+    rebuildMiniFlagWires(context);
+  }
 
   Console::log("Rebuilt dynamic meshes in", (Gm_GetMicroseconds() - start), "us");
 }

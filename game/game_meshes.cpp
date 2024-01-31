@@ -119,6 +119,14 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
 
+  {
+    .name = "flag-wire-spawn",
+    .dynamic = true,
+    .create = []() {
+      return Mesh::Sphere(8);
+    }
+  },
+
   /**
    * Unique meshes
    * -------------
@@ -1261,6 +1269,7 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
       .roughness = 0.3f
     }
   },
+
   {
     .name = "streetlamp-light",
     .create = []() {
@@ -1270,7 +1279,6 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
       .emissivity = 1.f
     }
   },
-
   {
     .name = "streetlamp-frame",
     .create = []() {
@@ -1280,8 +1288,10 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
       .texture = "./game/assets/wood-beam.png"
     }
   },
+
   {
     .name = "wire",
+    .maxInstances = 10000,
     .create = []() {
       return Mesh::Cube();
     },
@@ -1289,6 +1299,7 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
       .roughness = 0.3f
     }
   },
+
   {
     .name = "ac-fan",
     .moving = true,
@@ -1309,6 +1320,7 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
       .roughness = 0.4f
     }
   },
+
   {
     .name = "building-1-body",
     .create = []() {
@@ -1324,6 +1336,7 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
       .texture = "./game/assets/building-1-frame.png"
     }
   },
+
   {
     .name = "yuki-building-1-frame",
     .create = []() {
@@ -1333,6 +1346,7 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
       .roughness = 0.8f
     }
   },
+
   {
     .name = "yuki-building-2-frame",
     .create = []() {
@@ -1342,6 +1356,7 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
       .roughness = 0.8f
     }
   },
+
   {
     .name = "yuki-building-3-frame",
     .create = []() {
@@ -1439,7 +1454,22 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
       .maxCascade = 2,
       .emissivity = 0.8f
     }
-  }
+  },
+
+  // flag-wire-spawn
+  {
+    .name = "mini-flag",
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/mini-flag.obj");
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .animation = {
+        .type = PresetAnimationType::CLOTH,
+        .factor = 3.f
+      },
+    }
+  },
 };
 
 void GameMeshes::loadAllMeshAssets() {
