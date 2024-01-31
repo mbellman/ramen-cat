@@ -22,5 +22,44 @@ std::vector<MeshAsset> overworld_stairs_meshes = {
     .attributes = {
       .maxCascade = 4
     }
+  },
+  {
+    .name = "round-tower",
+    .dynamic = true,
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/round-tower-base.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    },
+    .pieces = {
+      {
+        .name = "round-tower-base",
+        .create = []() {
+          return Mesh::Model("./game/assets/buildings/round-tower-base.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(1.f, 0.8f, 0.6f);
+        }
+      },
+      {
+        .name = "round-tower-supports",
+        .create = []() {
+          return Mesh::Model("./game/assets/buildings/round-tower-supports.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(1.f, 0.6f, 0.2f);
+        }
+      },
+      {
+        .name = "round-tower-roof",
+        .create = []() {
+          return Mesh::Model("./game/assets/buildings/round-tower-roof.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(0.8f, 0.4f, 0.2f);
+        }
+      }
+    }
   }
 };

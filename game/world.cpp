@@ -580,6 +580,7 @@ internal void rebuildMiniFlagWires(GmContext* context) {
           flag.position = point - Vec3f(0, 55.f, 0);
           flag.scale = Vec3f(60.f);
           flag.color = *(FLAG_COLORS.begin() + colorIndex);
+          // @todo rotate along wire direction
 
           commit(flag);
         }
