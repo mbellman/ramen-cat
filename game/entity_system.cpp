@@ -491,17 +491,34 @@ internal void handleWindmillWheels(GmContext* context, GameState& state, float d
 
   float t = get_scene_time();
 
-  for_moving_objects("windmill-wheel", {
-    auto rotationAxis = initial.rotation.getDirection();
-    // Rotate larger windmill wheels more slowly
-    float scaleRatio = Gm_Clampf(initial.scale.magnitude() / 2000.f, 0.f, 1.f);
-    float rotationSpeedFactor = Gm_Lerpf(MAX_SPEED, MIN_SPEED, scaleRatio);
-    float angle = rotationSpeedFactor * get_scene_time();
+  {
+    for_moving_objects("windmill-wheel", {
+      auto rotationAxis = initial.rotation.getDirection();
+      // Rotate larger windmill wheels more slowly
+      float scaleRatio = Gm_Clampf(initial.scale.magnitude() / 2000.f, 0.f, 1.f);
+      float rotationSpeedFactor = Gm_Lerpf(MAX_SPEED, MIN_SPEED, scaleRatio);
+      float angle = rotationSpeedFactor * get_scene_time();
 
-    object.rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initial.rotation;
+      object.rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initial.rotation;
 
-    commit(object);
-  });
+      commit(object);
+    });
+  }
+
+  // @todo dedupe from above
+  {
+    for_moving_objects("windmill-wheel-2", {
+      auto rotationAxis = initial.rotation.getDirection();
+      // Rotate larger windmill wheels more slowly
+      float scaleRatio = Gm_Clampf(initial.scale.magnitude() / 2000.f, 0.f, 1.f);
+      float rotationSpeedFactor = Gm_Lerpf(MAX_SPEED, MIN_SPEED, scaleRatio);
+      float angle = rotationSpeedFactor * get_scene_time();
+
+      object.rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initial.rotation;
+
+      commit(object);
+    });
+  }
 }
 
 internal void handleWindTurbines(GmContext* context, GameState& state, float dt) {

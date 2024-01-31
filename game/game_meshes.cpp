@@ -127,6 +127,22 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
   },
 
   /**
+   * Environmental elements
+   * ----------------------
+   */
+  {
+    .name = "waterfall-1",
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/waterfall.obj");
+    },
+    .attributes = {
+      // @todo create a new flowing water shader (or use scrolling textures for this one)
+      .type = MeshType::REFRACTIVE,
+      .maxCascade = 4
+    }
+  },
+
+  /**
    * Unique meshes
    * -------------
    */
@@ -792,6 +808,19 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     .hitboxScale = Vec3f(1.f, 1.f, 0.1f),
     .create = []() {
       return Mesh::Model("./game/assets/windmill-wheel.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/wood-beam.png",
+      .maxCascade = 4
+    }
+  },
+  {
+    .name = "windmill-wheel-2",
+    .moving = true,
+    .defaultScale = Vec3f(75.f),
+    .hitboxScale = Vec3f(1.f, 1.f, 0.1f),
+    .create = []() {
+      return Mesh::Model("./game/assets/windmill-wheel-2.obj");
     },
     .attributes = {
       .texture = "./game/assets/wood-beam.png",
