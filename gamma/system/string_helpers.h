@@ -17,6 +17,7 @@ std::string Gm_Serialize(const Gamma::Vec3f& v);
 std::string Gm_Serialize(const Gamma::Quaternion& q);
 std::string Gm_Serialize(const Gamma::pVec4& p);
 
+std::string Gm_ToDebugString(float v);
 std::string Gm_ToDebugString(const Gamma::Vec3f& v);
 std::string Gm_ToDebugString(const Gamma::Quaternion& q);
 

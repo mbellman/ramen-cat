@@ -564,23 +564,23 @@ internal void rebuildMiniFlagWires(GmContext* context) {
         buildWireFromStartToEnd(context, start, end, 4.f, Vec3f(0.5f));
 
         // Add mini flag decorations
-        std::vector<Vec3f> points;
         u8 totalWirePieces = 10;
-        float sagDistance = (end - start).magnitude() / 10.f;
+        Vec3f direction = end - start;
+        float sagDistance = direction.magnitude() / 10.f;
+        float angle = atan2f(direction.x, direction.z) + Gm_HALF_PI;
 
-        // Define a discrete set of points forming the wire curve
         for (u8 i = 1; i < totalWirePieces; i++) {
           float alpha = float(i) / float(totalWirePieces);
           float sag = (1.f - powf(alpha * 2.f - 1.f, 2)) * sagDistance;
-          Vec3f point = Vec3f::lerp(start, end, alpha) - Vec3f(0, sag, 0);
-          u8 colorIndex = u8(Gm_Modf(point.x, 3.f));
+          Vec3f position = Vec3f::lerp(start, end, alpha) - Vec3f(0, sag + 10.f, 0);
+          u8 colorIndex = u8(Gm_Modf(position.x, 3.f));
 
           auto& flag = create_object_from("mini-flag");
 
-          flag.position = point - Vec3f(0, 55.f, 0);
+          flag.position = position - Vec3f(0, 55.f, 0);
           flag.scale = Vec3f(60.f);
           flag.color = *(FLAG_COLORS.begin() + colorIndex);
-          // @todo rotate along wire direction
+          flag.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angle);
 
           commit(flag);
         }

@@ -14,6 +14,7 @@
 #include "system/flags.h"
 #include "system/immediate_ui.h"
 #include "system/scene.h"
+#include "system/string_helpers.h"
 
 using namespace Gamma;
 
@@ -55,12 +56,23 @@ static void Gm_DisplayDevtools(GmContext* context) {
         + String(frameTimeBudget)
         + "%)";
 
+      u32 objectAllocationTotalInBytes = 0;
+
+      for (auto* mesh : context->scene.meshes) {
+        auto maxInstances = mesh->objects.max();
+
+        objectAllocationTotalInBytes += maxInstances * 52;
+      }
+
+      float objectAllocationTotalInMegabytes = float(objectAllocationTotalInBytes) / 1000000.f;
+
       auto resolutionLabel = "Resolution: " + String(resolution.width) + " x " + String(resolution.height);
       auto vertsLabel = "Verts: " + String(sceneStats.verts);
       auto trisLabel = "Tris: " + String(sceneStats.tris);
       auto totalLightsLabel = "Lights: " + String(sceneStats.totalLights);
       auto totalMeshesLabel = "Meshes: " + String(sceneStats.totalMeshes);
-      auto memoryLabel = "GPU Memory: " + String(renderStats.gpuMemoryUsed) + "MB / " + String(renderStats.gpuMemoryTotal) + "MB";
+      auto objectAllocationLabel = "Object Allocation: " + Gm_ToDebugString(objectAllocationTotalInMegabytes) + "MB";
+      auto gpuMemoryLabel = "GPU Memory: " + String(renderStats.gpuMemoryUsed) + "MB / " + String(renderStats.gpuMemoryTotal) + "MB";
 
       const Vec3f TEXT_COLOR = Vec3f(1.f);
       const Vec4f BACKGROUND_COLOR = Vec4f(0.5f, 0, 0, 0.5f);
@@ -72,7 +84,8 @@ static void Gm_DisplayDevtools(GmContext* context) {
       renderer.renderText(font_sm, trisLabel.c_str(), 25, 125, TEXT_COLOR, BACKGROUND_COLOR);
       renderer.renderText(font_sm, totalLightsLabel.c_str(), 25, 150, TEXT_COLOR, BACKGROUND_COLOR);
       renderer.renderText(font_sm, totalMeshesLabel.c_str(), 25, 175, TEXT_COLOR, BACKGROUND_COLOR);
-      renderer.renderText(font_sm, memoryLabel.c_str(), 25, 200, TEXT_COLOR, BACKGROUND_COLOR);
+      renderer.renderText(font_sm, objectAllocationLabel.c_str(), 25, 200, TEXT_COLOR, BACKGROUND_COLOR);
+      renderer.renderText(font_sm, gpuMemoryLabel.c_str(), 25, 225, TEXT_COLOR, BACKGROUND_COLOR);
     }
 
     // Render user-defined debug messages
