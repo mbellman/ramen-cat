@@ -409,6 +409,7 @@ internal void rebuildDynamicStaircases(GmContext* context) {
   #endif
 }
 
+// @todo define as pieces
 internal void rebuildStreetlampLights(GmContext* context) {
   objects("streetlamp-light").reset();
   objects("streetlamp-frame").reset();
@@ -771,6 +772,7 @@ internal void rebuildWindTurbines(GmContext* context) {
   }
 }
 
+// @todo define as pieces
 internal void rebuildSignRoofs(GmContext* context) {
   objects("sign-roof-supports").reset();
   objects("sign-roof-signs").reset();

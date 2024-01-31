@@ -11,7 +11,7 @@ int main(int argc, char* argv[]) {
   auto* context = Gm_CreateContext();
   GameState state;
 
-  Gm_OpenWindow(context, "Video Game!", { 1200, 675 });
+  Gm_OpenWindow(context, "Video Game!", { 1536, 850 });
   Gm_SetRenderMode(context, GmRenderMode::OPENGL);
 
   initializeGame(context, state);
