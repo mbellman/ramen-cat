@@ -118,7 +118,6 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .maxCascade = 4
     }
   },
-
   {
     .name = "flag-wire-spawn",
     .dynamic = true,

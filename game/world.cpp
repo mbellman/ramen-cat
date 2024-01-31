@@ -921,6 +921,17 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
 
     add_mesh("slingshot", 100, Mesh::Model("./game/assets/slingshot.obj"));
     mesh("slingshot")->roughness = 0.9f;
+
+    #if GAMMA_DEVELOPER_MODE
+      add_mesh("motion_indicator", 4, Mesh::Cube());
+      mesh("motion_indicator")->emissivity = 1.f;
+      mesh("motion_indicator")->canCastShadows = false;
+
+      create_object_from("motion_indicator");
+      create_object_from("motion_indicator");
+      create_object_from("motion_indicator");
+      create_object_from("motion_indicator");
+    #endif
   }
 
   auto& ocean = create_object_from("ocean");

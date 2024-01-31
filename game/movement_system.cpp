@@ -624,5 +624,46 @@ namespace MovementSystem {
         state.velocity.z *= (1.0f - 7.f * dt);
       }
     }
+
+    #if GAMMA_DEVELOPER_MODE
+      // Display player motion vectors if dev tools are enabled
+      mesh("motion_indicator")->disabled = !Gm_IsFlagEnabled(GammaFlags::ENABLE_DEV_TOOLS);
+
+      if (Gm_IsFlagEnabled(GammaFlags::ENABLE_DEV_TOOLS)) {
+        const float thickness = 3.f;
+
+        // Velocity vectors
+        auto& vx = objects("motion_indicator")[0];
+        auto& vy = objects("motion_indicator")[1];
+        auto& vz = objects("motion_indicator")[2];
+
+        vx.position = player.position + Vec3f(state.velocity.x * 0.2f, 0, 0);
+        vy.position = player.position + Vec3f(0, state.velocity.y * 0.2f, 0);
+        vz.position = player.position + Vec3f(0, 0, state.velocity.z * 0.2f);
+
+        vx.scale = Vec3f(state.velocity.x * 0.2f, thickness, thickness);
+        vy.scale = Vec3f(thickness, state.velocity.y * 0.2f, thickness);
+        vz.scale = Vec3f(thickness, thickness, state.velocity.z * 0.2f);
+
+        vx.color = Vec3f(0, 0, 1.f);
+        vy.color = Vec3f(0, 1.f, 0);
+        vz.color = Vec3f(1.f, 0, 0);
+
+        // Motion vector
+        auto& motion = objects("motion_indicator")[3];
+        auto yaw = atan2f(state.velocity.x, state.velocity.z);
+        float pitch = atan2f(state.velocity.xz().magnitude(), state.velocity.y) + Gm_HALF_PI;
+
+        motion.position = player.position + state.velocity * 0.2f;
+        motion.scale = Vec3f(thickness, thickness, state.velocity.magnitude() * 0.2f);
+        motion.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), yaw) * Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), pitch);
+        motion.color = Vec3f(0, 1.f, 1.f);
+
+        commit(vx);
+        commit(vy);
+        commit(vz);
+        commit(motion);
+      }
+    #endif
   }
 }
