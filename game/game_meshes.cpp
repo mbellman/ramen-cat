@@ -287,6 +287,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
         .type = PresetAnimationType::FLOWER,
         .factor = 5.f
       },
+      .roughness = 0.9f,
       .useMipmaps = false
     }
   },
@@ -682,7 +683,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     },
     .attributes = {
       .maxCascade = 4,
-      .roughness = 0.3f
+      .roughness = 0.1f
     }
   },
   {
@@ -998,7 +999,8 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       return Mesh::Model("./game/assets/awning.obj");
     },
     .attributes = {
-      .texture = "./game/assets/awning.png"
+      .texture = "./game/assets/awning.png",
+      .maxCascade = 4
     }
   },
   {

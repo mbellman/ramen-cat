@@ -53,7 +53,7 @@ vec3 getDepthOfFieldColor(vec3 current_out_color, vec2 uv, float linear_frag_dep
   if (depth_factor > 1.0) depth_factor = 1.0;
 
   depth_factor *= depth_factor;
-
+// 
   return mix(current_out_color, depth_of_field_color, depth_factor);
 }
 
@@ -151,7 +151,7 @@ void main() {
   #endif
 
   // Game-specific modifications below
-  // ---------------------------------
+  // -----------8---------------------
 
   // Redshifting/Torii Gate zones
   {

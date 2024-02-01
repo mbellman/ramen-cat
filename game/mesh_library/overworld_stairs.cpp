@@ -61,5 +61,36 @@ std::vector<MeshAsset> overworld_stairs_meshes = {
         }
       }
     }
+  },
+  {
+    .name = "bridge-2",
+    .dynamic = true,
+    .hitboxScale = Vec3f(0.3f, 0.2f, 1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/bridge-2-floor.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    },
+    .pieces = {
+      {
+        .name = "bridge-2-floor",
+        .create = []() {
+          return Mesh::Model("./game/assets/buildings/bridge-2-floor.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(1.f, 0.6f, 0.2f);
+        }
+      },
+      {
+        .name = "bridge-2-railing",
+        .create = []() {
+          return Mesh::Model("./game/assets/buildings/bridge-2-railing.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(0.7f, 0.2f, 0.1f);
+        }
+      }
+    }
   }
 };

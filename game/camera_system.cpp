@@ -351,9 +351,11 @@ void CameraSystem::handleVisibilityCullingAndLevelsOfDetail(GmContext* context, 
     "b1-base", "b1-levels", "b1-windows",
     "b2-base", "b2-levels", "b2-columns", "b2-windows",
     "b3-base", "b3-levels", "b3-columns",
+    "concrete-b1",
+    "round-tower-base", "round-tower-supports", "round-tower-roof",
     "wood-house-base", "wood-house-roof",
     "wood-tower", "wood-tower-top",
-    "branch-1", "leaves",
+    "tree-trunk", "branch-1", "bush", "leaves",
     "dynamic-wave-sign"
   };
 
