@@ -547,7 +547,7 @@ internal void handleFans(GmContext* context, GameState& state, float dt) {
   }
 
   {
-    for_moving_objects("big-fan-blades", {
+    for_moving_objects("exhaust-fan-blades", {
       auto rotationAxis = initial.rotation.getUpDirection();
       float angle = get_scene_time();
 

@@ -1400,7 +1400,6 @@ namespace Gamma {
     shaders.ocean.setFloat("time", scene.sceneTime);
     shaders.ocean.setFloat("zNear", scene.zNear);
     shaders.ocean.setFloat("zFar", scene.zFar);
-
     shaders.ocean.setVec3f("sunDirection", scene.sky.sunDirection);
     shaders.ocean.setVec3f("sunColor", scene.sky.sunColor);
     shaders.ocean.setVec3f("atmosphereColor", scene.sky.atmosphereColor);
@@ -1408,6 +1407,8 @@ namespace Gamma {
 
     for (auto* glMesh : glMeshes) {
       if (glMesh->isMeshType(MeshType::OCEAN)) {
+        shaders.ocean.setFloat("turbulence", glMesh->getSourceMesh()->ocean.turbulence);
+
         glMesh->render(ctx.primitiveMode);
       }
     }

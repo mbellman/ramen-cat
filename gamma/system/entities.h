@@ -217,6 +217,16 @@ namespace Gamma {
   };
 
   /**
+   * Ocean
+   * -----
+   *
+   * @todo description
+   */
+  struct Ocean {
+    float turbulence = 1.f;
+  };
+
+  /**
    * MeshAttributes
    * --------------
    *
@@ -252,6 +262,10 @@ namespace Gamma {
      * Configuration for preset animated meshes.
      */
     PresetAnimation animation;
+    /**
+     * Configuration for ocean meshes.
+     */
+    Ocean ocean;
     /**
      * Controls how intensely mesh objects render in their
      * natural color, without a light source contribution.

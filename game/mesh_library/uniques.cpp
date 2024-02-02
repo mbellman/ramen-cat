@@ -33,7 +33,22 @@ std::vector<MeshAsset> unique_meshes = {
       return Mesh::Model("./game/assets/uniques/lower-lake.obj");
     },
     .attributes = {
-      .type = MeshType::OCEAN
+      .type = MeshType::OCEAN,
+      .maxCascade = 4,
+      .ocean = {
+        .turbulence = 0.01f
+      }
+    },
+    .pieces = {
+      {
+        .name = "lower-lakebed",
+        .create = []() {
+          return Mesh::Model("./game/assets/uniques/lower-lakebed.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(0.3f, 0.8f, 0.2f);
+        }
+      }
     }
   }
 };

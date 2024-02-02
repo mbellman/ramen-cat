@@ -22,6 +22,7 @@ uniform vec3 sunDirection;
 uniform vec3 sunColor;
 uniform vec3 atmosphereColor;
 uniform float altitude;
+uniform float turbulence;
 
 flat in vec3 fragColor;
 in vec3 fragNormal;
@@ -85,6 +86,8 @@ vec3 getNormal(vec3 world_position) {
   n += vec2(simplex_noise(vec2(t * 0.08 + wx * 0.0002, t * 0.1 + wz * 0.00005)));
   n += vec2(simplex_noise(vec2(t * 0.1 - wx * 0.0005, t * 0.1 - wz * 0.0005))) * 0.3;
   n += vec2(simplex_noise(vec2(t * 0.1 + wx * 0.002, t * 0.1 - wz * 0.002))) * 0.2;
+
+  n *= turbulence;
 
   vec3 n_normal = normalize(fragNormal);
   vec3 n_tangent = normalize(fragTangent);
@@ -254,6 +257,8 @@ void main() {
   float s2 = simplex_noise(vec2(wx * 0.000013, wz * 0.000013));
 
   ocean_color += vec3(0.1 * s, 0.8 * s, 0.5 * s2) * 0.3;
+
+  ocean_color *= fragColor;
 
   out_color_and_depth = vec4(ocean_color, gl_FragCoord.z);
 }

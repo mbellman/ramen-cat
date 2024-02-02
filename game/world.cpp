@@ -282,10 +282,12 @@ internal void unloadCurrentLevel(GmContext* context, GameState& state) {
 
 internal void copyMeshAttributes(Mesh& mesh, const MeshAttributes& attributes) {
   mesh.type = attributes.type;
+  mesh.animation = attributes.animation;
+  mesh.particles = attributes.particles;
+  mesh.ocean = attributes.ocean;
   mesh.texture = attributes.texture;
   mesh.normals = attributes.normals;
   mesh.maxCascade = attributes.maxCascade;
-  mesh.animation = attributes.animation;
   mesh.emissivity = attributes.emissivity;
   mesh.roughness = attributes.roughness;
   mesh.canCastShadows = attributes.canCastShadows;
