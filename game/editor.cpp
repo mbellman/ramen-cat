@@ -244,6 +244,7 @@ internal void resetMovingObjects(GmContext* context, GameState& state) {
   }
 }
 
+// @todo move this to world.cpp
 internal void rebuildInitialMovingObjects(GmContext* context, GameState& state) {
   state.initialMovingObjects.clear();
 
@@ -256,7 +257,7 @@ internal void rebuildInitialMovingObjects(GmContext* context, GameState& state) 
 
     for (auto& piece : asset.pieces) {
       if (piece.moving) {
-        for (auto& object : objects(asset.name)) {
+        for (auto& object : objects(piece.name)) {
           state.initialMovingObjects.push_back(object);
         }
       }

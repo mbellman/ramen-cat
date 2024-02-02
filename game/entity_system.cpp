@@ -534,15 +534,28 @@ internal void handleWindTurbines(GmContext* context, GameState& state, float dt)
   });
 }
 
-internal void handleAcFans(GmContext* context, GameState& state, float dt) {
-  for_moving_objects("ac-fan", {
-    auto rotationAxis = initial.rotation.getDirection();
-    float angle = 3.f * get_scene_time();
+internal void handleFans(GmContext* context, GameState& state, float dt) {
+  {
+    for_moving_objects("ac-fan", {
+      auto rotationAxis = initial.rotation.getDirection();
+      float angle = 3.f * get_scene_time();
 
-    object.rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initial.rotation;
+      object.rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initial.rotation;
 
-    commit(object);
-  });
+      commit(object);
+    });
+  }
+
+  {
+    for_moving_objects("big-fan-blades", {
+      auto rotationAxis = initial.rotation.getUpDirection();
+      float angle = get_scene_time();
+
+      object.rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initial.rotation;
+
+      commit(object);
+    });
+  }
 }
 
 internal void handleHotAirBalloons(GmContext* context, GameState& state, float dt) {
@@ -910,7 +923,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   handleLanterns(context, state, dt);
   handleWindmillWheels(context, state, dt);
   handleWindTurbines(context, state, dt);
-  handleAcFans(context, state, dt);
+  handleFans(context, state, dt);
   handleUniqueLevelStructures(context, state, dt);
   handleOcean(context);
 

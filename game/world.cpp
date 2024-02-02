@@ -595,26 +595,6 @@ internal void rebuildMiniFlagWires(GmContext* context) {
 }
 
 internal void rebuildDynamicBuildings(GmContext* context) {
-  for (auto& asset : GameMeshes::meshAssets) {
-    for (auto& piece : asset.pieces) {
-      objects(piece.name).reset();
-
-      for (auto& source : objects(asset.name)) {
-        auto& pieceObject = create_object_from(piece.name);
-
-        pieceObject.position = source.position;
-        pieceObject.scale = source.scale;
-        pieceObject.rotation = source.rotation;
-
-        if (piece.rebuild != nullptr) {
-          piece.rebuild(source, pieceObject);
-        }
-
-        commit(pieceObject);
-      }
-    }
-  }
-
   objects("building-1-body").reset();
   objects("building-1-frame").reset();
 
@@ -981,6 +961,28 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
 
 void World::rebuildDynamicMeshes(GmContext* context) {
   auto start = Gm_GetMicroseconds();
+
+  {
+    for (auto& asset : GameMeshes::meshAssets) {
+      for (auto& piece : asset.pieces) {
+        objects(piece.name).reset();
+
+        for (auto& source : objects(asset.name)) {
+          auto& pieceObject = create_object_from(piece.name);
+
+          pieceObject.position = source.position;
+          pieceObject.scale = source.scale;
+          pieceObject.rotation = source.rotation;
+
+          if (piece.rebuild != nullptr) {
+            piece.rebuild(source, pieceObject);
+          }
+
+          commit(pieceObject);
+        }
+      }
+    }
+  }
 
   rebuildDynamicStaircases(context);
   rebuildStreetlampLights(context);

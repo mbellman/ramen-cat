@@ -15,6 +15,30 @@ std::vector<MeshAsset> overworld_stairs_meshes = {
     }
   },
   {
+    .name = "big-fan",
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/big-fan-frame.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    },
+    .pieces = {
+      {
+        .name = "big-fan-blades",
+        .moving = true,
+        .create = []() {
+          return Mesh::Model("./game/assets/decorations/big-fan.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(0.5f);
+        },
+        .attributes = {
+          .roughness = 0.1f
+        }
+      }
+    }
+  },
+  {
     .name = "concrete-b1",
     .create = []() {
       return Mesh::Model("./game/assets/buildings/concrete-b1.obj");
