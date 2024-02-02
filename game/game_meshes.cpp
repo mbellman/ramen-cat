@@ -5,6 +5,7 @@
 #include "mesh_library/overworld_crossing.h"
 #include "mesh_library/overworld_station.h"
 #include "mesh_library/overworld_stairs.h"
+#include "mesh_library/uniques.h"
 
 using namespace Gamma;
 
@@ -139,32 +140,6 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       // @todo create a new flowing water shader (or use scrolling textures for this one)
       .type = MeshType::REFRACTIVE,
       .maxCascade = 4
-    }
-  },
-
-  /**
-   * Unique meshes
-   * -------------
-   */
-  {
-    .name = "big-tree-trunk",
-    .hitboxScale = Vec3f(0.3f, 1.f, 0.3f),
-    .create = []() {
-      return Mesh::Model("./game/assets/uniques/big-tree-trunk.obj");
-    },
-    .attributes = {
-      .maxCascade = 4
-    }
-  },
-  {
-    .name = "water-tower-pipe",
-    .hitboxScale = Vec3f(0.2f, 0.3f, 1.f),
-    .create = []() {
-      return Mesh::Model("./game/assets/uniques/water-tower-pipe.obj");
-    },
-    .attributes = {
-      .maxCascade = 4,
-      .roughness = 0.2f
     }
   },
 
@@ -1514,4 +1489,5 @@ void GameMeshes::loadAllMeshAssets() {
   add_mesh_assets(assets, overworld_crossing_meshes);
   add_mesh_assets(assets, overworld_station_meshes);
   add_mesh_assets(assets, overworld_stairs_meshes);
+  add_mesh_assets(assets, unique_meshes);
 }

@@ -171,6 +171,9 @@
     <ClCompile Include="game\mesh_library\overworld_stairs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="game\mesh_library\uniques.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="external\glew\include\eglew.h">
@@ -636,6 +639,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="game\mesh_library\overworld_stairs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\mesh_library\uniques.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

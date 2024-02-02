@@ -129,6 +129,7 @@
     <ClCompile Include="game\mesh_library\overworld_stack.cpp" />
     <ClCompile Include="game\mesh_library\overworld_stairs.cpp" />
     <ClCompile Include="game\mesh_library\overworld_station.cpp" />
+    <ClCompile Include="game\mesh_library\uniques.cpp" />
     <ClCompile Include="game\movement_system.cpp" />
     <ClCompile Include="game\ui_system.cpp" />
     <ClCompile Include="game\world.cpp" />
@@ -275,6 +276,7 @@
     <ClInclude Include="game\mesh_library\overworld_stack.h" />
     <ClInclude Include="game\mesh_library\overworld_stairs.h" />
     <ClInclude Include="game\mesh_library\overworld_station.h" />
+    <ClInclude Include="game\mesh_library\uniques.h" />
     <ClInclude Include="game\movement_system.h" />
     <ClInclude Include="game\ui_system.h" />
     <ClInclude Include="game\world.h" />

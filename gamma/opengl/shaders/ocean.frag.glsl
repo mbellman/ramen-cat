@@ -177,13 +177,13 @@ void main() {
 
   // @hack use altitude to adjust from where we sample the cloud texture,
   // creating the illusion that the far plane represents the horizon line
-  float altitude_above_horizon = altitude - (-2000.0);
-  float altitude_reflection_adjustment_factor = 1 - altitude_above_horizon / 100000.0;
+  float height_above_surface = cameraPosition.y - world_position.y;
+  float height_above_surface_reflection_adjustment_factor = 1 - height_above_surface / 100000.0;
 
   // @todo refactor
   vec2 cloudsUv = vec2(
     -(atan(reflection_ray.z, reflection_ray.x) + PI) / TAU + time * CLOUD_MOVEMENT_RATE,
-    -reflection_ray.y + 0.5 - altitude_reflection_adjustment_factor
+    -reflection_ray.y + 0.5 - height_above_surface_reflection_adjustment_factor
   );
 
   // @todo refactor
