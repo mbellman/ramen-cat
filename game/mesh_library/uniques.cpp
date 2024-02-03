@@ -50,5 +50,31 @@ std::vector<MeshAsset> unique_meshes = {
         }
       }
     }
+  },
+  {
+    .name = "pink-palace",
+    .create = []() {
+      return Mesh::Model("./game/assets/uniques/pink-palace.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    },
+    .pieces = {
+      {
+        .name = "pink-palace-trim",
+        .create = []() {
+          return Mesh::Model("./game/assets/uniques/pink-palace-trim.obj");
+        }
+      },
+      {
+        .name = "pink-palace-top",
+        .create = []() {
+          return Mesh::Model("./game/assets/uniques/pink-palace-top.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(1.f, 0.8f, 0.7f);
+        }
+      }
+    }
   }
 };
