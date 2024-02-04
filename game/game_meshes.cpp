@@ -368,6 +368,29 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
+    .name = "japanese-tree",
+    .create = []() {
+      return Mesh::Model("./game/assets/japanese-tree-trunk.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    },
+    .pieces = {
+      {
+        .name = "japanese-tree-leaves",
+        .create = []() {
+          return Mesh::Model("./game/assets/japanese-tree-leaves.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(0.1f, 0.4f, 0.2f);
+        },
+        .attributes = {
+          .roughness = 0.9f
+        }
+      }
+    }
+  },
+  {
     .name = "branch-1",
     .defaultColor = Vec3f(0.7f, 0.5f, 0.3f),
     .create = []() {
