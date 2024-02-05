@@ -229,8 +229,8 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
   },
 
   /**
-   * Plants
-   * ------
+   * Plants/environmental details
+   * ----------------------------
    */
   {
     .name = "weeds",
@@ -382,7 +382,10 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
           return Mesh::Model("./game/assets/japanese-tree-leaves.obj");
         },
         .rebuild = [](auto& source, auto& piece) {
-          piece.color = Vec3f(0.1f, 0.4f, 0.2f);
+          float g = Gm_Modf(piece.position.x, 10.f) / 10.f;
+          float b = Gm_Modf(piece.position.z, 10.f) / 10.f;
+
+          piece.color = Vec3f(0.1f, 0.4f * (0.5f + g * 0.5f), 0.2f * (0.5f + b * 0.5f));
         },
         .attributes = {
           .roughness = 0.9f
@@ -416,6 +419,36 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
         .factor = 15.f
       },
       .useMipmaps = false
+    }
+  },
+  {
+    .name = "bamboo",
+    .hitboxScale = Vec3f(0.2f, 1.f, 0.2f),
+    .create = []() {
+      return Mesh::Model("./game/assets/bamboo.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    }
+  },
+  {
+    .name = "rock-1",
+    .create = []() {
+      return Mesh::Model("./game/assets/rock-1.obj");
+    },
+    .attributes = {
+      .maxCascade = 4,
+      .roughness = 0.8f
+    }
+  },
+  {
+    .name = "garden-terrain",
+    .create = []() {
+      return Mesh::Model("./game/assets/garden-terrain.obj");
+    },
+    .attributes = {
+      .maxCascade = 4,
+      .roughness = 1.f
     }
   },
 
