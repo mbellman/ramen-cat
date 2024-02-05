@@ -342,6 +342,8 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
 void CameraSystem::handleVisibilityCullingAndLevelsOfDetail(GmContext* context, GameState& state) {
   START_TIMING("handleVisibilityCullingAndLevelsOfDetail");
 
+  use_lod_by_distance(5000.f, { "b1-levels" });
+
   use_frustum_culling({ "weeds", "lamp", "ladder", "ac-unit", "ac-fan" });
   use_distance_culling(3000.f, { "flower" });
   use_distance_culling(5000.f, { "onigiri", "nitamago", "chashu" });

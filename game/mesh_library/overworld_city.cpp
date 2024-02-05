@@ -23,10 +23,16 @@ std::vector<MeshAsset> overworld_city_meshes = {
       {
         .name = "b1-levels",
         .create = []() {
-          return Mesh::Model("./game/assets/buildings/b1-levels.obj");
+          return Mesh::Model({
+            "./game/assets/buildings/b1-levels-hd.obj",
+            "./game/assets/buildings/b1-levels.obj"
+          });
         },
         .rebuild = [](auto& source, auto& piece) {
           piece.color = source.color;
+        },
+        .attributes = {
+          .useLowestLevelOfDetailForShadows = false
         }
       },
       {

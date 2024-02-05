@@ -46,7 +46,10 @@ std::vector<MeshAsset> unique_meshes = {
           return Mesh::Model("./game/assets/uniques/lower-lakebed.obj");
         },
         .rebuild = [](auto& source, auto& piece) {
-          piece.color = Vec3f(0.3f, 0.8f, 0.2f);
+          piece.color = Vec3f(0.3f, 0.7f, 0.2f);
+        },
+        .attributes = {
+          .roughness = 1.f
         }
       }
     }
@@ -82,6 +85,18 @@ std::vector<MeshAsset> unique_meshes = {
         },
         .rebuild = [](auto& source, auto& piece) {
           piece.color = Vec3f(0.7f, 0.2f, 0.1f);
+        }
+      },
+      {
+        .name = "pink-palace-windows",
+        .create = []() {
+          return Mesh::Model("./game/assets/uniques/pink-palace-windows.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(0.5f, 0.75f, 1.f);
+        },
+        .attributes = {
+          .roughness = 0.1f
         }
       }
     }

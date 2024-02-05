@@ -284,6 +284,11 @@ namespace Gamma {
      */
     bool canCastShadows = true;
     /**
+     * Controls whether shadow maps always uses the lowest level of detail
+     * for the mesh. Only matters for meshes with levels of detail.
+     */
+    bool useLowestLevelOfDetailForShadows = true;
+    /**
      * Controls whether we should use mipmaps for the mesh textures.
      */
     bool useMipmaps = true;

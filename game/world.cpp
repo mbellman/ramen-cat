@@ -291,6 +291,7 @@ internal void copyMeshAttributes(Mesh& mesh, const MeshAttributes& attributes) {
   mesh.emissivity = attributes.emissivity;
   mesh.roughness = attributes.roughness;
   mesh.canCastShadows = attributes.canCastShadows;
+  mesh.useLowestLevelOfDetailForShadows = attributes.useLowestLevelOfDetailForShadows;
   mesh.useMipmaps = attributes.useMipmaps;
   mesh.useCloseTranslucency = attributes.useCloseTranslucency;
   mesh.useXzPlaneTexturing = attributes.useXzPlaneTexturing;

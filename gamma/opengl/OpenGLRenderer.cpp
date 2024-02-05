@@ -661,7 +661,7 @@ namespace Gamma {
           shader.setFloat("animation.factor", animation.factor);
           shader.setBool("hasTexture", glMesh->hasTexture());
 
-          glMesh->render(ctx.primitiveMode, true);
+          glMesh->render(ctx.primitiveMode, mesh.useLowestLevelOfDetailForShadows);
         }
       }
     }
@@ -698,16 +698,16 @@ namespace Gamma {
       // (will require a handful of other changes to mesh organization/data buffering)
       // @todo allow specific meshes to be associated with spot lights + rendered to shadow maps
       for (auto* glMesh : glMeshes) {
-        auto* sourceMesh = glMesh->getSourceMesh();
-        auto& animation = sourceMesh->animation;
+        auto& mesh = *glMesh->getSourceMesh();
+        auto& animation = mesh.animation;
 
         shader.setInt("animation.type", animation.type);
         shader.setFloat("animation.speed", animation.speed);
         shader.setFloat("animation.factor", animation.factor);
         shader.setBool("hasTexture", glMesh->hasTexture());
 
-        if (sourceMesh->canCastShadows) {
-          glMesh->render(ctx.primitiveMode, true);
+        if (mesh.canCastShadows) {
+          glMesh->render(ctx.primitiveMode, mesh.useLowestLevelOfDetailForShadows);
         }
       }
 
@@ -735,12 +735,12 @@ namespace Gamma {
 
       glClear(GL_DEPTH_BUFFER_BIT);
 
+      Matrix4f matLightProjection = Matrix4f::glPerspective({ 1024, 1024 }, 90.f, 1.f, light.radius);
+
       for (u32 i = 0; i < 6; i++) {
         auto& direction = CUBE_MAP_DIRECTIONS[i];
         auto& upDirection = CUBE_MAP_UP_DIRECTIONS[i];
 
-        // @optimize matLightProjection can be precomputed
-        Matrix4f matLightProjection = Matrix4f::glPerspective({ 1024, 1024 }, 90.f, 1.f, light.radius);
         Matrix4f matLightView = Matrix4f::lookAt(light.position.gl(), direction, upDirection);
         Matrix4f lightMatrix = (matLightProjection * matLightView).transpose();
 
@@ -754,12 +754,12 @@ namespace Gamma {
       // (will require a handful of other changes to mesh organization/data buffering)
       // @todo allow specific meshes to be associated with point lights + rendered to shadow maps
       for (auto* glMesh : glMeshes) {
-        auto* sourceMesh = glMesh->getSourceMesh();
+        auto& mesh = *glMesh->getSourceMesh();
 
         // @todo handle foliage (requires point shadowcaster view shader updates)
 
-        if (sourceMesh->canCastShadows) {
-          glMesh->render(ctx.primitiveMode, true);
+        if (mesh.canCastShadows) {
+          glMesh->render(ctx.primitiveMode, mesh.useLowestLevelOfDetailForShadows);
         }
       }
 
