@@ -32,7 +32,7 @@ layout (location = 0) out vec3 out_color;
 
 vec3 getDepthOfFieldColor(vec3 current_out_color, vec2 uv, float linear_frag_depth) {
   const int MIP_LEVEL = 1;
-  const float MAX_DEPTH = 3000.0;
+  const float MAX_DEPTH = 20000.0;
 
   vec2 texel_size = 1.0 / textureSize(texColorAndDepth, MIP_LEVEL);
   vec3 depth_of_field_color = vec3(0.0);
@@ -53,7 +53,7 @@ vec3 getDepthOfFieldColor(vec3 current_out_color, vec2 uv, float linear_frag_dep
   if (depth_factor > 1.0) depth_factor = 1.0;
 
   depth_factor *= depth_factor;
-// 
+
   return mix(current_out_color, depth_of_field_color, depth_factor);
 }
 
