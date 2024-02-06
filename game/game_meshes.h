@@ -5,6 +5,7 @@
 namespace GameMeshes {
   extern std::vector<MeshAsset> meshAssets;
   extern std::vector<MeshAsset> dynamicMeshPieces;
+  extern std::vector<MeshAsset> proceduralMeshParts;
 
   void loadAllMeshAssets();
 }

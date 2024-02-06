@@ -6,6 +6,7 @@
 #include "mesh_library/overworld_station.h"
 #include "mesh_library/overworld_stairs.h"
 #include "mesh_library/uniques.h"
+#include "mesh_library/procedural.h"
 
 using namespace Gamma;
 
@@ -1318,6 +1319,21 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
   }
 };
 
+std::vector<MeshAsset> GameMeshes::proceduralMeshParts = {
+  {
+    .name = "p_concrete",
+    .maxInstances = 10000,
+    .create = []() {
+      return Mesh::Cube();
+    },
+    .attributes = {
+      .maxCascade = 4,
+      .roughness = 0.9f
+    }
+  }
+};
+
+// @todo remove + define these meshes as pieces for parent meshes
 std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
   {
     .name = "stair-step",
@@ -1546,4 +1562,5 @@ void GameMeshes::loadAllMeshAssets() {
   add_mesh_assets(assets, overworld_station_meshes);
   add_mesh_assets(assets, overworld_stairs_meshes);
   add_mesh_assets(assets, unique_meshes);
+  add_mesh_assets(assets, procedural_meshes);
 }

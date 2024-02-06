@@ -264,6 +264,14 @@ internal void rebuildInitialMovingObjects(GmContext* context, GameState& state) 
     }
   }
 
+  for (auto& asset : GameMeshes::proceduralMeshParts) {
+    if (asset.moving) {
+      for (auto& object : objects(asset.name)) {
+        state.initialMovingObjects.push_back(object);
+      }
+    }
+  }
+
   // @todo remove
   for (auto& asset : GameMeshes::dynamicMeshPieces) {
     if (asset.moving) {
@@ -1045,6 +1053,12 @@ namespace Editor {
         }
       }
 
+      for (auto& asset : GameMeshes::proceduralMeshParts) {
+        if (!asset.dynamic) {
+          mesh(asset.name)->objects.showAll();
+        }
+      }
+
       // @todo remove
       for (auto& asset : GameMeshes::dynamicMeshPieces) {
         if (!asset.dynamic) {
@@ -1096,6 +1110,10 @@ namespace Editor {
         for (auto& piece : asset.pieces) {
           mesh(piece.name)->disabled = false;
         }
+      }
+
+      for (auto& asset : GameMeshes::proceduralMeshParts) {
+        mesh(asset.name)->disabled = false;
       }
 
       // @todo remove
@@ -1161,6 +1179,11 @@ namespace Editor {
             // @todo is this correct? mesh pieces should also be toggled off regardless of the editor being enabled
             mesh(piece.name)->disabled = !mesh(piece.name)->disabled || state.isEditorEnabled;
           }
+        }
+
+        for (auto& asset : GameMeshes::proceduralMeshParts) {
+          // @todo is this correct? mesh pieces should also be toggled off regardless of the editor being enabled
+          mesh(asset.name)->disabled = !mesh(asset.name)->disabled || state.isEditorEnabled;
         }
 
         // @todo remove

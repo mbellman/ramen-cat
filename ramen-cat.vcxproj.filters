@@ -174,6 +174,12 @@
     <ClCompile Include="game\mesh_library\uniques.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="game\mesh_library\procedural.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="game\procedural_meshes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="external\glew\include\eglew.h">
@@ -642,6 +648,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="game\mesh_library\uniques.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\mesh_library\procedural.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\procedural_meshes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

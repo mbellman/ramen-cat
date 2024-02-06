@@ -2,6 +2,7 @@
 #include "game_meshes.h"
 #include "collisions.h"
 #include "game_constants.h"
+#include "procedural_meshes.h"
 #include "editor.h"
 #include "macros.h"
 
@@ -232,6 +233,10 @@ internal void unloadCurrentLevel(GmContext* context, GameState& state) {
     }
   }
 
+  for (auto& asset : GameMeshes::proceduralMeshParts) {
+    mesh(asset.name)->objects.reset();
+  }
+
   // @todo remove
   for (auto& asset : GameMeshes::dynamicMeshPieces) {
     mesh(asset.name)->objects.reset();
@@ -297,6 +302,7 @@ internal void copyMeshAttributes(Mesh& mesh, const MeshAttributes& attributes) {
   mesh.useXzPlaneTexturing = attributes.useXzPlaneTexturing;
 }
 
+// @todo create a loadGameMeshFromAsset() function to simplify this
 internal void loadGameMeshes(GmContext* context, GameState& state) {
   GameMeshes::loadAllMeshAssets();
 
@@ -320,6 +326,15 @@ internal void loadGameMeshes(GmContext* context, GameState& state) {
       pieceMesh.maxCascade = mesh.maxCascade;
       pieceMesh.canCastShadows = mesh.canCastShadows;
     }
+  }
+
+  for (auto& asset : GameMeshes::proceduralMeshParts) {
+    add_mesh(asset.name, asset.maxInstances, asset.create());
+
+    auto& mesh = *mesh(asset.name);
+    auto& attributes = asset.attributes;
+
+    copyMeshAttributes(mesh, attributes);
   }
 
   // @todo remove
@@ -1002,6 +1017,8 @@ void World::rebuildDynamicMeshes(GmContext* context) {
     rebuildMiniFlagWires(context);
   }
 
+  ProceduralMeshes::rebuildProceduralMeshes(context);
+
   Console::log("Rebuilt dynamic meshes in", (Gm_GetMicroseconds() - start), "us");
 }
 
@@ -1011,6 +1028,17 @@ void World::rebuildDynamicCollisionPlanes(GmContext* context, GameState& state) 
   objects("dynamic_collision_box").reset();
 
   for (auto& cube : objects("cube")) {
+    auto& box = create_object_from("dynamic_collision_box");
+
+    box.position = cube.position;
+    box.rotation = cube.rotation;
+    box.scale = cube.scale;
+    box.color = DEFAULT_COLOR;
+
+    commit(box);
+  }
+
+  for (auto& cube : objects("concrete-stack")) {
     auto& box = create_object_from("dynamic_collision_box");
 
     box.position = cube.position;
@@ -1130,6 +1158,14 @@ void World::loadLevel(GmContext* context, GameState& state, const std::string& l
           for (auto& object : objects(piece.name)) {
             state.initialMovingObjects.push_back(object);
           }
+        }
+      }
+    }
+
+    for (auto& asset : GameMeshes::proceduralMeshParts) {
+      if (asset.moving) {
+        for (auto& object : objects(asset.name)) {
+          state.initialMovingObjects.push_back(object);
         }
       }
     }
