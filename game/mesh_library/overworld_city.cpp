@@ -72,10 +72,16 @@ std::vector<MeshAsset> overworld_city_meshes = {
       {
         .name = "b2-levels",
         .create = []() {
-          return Mesh::Model("./game/assets/buildings/b2-levels.obj");
+          return Mesh::Model({
+            "./game/assets/buildings/b2-levels-hd.obj",
+            "./game/assets/buildings/b2-levels.obj"
+          });
         },
         .rebuild = [](auto& base, auto& piece) {
           piece.color = Vec3f(1.f);
+        },
+        .attributes = {
+          .useLowestLevelOfDetailForShadows = false
         }
       },
       {

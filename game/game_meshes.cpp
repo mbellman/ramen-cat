@@ -401,7 +401,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     },
     .attributes = {
       .maxCascade = 4,
-      .roughness = 0.8f
+      .roughness = 0.9f
     }
   },
   {
