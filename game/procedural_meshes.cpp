@@ -13,14 +13,16 @@ internal float randomFromVec3f(const Vec3f& v) {
 internal void rebuildConcreteStacks(GmContext* context) {
   objects("p_concrete").reset();
 
+  const float PIECE_SIZE = 600.f;
+
   for (auto& stack : objects("concrete-stack")) {
     float width = stack.scale.x;
     float height = stack.scale.y;
     float depth = stack.scale.z;
 
-    auto totalX = (u8)std::ceilf(width / 750.f);
-    auto totalY = (u8)std::ceilf(height / 750.f);
-    auto totalZ = (u8)std::ceilf(depth / 750.f);
+    auto totalX = (u8)std::ceilf(width / PIECE_SIZE);
+    auto totalY = (u8)std::ceilf(height / PIECE_SIZE);
+    auto totalZ = (u8)std::ceilf(depth / PIECE_SIZE);
 
     auto base = Vec3f(
       stack.position.x + width,
@@ -56,6 +58,10 @@ internal void rebuildConcreteStacks(GmContext* context) {
 
           if (y == 0 || y == totalY - 1) {
             piece.scale.y += random * 5.f;
+          } else {
+            piece.scale.y += random * 200.f;
+            piece.scale.x += random * 200.f;
+            piece.scale.z += random * 200.f;
           }
 
           piece.color = stack.color.toVec3f() * Vec3f(
