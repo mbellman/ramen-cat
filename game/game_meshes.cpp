@@ -1320,6 +1320,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
 };
 
 std::vector<MeshAsset> GameMeshes::proceduralMeshParts = {
+  // concrete-stack
   {
     .name = "p_concrete",
     .maxInstances = 10000,
@@ -1329,6 +1330,31 @@ std::vector<MeshAsset> GameMeshes::proceduralMeshParts = {
     .attributes = {
       .maxCascade = 4,
       .roughness = 0.9f
+    }
+  },
+
+  // mini-house/double
+  {
+    .name = "p_mini-house",
+    .create = []() {
+      return Mesh::Cube();
+    },
+    .attributes = {
+      .maxCascade = 4,
+      .roughness = 0.7f
+    }
+  },
+  {
+    .name = "p_mini-house-roof",
+    .create = []() {
+      return Mesh::Model({
+        "./game/assets/japanese-roof.obj",
+        "./game/assets/japanese-roof-lod.obj"
+      });
+    },
+    .attributes = {
+      .maxCascade = 4,
+      .roughness = 0.5f
     }
   }
 };

@@ -13,12 +13,12 @@ internal float randomFromVec3f(const Vec3f& v) {
 internal void rebuildConcreteStacks(GmContext* context) {
   objects("p_concrete").reset();
 
-  const float PIECE_SIZE = 600.f;
+  const auto PIECE_SIZE = 600.f;
 
   for (auto& stack : objects("concrete-stack")) {
-    float width = stack.scale.x;
-    float height = stack.scale.y;
-    float depth = stack.scale.z;
+    auto width = stack.scale.x;
+    auto height = stack.scale.y;
+    auto depth = stack.scale.z;
 
     auto totalX = (u8)std::ceilf(width / PIECE_SIZE);
     auto totalY = (u8)std::ceilf(height / PIECE_SIZE);
@@ -50,8 +50,8 @@ internal void rebuildConcreteStacks(GmContext* context) {
 
           piece.position = stack.position + stack.rotation.toMatrix4f().transformVec3f(offset);
 
-          float random = randomFromVec3f(piece.position);
-          float yaw = (random * 10.f - 5.f) * (Gm_PI / 180.f);
+          auto random = randomFromVec3f(piece.position);
+          auto yaw = (random * 10.f - 5.f) * (Gm_PI / 180.f);
 
           piece.scale = scale;
           piece.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), yaw) * stack.rotation;
@@ -77,6 +77,49 @@ internal void rebuildConcreteStacks(GmContext* context) {
   Console::log("Created", objects("p_concrete").totalActive(), "p_concrete meshes");
 }
 
+internal void rebuildMiniHouses(GmContext* context) {
+  objects("p_mini-house").reset();
+  objects("p_mini-house-roof").reset();
+
+  for (auto& source : objects("mini-house")) {
+    auto origin = source.position;
+    auto random = randomFromVec3f(origin);
+    auto random2 = Gm_Modf(random * 2.f, 1.f);
+
+    // Base
+    {
+      auto& base = create_object_from("p_mini-house");
+
+      base.position = source.position;
+      base.scale = source.scale;
+      base.rotation = source.rotation;
+      base.color = Vec3f(0.5f + 0.5f * random, 0.5f + 0.5f * random2, 0.3f + 0.4f * (1.f - random));
+
+      commit(base);
+    }
+
+    // Roof
+    {
+      auto& roof = create_object_from("p_mini-house-roof");
+      auto offset = Vec3f(0, source.scale.y * 1.035f, source.scale.z * 0.5f);
+
+      roof.position = origin + source.rotation.toMatrix4f().transformVec3f(offset);
+      roof.scale = Vec3f(source.scale.x, source.scale.x, source.scale.z) * 1.1f;
+
+      roof.rotation =
+        source.rotation * (
+          Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), Gm_PI) *
+          Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -15.f * (Gm_PI / 180.f))
+        );
+
+      roof.color = Vec3f(0.4f, 0.8f, 0.5f);
+
+      commit(roof);
+    }
+  }
+}
+
 void ProceduralMeshes::rebuildProceduralMeshes(GmContext* context) {
   rebuildConcreteStacks(context);
+  rebuildMiniHouses(context);
 }

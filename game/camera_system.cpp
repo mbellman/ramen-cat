@@ -344,6 +344,7 @@ void CameraSystem::handleVisibilityCullingAndLevelsOfDetail(GmContext* context, 
 
   use_lod_by_distance(5000.f, { "b1-levels" });
   use_lod_by_distance(7500.f, { "b2-levels" });
+  use_lod_by_distance(8000.f, { "p_mini-house-roof" });
 
   use_frustum_culling({ "weeds", "lamp", "ladder", "ac-unit", "ac-fan" });
   use_distance_culling(3000.f, { "flower" });

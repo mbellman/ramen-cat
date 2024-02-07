@@ -11,5 +11,23 @@ std::vector<MeshAsset> procedural_meshes = {
     .create = []() {
       return Mesh::Cube();
     }
+  },
+  {
+    .name = "mini-house",
+    .dynamic = true,
+    .defaultScale = Vec3f(180.f, 200.f, 100.f),
+    .scalingFactor = Vec3f(0.f),
+    .create = []() {
+      return Mesh::Cube();
+    }
+  },
+  {
+    .name = "mini-house-double",
+    .dynamic = true,
+    .defaultScale = Vec3f(180.f, 200.f, 200.f),
+    .scalingFactor = Vec3f(0.f),
+    .create = []() {
+      return Mesh::Cube();
+    }
   }
 };
