@@ -73,8 +73,6 @@ internal void rebuildConcreteStacks(GmContext* context) {
       }
     }
   }
-
-  Console::log("Created", objects("p_concrete").totalActive(), "p_concrete meshes");
 }
 
 internal void rebuildMiniHouses(GmContext* context) {
@@ -87,6 +85,7 @@ internal void rebuildMiniHouses(GmContext* context) {
   for (auto& source : objects("mini-house")) {
     auto origin = source.position;
     auto random = randomFromVec3f(origin);
+    auto sourceRotationMatrix = source.rotation.toMatrix4f();
 
     // Base
     {
@@ -106,7 +105,7 @@ internal void rebuildMiniHouses(GmContext* context) {
       auto& roof = create_object_from("p_mini-house-roof");
       auto offset = Vec3f(0, source.scale.y * 1.04f, source.scale.z * 0.5f);
 
-      roof.position = origin + source.rotation.toMatrix4f().transformVec3f(offset);
+      roof.position = origin + sourceRotationMatrix.transformVec3f(offset);
       roof.scale = Vec3f(source.scale.x, source.scale.x, source.scale.z) * 1.1f;
 
       roof.rotation =
@@ -115,7 +114,13 @@ internal void rebuildMiniHouses(GmContext* context) {
           Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -15.f * (Gm_PI / 180.f))
         );
 
-      roof.color = Vec3f(0.4f, 0.8f, 0.5f);
+      if (random < 0.3f) {
+        roof.color = Vec3f(0.4f, 0.8f, 0.5f);
+      } else if (random < 0.6f) {
+        roof.color = Vec3f(0.8f, 0.5f, 0.4f);
+      } else {
+        roof.color = Vec3f(0.4f, 0.6f, 0.8f);
+      }
 
       commit(roof);
     }
@@ -126,8 +131,8 @@ internal void rebuildMiniHouses(GmContext* context) {
         auto& left = create_object_from("p_mini-house-wood-beam");
         auto offset = Vec3f(source.scale.x, 0, source.scale.z);
 
-        left.position = origin + source.rotation.toMatrix4f().transformVec3f(offset);
-        left.scale = Vec3f(10.f, source.scale.y, 12.f);
+        left.position = origin + sourceRotationMatrix.transformVec3f(offset);
+        left.scale = Vec3f(10.f, source.scale.y * 0.99f, 12.f);
         left.rotation = source.rotation;
         left.color = Vec3f(0.7f);
 
@@ -138,8 +143,8 @@ internal void rebuildMiniHouses(GmContext* context) {
         auto& right = create_object_from("p_mini-house-wood-beam");
         auto offset = Vec3f(-source.scale.x, 0, source.scale.z);
 
-        right.position = origin + source.rotation.toMatrix4f().transformVec3f(offset);
-        right.scale = Vec3f(10.f, source.scale.y, 12.f);
+        right.position = origin + sourceRotationMatrix.transformVec3f(offset);
+        right.scale = Vec3f(10.f, source.scale.y * 0.99f, 12.f);
         right.rotation = source.rotation;
         right.color = Vec3f(0.7f);
 
@@ -147,53 +152,60 @@ internal void rebuildMiniHouses(GmContext* context) {
       }
     }
 
-    // Window
+    // Window + associated parts
     {
+      // Window
       auto& window = create_object_from("p_mini-house-window");
-      auto window_offset = Vec3f(source.scale.x * (random * 0.5f - 0.25f), source.scale.y * random * 0.5f, source.scale.z * 1.05f);
+      auto windowOffset = Vec3f(source.scale.x * (random * 0.5f - 0.25f), source.scale.y * random * 0.5f, source.scale.z * 1.05f);
 
-      window.position = origin + source.rotation.toMatrix4f().transformVec3f(window_offset);
+      window.position = origin + sourceRotationMatrix.transformVec3f(windowOffset);
       window.scale = Vec3f(source.scale.x * 0.5f, source.scale.y * 0.5f, source.scale.z);
       window.rotation = source.rotation;
 
       commit(window);
 
-      auto& b1 = create_object_from("p_mini-house-wood-beam");
-      auto b1_offset = Vec3f(0, window_offset.y + window.scale.y * 0.5f, source.scale.z);
+      // Allow window beams to be aligned with or below the window
+      float beamOffset = random > 0.5f ? -window.scale.y : 0.f;
 
-      b1.position = origin + source.rotation.toMatrix4f().transformVec3f(b1_offset);
-      b1.scale = Vec3f(10.f, source.scale.x, 10.f);
-      b1.rotation = source.rotation * Quaternion::fromAxisAngle(Vec3f(0, 0, 1.f), Gm_HALF_PI);
-      b1.color = Vec3f(0.7f);
+      // Upper beam
+      auto& topBeam = create_object_from("p_mini-house-wood-beam");
+      auto topBeamOffset = Vec3f(0, windowOffset.y + window.scale.y * 0.5f + beamOffset, source.scale.z);
 
-      commit(b1);
+      topBeam.position = origin + sourceRotationMatrix.transformVec3f(topBeamOffset);
+      topBeam.scale = Vec3f(10.f, source.scale.x, 10.f);
+      topBeam.rotation = source.rotation * Quaternion::fromAxisAngle(Vec3f(0, 0, 1.f), Gm_HALF_PI);
+      topBeam.color = Vec3f(0.7f);
 
-      auto& b2 = create_object_from("p_mini-house-wood-beam");
-      auto b2_offset = Vec3f(0, window_offset.y - window.scale.y * 0.5f, source.scale.z);
+      commit(topBeam);
 
-      b2.position = origin + source.rotation.toMatrix4f().transformVec3f(b2_offset);
-      b2.scale = Vec3f(10.f, source.scale.x, 10.f);
-      b2.rotation = source.rotation * Quaternion::fromAxisAngle(Vec3f(0, 0, 1.f), Gm_HALF_PI);
-      b2.color = Vec3f(0.7f);
+      // Lower beam
+      auto& bottomBeam = create_object_from("p_mini-house-wood-beam");
+      auto bottomBeamOffset = Vec3f(0, windowOffset.y - window.scale.y * 0.5f + beamOffset, source.scale.z);
 
-      commit(b2);
+      bottomBeam.position = origin + sourceRotationMatrix.transformVec3f(bottomBeamOffset);
+      bottomBeam.scale = Vec3f(10.f, source.scale.x, 10.f);
+      bottomBeam.rotation = source.rotation * Quaternion::fromAxisAngle(Vec3f(0, 0, 1.f), Gm_HALF_PI);
+      bottomBeam.color = Vec3f(0.7f);
 
-      auto& board1 = create_object_from("p_mini-house-board");
-      auto& board2 = create_object_from("p_mini-house-board");
-      auto board1_offset = Vec3f(source.scale.x * 0.5f, window_offset.y, source.scale.z * 1.05f);
-      auto board2_offset = Vec3f(-source.scale.x * 0.5f, window_offset.y, source.scale.z * 1.05f);
+      commit(bottomBeam);
 
-      board1.position = origin + source.rotation.toMatrix4f().transformVec3f(board1_offset);
-      board2.position = origin + source.rotation.toMatrix4f().transformVec3f(board2_offset);
+      // Wooden boards beneath the window panel
+      auto& leftBoard = create_object_from("p_mini-house-board");
+      auto& rightBoard = create_object_from("p_mini-house-board");
+      auto leftBoardOffset = Vec3f(source.scale.x * 0.5f, windowOffset.y + beamOffset, source.scale.z * 1.05f);
+      auto rightBoardOffset = Vec3f(-source.scale.x * 0.5f, windowOffset.y + beamOffset, source.scale.z * 1.05f);
 
-      board1.scale = Vec3f(source.scale.x * 0.5f, 1.f, window.scale.y * 0.48f);
-      board2.scale = Vec3f(source.scale.x * 0.5f, 1.f, window.scale.y * 0.48f);
+      leftBoard.position = origin + sourceRotationMatrix.transformVec3f(leftBoardOffset);
+      rightBoard.position = origin + sourceRotationMatrix.transformVec3f(rightBoardOffset);
 
-      board1.rotation = source.rotation * Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI);
-      board2.rotation = source.rotation * Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI);
+      leftBoard.scale =
+      rightBoard.scale = Vec3f(source.scale.x * 0.5f, 1.f, window.scale.y * 0.48f);
 
-      commit(board1);
-      commit(board2);
+      leftBoard.rotation =
+      rightBoard.rotation = source.rotation * Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), Gm_HALF_PI);
+
+      commit(leftBoard);
+      commit(rightBoard);
     }
   }
 }

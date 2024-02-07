@@ -1354,7 +1354,7 @@ std::vector<MeshAsset> GameMeshes::proceduralMeshParts = {
     },
     .attributes = {
       .maxCascade = 4,
-      .roughness = 0.5f
+      .roughness = 0.3f
     }
   },
   {
@@ -1380,6 +1380,7 @@ std::vector<MeshAsset> GameMeshes::proceduralMeshParts = {
   },
   {
     .name = "p_mini-house-board",
+    .maxInstances = 10000,
     .create = []() {
       return Mesh::Plane(2);
     },

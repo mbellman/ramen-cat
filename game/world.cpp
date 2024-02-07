@@ -1019,6 +1019,10 @@ void World::rebuildDynamicMeshes(GmContext* context) {
 
   ProceduralMeshes::rebuildProceduralMeshes(context);
 
+  for (auto& asset : GameMeshes::proceduralMeshParts) {
+    Console::log("Created", objects(asset.name).totalActive(), asset.name, "meshes");
+  }
+
   Console::log("Rebuilt dynamic meshes in", (Gm_GetMicroseconds() - start), "us");
 }
 
@@ -1092,7 +1096,7 @@ void World::rebuildDynamicCollisionPlanes(GmContext* context, GameState& state) 
   #if GAMMA_DEVELOPER_MODE
     u16 total = objects("dynamic_collision_box").totalActive();
 
-    Console::log("Rebuilt ", std::to_string(total), " dynamic collision boxes");
+    Console::log("Rebuilt", std::to_string(total), "dynamic collision boxes");
   #endif
 }
 
