@@ -1333,7 +1333,7 @@ std::vector<MeshAsset> GameMeshes::proceduralMeshParts = {
     }
   },
 
-  // mini-house/double
+  // mini-house/mini-house-double
   {
     .name = "p_mini-house",
     .create = []() {
@@ -1356,7 +1356,39 @@ std::vector<MeshAsset> GameMeshes::proceduralMeshParts = {
       .maxCascade = 4,
       .roughness = 0.5f
     }
-  }
+  },
+  {
+    .name = "p_mini-house-wood-beam",
+    .maxInstances = 10000,
+    .create = []() {
+      return Mesh::Model("./game/assets/procedural/mini-house-wood-beam.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/wood-beam.png",
+      .roughness = 0.5f
+    }
+  },
+  {
+    .name = "p_mini-house-window",
+    .create = []() {
+      return Mesh::Model("./game/assets/procedural/mini-house-window.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/windows-1.png",
+      .roughness = 0.5f
+    }
+  },
+  {
+    .name = "p_mini-house-board",
+    .create = []() {
+      return Mesh::Plane(2);
+    },
+    .attributes = {
+      .texture = "./game/assets/wood-beam.png",
+      .normals = "./game/assets/wood-beam-normals.png",
+      .roughness = 0.5f
+    }
+  },
 };
 
 // @todo remove + define these meshes as pieces for parent meshes
