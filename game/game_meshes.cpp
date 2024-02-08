@@ -252,6 +252,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
   },
   {
     .name = "bush",
+    .hitboxScale = Vec3f(0.8f),
     .create = []() {
       return Mesh::Model("./game/assets/bush.obj");
     },
@@ -430,6 +431,23 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     },
     .attributes = {
       .maxCascade = 4
+    }
+  },
+  {
+    .name = "banana-plant",
+    .hitboxScale = Vec3f(1.f, 0.3f, 1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/plants/banana-plant.obj");
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .texture = "./game/assets/plants/banana-plant.png",
+      .maxCascade = 4,
+      .animation = {
+        .type = PresetAnimationType::LEAF,
+        .factor = 10.f
+      },
+      .roughness = 0.4f
     }
   },
   {
@@ -809,6 +827,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     },
     .attributes = {
       .texture = "./game/assets/wood-beam.png",
+      .maxCascade = 4,
       .roughness = 0.5f
     }
   },
