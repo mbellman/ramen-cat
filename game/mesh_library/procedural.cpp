@@ -29,5 +29,16 @@ std::vector<MeshAsset> procedural_meshes = {
     .create = []() {
       return Mesh::Cube();
     }
+  },
+  {
+    .name = "wood-building-1",
+    .hitboxScale = Vec3f(1.f, 0.3f, 0.5f),
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/wood-building-1.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/wood-beam.png",
+      .maxCascade = 4
+    }
   }
 };
