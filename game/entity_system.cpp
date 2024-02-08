@@ -535,10 +535,12 @@ internal void handleWindTurbines(GmContext* context, GameState& state, float dt)
 }
 
 internal void handleFans(GmContext* context, GameState& state, float dt) {
+  auto t = get_scene_time();
+
   {
     for_moving_objects("ac-fan", {
       auto rotationAxis = initial.rotation.getDirection();
-      float angle = 3.f * get_scene_time();
+      float angle = 3.f * t;
 
       object.rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initial.rotation;
 
@@ -549,9 +551,37 @@ internal void handleFans(GmContext* context, GameState& state, float dt) {
   {
     for_moving_objects("exhaust-fan-blades", {
       auto rotationAxis = initial.rotation.getUpDirection();
-      float angle = get_scene_time();
+      float angle = t;
 
       object.rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initial.rotation;
+
+      commit(object);
+    });
+  }
+}
+
+internal void handleKites(GmContext* context, GameState& state, float dt) {
+  auto t = get_scene_time();
+
+  {
+    for_moving_objects("fish-kite", {
+      auto rotationAxis = initial.rotation.getUpDirection();
+      float angle = sinf(initial.position.x + t * 0.5f) * 0.2f;
+
+      object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angle) * initial.rotation;
+      object.position.y = initial.position.y + sinf(initial.position.y + t * 0.6f) * 150.f;
+
+      commit(object);
+    });
+  }
+
+  {
+    for_moving_objects("fish-kite-fins", {
+      auto rotationAxis = initial.rotation.getUpDirection();
+      float angle = sinf(initial.position.x + t * 0.5f) * 0.2f;
+
+      object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angle) * initial.rotation;
+      object.position.y = initial.position.y + sinf(initial.position.y + t * 0.6f) * 150.f;
 
       commit(object);
     });
@@ -562,7 +592,7 @@ internal void handleHotAirBalloons(GmContext* context, GameState& state, float d
   for_moving_objects("hot-air-balloon", {
     float offset = object.position.x + object.position.z;
     float heightRate = 0.5f * get_scene_time() + offset;
-    float heightOscillation = object.scale.x / 10.f;
+    float heightOscillation = object.scale.x / 5.f;
     float rotationRate = 0.7f * get_scene_time() + offset;
 
     object.position = initial.position + Vec3f(0, heightOscillation, 0) * sinf(heightRate);
@@ -924,6 +954,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   handleWindmillWheels(context, state, dt);
   handleWindTurbines(context, state, dt);
   handleFans(context, state, dt);
+  handleKites(context, state, dt);
   handleUniqueLevelStructures(context, state, dt);
   handleOcean(context);
 

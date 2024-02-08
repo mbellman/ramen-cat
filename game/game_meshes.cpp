@@ -127,6 +127,42 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       return Mesh::Sphere(8);
     }
   },
+  {
+    .name = "fish-kite",
+    .moving = true,
+    .hitboxScale = Vec3f(1.f, 0.5f, 0.5f),
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/fish-kite.obj");
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .animation = {
+        .type = PresetAnimationType::CLOTH,
+        .factor = 12.f
+      },
+      .emissivity = 0.3f
+    },
+    .pieces = {
+      {
+        .name = "fish-kite-fins",
+        .moving = true,
+        .create = []() {
+          return Mesh::Model("./game/assets/decorations/fish-kite-fins.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = source.color.toVec3f() * 2.f;
+        },
+        .attributes = {
+          .type = MeshType::PRESET_ANIMATED,
+          .animation = {
+            .type = PresetAnimationType::CLOTH,
+            .factor = 20.f
+          },
+          .emissivity = 0.3f
+        }
+      }
+    }
+  },
 
   /**
    * Environmental elements

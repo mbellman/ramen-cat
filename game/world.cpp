@@ -804,7 +804,7 @@ internal void rebuildPetals(GmContext* context) {
         Gm_Randomf(-5000.f, 5000.f)
       );
 
-      petal.color = Vec3f(1.f, 0.5f, 0.5f);
+      petal.color = Vec3f(1.f, Gm_Randomf(0.3f, 0.6f), Gm_Randomf(0.3f, 0.6f));
 
       commit(petal);
     }

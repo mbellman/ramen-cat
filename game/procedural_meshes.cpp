@@ -210,7 +210,12 @@ internal void rebuildMiniHouses(GmContext* context) {
   }
 }
 
+internal void rebuildWoodBuildings(GmContext* context) {
+  // @todo
+}
+
 void ProceduralMeshes::rebuildProceduralMeshes(GmContext* context) {
   rebuildConcreteStacks(context);
   rebuildMiniHouses(context);
+  rebuildWoodBuildings(context);
 }
