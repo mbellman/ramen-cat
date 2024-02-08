@@ -339,6 +339,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
   LOG_TIME();
 }
 
+// @todo remove state argument if we're not using it
 void CameraSystem::handleVisibilityCullingAndLevelsOfDetail(GmContext* context, GameState& state) {
   START_TIMING("handleVisibilityCullingAndLevelsOfDetail");
 

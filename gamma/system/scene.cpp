@@ -166,11 +166,11 @@ Gamma::Object& Gm_CreateObjectFrom(GmContext* context, const std::string& meshNa
   object.scale = Vec3f(1.0f);
 
   if (mesh.lods.size() > 0) {
-    // Increment the base LoD instance count by default,
+    // Update the base LoD instance count by default,
     // which we use for vert/tri counts in scene stats.
     // Gm_UseLodByDistance can control the per-LoD
     // instance counts during the update loop.
-    mesh.lods[0].instanceCount++;
+    mesh.lods[0].instanceCount = mesh.objects.totalActive();
   }
 
   return object;
@@ -189,11 +189,11 @@ Gamma::Object& Gm_CreateObjectFrom(GmContext* context, u16 meshIndex) {
   object.scale = Vec3f(1.0f);
 
   if (mesh.lods.size() > 0) {
-    // Increment the base LoD instance count by default,
+    // Update the base LoD instance count by default,
     // which we use for vert/tri counts in scene stats.
     // Gm_UseLodByDistance can control the per-LoD
     // instance counts during the update loop.
-    mesh.lods[0].instanceCount++;
+    mesh.lods[0].instanceCount = mesh.objects.totalActive();
   }
 
   return object;
