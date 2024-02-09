@@ -1,4 +1,5 @@
 #include "vehicle_system.h"
+#include "macros.h"
 
 using namespace Gamma;
 
@@ -11,16 +12,18 @@ void VehicleSystem::rebuildVehicleTracks(GmContext* context, GameState& state) {
   for (auto& spawn : objects("vehicle-spawn")) {
     VehicleTrack track;
 
-    // @todo do this for all vehicle meshes (e.g. define a list of vehicle mesh names)
+    // @todo do this for all vehicle meshes (e.g. define a list of vehicle mesh names + speed)
     for (auto& object : objects("small-train")) {
       if ((object.position - spawn.position).magnitude() < 2000.f) {
         Vehicle vehicle = {
           .object = object._record,
           .trackPointTarget = 0,
-          .speed = 1000.f
+          .speed = 3000.f
         };
 
         object.position = spawn.position;
+
+        commit(object);
 
         track.vehicles.push_back(vehicle);
       }
@@ -83,5 +86,35 @@ void VehicleSystem::rebuildVehicleTracks(GmContext* context, GameState& state) {
 }
 
 void VehicleSystem::handleVehicles(GmContext* context, GameState& state, float dt) {
+  START_TIMING("handleVehicles");
 
+  for (auto& track : state.vehicleTracks) {
+    for (auto& vehicle : track.vehicles) {
+      auto object = get_object_by_record(vehicle.object);
+
+      if (object != nullptr) {
+        auto target = track.points[vehicle.trackPointTarget];
+        auto objectToTarget = target - object->position;
+        auto targetDistance = objectToTarget.magnitude();
+
+        if (targetDistance < 20.f) {
+          vehicle.trackPointTarget++;
+        }
+
+        if (vehicle.trackPointTarget > track.points.size() - 1) {
+          vehicle.trackPointTarget = 0;
+          object->position = track.points[0];
+        } else {
+          auto finalTarget = track.points[vehicle.trackPointTarget];
+          auto objectToFinalTarget = finalTarget - object->position;
+
+          object->position += objectToFinalTarget.unit() * vehicle.speed * dt;
+        }
+
+        commit(*object);
+      }
+    }
+  }
+
+  LOG_TIME();
 }

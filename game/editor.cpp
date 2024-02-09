@@ -7,6 +7,7 @@
 #include "game_meshes.h"
 #include "collisions.h"
 #include "effects_system.h"
+#include "vehicle_system.h"
 #include "macros.h"
 
 using namespace Gamma;
@@ -1102,7 +1103,7 @@ namespace Editor {
     rebuildInitialMovingObjects(context, state);
     rebuildCollisionPlanes(context, state);
 
-    // @todo VehicleSystem::rebuildVehicleTracks(context, state);
+    VehicleSystem::rebuildVehicleTracks(context, state);
 
     // Force certain meshes to be enabled/disabled
     {
