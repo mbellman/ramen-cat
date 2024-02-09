@@ -22,13 +22,11 @@ struct Plane {
   Gamma::ObjectRecord sourceObjectRecord;
 };
 
-// @todo move to entity_system.h
 struct NonPlayerCharacter {
   Gamma::Vec3f position;
   std::vector<std::string> dialogue;
 };
 
-// @todo move to entity_system.h
 struct Slingshot {
   Gamma::Vec3f position;
   float xzVelocity = 350.f;
@@ -36,10 +34,22 @@ struct Slingshot {
   float initialRotation = 0.f;
 };
 
-// @todo move to entity_system.h
 struct Jetstream {
   std::vector<Gamma::Vec3f> points;
   float radius = 500.f;
+};
+
+struct Vehicle {
+  Gamma::ObjectRecord object;
+  u32 trackPointTarget;
+  float speed;
+};
+
+struct VehicleTrack {
+  std::vector<Gamma::Vec3f> points;
+  std::vector<Gamma::Vec3f> stops;
+
+  std::vector<Vehicle> vehicles;
 };
 
 struct InventoryItem {
@@ -149,6 +159,7 @@ struct GameState {
   std::vector<NonPlayerCharacter> npcs;
   std::vector<Slingshot> slingshots;
   std::vector<Jetstream> jetstreams;
+  std::vector<VehicleTrack> vehicleTracks;
 
   // @todo define a struct for this
   float lastSlingshotInteractionTime = 0.f;

@@ -3,6 +3,7 @@
 #include "collisions.h"
 #include "game_constants.h"
 #include "procedural_meshes.h"
+#include "vehicle_system.h"
 #include "editor.h"
 #include "macros.h"
 
@@ -1183,6 +1184,8 @@ void World::loadLevel(GmContext* context, GameState& state, const std::string& l
       }
     }
   }
+
+  VehicleSystem::rebuildVehicleTracks(context, state);
 
   state.currentLevelName = levelName;
 }

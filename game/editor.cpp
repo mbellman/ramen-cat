@@ -1102,6 +1102,8 @@ namespace Editor {
     rebuildInitialMovingObjects(context, state);
     rebuildCollisionPlanes(context, state);
 
+    // @todo VehicleSystem::rebuildVehicleTracks(context, state);
+
     // Force certain meshes to be enabled/disabled
     {
       for (auto& asset : GameMeshes::meshAssets) {

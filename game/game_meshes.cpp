@@ -5,6 +5,7 @@
 #include "mesh_library/overworld_crossing.h"
 #include "mesh_library/overworld_station.h"
 #include "mesh_library/overworld_stairs.h"
+#include "mesh_library/vehicles.h"
 #include "mesh_library/uniques.h"
 #include "mesh_library/procedural.h"
 
@@ -875,6 +876,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     },
     .attributes = {
       .texture = "./game/assets/wood-beam.png",
+      .maxCascade = 4,
       .roughness = 0.5f
     }
   },
@@ -1675,6 +1677,7 @@ void GameMeshes::loadAllMeshAssets() {
   add_mesh_assets(assets, overworld_crossing_meshes);
   add_mesh_assets(assets, overworld_station_meshes);
   add_mesh_assets(assets, overworld_stairs_meshes);
+  add_mesh_assets(assets, vehicle_meshes);
   add_mesh_assets(assets, unique_meshes);
   add_mesh_assets(assets, procedural_meshes);
 }
