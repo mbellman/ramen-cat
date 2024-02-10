@@ -121,9 +121,10 @@ vec3 getToonShadedColor(vec3 current_out_color, vec2 uv, float depth, float line
 
     current_out_color = mix(vec3(0), current_out_color, alpha);
   } else if (depth_ratio < 1.0) {
-    float fade_factor = pow(saturate(linear_frag_depth / 30000.0), 3) * 0.35;
+    float fade_factor = pow(saturate(linear_frag_depth / 20000.0), 3) * 0.35;
 
     current_out_color = mix(current_out_color, atmosphereColor, fade_factor);
+    current_out_color = mix(current_out_color, pow(current_out_color, vec3(1 / 0.5)) * 2.0, fade_factor);
   }
 
   return current_out_color;

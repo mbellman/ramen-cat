@@ -586,6 +586,18 @@ internal void handleKites(GmContext* context, GameState& state, float dt) {
       commit(object);
     });
   }
+
+  {
+    for_moving_objects("balloon-windmill", {
+      auto rotationAxis = initial.rotation.getUpDirection();
+      float angle = sinf(initial.position.x + t * 0.2f) * 0.2f;
+
+      object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angle) * initial.rotation;
+      object.position.y = initial.position.y + sinf(initial.position.y + t * 0.5f) * 150.f;
+
+      commit(object);
+    });
+  }
 }
 
 internal void handleHotAirBalloons(GmContext* context, GameState& state, float dt) {

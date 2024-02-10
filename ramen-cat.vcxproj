@@ -124,6 +124,7 @@
     <ClCompile Include="game\game_meshes.cpp" />
     <ClCompile Include="game\inventory_system.cpp" />
     <ClCompile Include="game\main.cpp" />
+    <ClCompile Include="game\mesh_library\decorations.cpp" />
     <ClCompile Include="game\mesh_library\overworld_city.cpp" />
     <ClCompile Include="game\mesh_library\overworld_crossing.cpp" />
     <ClCompile Include="game\mesh_library\overworld_stack.cpp" />
@@ -274,6 +275,7 @@
     <ClInclude Include="external\sdl_image\include\SDL_image.h" />
     <ClInclude Include="game\inventory_system.h" />
     <ClInclude Include="game\macros.h" />
+    <ClInclude Include="game\mesh_library\decorations.h" />
     <ClInclude Include="game\mesh_library\mesh_asset.h" />
     <ClInclude Include="game\mesh_library\overworld_city.h" />
     <ClInclude Include="game\mesh_library\overworld_crossing.h" />
