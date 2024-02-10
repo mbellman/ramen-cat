@@ -122,6 +122,22 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
+    .name = "canopy",
+    .hitboxScale = Vec3f(1.f, 0.2f, 1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/canopy.obj");
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .maxCascade = 4,
+      .animation = {
+        .type = PresetAnimationType::CLOTH,
+        .speed = 0.5f,
+        .factor = 40.f
+      }
+    }
+  },
+  {
     .name = "flag-wire-spawn",
     .dynamic = true,
     .create = []() {
@@ -299,7 +315,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .maxCascade = 4,
       .animation = {
         .type = PresetAnimationType::FLOWER,
-        .factor = 5.f
+        .factor = 30.f
       },
       .roughness = 0.9f,
       .useMipmaps = false
