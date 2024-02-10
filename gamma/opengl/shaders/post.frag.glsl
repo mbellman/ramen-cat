@@ -32,7 +32,7 @@ layout (location = 0) out vec3 out_color;
 
 vec3 getDepthOfFieldColor(vec3 current_out_color, vec2 uv, float linear_frag_depth) {
   const int MIP_LEVEL = 1;
-  const float MAX_DEPTH = 20000.0;
+  const float MAX_DEPTH = 60000.0;
 
   vec2 texel_size = 1.0 / textureSize(texColorAndDepth, MIP_LEVEL);
   vec3 depth_of_field_color = vec3(0.0);
@@ -59,7 +59,7 @@ vec3 getDepthOfFieldColor(vec3 current_out_color, vec2 uv, float linear_frag_dep
 
 vec3 getAtmosphericsColor(vec3 current_out_color, vec2 uv, float frag_depth, float linear_frag_depth, vec3 world_position) {
   // @todo make configurable
-  const float atmosphere_density = 1.5;
+  const float atmosphere_density = 1.0;
   const float atmosphere_distance_limit = 0.8;
   const float max_atmosphere_altitude = 20000.0;
   const float horizon_altitude = -2000.0;
@@ -86,7 +86,7 @@ vec3 getAtmosphericsColor(vec3 current_out_color, vec2 uv, float frag_depth, flo
 }
 
 vec3 getToonShadedColor(vec3 current_out_color, vec2 uv, float depth, float linear_frag_depth) {
-  const float OUTLINE_THICKNESS = 1.5;
+  const float OUTLINE_THICKNESS = 1.0;
 
   // Get the depth values for the top/left/right/bottom pixels
   vec2 texel_size = 1.0 / textureSize(texColorAndDepth, 0);
@@ -120,6 +120,10 @@ vec3 getToonShadedColor(vec3 current_out_color, vec2 uv, float depth, float line
     float alpha = saturate(0.5 + linear_frag_depth / zFar);
 
     current_out_color = mix(vec3(0), current_out_color, alpha);
+  } else if (depth_ratio < 1.0) {
+    float fade_factor = pow(saturate(linear_frag_depth / 30000.0), 3) * 0.35;
+
+    current_out_color = mix(current_out_color, atmosphereColor, fade_factor);
   }
 
   return current_out_color;
@@ -151,7 +155,7 @@ void main() {
   #endif
 
   // Game-specific modifications below
-  // -----------8---------------------
+  // ---------------------------------
 
   // Redshifting/Torii Gate zones
   {

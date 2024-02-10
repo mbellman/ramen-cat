@@ -102,13 +102,23 @@ void VehicleSystem::handleVehicles(GmContext* context, GameState& state, float d
         }
 
         if (vehicle.trackPointTarget > track.points.size() - 1) {
+          auto direction = (track.points[1] - track.points[0]).unit();
+          auto angle = atan2f(direction.x, direction.z);
+
           vehicle.trackPointTarget = 0;
+
           object->position = track.points[0];
+          object->rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angle);
         } else {
           auto finalTarget = track.points[vehicle.trackPointTarget];
           auto objectToFinalTarget = finalTarget - object->position;
+          auto objectDirection = object->rotation.getDirection();
+          float currentAngle = atan2f(objectDirection.x, objectDirection.z);
+          float targetAngle = atan2f(objectToFinalTarget.x, objectToFinalTarget.z);
+          float angle = Gm_LerpCircularf(currentAngle, targetAngle, dt, Gm_PI);
 
           object->position += objectToFinalTarget.unit() * vehicle.speed * dt;
+          object->rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angle);
         }
 
         commit(*object);
