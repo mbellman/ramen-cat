@@ -44,6 +44,9 @@ std::vector<MeshAsset> decoration_meshes = {
     .create = []() {
       return Mesh::Model("./game/assets/decorations/circle-sign-frame.obj");
     },
+    .attributes = {
+      .roughness = 0.2f
+    },
     .pieces = {
       {
         .name = "circle-sign-frame",
@@ -52,6 +55,9 @@ std::vector<MeshAsset> decoration_meshes = {
         },
         .rebuild = [](auto& source, auto& piece) {
           piece.color = source.color;
+        },
+        .attributes = {
+          .roughness = 0.2f
         }
       },
       {

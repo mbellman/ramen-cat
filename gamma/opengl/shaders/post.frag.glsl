@@ -30,33 +30,6 @@ layout (location = 0) out vec3 out_color;
 #include "utils/conversion.glsl";
 #include "utils/helpers.glsl";
 
-vec3 getDepthOfFieldColor(vec3 current_out_color, vec2 uv, float linear_frag_depth) {
-  const int MIP_LEVEL = 1;
-  const float MAX_DEPTH = 60000.0;
-
-  vec2 texel_size = 1.0 / textureSize(texColorAndDepth, MIP_LEVEL);
-  vec3 depth_of_field_color = vec3(0.0);
-
-  vec2 uv1 = uv + vec2(-1.0, 0.0) * texel_size;
-  vec2 uv2 = uv + vec2(1.0, 0.0) * texel_size;
-  vec2 uv3 = uv + vec2(0.0, -1.0) * texel_size;
-  vec2 uv4 = uv + vec2(0.0, 1.0) * texel_size;
-
-  depth_of_field_color += textureLod(texColorAndDepth, uv, MIP_LEVEL).rgb;
-  depth_of_field_color += textureLod(texColorAndDepth, uv1, MIP_LEVEL).rgb;
-  depth_of_field_color += textureLod(texColorAndDepth, uv2, MIP_LEVEL).rgb;
-  depth_of_field_color += textureLod(texColorAndDepth, uv3, MIP_LEVEL).rgb;
-  depth_of_field_color += textureLod(texColorAndDepth, uv4, MIP_LEVEL).rgb;
-  depth_of_field_color /= 5.0;
-
-  float depth_factor = linear_frag_depth / MAX_DEPTH;
-  if (depth_factor > 1.0) depth_factor = 1.0;
-
-  depth_factor *= depth_factor;
-
-  return mix(current_out_color, depth_of_field_color, depth_factor);
-}
-
 vec3 getAtmosphericsColor(vec3 current_out_color, vec2 uv, float frag_depth, float linear_frag_depth, vec3 world_position) {
   // @todo make configurable
   const float atmosphere_density = 1.0;
@@ -121,7 +94,7 @@ vec3 getToonShadedColor(vec3 current_out_color, vec2 uv, float depth, float line
 
     current_out_color = mix(vec3(0), current_out_color, alpha);
   } else if (depth_ratio < 1.0) {
-    float fade_factor = pow(saturate(linear_frag_depth / 20000.0), 3) * 0.35;
+    float fade_factor = 0.05 + pow(saturate(linear_frag_depth / 20000.0), 3) * 0.3;
 
     current_out_color = mix(current_out_color, atmosphereColor, fade_factor);
     current_out_color = mix(current_out_color, pow(current_out_color, vec3(1 / 0.5)) * 2.0, fade_factor);
@@ -143,10 +116,6 @@ void main() {
   vec3 world_position = getWorldPosition(frag_color_and_depth.w, screen_warp_uv, matInverseProjection, matInverseView);
 
   out_color = frag_color_and_depth.rgb;
-
-  #if USE_DEPTH_OF_FIELD == 1
-    out_color = getDepthOfFieldColor(out_color, screen_warp_uv, linear_frag_depth);
-  #endif
 
   out_color = getToonShadedColor(out_color, screen_warp_uv, frag_color_and_depth.w, linear_frag_depth);
 
