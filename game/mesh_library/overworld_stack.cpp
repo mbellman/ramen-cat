@@ -25,6 +25,15 @@ std::vector<MeshAsset> overworld_stack_meshes = {
     }
   },
   {
+    .name = "cylinder-2",
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/cylinder-2.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    }
+  },
+  {
     .name = "dome-1",
     .hitboxScale = Vec3f(1.f, 0.2f, 1.f),
     .create = []() {
