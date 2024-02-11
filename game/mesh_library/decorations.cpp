@@ -149,5 +149,14 @@ std::vector<MeshAsset> decoration_meshes = {
     .attributes = {
       .maxCascade = 4
     }
+  },
+  {
+    .name = "billboards-1",
+    .create = []() {
+      return Mesh::Model("./game/assets/texture-cube.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/tiles-1.png"
+    }
   }
 };

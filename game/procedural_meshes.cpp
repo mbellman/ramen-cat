@@ -292,3 +292,24 @@ void ProceduralMeshes::rebuildProceduralMeshes(GmContext* context) {
   rebuildMiniHouses(context);
   rebuildWoodBuildings(context);
 }
+
+void ProceduralMeshes::handleProceduralMeshes(GmContext* context, GameState& state, float dt) {
+  START_TIMING("handleProceduralMeshes");
+
+  objects("p_balloon-windmill-blades").reset();
+
+  auto t = get_scene_time();
+
+  for (auto& windmill : objects("balloon-windmill")) {
+    auto& blades = create_object_from("p_balloon-windmill-blades");
+
+    blades.position = windmill.position;
+    blades.scale = windmill.scale;
+    blades.rotation = windmill.rotation * Quaternion::fromAxisAngle(Vec3f(0, 0, 1.f), t * 0.5f);
+    blades.color = Vec3f(1.f, 0.8f, 0.6f);
+
+    commit(blades);
+  }
+
+  LOG_TIME();
+}

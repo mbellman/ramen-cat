@@ -10,6 +10,7 @@
 #include "entity_system.h"
 #include "vehicle_system.h"
 #include "effects_system.h"
+#include "procedural_meshes.h"
 #include "ui_system.h"
 #include "editor.h"
 #include "game_constants.h"
@@ -206,6 +207,7 @@ void updateGame(GmContext* context, GameState& state, float dt) {
   MovementSystem::handlePlayerMovementPhysics(context, state, dt);
   EntitySystem::handleGameEntities(context, state, dt);
   VehicleSystem::handleVehicles(context, state, dt);
+  ProceduralMeshes::handleProceduralMeshes(context, state, dt);
   AnimationSystem::handleAnimations(context, state, dt);
   CameraSystem::handleGameCamera(context, state, dt);
   CameraSystem::handleVisibilityCullingAndLevelsOfDetail(context, state);

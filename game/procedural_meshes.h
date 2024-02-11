@@ -6,4 +6,5 @@
 
 namespace ProceduralMeshes {
   void rebuildProceduralMeshes(GmContext* context);
+  void handleProceduralMeshes(GmContext* context, GameState& state, float dt);
 }

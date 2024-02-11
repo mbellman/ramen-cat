@@ -97,7 +97,7 @@ std::vector<MeshAsset> procedural_mesh_parts = {
       .maxCascade = 4,
       .animation = {
         .type = PresetAnimationType::LEAF,
-        .factor = 5.f
+        .factor = 3.f
       },
       .roughness = 0.4f
     }
@@ -113,7 +113,8 @@ std::vector<MeshAsset> procedural_mesh_parts = {
       .texture = "./game/assets/weeds.png",
       .maxCascade = 2,
       .animation = {
-        .type = PresetAnimationType::FLOWER
+        .type = PresetAnimationType::FLOWER,
+        .factor = 3.f
       },
       .emissivity = 0.1f,
       .roughness = 1.f
@@ -190,4 +191,15 @@ std::vector<MeshAsset> procedural_mesh_parts = {
       .roughness = 0.5f
     }
   },
+
+  // balloon-windmill
+  {
+    .name = "p_balloon-windmill-blades",
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/balloon-windmill-blades.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    }
+  }
 };
