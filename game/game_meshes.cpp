@@ -265,6 +265,17 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
+    .name = "tall-trunk",
+    .hitboxScale = Vec3f(0.3f, 1.f, 0.3f),
+    .create = []() {
+      return Mesh::Model("./game/assets/plants/tall-trunk.obj");
+    },
+    .attributes = {
+      .maxCascade = 4,
+      .roughness = 0.9f
+    }
+  },
+  {
     .name = "palm-trunk",
     .hitboxScale = Vec3f(0.1f, 1.f, 0.1f),
     .create = []() {

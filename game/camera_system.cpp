@@ -360,7 +360,7 @@ void CameraSystem::handleVisibilityCulling(GmContext* context, GameState& state)
     "round-tower-base", "round-tower-supports", "round-tower-roof",
     "wood-house-base", "wood-house-roof",
     "wood-tower", "wood-tower-top",
-    "tree-trunk", "branch-1", "bush", "leaves", "banana-plant",
+    "tree-trunk", "tall-trunk", "branch-1", "bush", "leaves", "banana-plant",
     "japanese-tree", "japanese-tree-leaves", "bamboo", "rock-1",
     "circle-sign", "circle-sign-frame",
     "dynamic-wave-sign",

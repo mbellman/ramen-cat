@@ -5,6 +5,7 @@
 using namespace Gamma;
 
 std::vector<MeshAsset> vehicle_meshes = {
+  // Vehicle track pivots
   {
     .name = "vehicle-stop",
     .dynamic = true,
@@ -32,6 +33,8 @@ std::vector<MeshAsset> vehicle_meshes = {
       return Mesh::Sphere(8);
     }
   },
+
+  // Vehicles
   {
     .name = "small-train",
     .moving = true,
