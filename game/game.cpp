@@ -169,11 +169,7 @@ void updateGame(GmContext* context, GameState& state, float dt) {
   if (state.isEditorEnabled) {
     Editor::handleGameEditor(context, state, dt);
     EntitySystem::handleOcean(context);
-
-    // @todo CameraSystem::handleLods()
-    use_lod_by_distance(5000.f, { "b1-levels" });
-    use_lod_by_distance(7500.f, { "b2-levels" });
-    use_lod_by_distance(8000.f, { "p_mini-house-roof" });
+    CameraSystem::handleLevelsOfDetail(context);
 
     // Update our 'altitude' parameter so height-based lighting changes take effect in the editor
     context->scene.sky.altitude = get_camera().position.y - OCEAN_PLANE_Y_POSITION;
@@ -210,7 +206,8 @@ void updateGame(GmContext* context, GameState& state, float dt) {
   ProceduralMeshes::handleProceduralMeshes(context, state, dt);
   AnimationSystem::handleAnimations(context, state, dt);
   CameraSystem::handleGameCamera(context, state, dt);
-  CameraSystem::handleVisibilityCullingAndLevelsOfDetail(context, state);
+  CameraSystem::handleLevelsOfDetail(context);
+  CameraSystem::handleVisibilityCulling(context, state);
   EffectsSystem::handleGameEffects(context, state, dt);
   UISystem::handleUI(context, state, dt);
 

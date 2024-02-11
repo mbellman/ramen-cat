@@ -339,13 +339,19 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
   LOG_TIME();
 }
 
-// @todo remove state argument if we're not using it
-void CameraSystem::handleVisibilityCullingAndLevelsOfDetail(GmContext* context, GameState& state) {
-  START_TIMING("handleVisibilityCullingAndLevelsOfDetail");
+void CameraSystem::handleLevelsOfDetail(GmContext* context) {
+  START_TIMING("handleLevelsOfDetail");
 
   use_lod_by_distance(5000.f, { "b1-levels" });
   use_lod_by_distance(7500.f, { "b2-levels" });
   use_lod_by_distance(8000.f, { "p_mini-house-roof" });
+
+  LOG_TIME();
+}
+
+// @todo remove state argument if we're not using it
+void CameraSystem::handleVisibilityCulling(GmContext* context, GameState& state) {
+  START_TIMING("handleVisibilityCulling");
 
   use_frustum_culling({ "weeds", "lamp", "ladder", "ac-unit", "ac-fan" });
   use_distance_culling(3000.f, { "flower" });
