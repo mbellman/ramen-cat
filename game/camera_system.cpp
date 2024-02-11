@@ -343,7 +343,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
 void CameraSystem::handleVisibilityCulling(GmContext* context, GameState& state) {
   START_TIMING("handleVisibilityCulling");
 
-  use_frustum_culling({ "weeds", "lamp", "ladder", "ac-unit", "ac-fan" });
+  use_frustum_culling({ "weeds", "lamp", "ladder", "ac-unit", "ac-fan", "petal" });
   use_distance_culling(3000.f, { "flower" });
   use_distance_culling(5000.f, { "onigiri", "nitamago", "chashu" });
 
@@ -353,16 +353,21 @@ void CameraSystem::handleVisibilityCulling(GmContext* context, GameState& state)
     "b1-base", "b1-levels", "b1-windows",
     "b2-base", "b2-levels", "b2-columns", "b2-windows",
     "b3-base", "b3-levels", "b3-columns",
+    "windmill-base", "windmill-wheel",
+    "exhaust-fan", "exhaust-fan-blades",
+    "cylinder-1", "cylinder-2", "dome-1",
     "concrete-b1",
     "round-tower-base", "round-tower-supports", "round-tower-roof",
     "wood-house-base", "wood-house-roof",
     "wood-tower", "wood-tower-top",
     "tree-trunk", "branch-1", "bush", "leaves", "banana-plant",
-    "japanese-tree", "japanese-tree-leaves",
+    "japanese-tree", "japanese-tree-leaves", "bamboo", "rock-1",
+    "circle-sign", "circle-sign-frame",
     "dynamic-wave-sign",
 
     // Procedural meshes
-    "p_mini-house", "p_mini-house-roof",
+    "mini-flag",
+    "p_mini-house", "p_mini-house-roof", "p_mini-house-wood-beam", "p_mini-house-window",
     "p_shrub", "p_shrub-2", "p_banana-plant", "p_weeds"
   };
 
