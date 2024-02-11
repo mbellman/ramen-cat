@@ -1,3 +1,4 @@
+#include "game_meshes.h"
 #include "procedural_meshes.h"
 #include "macros.h"
 
@@ -10,9 +11,82 @@ internal float randomFromVec3f(const Vec3f& v) {
   return Gm_Modf(sqrtf(b), 1.f);
 }
 
-internal void rebuildConcreteStacks(GmContext* context) {
-  objects("p_concrete").reset();
+internal float randomVariance(float random, float variance) {
+  return -variance + random * variance * 2.f;
+}
 
+internal void rebuildPlantStrips(GmContext* context) {
+  for (auto& strip : objects("plant-strip")) {
+    auto start = Vec3f(0);
+    auto end = Vec3f(0);
+    auto matRotation = strip.rotation.toMatrix4f();
+
+    if (strip.scale.x > strip.scale.z) {
+      start = strip.position + matRotation.transformVec3f(Vec3f(-strip.scale.x, 0, 0));
+      end = strip.position + matRotation.transformVec3f(Vec3f(strip.scale.x, 0, 0));
+    } else {
+      start = strip.position + matRotation.transformVec3f(Vec3f(0, 0, -strip.scale.z));
+      end = strip.position + matRotation.transformVec3f(Vec3f(0, 0, strip.scale.z));
+    }
+
+    u8 total = u8((end - start).magnitude() / 150.f);
+
+    // Weeds
+    for (u8 i = 0; i < total; i++) {
+      auto& weeds = create_object_from("p_weeds");
+      auto alpha = float(i) / float(total);
+      auto basePosition = Vec3f::lerp(start, end, alpha);
+      auto random = randomFromVec3f(basePosition + Vec3f(1.23f, 0, 0));
+      auto random2 = randomFromVec3f(basePosition + Vec3f(4.46f, 0, 0));
+
+      weeds.position = basePosition + Vec3f(
+        randomVariance(random, 20.f),
+        -strip.scale.y * 0.5f,
+        randomVariance(random2, 30.f)
+      );
+
+      weeds.scale = Vec3f(50.f + randomVariance(random, 20.f));
+      weeds.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), random * Gm_PI * 2.f);
+
+      commit(weeds);
+    }
+
+    // Bushes
+    const float DEFAULT_SIZE = 80.f;
+    const float SIZE_VARIANCE = 40.f;
+
+    for (u8 i = 0; i < total; i++) {
+      auto alpha = float(i) / float(total);
+      auto basePosition = Vec3f::lerp(start, end, alpha);
+      auto random = randomFromVec3f(basePosition);
+      auto random2 = randomFromVec3f(basePosition + Vec3f(1.23f, 0, 0));
+
+      auto& bush =
+        random > 0.7f ? create_object_from("p_shrub") :
+        random > 0.3f ? create_object_from("p_shrub-2") :
+        create_object_from("p_banana-plant");
+
+      bush.position = basePosition + Vec3f(
+        randomVariance(random, 50.f),
+        randomVariance(random, 10.f),
+        randomVariance(random2, 70.f)
+      );
+
+      bush.scale = Vec3f(DEFAULT_SIZE + randomVariance(random2, SIZE_VARIANCE));
+      bush.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), random * Gm_PI * 2.f);
+
+      bush.color = Vec3f(
+        1.f,
+        0.9f + randomVariance(random, 0.1f),
+        0.9f + randomVariance(random2, 0.1f)
+      );
+
+      commit(bush);
+    }
+  }
+}
+
+internal void rebuildConcreteStacks(GmContext* context) {
   const auto PIECE_SIZE = 600.f;
 
   for (auto& stack : objects("concrete-stack")) {
@@ -76,12 +150,6 @@ internal void rebuildConcreteStacks(GmContext* context) {
 }
 
 internal void rebuildMiniHouses(GmContext* context) {
-  objects("p_mini-house").reset();
-  objects("p_mini-house-roof").reset();
-  objects("p_mini-house-wood-beam").reset();
-  objects("p_mini-house-window").reset();
-  objects("p_mini-house-board").reset();
-
   for (auto& source : objects("mini-house")) {
     auto origin = source.position;
     auto random = randomFromVec3f(origin);
@@ -215,6 +283,11 @@ internal void rebuildWoodBuildings(GmContext* context) {
 }
 
 void ProceduralMeshes::rebuildProceduralMeshes(GmContext* context) {
+  for (auto& asset : GameMeshes::proceduralMeshParts) {
+    objects(asset.name).reset();
+  }
+
+  rebuildPlantStrips(context);
   rebuildConcreteStacks(context);
   rebuildMiniHouses(context);
   rebuildWoodBuildings(context);

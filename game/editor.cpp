@@ -808,9 +808,6 @@ internal void respawnPlayer(GmContext* context, GameState& state) {
   state.previousPlayerPosition = player.position;
   state.camera3p.azimuth = atan2f(playerToCamera.z, playerToCamera.x);
 
-  // Prevent respawning in a lower area from erroneously
-  // triggering fall position reset behavior
-  state.lastTimeOnSolidGround = get_context_time();
   // Prevent triggering 'ledge turnaround' behavior in case
   // we respawn in midair after being on solid ground
   state.wasOnSolidGroundLastFrame = false;

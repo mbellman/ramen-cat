@@ -334,7 +334,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     },
     .attributes = {
       .type = MeshType::PRESET_ANIMATED,
-      .texture = "./game/assets/leaves.png",
+      .texture = "./game/assets/plants/leaves.png",
       .maxCascade = 4,
       .animation = {
         .type = PresetAnimationType::FLOWER,
@@ -1259,79 +1259,6 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
   }
 };
 
-std::vector<MeshAsset> GameMeshes::proceduralMeshParts = {
-  // concrete-stack
-  {
-    .name = "p_concrete",
-    .maxInstances = 10000,
-    .create = []() {
-      return Mesh::Cube();
-    },
-    .attributes = {
-      .maxCascade = 4,
-      .roughness = 0.9f
-    }
-  },
-
-  // mini-house/mini-house-double
-  {
-    .name = "p_mini-house",
-    .create = []() {
-      return Mesh::Cube();
-    },
-    .attributes = {
-      .maxCascade = 4,
-      .roughness = 0.7f
-    }
-  },
-  {
-    .name = "p_mini-house-roof",
-    .create = []() {
-      return Mesh::Model({
-        "./game/assets/japanese-roof.obj",
-        "./game/assets/japanese-roof-lod.obj"
-      });
-    },
-    .attributes = {
-      .maxCascade = 4,
-      .roughness = 0.3f
-    }
-  },
-  {
-    .name = "p_mini-house-wood-beam",
-    .maxInstances = 10000,
-    .create = []() {
-      return Mesh::Model("./game/assets/procedural/mini-house-wood-beam.obj");
-    },
-    .attributes = {
-      .texture = "./game/assets/wood-beam.png",
-      .roughness = 0.5f
-    }
-  },
-  {
-    .name = "p_mini-house-window",
-    .create = []() {
-      return Mesh::Model("./game/assets/procedural/mini-house-window.obj");
-    },
-    .attributes = {
-      .texture = "./game/assets/windows-1.png",
-      .roughness = 0.5f
-    }
-  },
-  {
-    .name = "p_mini-house-board",
-    .maxInstances = 10000,
-    .create = []() {
-      return Mesh::Plane(2);
-    },
-    .attributes = {
-      .texture = "./game/assets/wood-beam.png",
-      .normals = "./game/assets/wood-beam-normals.png",
-      .roughness = 0.5f
-    }
-  },
-};
-
 // @todo remove + define these meshes as pieces for parent meshes
 std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
   {
@@ -1550,9 +1477,15 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
   },
 };
 
+std::vector<MeshAsset> GameMeshes::proceduralMeshParts = {};
+
 void GameMeshes::loadAllMeshAssets() {
   #define add_mesh_assets(list, elements) list.insert(list.end(), elements.begin(), elements.end())
 
+  // Store procedural mesh parts
+  GameMeshes::proceduralMeshParts = procedural_mesh_parts;
+
+  // Add assets from mesh library files
   auto& assets = GameMeshes::meshAssets;
 
   add_mesh_assets(assets, overworld_city_meshes);

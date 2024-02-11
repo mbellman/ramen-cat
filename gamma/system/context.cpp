@@ -96,7 +96,7 @@ static void Gm_DisplayDevtools(GmContext* context) {
       u8 index = 0;
 
       for (auto& message : context->debugMessages) {
-        renderer.renderText(font_sm, message.c_str(), 25, 250 + index++ * 25, TEXT_COLOR, BACKGROUND_COLOR);
+        renderer.renderText(font_sm, message.c_str(), 25, 275 + index++ * 25, TEXT_COLOR, BACKGROUND_COLOR);
       }
     }
 
