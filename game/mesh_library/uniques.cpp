@@ -8,6 +8,7 @@ std::vector<MeshAsset> unique_meshes = {
   {
     .name = "big-tree-trunk",
     .hitboxScale = Vec3f(0.3f, 1.f, 0.3f),
+    .maxInstances = 5,
     .create = []() {
       return Mesh::Model("./game/assets/uniques/big-tree-trunk.obj");
     },
@@ -18,6 +19,7 @@ std::vector<MeshAsset> unique_meshes = {
   {
     .name = "water-tower-pipe",
     .hitboxScale = Vec3f(0.2f, 0.3f, 1.f),
+    .maxInstances = 5,
     .create = []() {
       return Mesh::Model("./game/assets/uniques/water-tower-pipe.obj");
     },
@@ -27,8 +29,21 @@ std::vector<MeshAsset> unique_meshes = {
     }
   },
   {
+    .name = "water-wheel",
+    .moving = true,
+    .hitboxScale = Vec3f(0.2f, 1.f, 1.f),
+    .maxInstances = 5,
+    .create = []() {
+      return Mesh::Model("./game/assets/uniques/water-wheel.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    }
+  },
+  {
     .name = "lower-lake",
     .hitboxScale = Vec3f(1.f, 0.1f, 1.f),
+    .maxInstances = 5,
     .create = []() {
       return Mesh::Model("./game/assets/uniques/lower-lake.obj");
     },
@@ -42,6 +57,7 @@ std::vector<MeshAsset> unique_meshes = {
     .pieces = {
       {
         .name = "lower-lakebed",
+        .maxInstances = 5,
         .create = []() {
           return Mesh::Model("./game/assets/uniques/lower-lakebed.obj");
         },
@@ -56,6 +72,7 @@ std::vector<MeshAsset> unique_meshes = {
   },
   {
     .name = "pink-palace",
+    .maxInstances = 5,
     .create = []() {
       return Mesh::Model("./game/assets/uniques/pink-palace.obj");
     },
@@ -65,12 +82,14 @@ std::vector<MeshAsset> unique_meshes = {
     .pieces = {
       {
         .name = "pink-palace-trim",
+        .maxInstances = 5,
         .create = []() {
           return Mesh::Model("./game/assets/uniques/pink-palace-trim.obj");
         }
       },
       {
         .name = "pink-palace-top",
+        .maxInstances = 5,
         .create = []() {
           return Mesh::Model("./game/assets/uniques/pink-palace-top.obj");
         },
@@ -80,6 +99,7 @@ std::vector<MeshAsset> unique_meshes = {
       },
       {
         .name = "pink-palace-roof",
+        .maxInstances = 5,
         .create = []() {
           return Mesh::Model("./game/assets/uniques/pink-palace-roof.obj");
         },
@@ -89,6 +109,7 @@ std::vector<MeshAsset> unique_meshes = {
       },
       {
         .name = "pink-palace-windows",
+        .maxInstances = 5,
         .create = []() {
           return Mesh::Model("./game/assets/uniques/pink-palace-windows.obj");
         },

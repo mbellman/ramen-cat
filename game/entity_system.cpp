@@ -860,9 +860,21 @@ internal void handleUniqueLevelStructures(GmContext* context, GameState& state, 
 
   {
     for_moving_objects("umimura-sculpture-fan", {
+      auto axis = Vec3f(0, 1.f, 0);
       float angle = t * 0.2f;
 
-      object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angle);
+      object.rotation = Quaternion::fromAxisAngle(axis, angle);
+
+      commit(object);
+    });
+  }
+
+  {
+    for_moving_objects("water-wheel", {
+      auto axis = initial.rotation.getLeftDirection();
+      float angle = -t * 0.1f;
+
+      object.rotation = Quaternion::fromAxisAngle(axis, angle) * initial.rotation;
 
       commit(object);
     });
