@@ -57,7 +57,10 @@ std::vector<MeshAsset> procedural_mesh_parts = {
     .name = "p_shrub",
     .maxInstances = 10000,
     .create = []() {
-      return Mesh::Model("./game/assets/plants/shrub.obj");
+      return Mesh::Model({
+        "./game/assets/plants/shrub.obj",
+        "./game/assets/plants/shrub-lod.obj"
+      });
     },
     .attributes = {
       .type = MeshType::PRESET_ANIMATED,
@@ -73,7 +76,10 @@ std::vector<MeshAsset> procedural_mesh_parts = {
     .name = "p_shrub-2",
     .maxInstances = 10000,
     .create = []() {
-      return Mesh::Model("./game/assets/plants/shrub.obj");
+      return Mesh::Model({
+        "./game/assets/plants/shrub.obj",
+        "./game/assets/plants/shrub-lod.obj"
+      });
     },
     .attributes = {
       .type = MeshType::PRESET_ANIMATED,
@@ -89,7 +95,10 @@ std::vector<MeshAsset> procedural_mesh_parts = {
     .name = "p_banana-plant",
     .hitboxScale = Vec3f(1.f, 0.3f, 1.f),
     .create = []() {
-      return Mesh::Model("./game/assets/plants/banana-plant.obj");
+      return Mesh::Model({
+        "./game/assets/plants/banana-plant.obj",
+        "./game/assets/plants/banana-plant-lod.obj"
+      });
     },
     .attributes = {
       .type = MeshType::PRESET_ANIMATED,

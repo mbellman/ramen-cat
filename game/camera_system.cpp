@@ -339,16 +339,6 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
   LOG_TIME();
 }
 
-void CameraSystem::handleLevelsOfDetail(GmContext* context) {
-  START_TIMING("handleLevelsOfDetail");
-
-  use_lod_by_distance(5000.f, { "b1-levels" });
-  use_lod_by_distance(7500.f, { "b2-levels" });
-  use_lod_by_distance(8000.f, { "p_mini-house-roof" });
-
-  LOG_TIME();
-}
-
 // @todo remove state argument if we're not using it
 void CameraSystem::handleVisibilityCulling(GmContext* context, GameState& state) {
   START_TIMING("handleVisibilityCulling");
@@ -359,6 +349,7 @@ void CameraSystem::handleVisibilityCulling(GmContext* context, GameState& state)
 
   // @todo store somewhere as a constant
   static std::initializer_list<std::string> meshesToFrustumCullAtDistance = {
+    // Static meshes
     "b1-base", "b1-levels", "b1-windows",
     "b2-base", "b2-levels", "b2-columns", "b2-windows",
     "b3-base", "b3-levels", "b3-columns",
@@ -366,12 +357,36 @@ void CameraSystem::handleVisibilityCulling(GmContext* context, GameState& state)
     "round-tower-base", "round-tower-supports", "round-tower-roof",
     "wood-house-base", "wood-house-roof",
     "wood-tower", "wood-tower-top",
-    "tree-trunk", "branch-1", "bush", "leaves",
+    "tree-trunk", "branch-1", "bush", "leaves", "banana-plant",
     "japanese-tree", "japanese-tree-leaves",
-    "dynamic-wave-sign"
+    "dynamic-wave-sign",
+
+    // Procedural meshes
+    "p_mini-house", "p_mini-house-roof",
+    "p_shrub", "p_shrub-2", "p_banana-plant", "p_weeds"
   };
 
   use_frustum_culling_at_distance(10000.f, meshesToFrustumCullAtDistance);
+
+  LOG_TIME();
+}
+
+void CameraSystem::handleLevelsOfDetail(GmContext* context) {
+  START_TIMING("handleLevelsOfDetail");
+
+  use_lod_by_distance(5000.f, {
+    "b1-levels", "circle-sign-frame", "hot-air-balloon", "mini-flag", "vertical-banner", "branch-1",
+    "p_shrub", "p_shrub-2"
+  });
+
+  use_lod_by_distance(8000.f, {
+    "b2-levels", "banana-plant",
+    "p_mini-house-roof", "p_banana-plant"
+  });
+
+  use_lod_by_distance(10000.f, {
+    "bush"
+  });
 
   LOG_TIME();
 }

@@ -206,8 +206,8 @@ void updateGame(GmContext* context, GameState& state, float dt) {
   ProceduralMeshes::handleProceduralMeshes(context, state, dt);
   AnimationSystem::handleAnimations(context, state, dt);
   CameraSystem::handleGameCamera(context, state, dt);
-  CameraSystem::handleLevelsOfDetail(context);
   CameraSystem::handleVisibilityCulling(context, state);
+  CameraSystem::handleLevelsOfDetail(context);
   EffectsSystem::handleGameEffects(context, state, dt);
   UISystem::handleUI(context, state, dt);
 

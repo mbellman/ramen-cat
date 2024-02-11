@@ -174,7 +174,10 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     .name = "bush",
     .hitboxScale = Vec3f(0.8f),
     .create = []() {
-      return Mesh::Model("./game/assets/bush.obj");
+      return Mesh::Model({
+        "./game/assets/bush.obj",
+        "./game/assets/bush-lod.obj"
+      });
     },
     .attributes = {
       .type = MeshType::PRESET_ANIMATED,
@@ -319,7 +322,10 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     .name = "branch-1",
     .defaultColor = Vec3f(0.7f, 0.5f, 0.3f),
     .create = []() {
-      return Mesh::Model("./game/assets/branch-1.obj");
+      return Mesh::Model({
+        "./game/assets/branch-1.obj",
+        "./game/assets/branch-1-lod.obj"
+      });
     },
     .attributes = {
       .maxCascade = 4,
@@ -357,7 +363,10 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     .name = "banana-plant",
     .hitboxScale = Vec3f(1.f, 0.3f, 1.f),
     .create = []() {
-      return Mesh::Model("./game/assets/plants/banana-plant.obj");
+      return Mesh::Model({
+        "./game/assets/plants/banana-plant.obj",
+        "./game/assets/plants/banana-plant-lod.obj"
+      });
     },
     .attributes = {
       .type = MeshType::PRESET_ANIMATED,
@@ -1093,7 +1102,10 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     .moving = true,
     .defaultScale = Vec3f(200.f),
     .create = []() {
-      return Mesh::Model("./game/assets/hot-air-balloon.obj");
+      return Mesh::Model({
+        "./game/assets/hot-air-balloon.obj",
+        "./game/assets/hot-air-balloon-lod.obj"
+      });
     },
     .attributes = {
       .texture = "./game/assets/hot-air-balloon.png",
@@ -1464,7 +1476,10 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
   {
     .name = "mini-flag",
     .create = []() {
-      return Mesh::Model("./game/assets/decorations/mini-flag.obj");
+      return Mesh::Model({
+        "./game/assets/decorations/mini-flag.obj",
+        "./game/assets/decorations/mini-flag-lod.obj"
+      });
     },
     .attributes = {
       .type = MeshType::PRESET_ANIMATED,

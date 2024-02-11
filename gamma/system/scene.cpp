@@ -419,7 +419,7 @@ void Gm_UseDistanceCulling(GmContext* context, float distance, const std::initia
 
   for (auto& meshName : meshNames) {
     auto& objects = meshMap[meshName]->objects;
-    auto totalVisible = objects.partitionByDistance(0, distance, camera.position, /* checkAllObjects */ true);
+    auto totalVisible = objects.partitionByDistance(0, distance, camera.position, true /* checkAllObjects */);
 
     objects.setTotalVisible(totalVisible);
   }

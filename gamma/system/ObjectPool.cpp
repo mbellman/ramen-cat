@@ -148,7 +148,6 @@ namespace Gamma {
     u16 end = totalActive();
     Vec3f cameraDirection = camera.orientation.getDirection();
 
-
     while (end > current) {
       Vec3f cameraToObject = objects[current].position - camera.position;
       float distance = cameraToObject.magnitude();

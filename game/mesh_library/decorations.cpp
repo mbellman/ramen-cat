@@ -9,7 +9,10 @@ std::vector<MeshAsset> decoration_meshes = {
     .name = "vertical-banner",
     .hitboxScale = Vec3f(0.2f, 1.f, 0.05f),
     .create = []() {
-      return Mesh::Model("./game/assets/decorations/vertical-banner.obj");
+      return Mesh::Model({
+        "./game/assets/decorations/vertical-banner.obj",
+        "./game/assets/decorations/vertical-banner-lod.obj"
+      });
     },
     .attributes = {
       .type = MeshType::PRESET_ANIMATED,
@@ -51,7 +54,10 @@ std::vector<MeshAsset> decoration_meshes = {
       {
         .name = "circle-sign-frame",
         .create = []() {
-          return Mesh::Model("./game/assets/decorations/circle-sign-frame.obj");
+          return Mesh::Model({
+            "./game/assets/decorations/circle-sign-frame.obj",
+            "./game/assets/decorations/circle-sign-frame-lod.obj"
+          });
         },
         .rebuild = [](auto& source, auto& piece) {
           piece.color = source.color;
