@@ -296,6 +296,7 @@ void ProceduralMeshes::rebuildProceduralMeshes(GmContext* context) {
 void ProceduralMeshes::handleProceduralMeshes(GmContext* context, GameState& state, float dt) {
   START_TIMING("handleProceduralMeshes");
 
+  // @todo handleBalloonWindmills()
   objects("p_balloon-windmill-blades").reset();
 
   auto t = get_scene_time();

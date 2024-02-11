@@ -156,7 +156,8 @@ std::vector<MeshAsset> decoration_meshes = {
       return Mesh::Model("./game/assets/texture-cube.obj");
     },
     .attributes = {
-      .texture = "./game/assets/tiles-1.png"
+      .texture = "./game/assets/tiles-1.png",
+      .useMipmaps = false
     }
   }
 };

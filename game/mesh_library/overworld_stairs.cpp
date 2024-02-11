@@ -40,6 +40,7 @@ std::vector<MeshAsset> overworld_stairs_meshes = {
   },
   {
     .name = "concrete-b1",
+    .hitboxScale = Vec3f(1.f, 1.f, 0.4f),
     .create = []() {
       return Mesh::Model("./game/assets/buildings/concrete-b1.obj");
     },
