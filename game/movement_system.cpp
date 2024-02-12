@@ -317,7 +317,9 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
         if (
           time_since(state.lastHardLandingTime) < SUPER_JUMP_WINDOW_DURATION ||
           time_since(state.lastAirDashTime) < SUPER_JUMP_WINDOW_DURATION ||
-          state.superjumpChargeTime != 0.f
+          state.superjumpChargeTime != 0.f ||
+          // @todo have a separate code path for jump pads specifically
+          state.isNearJumpPad
         ) {
           // Super jump
           jumpFactor *= 2.f;
@@ -331,6 +333,15 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
             state.superjumpChargeTime = 0.f;
 
             jumpFactor *= alpha;
+          }
+
+          if (state.isNearJumpPad) {
+            // @todo refactor
+            // @todo have a separate code path for jump pads specifically
+            state.lastAirDashTime = sceneTime;
+            state.airDashSpinStartYaw = state.currentYaw;
+            state.airDashSpinEndYaw = atan2(state.velocity.x, state.velocity.z) + Gm_PI;
+            if (state.airDashSpinEndYaw - state.airDashSpinStartYaw < Gm_PI) state.airDashSpinEndYaw += Gm_TAU;
           }
 
           context->scene.fx.screenWarpTime = sceneTime;

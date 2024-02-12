@@ -109,6 +109,7 @@ struct GameState {
   bool wasOnSolidGroundLastFrame = false;
   bool isMovingPlayerThisFrame = false;
   bool isRepositioningCamera = false;
+  bool isNearJumpPad = false;
   bool isGliding = false;
 
   // @todo wall kicks are currently automatic. It may be worthwhile to restore

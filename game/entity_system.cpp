@@ -772,6 +772,27 @@ internal void handleBoostPads(GmContext* context, GameState& state, float dt) {
   }
 }
 
+internal void handleJumpPads(GmContext* context, GameState& state, float dt) {
+  auto& player = get_player();
+
+  // Track proximity to jump pads
+  {
+    state.isNearJumpPad = false;
+
+    for (auto& pad : objects("jump-pad")) {
+      if ((pad.position - player.position).magnitude() < pad.scale.x) {
+        // @todo only do this at dash level 1 or 2
+        state.isNearJumpPad = true;
+
+        break;
+      }
+    }
+  }
+
+  // @todo have active jump pad pop out + retract in slowly
+  // @todo show particles when active
+}
+
 internal void handleBoostRings(GmContext* context, GameState& state, float dt) {
   auto& player = get_player();
 
@@ -1003,6 +1024,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   handleJetstreams(context, state, dt);
   handleToriiGates(context, state);
   handleBoostPads(context, state, dt);
+  handleJumpPads(context, state, dt);
   handleBoostRings(context, state, dt);
 
   // Power-up/ability entities
