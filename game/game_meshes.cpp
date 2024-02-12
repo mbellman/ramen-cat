@@ -5,6 +5,7 @@
 #include "mesh_library/overworld_crossing.h"
 #include "mesh_library/overworld_station.h"
 #include "mesh_library/overworld_stairs.h"
+#include "mesh_library/entity_meshes.h"
 #include "mesh_library/decorations.h"
 #include "mesh_library/vehicles.h"
 #include "mesh_library/uniques.h"
@@ -1519,6 +1520,7 @@ void GameMeshes::loadAllMeshAssets() {
   add_mesh_assets(assets, overworld_crossing_meshes);
   add_mesh_assets(assets, overworld_station_meshes);
   add_mesh_assets(assets, overworld_stairs_meshes);
+  add_mesh_assets(assets, entity_meshes);
   add_mesh_assets(assets, decoration_meshes);
   add_mesh_assets(assets, vehicle_meshes);
   add_mesh_assets(assets, unique_meshes);

@@ -189,6 +189,9 @@
     <ClCompile Include="game\mesh_library\decorations.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="game\mesh_library\entity_meshes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="external\glew\include\eglew.h">
@@ -672,6 +675,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="game\mesh_library\decorations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\mesh_library\entity_meshes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

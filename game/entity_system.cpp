@@ -760,6 +760,18 @@ internal void restoreLastUsedBoostRing(GmContext* context, GameState& state) {
   }
 }
 
+internal void handleBoostPads(GmContext* context, GameState& state, float dt) {
+  auto& player = get_player();
+
+  for (auto& pad : objects("boost-pad")) {
+    if ((player.position - pad.position).magnitude() < 200.f) {
+      if (state.dashLevel < 2) {
+        state.dashLevel++;
+      }
+    }
+  }
+}
+
 internal void handleBoostRings(GmContext* context, GameState& state, float dt) {
   auto& player = get_player();
 
@@ -990,6 +1002,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   handleCollectables(context, state, dt);
   handleJetstreams(context, state, dt);
   handleToriiGates(context, state);
+  handleBoostPads(context, state, dt);
   handleBoostRings(context, state, dt);
 
   // Power-up/ability entities

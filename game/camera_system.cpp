@@ -155,9 +155,11 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
     if (state.isFreeCameraMode) {
       if (Gm_IsWindowFocused()) {
         auto& camera = get_camera();
-        auto& mouseDelta = get_input().getMouseDelta();
+        auto& input = get_input();
+        auto& mouseDelta = input.getMouseDelta();
+        auto speed = input.isKeyHeld(Key::SPACE) ? 200000.f : 5000.f;
 
-        Gm_HandleFreeCameraMode(context, 10000.f, dt);
+        Gm_HandleFreeCameraMode(context, speed, dt);
 
         camera.orientation.yaw += mouseDelta.x / 1500.f;
         camera.orientation.pitch += mouseDelta.y / 1500.f;
