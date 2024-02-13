@@ -346,7 +346,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
   },
   {
     .name = "leaves",
-    .hitboxScale = Vec3f(0.5f, 1.f, 0.5f),
+    .hitboxScale = Vec3f(0.5f, 1.f, 0.3f),
     .create = []() {
       return Mesh::Model("./game/assets/leaves.obj");
     },
@@ -792,6 +792,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     },
     .attributes = {
       .texture = "./game/assets/wood-beam.png",
+      .maxCascade = 4,
       .roughness = 0.7f
     }
   },

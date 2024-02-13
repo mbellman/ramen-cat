@@ -45,7 +45,7 @@ std::vector<MeshAsset> decoration_meshes = {
     .dynamic = true,
     .hitboxScale = Vec3f(1.f, 1.f, 0.2f),
     .create = []() {
-      return Mesh::Model("./game/assets/decorations/circle-sign-frame.obj");
+      return Mesh::Model("./game/assets/decorations/circle-sign-board.obj");
     },
     .attributes = {
       .roughness = 0.2f
@@ -162,7 +162,7 @@ std::vector<MeshAsset> decoration_meshes = {
       return Mesh::Model("./game/assets/texture-cube.obj");
     },
     .attributes = {
-      .texture = "./game/assets/tiles-1.png",
+      .texture = "./game/assets/decorations/billboards-1.png",
       .useMipmaps = false
     }
   }

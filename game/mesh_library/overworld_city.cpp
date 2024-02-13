@@ -18,6 +18,9 @@ std::vector<MeshAsset> overworld_city_meshes = {
         .name = "b1-base",
         .create = []() {
           return Mesh::Model("./game/assets/buildings/b1-base.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f::lerp(source.color.toVec3f(), Vec3f(1.f), 0.75f);
         }
       },
       {
@@ -41,7 +44,7 @@ std::vector<MeshAsset> overworld_city_meshes = {
           return Mesh::Model("./game/assets/buildings/b1-windows.obj");
         },
         .rebuild = [](auto& source, auto& piece) {
-          piece.color = Vec3f(0.5f, 0.75f, 1.f);
+          piece.color = Vec3f(0.1f, 0.2f, 0.4f);
         },
         .attributes = {
           .roughness = 0.1f
@@ -77,9 +80,6 @@ std::vector<MeshAsset> overworld_city_meshes = {
             "./game/assets/buildings/b2-levels.obj"
           });
         },
-        .rebuild = [](auto& base, auto& piece) {
-          piece.color = Vec3f(1.f);
-        },
         .attributes = {
           .useLowestLevelOfDetailForShadows = false
         }
@@ -90,7 +90,7 @@ std::vector<MeshAsset> overworld_city_meshes = {
           return Mesh::Model("./game/assets/buildings/b2-columns.obj");
         },
         .rebuild = [](auto& source, auto& piece) {
-          piece.color = source.color;
+          piece.color = Vec3f::lerp(source.color.toVec3f(), Vec3f(1.f), 0.75f);
         }
       },
       {
@@ -99,7 +99,7 @@ std::vector<MeshAsset> overworld_city_meshes = {
           return Mesh::Model("./game/assets/buildings/b2-windows.obj");
         },
         .rebuild = [](auto& base, auto& piece) {
-          piece.color = Vec3f(0.5f, 0.75f, 1.f);
+          piece.color = Vec3f(0.1f, 0.2f, 0.4f);
         },
         .attributes = {
           .roughness = 0.1f
@@ -179,7 +179,7 @@ std::vector<MeshAsset> overworld_city_meshes = {
   },
   {
     .name = "wood-awning",
-    .hitboxScale = Vec3f(1.f, 1.2f, 1.f),
+    .hitboxScale = Vec3f(0.7f),
     .create = []() {
       return Mesh::Model("./game/assets/buildings/wood-awning.obj");
     },

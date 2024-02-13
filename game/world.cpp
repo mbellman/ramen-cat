@@ -613,6 +613,7 @@ internal void rebuildMiniFlagWires(GmContext* context) {
   #endif
 }
 
+// @todo create as pieces
 internal void rebuildDynamicBuildings(GmContext* context) {
   objects("building-1-body").reset();
   objects("building-1-frame").reset();
@@ -716,6 +717,10 @@ internal void rebuildDynamicBuildings(GmContext* context) {
 
   objects("dynamic-wave-sign").reset();
 
+  auto invertColor = [](const Vec3f& color) {
+    return Vec3f(1.f - color.x, 1.f - color.y, 1.f - color.z);
+  };
+
   for (auto& sign : objects("wave-sign")) {
     auto& s = create_object_from("dynamic-wave-sign");
     auto& s2 = create_object_from("dynamic-wave-sign");
@@ -730,7 +735,7 @@ internal void rebuildDynamicBuildings(GmContext* context) {
     s.rotation = s2.rotation = sign.rotation;
 
     s.color = sign.color;
-    s2.color = Vec3f::lerp(sign.color.toVec3f(), Vec3f(1.f), 0.5f);
+    s2.color = Vec3f::lerp(invertColor(sign.color.toVec3f()), Vec3f(1.f), 0.5f);
 
     commit(s);
     commit(s2);

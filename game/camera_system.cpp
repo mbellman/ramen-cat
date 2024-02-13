@@ -237,6 +237,10 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
 
     if (!isTitleScreenTransition) {
       for (auto& plane : state.collisionPlanes) {
+        // Early out for collision planes not local to the look at/target camera positions
+        if (plane.minY > lookAtPosition.y && plane.minY > targetCameraPosition.y) continue;
+        if (plane.maxY < lookAtPosition.y && plane.maxY < targetCameraPosition.y) continue;
+
         auto collision = Collisions::getLinePlaneCollision(lookAtPosition, targetCameraPosition, plane);
         auto cDotN = Vec3f::dot(targetCameraPosition - collision.point, plane.normal);
 

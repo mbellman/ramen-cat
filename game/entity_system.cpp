@@ -436,9 +436,11 @@ internal void handleSlingshots(GmContext* context, GameState& state, float dt) {
 }
 
 internal void handleLanterns(GmContext* context, GameState& state, float dt) {
+  auto t = get_scene_time();
+
   {
     for_moving_objects("lantern", {
-      float alpha = get_scene_time() * 1.5f + initial.position.z / 200.f;
+      float alpha = t * 1.5f + (initial.position.x + initial.position.z) / 10.f;
       float sineAlpha = sinf(alpha);
       float swing = 0.2f * sineAlpha;
 
@@ -454,7 +456,7 @@ internal void handleLanterns(GmContext* context, GameState& state, float dt) {
 
   {
     for_moving_objects("paper-lantern", {
-      float alpha = get_scene_time() * 1.5f + initial.position.z / 200.f;
+      float alpha = t * 1.5f + (initial.position.x + initial.position.z) / 10.f;
       float sineAlpha = sinf(alpha);
       float swing = 0.2f * sineAlpha;
 
@@ -766,6 +768,7 @@ internal void handleBoostPads(GmContext* context, GameState& state, float dt) {
   for (auto& pad : objects("boost-pad")) {
     if ((player.position - pad.position).magnitude() < 200.f) {
       if (state.dashLevel < 2) {
+        // @todo orient player along boost pad direction
         state.dashLevel++;
       }
     }
