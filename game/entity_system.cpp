@@ -600,6 +600,19 @@ internal void handleKites(GmContext* context, GameState& state, float dt) {
       commit(object);
     });
   }
+
+  {
+    for_moving_objects("flower-kite", {
+      auto rotationAxis = initial.rotation.getUpDirection();
+      float angle = initial.position.x + t * 0.2f;
+
+      object.rotation = initial.rotation * Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angle);
+      object.position.x = initial.position.x + sinf(initial.position.x + t * 0.6f) * 150.f;
+      object.position.y = initial.position.y + sinf(initial.position.y + t * 0.5f) * 200.f;
+
+      commit(object);
+    });
+  }
 }
 
 internal void handleHotAirBalloons(GmContext* context, GameState& state, float dt) {

@@ -147,6 +147,21 @@ std::vector<MeshAsset> decoration_meshes = {
     }
   },
   {
+    .name = "flower-kite",
+    .moving = true,
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/flower-kite.obj");
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .animation = {
+        .type = PresetAnimationType::CLOTH,
+        .factor = 20.f
+      },
+      .emissivity = 0.3f
+    }
+  },
+  {
     .name = "balloon-windmill",
     .moving = true,
     .create = []() {

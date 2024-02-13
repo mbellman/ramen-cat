@@ -511,7 +511,11 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
       // as long as we're moving + not gliding, or if we just used a boost ring.
       if (state.velocity.xz().magnitude() > 20.f) {
         // Only update yaw if moving sufficiently along the xz plane
-        yaw = atan2f(state.velocity.x, state.velocity.z) + Gm_PI;
+        if (state.isMovingPlayerThisFrame) {
+          yaw = atan2f(movement.x, movement.z) + Gm_PI;
+        } else {
+          yaw = atan2f(state.velocity.x, state.velocity.z) + Gm_PI;
+        }
       }
 
       pitch = -1.f * atan2f(movement.y, movement.xz().magnitude());
