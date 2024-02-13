@@ -54,7 +54,7 @@ internal void handlePlayerTrottingAnimation(GmContext* context, GameState& state
   float periodicHeadTurnFactor = timeOnSolidGround / (timeOnSolidGround + 1.f);
   float periodicHeadTurn = getPeriodicHeadTurn(get_scene_time()) * periodicHeadTurnFactor;
 
-  rig.joints[PLAYER_HEAD].offset = Vec3f(0, 0.05f, 0) * speedRatio * sinf(alpha * 2.f);
+  rig.joints[PLAYER_HEAD].offset = Vec3f(0, 0.025f, 0) * speedRatio * sinf(alpha * 2.f);
   rig.joints[PLAYER_NECK].offset = Vec3f(0, 0.15f, 0) * speedRatio * sinf(alpha * 2.f);
   rig.joints[PLAYER_HEAD].rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), state.turnFactor * 1.5f + periodicHeadTurn);
   rig.joints[PLAYER_NECK].rotation = Quaternion::fromAxisAngle(Vec3f(0, 1, 0), state.turnFactor + periodicHeadTurn * 0.5f);

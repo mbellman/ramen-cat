@@ -41,6 +41,30 @@ std::vector<MeshAsset> unique_meshes = {
     }
   },
   {
+    .name = "sun-sign",
+    .hitboxScale = Vec3f(1.f, 1.f, 0.1f),
+    .maxInstances = 5,
+    .create = []() {
+      return Mesh::Model("./game/assets/uniques/sun-sign.obj");
+    },
+    .attributes = {
+      .maxCascade = 4,
+      .emissivity = 0.4f
+    }
+  },
+  {
+    .name = "moon-sign",
+    .hitboxScale = Vec3f(1.f, 1.f, 0.1f),
+    .maxInstances = 5,
+    .create = []() {
+      return Mesh::Model("./game/assets/uniques/moon-sign.obj");
+    },
+    .attributes = {
+      .maxCascade = 4,
+      .emissivity = 0.4f
+    }
+  },
+  {
     .name = "lower-lake",
     .hitboxScale = Vec3f(1.f, 0.1f, 1.f),
     .maxInstances = 5,

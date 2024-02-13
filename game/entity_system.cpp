@@ -613,6 +613,10 @@ internal void handleKites(GmContext* context, GameState& state, float dt) {
       commit(object);
     });
   }
+
+  mesh("fish-kite")->emissivity = 0.5f + 0.2f * sinf(state.dayNightCycleTime - Gm_PI);
+  mesh("fish-kite-fins")->emissivity = 0.5f + 0.2f * sinf(state.dayNightCycleTime - Gm_PI);
+  mesh("flower-kite")->emissivity = 0.7f + 0.2f * sinf(state.dayNightCycleTime - Gm_PI);
 }
 
 internal void handleHotAirBalloons(GmContext* context, GameState& state, float dt) {

@@ -157,7 +157,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
         auto& camera = get_camera();
         auto& input = get_input();
         auto& mouseDelta = input.getMouseDelta();
-        auto speed = input.isKeyHeld(Key::SPACE) ? 200000.f : 5000.f;
+        auto speed = input.isKeyHeld(Key::SPACE) ? 200000.f : 10000.f;
 
         Gm_HandleFreeCameraMode(context, speed, dt);
 

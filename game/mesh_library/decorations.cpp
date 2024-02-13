@@ -158,7 +158,7 @@ std::vector<MeshAsset> decoration_meshes = {
         .type = PresetAnimationType::CLOTH,
         .factor = 20.f
       },
-      .emissivity = 0.3f
+      .emissivity = 0.6f
     }
   },
   {
@@ -178,6 +178,17 @@ std::vector<MeshAsset> decoration_meshes = {
     },
     .attributes = {
       .texture = "./game/assets/decorations/billboards-1.png",
+      .useMipmaps = false
+    }
+  },
+  {
+    .name = "circle-billboard-1",
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/circle-billboard.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/decorations/circle-billboard-1.png",
+      .maxCascade = 4,
       .useMipmaps = false
     }
   }
