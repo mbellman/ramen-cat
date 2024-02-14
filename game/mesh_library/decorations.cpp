@@ -154,6 +154,7 @@ std::vector<MeshAsset> decoration_meshes = {
     },
     .attributes = {
       .type = MeshType::PRESET_ANIMATED,
+      .maxCascade = 4,
       .animation = {
         .type = PresetAnimationType::CLOTH,
         .factor = 20.f

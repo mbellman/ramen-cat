@@ -295,8 +295,7 @@ internal void handleAnimatedMeshWithRig(Mesh& mesh, AnimationRig& rig) {
       animatedVertex.vertex.position = Vec3f::lerp(vertexPosition, targetPosition, weight);
     }
 
-    // @todo see if this is necessary
-    // animatedVertex.vertex.position = Vec3f::lerp(mesh.transformedVertices[i].position, animatedVertex.vertex.position, 0.5f);
+    animatedVertex.vertex.position = Vec3f::lerp(mesh.transformedVertices[i].position, animatedVertex.vertex.position, 0.5f);
 
     mesh.transformedVertices[i] = animatedVertex.vertex;
   }

@@ -1,5 +1,6 @@
 #include "game_meshes.h"
 
+#include "mesh_library/overworld_town.h"
 #include "mesh_library/overworld_city.h"
 #include "mesh_library/overworld_stack.h"
 #include "mesh_library/overworld_crossing.h"
@@ -1516,6 +1517,7 @@ void GameMeshes::loadAllMeshAssets() {
   // Add assets from mesh library files
   auto& assets = GameMeshes::meshAssets;
 
+  add_mesh_assets(assets, overworld_town_meshes);
   add_mesh_assets(assets, overworld_city_meshes);
   add_mesh_assets(assets, overworld_stack_meshes);
   add_mesh_assets(assets, overworld_crossing_meshes);

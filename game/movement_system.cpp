@@ -97,9 +97,7 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
       continue;
     }
 
-    // @bug if we strictly consider lines through the player along the plane normal,
-    // we can phase through floors if we're moving fast enough!
-    // @todo double check if this can still occur with a terminal fall velocity
+    // @todo use distinct logic for floors (nDotU > 0.7f) to improve ground collision handling/slope transitions
     Vec3f lineStart = player.position - plane.normal * PLAYER_RADIUS;
     Vec3f lineEnd = player.position + plane.normal * PLAYER_RADIUS;
     auto collision = Collisions::getLinePlaneCollision(lineStart, lineEnd, plane);
@@ -117,7 +115,7 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
       wasRecentlyOnSolidGround &&
       !didJustJump &&
       !didJustAirDash &&
-      plane.nDotU > 0.6f
+      plane.nDotU > 0.7f
     ) {
       // Snap the player to floors
       Vec3f fallCollisionLineEnd = player.position - plane.normal * 200.f;
