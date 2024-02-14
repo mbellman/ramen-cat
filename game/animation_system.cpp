@@ -48,7 +48,7 @@ internal void handlePlayerTrottingAnimation(GmContext* context, GameState& state
   auto& rig = state.animation.playerRig;
 
   float speed = state.velocity.xz().magnitude();
-  float speedRatio = speed / (speed + MAXIMUM_HORIZONTAL_GROUND_SPEED);
+  float speedRatio = sqrtf(speed / (speed + MAXIMUM_HORIZONTAL_GROUND_SPEED));
   float alpha = state.totalDistanceTraveled * 0.03f;
   float timeOnSolidGround = time_since(state.lastTimeInAir);
   float periodicHeadTurnFactor = timeOnSolidGround / (timeOnSolidGround + 1.f);
