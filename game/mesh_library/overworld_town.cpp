@@ -20,10 +20,8 @@ std::vector<MeshAsset> overworld_town_meshes = {
         .create = []() {
           return Mesh::Model("./game/assets/buildings/town-house-roof.obj");
         },
-        .rebuild = [](auto& source, auto& piece) {
-          piece.color = Vec3f(0.4f, 0.5f, 0.4f);
-        },
         .attributes = {
+          .texture = "./game/assets/buildings/town-house-roof.png",
           .roughness = 0.4f
         }
       }
