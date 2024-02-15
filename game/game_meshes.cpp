@@ -60,9 +60,10 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       return Mesh::Model("./game/assets/decorations/waterfall.obj");
     },
     .attributes = {
-      // @todo create a new flowing water shader (or use scrolling textures for this one)
       .type = MeshType::REFRACTIVE,
-      .maxCascade = 4
+      .normals = "./game/assets/water-normals.png",
+      .maxCascade = 4,
+      .useMipmaps = false
     }
   },
 
@@ -192,6 +193,24 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       },
       .roughness = 0.9f,
       .useMipmaps = false
+    }
+  },
+  {
+    .name = "shrub",
+    .create = []() {
+      return Mesh::Model({
+        "./game/assets/plants/shrub.obj",
+        "./game/assets/plants/shrub-lod.obj"
+      });
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .texture = "./game/assets/plants/shrub.png",
+      .animation = {
+        .type = PresetAnimationType::FLOWER,
+        .factor = 6.f
+      },
+      .roughness = 1.f
     }
   },
   {
@@ -404,7 +423,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .maxCascade = 4,
       .animation = {
         .type = PresetAnimationType::LEAF,
-        .factor = 8.f
+        .factor = 5.f
       },
       .roughness = 0.4f
     }
@@ -1331,7 +1350,7 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
     .attributes = {
       .texture = "./game/assets/stairs-1.png",
       .normals = "./game/assets/stairs-1-normals.png",
-      .roughness = 0.3f
+      .roughness = 0.1f
     }
   },
 

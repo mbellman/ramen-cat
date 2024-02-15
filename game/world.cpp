@@ -407,13 +407,17 @@ internal void rebuildDynamicStaircases(GmContext* context) {
         auto& step = create_object_from("stair-step");
 
         step.position = Vec3f::lerp(start, end, i / float(totalSteps));
-        step.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), yRotation);
+
+        float jitter = Gm_Modf(step.position.x * 1.23f + step.position.z * 4.56f, 1.f) * 0.1f - 0.05f;
+
+        step.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), yRotation + jitter);
+        step.color = Vec3f(0.7f, 0.9f, 1.f);
 
         // Scale the steps to the width of the staircase platform
         if (staircase.scale.x > staircase.scale.z) {
-          step.scale = Vec3f(50.f, 50.f, staircase.scale.z);
+          step.scale = Vec3f(70.f, 70.f, staircase.scale.z);
         } else {
-          step.scale = Vec3f(staircase.scale.x, 50.f, 50.f);
+          step.scale = Vec3f(staircase.scale.x, 70.f, 70.f);
         }
 
         commit(step);

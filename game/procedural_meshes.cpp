@@ -158,12 +158,14 @@ internal void rebuildMiniHouses(GmContext* context) {
     // Base
     {
       auto& base = create_object_from("p_mini-house");
-      auto random2 = Gm_Modf(random * 2.f, 1.f);
+      auto r1 = randomFromVec3f(origin + Vec3f(0, 1.23f, 0));
+      auto r2 = randomFromVec3f(origin + Vec3f(0, 2.34f, 0));
+      auto r3 = randomFromVec3f(origin + Vec3f(0, 3.45f, 0));
 
       base.position = source.position;
       base.scale = source.scale;
       base.rotation = source.rotation;
-      base.color = Vec3f(0.5f + 0.5f * random, 0.5f + 0.5f * random2, 0.3f + 0.4f * (1.f - random));
+      base.color = Vec3f(0.5f + 0.5f * r1, 0.5f + 0.5f * r2, 0.3f + 0.4f * (1.f - r3));
 
       commit(base);
     }

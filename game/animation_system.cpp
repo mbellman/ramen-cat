@@ -301,8 +301,19 @@ internal void handleAnimatedMeshWithRig(Mesh& mesh, AnimationRig& rig) {
   }
 }
 
+internal void handleWaterfallAnimations(GmContext* context, float dt) {
+  auto displacement = get_scene_time() * 0.2f;
+  auto& mesh = *mesh("waterfall-1");
+
+  for (u32 i = 0; i < mesh.vertices.size(); i++) {
+    mesh.transformedVertices[i] = mesh.vertices[i];
+
+    mesh.transformedVertices[i].uv.y = Gm_Modf(mesh.vertices[i].uv.y - displacement, 1.f);
+  }
+}
+
 void AnimationSystem::initializeAnimations(GmContext* context, GameState& state) {
-  // Initialize  player rig
+  // Initialize player rig
   // @todo store joints in a file
   {
     auto& rig = state.animation.playerRig;
@@ -492,6 +503,13 @@ void AnimationSystem::initializeAnimations(GmContext* context, GameState& state)
       mesh("player")->transformedVertices.push_back(vertex);
     }
   }
+
+  // Set up transformed vertices for other objects
+  {
+    for (auto& vertex : mesh("waterfall-1")->vertices) {
+      mesh("waterfall-1")->transformedVertices.push_back(vertex);
+    }
+  }
 }
 
 void AnimationSystem::handleAnimations(GmContext* context, GameState& state, float dt) {
@@ -576,6 +594,11 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
     // Normalize yaw to within the range [-Gm_PI, Gm_PI]
     if (state.currentYaw < -Gm_PI) state.currentYaw += Gm_TAU;
     if (state.currentYaw > Gm_PI) state.currentYaw -= Gm_TAU;
+  }
+
+  // Mesh animations
+  {
+    handleWaterfallAnimations(context, dt);
   }
 
   LOG_TIME();
