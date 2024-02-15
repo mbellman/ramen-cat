@@ -166,7 +166,8 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .texture = "./game/assets/weeds.png",
       .maxCascade = 2,
       .animation = {
-        .type = PresetAnimationType::FLOWER
+        .type = PresetAnimationType::FLOWER,
+        .factor = 3.f
       },
       .emissivity = 0.1f,
       .roughness = 1.f
@@ -403,6 +404,23 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .maxCascade = 4,
       .animation = {
         .type = PresetAnimationType::LEAF,
+        .factor = 8.f
+      },
+      .roughness = 0.4f
+    }
+  },
+  {
+    .name = "hanging-ivy",
+    .hitboxScale = Vec3f(0.3f, 1.f, 0.3f),
+    .create = []() {
+      return Mesh::Model("./game/assets/plants/hanging-ivy.obj");
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .texture = "./game/assets/plants/hanging-ivy.png",
+      .maxCascade = 4,
+      .animation = {
+        .type = PresetAnimationType::FLOWER,
         .factor = 8.f
       },
       .roughness = 0.4f
@@ -1033,6 +1051,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       return Mesh::Model("./game/assets/pipe-1.obj");
     },
     .attributes = {
+      .maxCascade = 4,
       .roughness = 0.1f
     }
   },
