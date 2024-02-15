@@ -113,6 +113,7 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
       }
     } else if (
       wasRecentlyOnSolidGround &&
+      !didCollideWithSolidGround &&
       !didJustJump &&
       !didJustAirDash &&
       plane.nDotU > 0.7f

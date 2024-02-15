@@ -306,6 +306,22 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
+    .name = "palm-leaves",
+    .hitboxScale = Vec3f(1.f, 0.1f, 1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/plants/palm-leaves.obj");
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .texture = "./game/assets/palm-leaf.png",
+      .animation = {
+        .type = PresetAnimationType::LEAF,
+        .factor = 4.f
+      },
+      .roughness = 0.8f
+    }
+  },
+  {
     .name = "japanese-tree",
     .create = []() {
       return Mesh::Model("./game/assets/japanese-tree-trunk.obj");
@@ -387,7 +403,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .maxCascade = 4,
       .animation = {
         .type = PresetAnimationType::LEAF,
-        .factor = 10.f
+        .factor = 8.f
       },
       .roughness = 0.4f
     }
