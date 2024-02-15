@@ -35,7 +35,7 @@ vec3 getLeafAnimationOffset(vec3 vertex_position, vec3 world_position) {
   float distance_factor = length(vertex_position);// pow(vy / (1.0 + vy), 2);
   float displacement_factor = animation.factor * distance_factor * 2.0;
   float angle = atan(vertex_position.x, vertex_position.z);
-  float y_offset = displacement_factor * (sin(rate + gl_InstanceID) + sin(rate + angle * 0.5));
+  float y_offset = displacement_factor * (sin(rate + gl_InstanceID) + sin(rate + angle * 1.7));
 
   return vec3(0, y_offset, 0);
 }

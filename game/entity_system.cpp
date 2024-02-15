@@ -487,6 +487,20 @@ internal void handleLanterns(GmContext* context, GameState& state, float dt) {
   }
 }
 
+internal void handleSigns(GmContext* context, GameState& state, float dt) {
+  auto t = get_scene_time();
+
+  {
+    for_moving_objects("p_town-sign-spinner", {
+      float angle = t * 0.5f * sinf(initial.position.y) + initial.position.y * 0.1f;
+
+      object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angle);
+
+      commit(object);
+    });
+  }
+}
+
 internal void handleWindmillWheels(GmContext* context, GameState& state, float dt) {
   const static float MAX_SPEED = 1.f;
   const static float MIN_SPEED = 0.1f;
@@ -1028,6 +1042,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   handleFireflies(context, state, dt);
   handleAmbientParticles(context, state, dt);
   handleLanterns(context, state, dt);
+  handleSigns(context, state, dt);
   handleWindmillWheels(context, state, dt);
   handleWindTurbines(context, state, dt);
   handleFans(context, state, dt);

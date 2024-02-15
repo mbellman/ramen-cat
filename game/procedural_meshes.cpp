@@ -282,6 +282,24 @@ internal void rebuildWoodBuildings(GmContext* context) {
   // @todo
 }
 
+internal void rebuildTownSigns(GmContext* context) {
+  for (auto& sign : objects("town-sign")) {
+    auto& s1 = create_object_from("p_town-sign-spinner");
+    auto& s2 = create_object_from("p_town-sign-spinner");
+    auto& s3 = create_object_from("p_town-sign-spinner");
+
+    s1.position = sign.position + Vec3f(0, sign.scale.y * 0.9f, 0);
+    s2.position = sign.position + Vec3f(0, sign.scale.y * 0.7f, 0);
+    s3.position = sign.position + Vec3f(0, sign.scale.y * 0.5f, 0);
+
+    s1.scale = s2.scale = s3.scale = sign.scale;
+
+    commit(s1);
+    commit(s2);
+    commit(s3);
+  }
+}
+
 void ProceduralMeshes::rebuildProceduralMeshes(GmContext* context) {
   for (auto& asset : GameMeshes::proceduralMeshParts) {
     objects(asset.name).reset();
@@ -291,6 +309,7 @@ void ProceduralMeshes::rebuildProceduralMeshes(GmContext* context) {
   rebuildConcreteStacks(context);
   rebuildMiniHouses(context);
   rebuildWoodBuildings(context);
+  rebuildTownSigns(context);
 }
 
 void ProceduralMeshes::handleProceduralMeshes(GmContext* context, GameState& state, float dt) {

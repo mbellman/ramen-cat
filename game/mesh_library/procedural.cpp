@@ -210,5 +210,14 @@ std::vector<MeshAsset> procedural_mesh_parts = {
     .attributes = {
       .maxCascade = 4
     }
+  },
+
+  // town-sign
+  {
+    .name = "p_town-sign-spinner",
+    .moving = true,
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/town-sign-spinner.obj");
+    }
   }
 };

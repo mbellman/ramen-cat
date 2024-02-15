@@ -38,5 +38,26 @@ std::vector<MeshAsset> overworld_town_meshes = {
         }
       }
     }
+  },
+  {
+    .name = "town-sign",
+    .hitboxScale = Vec3f(0.3f, 1.f, 0.3f),
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/town-sign-post.obj");
+    },
+    .pieces = {
+      {
+        .name = "town-sign-features",
+        .create = []() {
+          return Mesh::Model("./game/assets/decorations/town-sign-features.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(1.f, 0.6f, 0.2f);
+        },
+        .attributes = {
+          .roughness = 0.2f
+        }
+      }
+    }
   }
 };
