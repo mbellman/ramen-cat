@@ -1065,6 +1065,17 @@ void World::rebuildDynamicCollisionPlanes(GmContext* context, GameState& state) 
     commit(box);
   }
 
+  for (auto& staircase : objects("staircase")) {
+    auto& box = create_object_from("dynamic_collision_box");
+
+    box.position = staircase.position;
+    box.rotation = staircase.rotation;
+    box.scale = staircase.scale;
+    box.color = DEFAULT_COLOR;
+
+    commit(box);
+  }
+
   for (auto& cube : objects("concrete-stack")) {
     auto& box = create_object_from("dynamic_collision_box");
 

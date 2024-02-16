@@ -8,7 +8,7 @@
 
 using namespace Gamma;
 
-internal bool isDirectionalInputActive(GmContext* context) {
+internal bool isIssuingDirectionalInput(GmContext* context) {
   auto& input = get_input();
 
   return input.isKeyHeld(Key::W) || input.isKeyHeld(Key::A) || input.isKeyHeld(Key::S) || input.isKeyHeld(Key::D);
@@ -91,7 +91,8 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
   bool wasRecentlyOnSolidGround = time_since(state.lastTimeOnSolidGround) < 0.2f;
   bool didJustJump = time_since(state.lastJumpTime) < 0.5f;
   bool didJustAirDash = time_since(state.lastAirDashTime) < 0.1f;
-  bool didCollideWithSolidGround = false;
+  bool resolvedCollisionWithSolidGround = false;
+  float highestPlane = -Gm_FLOAT_MAX;
 
   // @todo implement world chunks + only consider collision planes local to the player
   for (auto& plane : state.collisionPlanes) {
@@ -116,16 +117,20 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
       state.isDoingTargetedAirDash = false;
 
       if (collision.plane.nDotU > 0.7f) {
-        didCollideWithSolidGround = true;
+        resolvedCollisionWithSolidGround = true;
       }
     } else if (
       wasRecentlyOnSolidGround &&
-      !didCollideWithSolidGround &&
+      !resolvedCollisionWithSolidGround &&
       !didJustJump &&
       !didJustAirDash &&
-      plane.nDotU > 0.7f
+      plane.nDotU > 0.7f &&
+      (
+        plane.nDotU == state.lastPlaneCollidedWith.nDotU ||
+        (state.lastPlaneCollidedWith.minY - plane.minY) > 50.f
+      )
     ) {
-      // Snap the player to floors
+      // Snap the player to sloped floors
       Vec3f fallCollisionLineEnd = player.position - plane.normal * 200.f;
       auto fallCollision = Collisions::getLinePlaneCollision(player.position, fallCollisionLineEnd, plane);
 
@@ -138,7 +143,7 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
         state.lastPlaneCollidedWith = plane;
         state.isDoingTargetedAirDash = false;
 
-        didCollideWithSolidGround = true;
+        resolvedCollisionWithSolidGround = true;
       }
     }
   }
@@ -147,7 +152,7 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
   // Setting it at ground collision resolution time can cause
   // subsequent ground collisions to trigger previous-position
   // reset behavior, causing the player to get stuck.
-  state.isOnSolidGround = didCollideWithSolidGround;
+  state.isOnSolidGround = resolvedCollisionWithSolidGround;
 
   LOG_TIME();
 }
@@ -508,6 +513,25 @@ internal void handleGliderMovementInput(GmContext* context, GameState& state, fl
   }
 }
 
+internal bool willPlayerFallOffLedge(GmContext* context, GameState& state) {
+  auto& player = get_player();
+  auto start = player.position;
+  auto end = player.position - Vec3f(0, PLAYER_RADIUS + 5.f, 0);
+
+  for (auto& plane : state.collisionPlanes) {
+    if (plane.minY > start.y) continue;
+    if (plane.maxY < end.y) continue;
+
+    auto collision = Collisions::getLinePlaneCollision(start, end, plane);
+
+    if (collision.hit) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 namespace MovementSystem {
   void handlePlayerMovementInput(GmContext* context, GameState& state, float dt) {
     #if GAMMA_DEVELOPER_MODE
@@ -610,7 +634,8 @@ namespace MovementSystem {
     if (
       state.wasOnSolidGroundLastFrame &&
       !state.isOnSolidGround &&
-      time_since(state.lastJumpTime) > 0.1f
+      time_since(state.lastJumpTime) > 0.1f &&
+      willPlayerFallOffLedge(context, state)
     ) {
       // Prevent the player from inadvertently walking off ledges
       player.position = state.lastSolidGroundPosition;
@@ -619,35 +644,45 @@ namespace MovementSystem {
       auto plane = state.lastPlaneCollidedWith;
       float max = Gm_FLOAT_MAX, dot;
       Vec3f tangent;
+      Vec3f edge;
 
       if ((dot = Vec3f::dot(player.position - plane.p1, plane.t1)) < max) {
         tangent = plane.t1;
+        edge = plane.p1 - plane.p2;
         max = dot;
       }
 
       if ((dot = Vec3f::dot(player.position - plane.p2, plane.t2)) < max) {
         tangent = plane.t2;
+        edge = plane.p2 - plane.p3;
         max = dot;
       }
 
       if ((dot = Vec3f::dot(player.position - plane.p3, plane.t3)) < max) {
         tangent = plane.t3;
+        edge = plane.p3 - plane.p4;
         max = dot;
       }
 
       if ((dot = Vec3f::dot(player.position - plane.p4, plane.t4)) < max) {
         tangent = plane.t4;
+        edge = plane.p4 - plane.p1;
         max = dot;
       }
 
-      auto redirectedVelocity = Vec3f::reflect(state.velocity, tangent.unit());
+      if (Vec3f::dot(edge, state.velocity) < 0.f) {
+        edge = edge.invert();
+      }
+
+      auto redirection = edge.unit() * 3.f + tangent.unit();
+      auto redirectedVelocity = redirection.unit() * state.velocity.magnitude();
 
       state.velocity.x = redirectedVelocity.x;
       state.velocity.z = redirectedVelocity.z;
       state.lastLedgeTurnaroundTime = get_scene_time();
     }
 
-    if (state.isOnSolidGround && !isDirectionalInputActive(context)) {
+    if (state.isOnSolidGround && !isIssuingDirectionalInput(context)) {
       if (lastSolidGroundXzDistance > 100.f) {
         // When landing from sufficiently long jumps, immediately reduce
         // the xz velocity to a fraction of the original to slow down quickly
