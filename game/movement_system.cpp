@@ -8,6 +8,12 @@
 
 using namespace Gamma;
 
+internal bool isDirectionalInputActive(GmContext* context) {
+  auto& input = get_input();
+
+  return input.isKeyHeld(Key::W) || input.isKeyHeld(Key::A) || input.isKeyHeld(Key::S) || input.isKeyHeld(Key::D);
+}
+
 internal void resolveNewPositionFromCollision(const Collision& collision, Object& player) {
   player.position = collision.point + collision.plane.normal * PLAYER_RADIUS;
 }
@@ -565,6 +571,7 @@ namespace MovementSystem {
       }
 
       if (state.velocity.y < -3000.f) {
+        // Terminal falling velocity
         state.velocity.y = -3000.f;
         state.velocity.x *= 1.f - 0.5f * dt;
         state.velocity.z *= 1.f - 0.5f * dt;
@@ -640,7 +647,7 @@ namespace MovementSystem {
       state.lastLedgeTurnaroundTime = get_scene_time();
     }
 
-    if (state.isOnSolidGround && !state.isMovingPlayerThisFrame) {
+    if (state.isOnSolidGround && !isDirectionalInputActive(context)) {
       if (lastSolidGroundXzDistance > 100.f) {
         // When landing from sufficiently long jumps, immediately reduce
         // the xz velocity to a fraction of the original to slow down quickly
