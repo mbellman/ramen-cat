@@ -109,6 +109,8 @@ struct GameState {
   bool wasOnSolidGroundLastFrame = false;
   bool isMovingPlayerThisFrame = false;
   bool isRepositioningCamera = false;
+  bool hasAirDashTarget = false;
+  bool isDoingTargetedAirDash = false;
   bool isNearJumpPad = false;
   bool isGliding = false;
 

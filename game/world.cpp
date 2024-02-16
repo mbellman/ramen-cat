@@ -920,6 +920,10 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
     mesh("glider")->roughness = 0.4f;
     mesh("glider")->useCloseTranslucency = true;
 
+    add_mesh("air-dash-target", 1, Mesh::Model("./game/assets/entities/target.obj"));
+    mesh("air-dash-target")->roughness = 0.2f;
+    mesh("air-dash-target")->emissivity = 0.4f;
+
     add_mesh("ocean", 1, Mesh::Disc(12));
     add_mesh("ocean-floor", 1, Mesh::Disc(12));
 
@@ -927,8 +931,10 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
     mesh("ocean")->canCastShadows = false;
     mesh("ocean-floor")->canCastShadows = false;
 
+    // @todo remove
     add_mesh("npc", 100, Mesh::Cube());
 
+    // @todo remove
     add_mesh("slingshot", 100, Mesh::Model("./game/assets/slingshot.obj"));
     mesh("slingshot")->roughness = 0.9f;
 
@@ -972,6 +978,13 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   glider.color = Vec3f(0.1f);
 
   commit(glider);
+
+  auto& target = create_object_from("air-dash-target");
+
+  target.scale = Vec3f(0.f);
+  target.color = Vec3f(1.f, 0.9f, 0.4f);
+
+  commit(target);
 
   state.direction = Vec3f(0, 0, -1.f);
 

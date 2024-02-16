@@ -107,6 +107,7 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
       resolveSingleCollision(context, state, collision, dt);
 
       state.lastPlaneCollidedWith = plane;
+      state.isDoingTargetedAirDash = false;
 
       if (collision.plane.nDotU > 0.7f) {
         didCollideWithSolidGround = true;
@@ -129,6 +130,7 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
         state.lastSolidGroundPosition = player.position;
         state.lastTimeOnSolidGround = get_scene_time();
         state.lastPlaneCollidedWith = plane;
+        state.isDoingTargetedAirDash = false;
 
         didCollideWithSolidGround = true;
       }
@@ -224,7 +226,7 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
   }
 
   // Directional movement
-  if (time_since(state.lastLedgeTurnaroundTime) > 0.2f) {    
+  if (time_since(state.lastLedgeTurnaroundTime) > 0.2f && !state.isDoingTargetedAirDash) {    
     if (input.isKeyHeld(Key::W)) {
       acceleration += forward * rate;
     }
@@ -273,7 +275,7 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
   state.velocity += acceleration;
   state.isMovingPlayerThisFrame = state.velocity != initialVelocity;
 
-  // Limit horizontal speed on ground
+  // Limit horizontal speed
   {
     Vec3f horizontalVelocity = state.velocity.xz();
 
@@ -285,7 +287,10 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
         )
       : MAXIMUM_HORIZONTAL_AIR_SPEED;
 
-    if (horizontalVelocity.magnitude() > speedLimit) {
+    if (
+      horizontalVelocity.magnitude() > speedLimit &&
+      !state.isDoingTargetedAirDash
+    ) {
       Vec3f limitedHorizontalVelocity = horizontalVelocity.unit() * speedLimit;
 
       state.velocity.x = limitedHorizontalVelocity.x;
@@ -373,20 +378,32 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
         context->scene.fx.screenWarpTime = sceneTime;
       } else if (state.canPerformAirDash) {
         // Air dash
-        Vec3f airDashDirection = camera.orientation.getDirection();
+        Vec3f airDashDirection;
 
-        if (airDashDirection.y < 0.f) {
-          airDashDirection = (airDashDirection * Vec3f(2.f, 1.f, 2.f)).unit();
+        if (state.hasAirDashTarget) {
+          // Targeted air dash
+          auto& target = objects("air-dash-target")[0];
+          airDashDirection = (target.position - player.position).unit();
+
+          state.isDoingTargetedAirDash = true;
+          state.velocity = airDashDirection * MAXIMUM_HORIZONTAL_GROUND_SPEED * DASH_LEVEL_2_SPEED_FACTOR * 1.5f;
+        } else {
+          // Normal air dash
+          airDashDirection = camera.orientation.getDirection();
+
+          if (airDashDirection.y < 0.f) {
+            airDashDirection = (airDashDirection * Vec3f(2.f, 1.f, 2.f)).unit();
+          }
+
+          state.velocity = airDashDirection * MAXIMUM_HORIZONTAL_GROUND_SPEED * (
+            // Start dashing at level 1 speed
+            state.dashLevel == 0 ? DASH_LEVEL_1_SPEED_FACTOR :
+            // Start dashing at level 2 speed
+            state.dashLevel == 1 ? DASH_LEVEL_2_SPEED_FACTOR :
+            // Cap at speed level 2
+            DASH_LEVEL_2_SPEED_FACTOR
+          );
         }
-
-        state.velocity = airDashDirection * MAXIMUM_HORIZONTAL_GROUND_SPEED * (
-          // Start dashing at level 1 speed
-          state.dashLevel == 0 ? DASH_LEVEL_1_SPEED_FACTOR :
-          // Start dashing at level 2 speed
-          state.dashLevel == 1 ? DASH_LEVEL_2_SPEED_FACTOR :
-          // Cap at speed level 2
-          DASH_LEVEL_2_SPEED_FACTOR
-        );
 
         state.canPerformAirDash = false;
         state.canPerformWallKick = true;
@@ -543,7 +560,7 @@ namespace MovementSystem {
         state.velocity.y *= 1.f - 2.f * dt;
       }
         
-      if (!didUseBoostRing) {
+      if (!didUseBoostRing && !state.isDoingTargetedAirDash) {
         state.velocity.y -= gravity;
       }
 

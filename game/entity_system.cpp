@@ -922,6 +922,54 @@ internal void handleBoostRings(GmContext* context, GameState& state, float dt) {
   }
 }
 
+internal void handleAirDashTarget(GmContext* context, GameState& state) {
+  auto& target = objects("air-dash-target")[0];
+  auto& player = get_player();
+  auto initialTargetPosition = target.position;
+
+  state.hasAirDashTarget = false;
+
+  if (
+    !state.isDoingTargetedAirDash &&
+    time_since(state.lastTimeOnSolidGround) > 0.5f
+  ) {
+    auto& camera = get_camera();
+    auto cameraDirection = camera.orientation.getDirection();
+    float maxDot = -1.f;
+
+    for (auto& point : objects("air-dash-landing-point")) {
+      auto cameraToPoint = (point.position - camera.position);
+      auto dot = Vec3f::dot(cameraDirection, cameraToPoint.unit());
+
+      if (
+        player.position.y > (point.position.y + 250.f) &&
+        (point.position - player.position).magnitude() < 3000.f &&
+        dot > 0.95f && dot > maxDot
+      ) {
+        target.position = point.position;
+        maxDot = dot;
+
+        state.hasAirDashTarget = true;
+      }
+    }
+  }
+
+  if (state.hasAirDashTarget || state.isDoingTargetedAirDash) {
+    auto t = get_scene_time();
+
+    if (target.scale.x > 1.f) {
+      target.position = Vec3f::lerp(initialTargetPosition, target.position, 0.5f);
+    }
+
+    target.scale = Vec3f::lerp(target.scale, Vec3f(PLAYER_RADIUS) * 4.f + 30.f * sinf(t * 2.f), 0.3f);
+    target.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), t);
+  } else {
+    target.scale = Vec3f::lerp(target.scale, Vec3f(0.f), 0.15f);
+  }
+
+  commit(target);
+}
+
 internal void handleUniqueLevelStructures(GmContext* context, GameState& state, float dt) {
   float t = get_scene_time();
 
@@ -1061,6 +1109,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   handleBoostPads(context, state, dt);
   handleJumpPads(context, state, dt);
   handleBoostRings(context, state, dt);
+  handleAirDashTarget(context, state);
 
   // Power-up/ability entities
   handleGlider(context, state);

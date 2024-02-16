@@ -1065,6 +1065,7 @@ namespace Editor {
       }
 
       mesh("light-sphere")->disabled = editor.mode != EditorMode::LIGHTS;
+      mesh("air-dash-target")->disabled = true;
     }
 
     // If collision planes are hidden when re-enabling the editor in COLLISION_PLANES mode,
@@ -1122,6 +1123,7 @@ namespace Editor {
       }
 
       mesh("light-sphere")->disabled = true;
+      mesh("air-dash-target")->disabled = false;
     }
   }
 

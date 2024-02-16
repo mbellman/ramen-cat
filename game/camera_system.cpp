@@ -324,6 +324,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
 
     if (state.dashLevel == 1) targetFov *= 1.1f;
     if (state.dashLevel == 2) targetFov *= 1.2f;
+    if (state.isDoingTargetedAirDash) targetFov *= 1.2f;
 
     if (state.lastBoostRingLaunchTime != 0.f && time_since(state.lastBoostRingLaunchTime) < 1.f) {
       // Boost ring FoV adjustments
