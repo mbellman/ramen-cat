@@ -103,28 +103,46 @@ internal void addJetstream(GmContext* context, GameState& state, const std::vect
   }
 }
 
-internal void interactWithNpc(GmContext* context, GameState& state, NonPlayerCharacter& npc) {
+internal void setTargetCameraStateForDialogue(GmContext* context, GameState& state, const Vec3f& lineOfSight, const Vec3f& lookAtPosition, float radius) {
   auto& player = get_player();
-  Vec3f npcFacePosition = npc.position + Vec3f(0, 30.f, 0);
-  Vec3f npcToPlayer = (player.position - npc.position);
-
-  state.activeNpc = &npc;
-  state.velocity = Vec3f(0.f);
 
   CameraSystem::setTargetCameraState(context, state, {
     .camera3p = {
-      .azimuth = atan2f(npcToPlayer.z, npcToPlayer.x) - Gm_TAU / 8.f,
-      .altitude = 0.f,
-      .radius = NPC_INTERACTION_CAMERA_RADIUS
+      .azimuth = atan2f(lineOfSight.z, lineOfSight.x) - Gm_TAU / 8.f + Gm_PI * 0.25f + Gm_PI,
+      .altitude = atan2f(lineOfSight.y, lineOfSight.xz().magnitude()),
+      .radius = radius
     },
     .lookAtTarget = {
-      (npcFacePosition.x + player.position.x) / 2.f,
-      npcFacePosition.y,
-      (npcFacePosition.z + player.position.z) / 2.f
+      (lookAtPosition.x + player.position.x) / 2.f,
+      lookAtPosition.y,
+      (lookAtPosition.z + player.position.z) / 2.f
     }
   });
+}
+
+internal void interactWithNpc(GmContext* context, GameState& state, NonPlayerCharacter& npc) {
+  auto& player = get_player();
+  Vec3f npcFacePosition = npc.position + Vec3f(0, 30.f, 0);
+
+  state.activeNpc = &npc;
+  state.velocity = Vec3f(0.f);
+  state.hasActiveDialogue = true;
+
+  setTargetCameraStateForDialogue(context, state, npc.position - player.position, npcFacePosition, NPC_INTERACTION_CAMERA_RADIUS);
 
   UISystem::queueDialogue(context, state, npc.dialogue);
+}
+
+internal void interactWithSign(GmContext* context, GameState& state, Object& sign) {
+  auto& player = get_player();
+  auto& speechBubble = objects("speech-bubble")[0];
+
+  state.velocity = Vec3f(0.f);
+  state.hasActiveDialogue = true;
+
+  setTargetCameraStateForDialogue(context, state, sign.position - speechBubble.position, sign.position, NPC_INTERACTION_CAMERA_RADIUS);
+
+  UISystem::queueDialogue(context, state, { "Hello! And...", "...Goodbye!" });
 }
 
 internal void interactWithSlingshot(GmContext* context, GameState& state, Object& object) {
@@ -186,9 +204,10 @@ internal void handleNpcs(GmContext* context, GameState& state) {
   auto& input = get_input();
   auto& player = get_player();
 
-  // Handle talking to NPCs
+  // Handle talking to NPCs/reading signs
+  // @todo cleanup
   {
-    if (input.didPressKey(Key::SPACE)) {
+    if (input.didPressKey(Key::SPACE) && state.wasOnSolidGroundLastFrame) {
       if (state.activeNpc == nullptr) {
         for (auto& npc : state.npcs) {
           float npcXzDistance = (npc.position - player.position).xz().magnitude();
@@ -204,6 +223,16 @@ internal void handleNpcs(GmContext* context, GameState& state) {
           }
         }
       }
+
+      for (auto& sign : objects("town-sign")) {
+        if ((player.position - sign.position).magnitude() < 200.f) {
+          if (!state.hasActiveDialogue) {
+            interactWithSign(context, state, sign);
+          }
+
+          break;
+        }
+      }
     }
   }
 
@@ -211,6 +240,12 @@ internal void handleNpcs(GmContext* context, GameState& state) {
   {
     if (state.activeNpc != nullptr && UISystem::isDialogueQueueEmpty()) {
       state.activeNpc = nullptr;
+
+      CameraSystem::restoreOriginalCameraState(context, state);
+    }
+
+    if (state.hasActiveDialogue && UISystem::isDialogueDone()) {
+      state.hasActiveDialogue = false;
 
       CameraSystem::restoreOriginalCameraState(context, state);
     }
@@ -233,6 +268,36 @@ internal void handlePeople(GmContext* context, GameState& state) {
 
     commit(object);
   });
+}
+
+internal void handleSpeechBubbleTargets(GmContext* context, GameState& state) {
+  auto t = get_scene_time();
+  auto& player = get_player();
+  auto& speechBubble = objects("speech-bubble")[0];
+  bool isNearSpeechBubbleTarget = false;
+
+  for (auto& sign : objects("town-sign")) {
+    if ((sign.position - player.position).magnitude() < 200.f) {
+      isNearSpeechBubbleTarget = true;
+
+      speechBubble.position =
+        sign.position +
+        sign.rotation.getDirection() * 60.f +
+        Vec3f(0, sinf(t * 2.f) * 10.f, 0);
+
+      speechBubble.scale = Vec3f::lerp(speechBubble.scale, Vec3f(25.f), 0.1f);
+
+      break;
+    }
+  }
+
+  if (!isNearSpeechBubbleTarget) {
+    speechBubble.scale = Vec3f::lerp(speechBubble.scale, Vec3f(0.f), 0.1f);
+  }
+
+  speechBubble.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), t);
+
+  commit(speechBubble);
 }
 
 internal void spawnFlyingBird(GmContext* context, GameState& state, const Object& reference) {
@@ -1103,6 +1168,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   handleSlingshots(context, state, dt);
   handleNpcs(context, state);
   handlePeople(context, state);
+  handleSpeechBubbleTargets(context, state);
   handleHotAirBalloons(context, state, dt);
   handleCollectables(context, state, dt);
   handleJetstreams(context, state, dt);

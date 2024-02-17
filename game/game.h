@@ -106,13 +106,14 @@ struct GameState {
   float dayNightCycleTime = 0.f;
 
   bool isOnSolidGround = false;
-  bool wasOnSolidGroundLastFrame = false;
   bool isMovingPlayerThisFrame = false;
   bool isRepositioningCamera = false;
-  bool hasAirDashTarget = false;
   bool isDoingTargetedAirDash = false;
   bool isNearJumpPad = false;
   bool isGliding = false;
+  bool wasOnSolidGroundLastFrame = false;
+  bool hasAirDashTarget = false;
+  bool hasActiveDialogue = false;
 
   // @todo wall kicks are currently automatic. It may be worthwhile to restore
   // the original behavior, or use a system of briefly running along walls and

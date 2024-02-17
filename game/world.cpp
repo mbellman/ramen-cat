@@ -924,6 +924,9 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
     mesh("air-dash-target")->roughness = 0.2f;
     mesh("air-dash-target")->emissivity = 0.4f;
 
+    add_mesh("speech-bubble", 1, Mesh::Model("./game/assets/entities/speech-bubble.obj"));
+    mesh("speech-bubble")->emissivity = 0.5f;
+
     add_mesh("ocean", 1, Mesh::Disc(12));
     add_mesh("ocean-floor", 1, Mesh::Disc(12));
 
@@ -985,6 +988,8 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   target.color = Vec3f(1.f, 0.9f, 0.4f);
 
   commit(target);
+
+  create_object_from("speech-bubble");
 
   state.direction = Vec3f(0, 0, -1.f);
 

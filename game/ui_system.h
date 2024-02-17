@@ -19,4 +19,5 @@ namespace UISystem {
   void queueDialogue(GmContext* context, GameState& state, const std::vector<std::string>& queue);
   bool isDialogueQueueEmpty();
   bool hasBlockingDialogue();
+  bool isDialogueDone();
 }

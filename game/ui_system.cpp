@@ -226,3 +226,7 @@ bool UISystem::isDialogueQueueEmpty() {
 bool UISystem::hasBlockingDialogue() {
   return dialogue.active && dialogue.blocking;
 }
+
+bool UISystem::isDialogueDone() {
+  return dialogue.queue.size() == 0 || !dialogue.active;
+}
