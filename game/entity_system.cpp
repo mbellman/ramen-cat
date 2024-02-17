@@ -120,6 +120,12 @@ internal void setTargetCameraStateForDialogue(GmContext* context, GameState& sta
   });
 }
 
+internal bool canPlayerInteractWithSign(const Object& player, const Object& sign, GameState& state) {
+  auto playerToSign = sign.position - player.position;
+
+  return playerToSign.magnitude() < 180.f && state.dashLevel == 0;
+}
+
 internal void interactWithNpc(GmContext* context, GameState& state, NonPlayerCharacter& npc) {
   auto& player = get_player();
   Vec3f npcFacePosition = npc.position + Vec3f(0, 30.f, 0);
@@ -194,6 +200,7 @@ internal void interactWithSlingshot(GmContext* context, GameState& state, Object
     // the player, once launched from the slingshot
     state.originalCameraState.camera3p.azimuth = Gm_Modf(atan2f(slingshotVelocity.z, slingshotVelocity.x) - Gm_PI, Gm_TAU);
     state.originalCameraState.camera3p.altitude = Gm_HALF_PI * 0.8f;
+
     state.originalCameraState.camera3p.radius =
       (state.cameraMode == CameraMode::NORMAL ? CAMERA_NORMAL_BASE_RADIUS : CAMERA_ZOOM_OUT_BASE_RADIUS)
       + CAMERA_RADIUS_ALTITUDE_MULTIPLIER * (state.originalCameraState.camera3p.altitude / Gm_HALF_PI);
@@ -225,7 +232,7 @@ internal void handleNpcs(GmContext* context, GameState& state) {
       }
 
       for (auto& sign : objects("town-sign")) {
-        if ((player.position - sign.position).magnitude() < 200.f) {
+        if (canPlayerInteractWithSign(player, sign, state)) {
           if (!state.hasActiveDialogue) {
             interactWithSign(context, state, sign);
           }
@@ -277,7 +284,7 @@ internal void handleSpeechBubbleTargets(GmContext* context, GameState& state) {
   bool isNearSpeechBubbleTarget = false;
 
   for (auto& sign : objects("town-sign")) {
-    if ((sign.position - player.position).magnitude() < 200.f) {
+    if (canPlayerInteractWithSign(player, sign, state)) {
       isNearSpeechBubbleTarget = true;
 
       speechBubble.position =

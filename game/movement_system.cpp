@@ -513,6 +513,9 @@ internal void handleGliderMovementInput(GmContext* context, GameState& state, fl
   }
 }
 
+/**
+ * @todo description
+ */
 internal bool willPlayerFallOffLedge(GmContext* context, GameState& state) {
   auto& player = get_player();
   auto start = player.position;
@@ -625,7 +628,7 @@ namespace MovementSystem {
         state.lastGliderChangeTime = get_scene_time();
       }
 
-      if (initialVelocity.y < -550.f) {
+      if (initialVelocity.magnitude() > 550.f && initialVelocity.y < -200.f) {
         state.lastHardLandingPosition = player.position - Vec3f(0, PLAYER_RADIUS * 0.5f, 0);
         state.lastHardLandingTime = get_scene_time();
       }
@@ -634,6 +637,7 @@ namespace MovementSystem {
     if (
       state.wasOnSolidGroundLastFrame &&
       !state.isOnSolidGround &&
+      time_since(state.lastHardLandingTime) > 0.5f &&
       time_since(state.lastJumpTime) > 0.1f &&
       willPlayerFallOffLedge(context, state)
     ) {

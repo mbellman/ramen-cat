@@ -44,4 +44,15 @@ std::vector<MeshAsset> overworld_stack_meshes = {
       .roughness = 0.2f
     }
   },
+  {
+    .name = "dome-2",
+    .hitboxScale = Vec3f(1.f, 0.2f, 1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/dome-2.obj");
+    },
+    .attributes = {
+      .maxCascade = 4,
+      .roughness = 0.1f
+    }
+  },
 };
