@@ -16,6 +16,46 @@ std::vector<MeshAsset> overworld_stack_meshes = {
     }
   },
   {
+    .name = "b4",
+    .hitboxScale = Vec3f(0.8f, 1.f, 0.8f),
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/b4-levels.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    },
+    .pieces = {
+      {
+        .name = "b4-columns",
+        .create = []() {
+          return Mesh::Model("./game/assets/buildings/b4-columns.obj");
+        }
+      },
+      {
+        .name = "b4-windows",
+        .create = []() {
+          return Mesh::Model("./game/assets/buildings/b4-windows.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(0.4f, 0.7f, 1.f);
+        },
+        .attributes = {
+          .roughness = 0.1f
+        }
+      }
+    }
+  },
+  {
+    .name = "b5",
+    .hitboxScale = Vec3f(0.6f, 1.f, 0.6f),
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/b5-base.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    }
+  },
+  {
     .name = "cylinder-1",
     .create = []() {
       return Mesh::Model("./game/assets/buildings/cylinder-1.obj");
