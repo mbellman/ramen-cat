@@ -22,7 +22,8 @@ std::vector<MeshAsset> overworld_stack_meshes = {
       return Mesh::Model("./game/assets/buildings/b4-levels.obj");
     },
     .attributes = {
-      .maxCascade = 4
+      .maxCascade = 4,
+      .roughness = 0.2f
     },
     .pieces = {
       {
