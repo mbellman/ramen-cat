@@ -24,7 +24,7 @@ internal float easeOutElastic(float t) {
   return (
     t == 0.f ? 0.f :
     t == 1.f ? 1.f :
-    powf(2.f, -10.f * t) * sinf((t * 10.f - 0.75f) * c4) + 1.f
+    powf(1.7f, -10.f * t) * sinf((t * 5.f - 1.f) * c4) + 1.f
   );
 }
 

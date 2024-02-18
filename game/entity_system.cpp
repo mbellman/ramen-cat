@@ -870,9 +870,13 @@ internal void handleBoostPads(GmContext* context, GameState& state, float dt) {
 
   for (auto& pad : objects("boost-pad")) {
     if ((player.position - pad.position).magnitude() < 200.f) {
+      state.lastBoostTime = get_scene_time();
+
       if (state.dashLevel < 2) {
         // @todo orient player along boost pad direction
         state.dashLevel++;
+
+        break;
       }
     }
   }
@@ -897,101 +901,6 @@ internal void handleJumpPads(GmContext* context, GameState& state, float dt) {
 
   // @todo have active jump pad pop out + retract in slowly
   // @todo show particles when active
-}
-
-internal void handleBoostRings(GmContext* context, GameState& state, float dt) {
-  auto& player = get_player();
-
-  // Check for passage through boost rings
-  {
-    for (auto& ring : objects("boost-ring")) {
-      Vec3f forward = ring.rotation.getDirection();
-      Vec3f lastPlayerDirection = (state.previousPlayerPosition - ring.position);
-      Vec3f currentPlayerDirection = player.position - ring.position;
-      float lastDot = Vec3f::dot(forward, lastPlayerDirection);
-      float currentDot = Vec3f::dot(forward, currentPlayerDirection);
-
-      if (
-        Gm_Signf(lastDot) != Gm_Signf(currentDot) &&
-        currentPlayerDirection.magnitude() < ring.scale.x * 0.9f
-      ) {
-        // Launch through the boost ring
-        if (state.lastBoostRingLaunchTime != 0.f) {
-          restoreLastUsedBoostRing(context, state);
-        }
-
-        // @todo make configurable
-        float launchSpeed = state.isGliding ? 3000.f : 2000.f;
-
-        state.velocity = forward * launchSpeed * (currentDot > 0.f ? 1.f : -1.f);
-        state.lastBoostRingLaunchTime = get_scene_time();
-        state.lastUsedBoostRing = ring;
-        state.camera3p.altitude = forward.y;
-
-        if (state.dashLevel == 0) {
-          state.dashLevel = 1;
-        }
-
-        break;
-      }
-    }
-  }
-
-  // Animate the last-used ring
-  {
-    if (state.lastBoostRingLaunchTime != 0.f) {
-      float alpha = 2.f * time_since(state.lastBoostRingLaunchTime);
-
-      if (alpha < 1.f) {
-        auto* object = get_object_by_record(state.lastUsedBoostRing._record);
-
-        if (object != nullptr) {
-          auto& ring = *object;
-          float scaleAlpha = sinf(alpha * Gm_PI);
-          float scaleFactor = 1.f - 0.4f * scaleAlpha;
-
-          ring.scale = state.lastUsedBoostRing.scale * scaleFactor;
-
-          commit(ring);
-        }
-      } else {
-        restoreLastUsedBoostRing(context, state);
-      }
-    }
-  }
-
-  // @todo move to effects_system.cpp
-  // Animate ring particles
-  {
-    if (state.lastBoostRingLaunchTime != 0.f) {
-      Vec3f spawnPosition = state.lastUsedBoostRing.position;
-      float boostRingDuration = state.isGliding ? GLIDER_BOOST_RING_DURATION : BOOST_RING_DURATION;
-      float alpha = time_since(state.lastBoostRingLaunchTime) / boostRingDuration;
-
-      // "Spawn" the next particle
-      u16 totalRingParticles = objects("ring-particle").totalActive();
-      u16 nextRingParticleId = u16(alpha * float(totalRingParticles));
-
-      if (nextRingParticleId < totalRingParticles) {
-        // Only grab the next particle up until the last one
-        auto& nextRingParticle = objects("ring-particle")[nextRingParticleId];
-
-        nextRingParticle.position = player.position;
-        nextRingParticle.scale = Vec3f(DASH_PARTICLE_SIZE);
-      }
-
-      // Scale down existing particles
-      for (auto& particle : objects("ring-particle")) {
-        particle.scale -= Vec3f(DASH_PARTICLE_SIZE * dt);
-
-        if (particle.scale.x < 0.f) {
-          particle.scale = Vec3f(0.f);
-        }
-
-        commit(particle);
-      }
-    }
-  }
 }
 
 internal void handleAirDashTarget(GmContext* context, GameState& state) {
@@ -1182,7 +1091,6 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   handleToriiGates(context, state);
   handleBoostPads(context, state, dt);
   handleJumpPads(context, state, dt);
-  handleBoostRings(context, state, dt);
   handleAirDashTarget(context, state);
 
   // Power-up/ability entities

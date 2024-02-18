@@ -555,18 +555,20 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
       // early in the spin animation. We use an arbitrary threshold which
       // "feels" right to ensure that manual movement takes over the yaw,
       // canceling the spin, but not so quickly as to look discontinuous.
-      (!state.isOnSolidGround || timeSinceLastAirDash < AIR_DASH_SPIN_DURATION * 0.3f)
+      (!state.isOnSolidGround || timeSinceLastAirDash < AIR_DASH_SPIN_DURATION * 0.6f)
     ) {
       float totalRotation = state.airDashSpinEndYaw - state.airDashSpinStartYaw;
-      float alpha = easeOutBack(timeSinceLastAirDash / AIR_DASH_SPIN_DURATION, 1.5f);
-      float targetTurnFactor = 2.f * (1.f - alpha);
+      float spinAlpha = easeOutElastic(timeSinceLastAirDash / AIR_DASH_SPIN_DURATION);
+      float targetTurnFactor = 2.f * (1.f - spinAlpha);
 
-      yaw = state.airDashSpinStartYaw + alpha * totalRotation;
+      yaw = state.airDashSpinStartYaw + spinAlpha * totalRotation;
 
       state.turnFactor = Gm_Lerpf(state.turnFactor, targetTurnFactor, 10.f * dt);
     }
 
-    yaw = Gm_LerpCircularf(state.currentYaw, yaw, 10.f * dt, Gm_PI);
+    float yawTurnRate = timeSinceLastAirDash < 0.6f * AIR_DASH_SPIN_DURATION ? 50.f : 10.f;
+
+    yaw = Gm_LerpCircularf(state.currentYaw, yaw, Gm_Minf(1.f, yawTurnRate * dt), Gm_PI);
 
     if (time_since(state.lastBoostRingLaunchTime) < BOOST_RING_DURATION) {
       pitch = Gm_Lerpf(state.currentPitch, pitch, 10.f * dt);
@@ -581,11 +583,25 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
     handlePlayerAnimation(context, state, dt);
     handleAnimatedMeshWithRig(*mesh("player"), state.animation.playerRig);
 
+    // Stretch when launching through boost rings
     if (state.lastBoostRingLaunchTime != 0.f && time_since(state.lastBoostRingLaunchTime) < 1.f) {
       float somersaultAlpha = time_since(state.lastBoostRingLaunchTime) * (1.f / BOOST_RING_DURATION);
       float somersaultScale = Gm_Maxf(0.f, sinf(somersaultAlpha * Gm_PI) * 0.5f);
 
       player.scale.z = PLAYER_RADIUS * (1.f + somersaultScale);
+    }
+
+    // Stretch when air dashing
+    if (
+      state.lastAirDashTime != 0.f &&
+      time_since(state.lastAirDashTime) < AIR_DASH_SPIN_DURATION
+    ) {
+      auto alpha = time_since(state.lastAirDashTime) / AIR_DASH_SPIN_DURATION;
+
+      if (alpha < 0.15f) alpha = easeInOutQuad(alpha * 6.5f);
+      else alpha = 1.f - easeInOutQuad(1.15f * (alpha - 0.15f));
+
+      player.scale.z += 6.f * alpha;
     }
 
     state.currentYaw = yaw;

@@ -326,11 +326,11 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
     if (state.dashLevel == 2) targetFov *= 1.2f;
     if (state.isDoingTargetedAirDash) targetFov *= 1.2f;
 
-    if (state.lastBoostRingLaunchTime != 0.f && time_since(state.lastBoostRingLaunchTime) < 1.f) {
+    if (state.lastBoostTime != 0.f && time_since(state.lastBoostTime) < 0.2f) {
       // Boost ring FoV adjustments
-      float alpha = 1.f - easeOutQuint(time_since(state.lastBoostRingLaunchTime));
+      float alpha = 1.f - time_since(state.lastBoostTime) / 0.2f;
 
-      targetFov *= 1.f + alpha;
+      targetFov += 15.f * alpha;
     }
 
     if (state.superjumpChargeTime != 0.f) {
@@ -338,6 +338,13 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
       float alpha = state.superjumpChargeTime / (state.superjumpChargeTime + 2.f);
 
       targetFov -= 30.f * alpha;
+    }
+
+    if (
+      state.lastAirDashTime != 0.f &&
+      time_since(state.lastAirDashTime) < AIR_DASH_SPIN_DURATION
+    ) {
+      targetFov += 10.f * (1.f - time_since(state.lastAirDashTime) / AIR_DASH_SPIN_DURATION);
     }
 
     camera.fov = Gm_Lerpf(camera.fov, targetFov, alpha);

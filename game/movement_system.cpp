@@ -224,7 +224,7 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
   auto& player = get_player();
   auto& camera = get_camera();
 
-  auto rate = 5000.f * dt;
+  auto rate = 3000.f * dt;
   auto initialVelocity = state.velocity;
 
   Vec3f forward = camera.orientation.getDirection().xz().unit();

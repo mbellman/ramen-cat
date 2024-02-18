@@ -100,6 +100,7 @@ struct GameState {
   float lastAirParticleSpawnTime = 0.f;
   float lastGliderChangeTime = 0.f;
   float lastMouseMoveTime = 0.f;
+  float lastBoostTime = 0.f;
 
   float superjumpChargeTime = 0.f;
 
