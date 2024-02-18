@@ -385,7 +385,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     .name = "leaves",
     .hitboxScale = Vec3f(0.5f, 1.f, 0.3f),
     .create = []() {
-      return Mesh::Model("./game/assets/leaves.obj");
+      return Mesh::Model("./game/assets/plants/leaves.obj");
     },
     .attributes = {
       .type = MeshType::PRESET_ANIMATED,
@@ -394,6 +394,23 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .animation = {
         .type = PresetAnimationType::FLOWER,
         .factor = 15.f
+      },
+      .useMipmaps = false
+    }
+  },
+  {
+    .name = "hanging-leaves",
+    .hitboxScale = Vec3f(0.9f, 0.2f, 0.9f),
+    .create = []() {
+      return Mesh::Model("./game/assets/plants/hanging-leaves.obj");
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .texture = "./game/assets/plants/leaves.png",
+      .maxCascade = 4,
+      .animation = {
+        .type = PresetAnimationType::FLOWER,
+        .factor = 10.f
       },
       .useMipmaps = false
     }

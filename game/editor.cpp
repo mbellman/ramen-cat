@@ -1288,9 +1288,8 @@ namespace Editor {
           // Only consider planes facing the camera
           if (nDotC > 0.f) {
             auto collision = Collisions::getLinePlaneCollision(camera.position, lineOfSightEnd, plane);
-            auto distance = (camera.position - collision.point).magnitude();
 
-            if (collision.hit && distance < closestDistance) {
+            if (collision.hit) {
               // @todo none of the editor features should be enabled when not in developer mode anyway!
               #if GAMMA_DEVELOPER_MODE
                 auto* object = get_object_by_record(plane.sourceObjectRecord);
@@ -1298,8 +1297,12 @@ namespace Editor {
                 Object* object = nullptr;
               #endif
 
+              if (object == nullptr) continue;
+
+              auto distance = (object->position - camera.position).magnitude();
+
               if (
-                object != nullptr &&
+                distance < closestDistance &&
                 context->scene.meshes[object->_record.meshIndex]->name != "dynamic_collision_box"
               ) {
                 observeObject(context, *object);
