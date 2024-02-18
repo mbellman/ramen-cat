@@ -225,6 +225,18 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
     state.camera3p.azimuth = Gm_Modf(state.camera3p.azimuth, Gm_TAU);
   }
 
+  // Handle camera orientation adjustments based on entity interactions
+  {
+    if (
+      state.lastJumpPadLaunchTime != 0.f &&
+      time_since(state.lastJumpPadLaunchTime) < 0.2f
+    ) {
+      auto alpha = time_since(state.lastJumpPadLaunchTime) / 0.2f;
+
+      state.camera3p.altitude = Gm_Lerpf(state.camera3p.altitude, 0.f, alpha);
+    }
+  }
+
   // @todo move to game_constants.h
   const float titleTransitionDuration = 3.f;
 

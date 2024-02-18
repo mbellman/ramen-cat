@@ -181,6 +181,10 @@ struct GameState {
   Gamma::Object lastUsedBoostRing;
   float lastBoostRingLaunchTime = 0.f;
 
+  // Jump pads
+  Gamma::Object activeJumpPadPlatform;
+  float lastJumpPadLaunchTime = 0.f;
+
   #if GAMMA_DEVELOPER_MODE
     std::vector<Gamma::Vec3f> lastSolidGroundPositions;
     float gameSpeed = 1.f;

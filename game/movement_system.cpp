@@ -351,6 +351,8 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
           }
 
           if (state.isNearJumpPad) {
+            state.lastJumpPadLaunchTime = sceneTime;
+
             // @todo refactor
             // @todo have a separate code path for jump pads specifically
             state.lastAirDashTime = sceneTime;

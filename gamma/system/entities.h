@@ -79,6 +79,14 @@ namespace Gamma {
     Vec3f scale;
     Quaternion rotation;
     pVec4 color;
+
+    bool operator==(const Object& comparison) {
+      return (
+        this->_record.meshIndex == comparison._record.meshIndex &&
+        this->_record.id == comparison._record.id &&
+        this->_record.generation == comparison._record.generation
+      );
+    }
   };
 
   /**

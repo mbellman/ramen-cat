@@ -121,9 +121,10 @@ internal void setTargetCameraStateForDialogue(GmContext* context, GameState& sta
 }
 
 internal bool canPlayerInteractWithSign(const Object& player, const Object& sign, GameState& state) {
-  auto playerToSign = sign.position - player.position;
-
-  return playerToSign.magnitude() < 180.f && state.dashLevel == 0;
+  return (
+    (sign.position - player.position).magnitude() < 200.f &&
+    !state.isMovingPlayerThisFrame
+  );
 }
 
 internal void interactWithNpc(GmContext* context, GameState& state, NonPlayerCharacter& npc) {
@@ -207,7 +208,7 @@ internal void interactWithSlingshot(GmContext* context, GameState& state, Object
   }
 }
 
-internal void handleNpcs(GmContext* context, GameState& state) {
+internal void handleInteractibleEntitiesWithDialogue(GmContext* context, GameState& state) {
   auto& input = get_input();
   auto& player = get_player();
 
@@ -243,7 +244,7 @@ internal void handleNpcs(GmContext* context, GameState& state) {
     }
   }
 
-  // Handle ending conversions with NPCs
+  // Handle ending conversations
   {
     if (state.activeNpc != nullptr && UISystem::isDialogueQueueEmpty()) {
       state.activeNpc = nullptr;
@@ -889,18 +890,37 @@ internal void handleJumpPads(GmContext* context, GameState& state, float dt) {
   {
     state.isNearJumpPad = false;
 
-    for (auto& pad : objects("jump-pad")) {
-      if ((pad.position - player.position).magnitude() < pad.scale.x) {
-        // @todo only do this at dash level 1 or 2
+    for (auto& platform : objects("jump-pad-platform")) {
+      if (
+        (platform.position - player.position).magnitude() < platform.scale.x &&
+        state.dashLevel > 0
+      ) {
         state.isNearJumpPad = true;
-
-        break;
+        state.activeJumpPadPlatform = platform;
       }
     }
   }
 
-  // @todo have active jump pad pop out + retract in slowly
-  // @todo show particles when active
+  // Handle jump pad launch animations
+  auto timeSinceLastJumpPadLaunch = time_since(state.lastJumpPadLaunchTime);
+
+  for_moving_objects("jump-pad-platform", {
+    object.position = Vec3f::lerp(object.position, initial.position, 5.f * dt);
+
+    if (
+      state.lastJumpPadLaunchTime != 0.f &&
+      timeSinceLastJumpPadLaunch < 0.1f &&
+      object == state.activeJumpPadPlatform
+    ) {
+      object.position = Vec3f::lerp(
+        initial.position,
+        initial.position + Vec3f(0, 100.f, 0),
+        sqrtf(timeSinceLastJumpPadLaunch / 0.1f)
+      );
+    }
+
+    commit(object);
+  });
 }
 
 internal void handleAirDashTarget(GmContext* context, GameState& state) {
@@ -1082,7 +1102,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
 
   // Interactible/player-dependent entities
   handleSlingshots(context, state, dt);
-  handleNpcs(context, state);
+  handleInteractibleEntitiesWithDialogue(context, state);
   handlePeople(context, state);
   handleSpeechBubbleTargets(context, state);
   handleHotAirBalloons(context, state, dt);

@@ -31,11 +31,23 @@ std::vector<MeshAsset> entity_meshes = {
     .create = []() {
       return Mesh::Model("./game/assets/entities/jump-pad-base.obj");
     },
+    .attributes = {
+      .texture = "./game/assets/wood-plank.png",
+      .normals = "./game/assets/wood-plank-normals.png"
+    },
     .pieces = {
       {
         .name = "jump-pad-platform",
+        .moving = true,
         .create = []() {
           return Mesh::Model("./game/assets/entities/jump-pad.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(0.7f);
+        },
+        .attributes = {
+          .texture = "./game/assets/wood-plank.png",
+          .normals = "./game/assets/wood-plank-normals.png"
         }
       }
     }
