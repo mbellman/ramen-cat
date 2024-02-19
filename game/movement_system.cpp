@@ -322,7 +322,7 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
       float sceneTime = get_scene_time();
 
       if (state.isOnSolidGround) {
-        // Regular jump
+        // Jump
         float jumpFactor = (
           state.dashLevel == 1 ? 1.5f :
           state.dashLevel == 2 ? 2.f :
@@ -330,11 +330,11 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
         );
 
         if (
-          time_since(state.lastHardLandingTime) < SUPER_JUMP_WINDOW_DURATION ||
-          time_since(state.lastAirDashTime) < SUPER_JUMP_WINDOW_DURATION ||
-          state.superjumpChargeTime != 0.f ||
-          // @todo have a separate code path for jump pads specifically
-          state.isNearJumpPad
+          !state.isNearJumpPad && (
+            time_since(state.lastHardLandingTime) < SUPER_JUMP_WINDOW_DURATION ||
+            time_since(state.lastAirDashTime) < SUPER_JUMP_WINDOW_DURATION ||
+            state.superjumpChargeTime != 0.f
+          )
         ) {
           // Super jump
           jumpFactor *= 2.f;
@@ -350,21 +350,26 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
             jumpFactor *= alpha;
           }
 
-          if (state.isNearJumpPad) {
-            state.lastJumpPadLaunchTime = sceneTime;
-
-            // @todo refactor
-            // @todo have a separate code path for jump pads specifically
-            state.lastAirDashTime = sceneTime;
-            state.airDashSpinStartYaw = state.currentYaw;
-            state.airDashSpinEndYaw = atan2(state.velocity.x, state.velocity.z) + Gm_PI;
-            if (state.airDashSpinEndYaw - state.airDashSpinStartYaw < Gm_PI) state.airDashSpinEndYaw += Gm_TAU;
-          }
-
-          context->scene.fx.screenWarpTime = sceneTime;
-
           state.lastHardLandingPosition = player.position;
           state.lastHardLandingTime = sceneTime;
+
+          context->scene.fx.screenWarpTime = sceneTime;
+        }
+
+        if (state.isNearJumpPad) {
+          // Jump pad
+          jumpFactor *= 2.f;
+
+          state.lastJumpPadLaunchTime = sceneTime;
+
+          // @note this is copied from the air dash spin code below;
+          // we might want a dedicated effect for launch pad jumps
+          state.lastAirDashTime = sceneTime;
+          state.airDashSpinStartYaw = state.currentYaw;
+          state.airDashSpinEndYaw = atan2(state.velocity.x, state.velocity.z) + Gm_PI;
+          if (state.airDashSpinEndYaw - state.airDashSpinStartYaw < Gm_PI) state.airDashSpinEndYaw += Gm_TAU;
+
+          context->scene.fx.screenWarpTime = sceneTime;
         }
 
         state.velocity.y = DEFAULT_JUMP_Y_VELOCITY * jumpFactor;

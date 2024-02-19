@@ -930,6 +930,7 @@ internal void handleAirDashTarget(GmContext* context, GameState& state) {
 
   state.hasAirDashTarget = false;
 
+  // Figure out whether we have an air dash target in sight
   if (
     !state.isDoingTargetedAirDash &&
     time_since(state.lastTimeOnSolidGround) > 0.5f
@@ -949,6 +950,7 @@ internal void handleAirDashTarget(GmContext* context, GameState& state) {
         dot > 0.95f && dot > maxDot
       ) {
         target.position = point.position;
+        target.rotation = point.rotation;
         maxDot = dot;
 
         state.hasAirDashTarget = true;
@@ -957,6 +959,7 @@ internal void handleAirDashTarget(GmContext* context, GameState& state) {
   }
 
   if (state.hasAirDashTarget || state.isDoingTargetedAirDash) {
+    // Animate the air dash target when active
     auto t = get_scene_time();
 
     if (target.scale.x > 1.f) {
@@ -965,7 +968,17 @@ internal void handleAirDashTarget(GmContext* context, GameState& state) {
 
     target.scale = Vec3f::lerp(target.scale, Vec3f(PLAYER_RADIUS) * 4.f + 30.f * sinf(t * 2.f), 0.3f);
     target.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), t);
+
+    // If the player is close enough to the air dash target,
+    // stop the targeted air dash and allow air dashes to be
+    // performed again. This will allow us to place air dash
+    // targets in midair, and chain midair targeted air dashes.
+    if ((target.position - player.position).magnitude() < 10.f) {
+      state.isDoingTargetedAirDash = false;
+      state.canPerformAirDash = true;
+    }
   } else {
+    // Hide the air dash target when inactive
     target.scale = Vec3f::lerp(target.scale, Vec3f(0.f), 0.15f);
   }
 
