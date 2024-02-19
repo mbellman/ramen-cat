@@ -47,10 +47,18 @@ internal void rebuildCollectableStrips(GmContext* context, const std::string& co
   }
 }
 
+internal void rebuildCollectableSpawns(GmContext* context, const std::string& collectableMeshName) {
+  // @todo
+}
+
 internal void rebuildCollectables(GmContext* context) {
   rebuildCollectableStrips(context, "onigiri");
   rebuildCollectableStrips(context, "nitamago");
   rebuildCollectableStrips(context, "chashu");
+
+  rebuildCollectableSpawns(context, "onigiri");
+  // rebuildCollectableSpawns(context, "nitamago");
+  // rebuildCollectableSpawns(context, "chashu");
 }
 
 internal void rebuildPlantStrips(GmContext* context) {

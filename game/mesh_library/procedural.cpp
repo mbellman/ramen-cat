@@ -14,6 +14,14 @@ std::vector<MeshAsset> procedural_meshes = {
     }
   },
   {
+    .name = "onigiri-spawn",
+    .dynamic = true,
+    .defaultColor = Vec3f(0.5f, 1.f, 0.5f),
+    .create = []() {
+      return Mesh::Sphere(8);
+    }
+  },
+  {
     .name = "nitamago-strip",
     .dynamic = true,
     .defaultColor = Vec3f(1.f, 1.f, 0.5f),
@@ -27,14 +35,6 @@ std::vector<MeshAsset> procedural_meshes = {
     .defaultColor = Vec3f(1.f, 0.6f, 0.2f),
     .create = []() {
       return Mesh::Cube();
-    }
-  },
-  {
-    .name = "onigiri-spawn",
-    .dynamic = true,
-    .defaultColor = Vec3f(0.5f, 1.f, 0.5f),
-    .create = []() {
-      return Mesh::Sphere(8);
     }
   },
 
@@ -96,7 +96,8 @@ std::vector<MeshAsset> procedural_mesh_parts = {
     },
     .attributes = {
       .texture = "./game/assets/onigiri.png",
-      .emissivity = 0.2f
+      .emissivity = 0.3f,
+      .useMipmaps = false
     }
   },
   {
@@ -109,7 +110,7 @@ std::vector<MeshAsset> procedural_mesh_parts = {
     },
     .attributes = {
       .texture = "./game/assets/nitamago.png",
-      .emissivity = 0.2f,
+      .emissivity = 0.3f,
       .useMipmaps = false
     }
   },
@@ -123,7 +124,7 @@ std::vector<MeshAsset> procedural_mesh_parts = {
     },
     .attributes = {
       .texture = "./game/assets/chashu.png",
-      .emissivity = 0.2f,
+      .emissivity = 0.3f,
       .useMipmaps = false
     }
   },
