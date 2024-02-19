@@ -96,4 +96,13 @@ std::vector<MeshAsset> overworld_stack_meshes = {
       .roughness = 0.1f
     }
   },
+  {
+    .name = "runway",
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/runway.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    }
+  }
 };
