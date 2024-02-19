@@ -371,7 +371,7 @@ void CameraSystem::handleVisibilityCulling(GmContext* context, GameState& state)
 
   use_frustum_culling({ "weeds", "lamp", "ladder", "ac-unit", "ac-fan", "petal" });
   use_distance_culling(3000.f, { "flower" });
-  use_distance_culling(5000.f, { "onigiri", "nitamago", "chashu" });
+  use_distance_culling(10000.f, { "onigiri", "nitamago", "chashu" });
 
   // @todo store somewhere as a constant
   static std::initializer_list<std::string> meshesToFrustumCullAtDistance = {

@@ -15,6 +15,44 @@ internal float randomVariance(float random, float variance) {
   return -variance + random * variance * 2.f;
 }
 
+internal void rebuildCollectableStrips(GmContext* context, const std::string& collectableMeshName) {
+  for (auto& strip : objects(collectableMeshName + "-strip")) {
+    Vec3f start;
+    Vec3f end;
+
+    if (strip.scale.x > strip.scale.z) {
+      start = strip.position + strip.rotation.getLeftDirection() * strip.scale.x;
+      end = strip.position + strip.rotation.getLeftDirection().invert() * strip.scale.x;
+    } else {
+      start = strip.position + strip.rotation.getDirection() * strip.scale.z;
+      end = strip.position + strip.rotation.getDirection().invert() * strip.scale.z;
+    }
+
+    const float DEFAULT_SCALE = 40.f;
+    float distance = (end - start).magnitude();
+    Vec3f direction = (end - start).unit();
+    u8 current = 0;
+    u8 total = u8(distance / 100.f);
+
+    while (current <= total) {
+      auto& onigiri = create_object_from(collectableMeshName);
+
+      onigiri.position = start + direction * 100.f * float(current);
+      onigiri.scale = Vec3f(DEFAULT_SCALE);
+
+      commit(onigiri);
+
+      current++;
+    }
+  }
+}
+
+internal void rebuildCollectables(GmContext* context) {
+  rebuildCollectableStrips(context, "onigiri");
+  rebuildCollectableStrips(context, "nitamago");
+  rebuildCollectableStrips(context, "chashu");
+}
+
 internal void rebuildPlantStrips(GmContext* context) {
   for (auto& strip : objects("plant-strip")) {
     auto start = Vec3f(0);
@@ -307,6 +345,7 @@ void ProceduralMeshes::rebuildProceduralMeshes(GmContext* context) {
     objects(asset.name).reset();
   }
 
+  rebuildCollectables(context);
   rebuildPlantStrips(context);
   rebuildConcreteStacks(context);
   rebuildMiniHouses(context);

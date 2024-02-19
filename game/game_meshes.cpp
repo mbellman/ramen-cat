@@ -1239,52 +1239,6 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
   },
 
   /**
-   * Collectables
-   * ------------
-   */
-  {
-    .name = "onigiri",
-    .moving = true,
-    .defaultScale = Vec3f(40.f),
-    .hitboxScale = Vec3f(0.7f, 1.f, 0.5f),
-    .create = []() {
-      return Mesh::Model("./game/assets/onigiri.obj");
-    },
-    .attributes = {
-      .texture = "./game/assets/onigiri.png",
-      .emissivity = 0.2f
-    }
-  },
-  {
-    .name = "nitamago",
-    .moving = true,
-    .defaultScale = Vec3f(40.f),
-    .hitboxScale = Vec3f(0.8f, 0.8f, 0.6f),
-    .create = []() {
-      return Mesh::Model("./game/assets/nitamago.obj");
-    },
-    .attributes = {
-      .texture = "./game/assets/nitamago.png",
-      .emissivity = 0.2f,
-      .useMipmaps = false
-    }
-  },
-  {
-    .name = "chashu",
-    .moving = true,
-    .defaultScale = Vec3f(40.f),
-    .hitboxScale = Vec3f(0.8f, 0.8f, 0.2f),
-    .create = []() {
-      return Mesh::Model("./game/assets/chashu.obj");
-    },
-    .attributes = {
-      .texture = "./game/assets/chashu.png",
-      .emissivity = 0.2f,
-      .useMipmaps = false
-    }
-  },
-
-  /**
    * Stairs
    * ------
    */

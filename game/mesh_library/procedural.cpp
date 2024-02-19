@@ -6,6 +6,39 @@ using namespace Gamma;
 
 std::vector<MeshAsset> procedural_meshes = {
   {
+    .name = "onigiri-strip",
+    .dynamic = true,
+    .defaultColor = Vec3f(0.5f, 1.f, 0.5f),
+    .create = []() {
+      return Mesh::Cube();
+    }
+  },
+  {
+    .name = "nitamago-strip",
+    .dynamic = true,
+    .defaultColor = Vec3f(1.f, 1.f, 0.5f),
+    .create = []() {
+      return Mesh::Cube();
+    }
+  },
+  {
+    .name = "chashu-strip",
+    .dynamic = true,
+    .defaultColor = Vec3f(1.f, 0.6f, 0.2f),
+    .create = []() {
+      return Mesh::Cube();
+    }
+  },
+  {
+    .name = "onigiri-spawn",
+    .dynamic = true,
+    .defaultColor = Vec3f(0.5f, 1.f, 0.5f),
+    .create = []() {
+      return Mesh::Sphere(8);
+    }
+  },
+
+  {
     .name = "plant-strip",
     .dynamic = true,
     .defaultColor = Vec3f(0.5f, 1.f, 0.6f),
@@ -52,6 +85,49 @@ std::vector<MeshAsset> procedural_meshes = {
 };
 
 std::vector<MeshAsset> procedural_mesh_parts = {
+  // Collectables
+  {
+    .name = "onigiri",
+    .moving = true,
+    .defaultScale = Vec3f(40.f),
+    .hitboxScale = Vec3f(0.7f, 1.f, 0.5f),
+    .create = []() {
+      return Mesh::Model("./game/assets/onigiri.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/onigiri.png",
+      .emissivity = 0.2f
+    }
+  },
+  {
+    .name = "nitamago",
+    .moving = true,
+    .defaultScale = Vec3f(40.f),
+    .hitboxScale = Vec3f(0.8f, 0.8f, 0.6f),
+    .create = []() {
+      return Mesh::Model("./game/assets/nitamago.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/nitamago.png",
+      .emissivity = 0.2f,
+      .useMipmaps = false
+    }
+  },
+  {
+    .name = "chashu",
+    .moving = true,
+    .defaultScale = Vec3f(40.f),
+    .hitboxScale = Vec3f(0.8f, 0.8f, 0.2f),
+    .create = []() {
+      return Mesh::Model("./game/assets/chashu.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/chashu.png",
+      .emissivity = 0.2f,
+      .useMipmaps = false
+    }
+  },
+
   // plant-strip
   {
     .name = "p_shrub",
@@ -103,7 +179,6 @@ std::vector<MeshAsset> procedural_mesh_parts = {
     .attributes = {
       .type = MeshType::PRESET_ANIMATED,
       .texture = "./game/assets/plants/banana-plant.png",
-      .maxCascade = 4,
       .animation = {
         .type = PresetAnimationType::LEAF,
         .factor = 3.f

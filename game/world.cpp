@@ -566,7 +566,8 @@ internal void rebuildMiniFlagWires(GmContext* context) {
   const static auto FLAG_COLORS = {
     Vec3f(1.f, 0.5f, 0.2f),
     Vec3f(1.f, 0.2f, 0.1f),
-    Vec3f(0.2f, 0.5f, 1.f)
+    Vec3f(0.2f, 0.5f, 1.f),
+    Vec3f(0.2f, 1.f, 0.5f)
   };
 
   objects("mini-flag").reset();
@@ -597,12 +598,13 @@ internal void rebuildMiniFlagWires(GmContext* context) {
           float alpha = float(i) / float(totalWirePieces);
           float sag = (1.f - powf(alpha * 2.f - 1.f, 2)) * sagDistance;
           Vec3f position = Vec3f::lerp(start, end, alpha) - Vec3f(0, sag + 10.f, 0);
-          u8 colorIndex = u8(Gm_Modf(position.x, 3.f));
+          u8 colorIndex = u8(Gm_Modf(position.x + position.z, 4.f));
 
           auto& flag = create_object_from("mini-flag");
+          float sizeVariance = Gm_Modf(position.x, 10.f);
 
-          flag.position = position - Vec3f(0, 55.f, 0);
-          flag.scale = Vec3f(60.f);
+          flag.position = position - Vec3f(0, 55.f, 0) - Vec3f(0, sizeVariance, 0);
+          flag.scale = Vec3f(60.f - sizeVariance, 60.f + sizeVariance * 2.f, 60.f);
           flag.color = *(FLAG_COLORS.begin() + colorIndex);
           flag.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angle);
 

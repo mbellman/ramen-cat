@@ -123,7 +123,8 @@ internal void setTargetCameraStateForDialogue(GmContext* context, GameState& sta
 internal bool canPlayerInteractWithSign(const Object& player, const Object& sign, GameState& state) {
   return (
     (sign.position - player.position).magnitude() < 200.f &&
-    !state.isMovingPlayerThisFrame
+    !state.isMovingPlayerThisFrame &&
+    !state.isFreeCameraMode
   );
 }
 
