@@ -16,6 +16,8 @@ internal float randomVariance(float random, float variance) {
 }
 
 internal void rebuildCollectableStrips(GmContext* context, const std::string& collectableMeshName) {
+  const float DEFAULT_SCALE = 40.f;
+
   for (auto& strip : objects(collectableMeshName + "-strip")) {
     Vec3f start;
     Vec3f end;
@@ -28,19 +30,18 @@ internal void rebuildCollectableStrips(GmContext* context, const std::string& co
       end = strip.position + strip.rotation.getDirection().invert() * strip.scale.z;
     }
 
-    const float DEFAULT_SCALE = 40.f;
     float distance = (end - start).magnitude();
     Vec3f direction = (end - start).unit();
     u8 current = 0;
     u8 total = u8(distance / 100.f);
 
     while (current <= total) {
-      auto& onigiri = create_object_from(collectableMeshName);
+      auto& collectable = create_object_from(collectableMeshName);
 
-      onigiri.position = start + direction * 100.f * float(current);
-      onigiri.scale = Vec3f(DEFAULT_SCALE);
+      collectable.position = start + direction * 100.f * float(current);
+      collectable.scale = Vec3f(DEFAULT_SCALE);
 
-      commit(onigiri);
+      commit(collectable);
 
       current++;
     }
@@ -48,7 +49,20 @@ internal void rebuildCollectableStrips(GmContext* context, const std::string& co
 }
 
 internal void rebuildCollectableSpawns(GmContext* context, const std::string& collectableMeshName) {
-  // @todo
+  const float DEFAULT_SCALE = 40.f;
+  const float DEFAULT_RADIUS = 80.f;
+
+  for (auto& spawn : objects(collectableMeshName + "-spawn")) {
+    for (u8 i = 0; i < 5; i++) {
+      auto& collectable = create_object_from(collectableMeshName);
+      auto alpha = Gm_TAU * float(i) / 5.f;
+
+      collectable.position = spawn.position + Vec3f(sinf(alpha), 0, cosf(alpha)) * DEFAULT_RADIUS;
+      collectable.scale = Vec3f(DEFAULT_SCALE);
+
+      commit(collectable);
+    }
+  }
 }
 
 internal void rebuildCollectables(GmContext* context) {
