@@ -310,7 +310,11 @@ void updateGame(GmContext* context, GameState& state, float dt) {
       state.lastTimeInAir = sceneTime;
     }
 
-    if (input.didMoveMouse()) {
+    if (
+      input.didMoveMouse() ||
+      input.getRightStick().x != 0.f ||
+      input.getRightStick().y != 0.f
+    ) {
       state.lastMouseMoveTime = sceneTime;
     }
 

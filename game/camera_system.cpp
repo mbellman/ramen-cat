@@ -39,15 +39,14 @@ internal void updateThirdPersonCameraDirection(GmContext* context, GameState& st
   auto& input = get_input();
 
   if (
+    !input.didPressKey(Key::SHIFT) &&
     (
-      time_since(state.lastMouseMoveTime) < 1.f ||
+      time_since(state.lastMouseMoveTime) < 5.f ||
       input.getRightStick().x != 0.f ||
       input.getRightStick().y != 0.f
     )
-    &&
-    !input.didPressKey(Key::SHIFT)
   ) {
-    // Defer to mouse camera control
+    // Defer to manual camera control
     return;
   }
 

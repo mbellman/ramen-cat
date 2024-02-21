@@ -216,7 +216,12 @@ internal void handleInteractibleEntitiesWithDialogue(GmContext* context, GameSta
   // Handle talking to NPCs/reading signs
   // @todo cleanup
   {
-    if (input.didPressKey(Key::SPACE) && state.wasOnSolidGroundLastFrame) {
+    if (
+      state.wasOnSolidGroundLastFrame && (
+        input.didPressKey(Key::SPACE) ||
+        input.didPressKey(Key::CONTROLLER_B)
+      )
+    ) {
       if (state.activeNpc == nullptr) {
         for (auto& npc : state.npcs) {
           float npcXzDistance = (npc.position - player.position).xz().magnitude();

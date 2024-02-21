@@ -164,7 +164,7 @@ internal void handleDialogue(GmContext* context, GameState& state) {
     auto& input = get_input();
 
     if (
-      input.didPressKey(Key::SPACE) &&
+      (input.didPressKey(Key::SPACE) || input.didPressKey(Key::CONTROLLER_B)) &&
       dialogue.blocking &&
       hasStartedPrintingDialogue
     ) {

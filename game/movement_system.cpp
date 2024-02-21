@@ -245,28 +245,32 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
 
   // Directional movement
   if (time_since(state.lastLedgeTurnaroundTime) > 0.2f && !state.isDoingTargetedAirDash) {
-    if (input.isKeyHeld(Key::W)) {
-      acceleration += forward * rate;
+    // WASD
+    {
+      if (input.isKeyHeld(Key::W)) {
+        acceleration += forward * rate;
+      }
+
+      if (input.isKeyHeld(Key::S)) {
+        // @todo fix player model orientation
+        acceleration += forward.invert() * rate;
+      }
+
+      if (input.isKeyHeld(Key::A)) {
+        acceleration += left * rate;
+      }
+
+      if (input.isKeyHeld(Key::D)) {
+        // @todo fix player model orientation
+        acceleration += left.invert() * rate;
+      }
     }
 
-    if (input.isKeyHeld(Key::S)) {
-      // @todo fix player model orientation
-      acceleration += forward.invert() * rate;
-    }
-
-    if (input.isKeyHeld(Key::A)) {
-      acceleration += left * rate;
-    }
-
-    if (input.isKeyHeld(Key::D)) {
-      // @todo fix player model orientation
-      acceleration += left.invert() * rate;
-    }
-
-    // if (input.didMoveJoystick()) {
+    // Analog sticks
+    {
       acceleration += forward * input.getLeftStick().y * rate * -1.f;
       acceleration += left * input.getLeftStick().x * rate * -1.f;
-    // }
+    }
   }
 
   // Directional change handling/turn factor determination
@@ -603,6 +607,7 @@ namespace MovementSystem {
       if (
         time_since(state.lastJumpTime) < 1.f &&
         !input.isKeyHeld(Key::SPACE) &&
+        !input.isKeyHeld(Key::CONTROLLER_A) &&
         state.velocity.y > 0.f &&
         !didUseBoostRing
       ) {
