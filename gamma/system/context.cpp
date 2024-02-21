@@ -150,6 +150,9 @@ GmContext* Gm_CreateContext() {
   TTF_Init();
   IMG_Init(IMG_INIT_PNG);
 
+  SDL_GameControllerAddMappingsFromFile("./controllers.txt");
+  SDL_GameControllerOpen(0);
+
   context->window.font_sm = TTF_OpenFont("./fonts/OpenSans-Regular.ttf", 16);
   context->window.font_lg = TTF_OpenFont("./fonts/OpenSans-Regular.ttf", 22);
 

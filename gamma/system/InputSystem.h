@@ -4,6 +4,7 @@
 
 #include "SDL_events.h"
 #include "math/plane.h"
+#include "math/vector.h"
 #include "system/Signaler.h"
 #include "system/type_aliases.h"
 
@@ -55,7 +56,11 @@ namespace Gamma {
     ENTER = 1ULL << 43,
     CONTROL = 1ULL << 44,
     BACKSPACE = 1ULL << 45,
-    TAB = 1ULL << 46
+    TAB = 1ULL << 46,
+    CONTROLLER_A = 1ULL << 47,
+    CONTROLLER_B = 1ULL << 48,
+    CONTROLLER_X = 1ULL << 49,
+    CONTROLLER_Y = 1ULL << 50
   };
 
   struct MouseMoveEvent {
@@ -90,6 +95,8 @@ namespace Gamma {
     bool didReleaseMouse() const;
     bool didRightClickMouse() const;
     u64 getLastKeyDown() const;
+    const Vec2f& getLeftStick() const;
+    const Vec2f& getRightStick() const;
     const Point<int>& getMouseDelta() const;
     const MouseWheelEvent::Direction getMouseWheelDirection() const;
     void handleEvent(const SDL_Event& event);
@@ -102,6 +109,8 @@ namespace Gamma {
     u64 pressedKeyState = 0;
     u64 releasedKeyState = 0;
     u64 lastKeyDown = 0;
+    Vec2f leftStick;
+    Vec2f rightStick;
     // @todo define a struct for per-frame conditions
     bool didClickMouseThisFrame = false;
     bool didRightClickThisFrame = false;
@@ -111,6 +120,8 @@ namespace Gamma {
     Point<int> mouseDelta = { 0, 0 };
     MouseWheelEvent::Direction mousewheelDirection;
 
+    void handleControllerButtonDown(Uint8 button);
+    void handleControllerButtonUp(Uint8 button);
     void handleKeyDown(const SDL_Keycode& code);
     void handleKeyUp(const SDL_Keycode& code);
     void handleMouseDown(const SDL_MouseButtonEvent& event);

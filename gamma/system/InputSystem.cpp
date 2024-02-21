@@ -55,6 +55,13 @@ namespace Gamma {
     { SDLK_TAB, Key::TAB }
   };
 
+  const static std::map<Uint8, Key> controllerButtonMap = {
+    { SDL_CONTROLLER_BUTTON_A, Key::CONTROLLER_A },
+    { SDL_CONTROLLER_BUTTON_B, Key::CONTROLLER_B },
+    { SDL_CONTROLLER_BUTTON_X, Key::CONTROLLER_X },
+    { SDL_CONTROLLER_BUTTON_Y, Key::CONTROLLER_Y }
+  };
+
   bool InputSystem::didClickMouse() const {
     return didClickMouseThisFrame;
   }
@@ -87,6 +94,10 @@ namespace Gamma {
     return lastKeyDown;
   }
 
+  const Vec2f& InputSystem::getLeftStick() const {
+    return leftStick;
+  }
+
   const Point<int>& InputSystem::getMouseDelta() const {
     return mouseDelta;
   }
@@ -95,8 +106,52 @@ namespace Gamma {
     return mousewheelDirection;
   }
 
+  const Vec2f& InputSystem::getRightStick() const {
+    return rightStick;
+  }
+
   void InputSystem::handleEvent(const SDL_Event& event) {
     switch (event.type) {
+      case SDL_CONTROLLERAXISMOTION: {
+        // @todo cleanup
+        const float DEAD_ZONE = 0.2f;
+        float v = float(event.jaxis.value) / 32767.f;
+        bool isDeadZone = v < DEAD_ZONE && v > -DEAD_ZONE;
+
+        if (event.caxis.axis == SDL_CONTROLLER_AXIS_LEFTX) {
+          if (isDeadZone) {
+            leftStick.x = 0.f;
+          } else {
+            leftStick.x = v;
+          }
+        } else if (event.caxis.axis == SDL_CONTROLLER_AXIS_LEFTY) {
+          if (isDeadZone) {
+            leftStick.y = 0.f;
+          } else {
+            leftStick.y = v;
+          }
+        } else if (event.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX) {
+          if (isDeadZone) {
+            rightStick.x = 0.f;
+          } else {
+            rightStick.x = v;
+          }
+        } else if (event.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTY) {
+          if (isDeadZone) {
+            rightStick.y = 0.f;
+          } else {
+            rightStick.y = v;
+          }
+        }
+
+        break;
+      }
+      case SDL_CONTROLLERBUTTONDOWN:
+        handleControllerButtonDown(event.cbutton.button);
+        break;
+      case SDL_CONTROLLERBUTTONUP:
+        handleControllerButtonUp(event.cbutton.button);
+        break;
       case SDL_KEYDOWN:
         handleKeyDown(event.key.keysym.sym);
         break;
@@ -121,6 +176,37 @@ namespace Gamma {
     }
   }
 
+  // @todo refactor with handleKeyDown()
+  void InputSystem::handleControllerButtonDown(Uint8 button) {
+    if (controllerButtonMap.find(button) != controllerButtonMap.end()) {
+      Key key = controllerButtonMap.at(button);
+
+      if (!isKeyHeld(key)) {
+        signal("keystart", key);
+
+        pressedKeyState |= (u64)key;
+      }
+
+      heldKeyState |= (u64)key;
+      lastKeyDown = (u64)key;
+
+      signal("keydown", key);
+    }
+  }
+
+  void InputSystem::handleControllerButtonUp(Uint8 button) {
+    if (controllerButtonMap.find(button) != controllerButtonMap.end()) {
+      Key key = controllerButtonMap.at(button);
+
+      heldKeyState &= ~(u64)key;
+      pressedKeyState &= ~(u64)key;
+      releasedKeyState |= (u64)key;
+
+      signal("keyup", key);
+    }
+  }
+
+  // @todo refactor with handleControllerButtonDown()
   void InputSystem::handleKeyDown(const SDL_Keycode& code) {
     if (keyMap.find(code) != keyMap.end()) {
       Key key = keyMap.at(code);

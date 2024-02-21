@@ -11,7 +11,14 @@ using namespace Gamma;
 internal bool isIssuingDirectionalInput(GmContext* context) {
   auto& input = get_input();
 
-  return input.isKeyHeld(Key::W) || input.isKeyHeld(Key::A) || input.isKeyHeld(Key::S) || input.isKeyHeld(Key::D);
+  return (
+    input.isKeyHeld(Key::W) ||
+    input.isKeyHeld(Key::A) ||
+    input.isKeyHeld(Key::S) ||
+    input.isKeyHeld(Key::D) ||
+    input.getLeftStick().x != 0.f ||
+    input.getLeftStick().y != 0.f
+  );
 }
 
 internal void resolveNewPositionFromCollision(const Collision& collision, Object& player) {
@@ -237,7 +244,7 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
   }
 
   // Directional movement
-  if (time_since(state.lastLedgeTurnaroundTime) > 0.2f && !state.isDoingTargetedAirDash) {    
+  if (time_since(state.lastLedgeTurnaroundTime) > 0.2f && !state.isDoingTargetedAirDash) {
     if (input.isKeyHeld(Key::W)) {
       acceleration += forward * rate;
     }
@@ -255,6 +262,11 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
       // @todo fix player model orientation
       acceleration += left.invert() * rate;
     }
+
+    // if (input.didMoveJoystick()) {
+      acceleration += forward * input.getLeftStick().y * rate * -1.f;
+      acceleration += left * input.getLeftStick().x * rate * -1.f;
+    // }
   }
 
   // Directional change handling/turn factor determination
@@ -318,7 +330,7 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
       state.superjumpChargeTime = 0.f;
     }
 
-    if (input.didPressKey(Key::SPACE)) {
+    if (input.didPressKey(Key::SPACE) || input.didPressKey(Key::CONTROLLER_A)) {
       float sceneTime = get_scene_time();
 
       if (state.isOnSolidGround) {

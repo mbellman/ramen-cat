@@ -39,7 +39,12 @@ internal void updateThirdPersonCameraDirection(GmContext* context, GameState& st
   auto& input = get_input();
 
   if (
-    time_since(state.lastMouseMoveTime) < 1.f &&
+    (
+      time_since(state.lastMouseMoveTime) < 1.f ||
+      input.getRightStick().x != 0.f ||
+      input.getRightStick().y != 0.f
+    )
+    &&
     !input.didPressKey(Key::SHIFT)
   ) {
     // Defer to mouse camera control
@@ -55,7 +60,7 @@ internal void updateThirdPersonCameraDirection(GmContext* context, GameState& st
       Vec3f motion = player.position - state.previousPlayerPosition;
 
       if (motion.magnitude() > 0.f) {
-        targetAltitude -= motion.unit().y;
+        targetAltitude += Gm_Absf(motion.unit().y);
 
         state.camera3p.altitude = Gm_Lerpf(state.camera3p.altitude, targetAltitude, 5.f * dt);
       }
@@ -163,6 +168,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
 
         camera.orientation.yaw += mouseDelta.x / 1500.f;
         camera.orientation.pitch += mouseDelta.y / 1500.f;
+
         camera.rotation = camera.orientation.toQuaternion();
       }
 
@@ -192,6 +198,9 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
 
         state.camera3p.azimuth -= delta.x / 1000.f;
         state.camera3p.altitude += delta.y / 1000.f;
+
+        state.camera3p.azimuth -= input.getRightStick().x * 0.02f;
+        state.camera3p.altitude += input.getRightStick().y * 0.02f;
 
         state.camera3p.limitAltitude(0.9f);
       }
