@@ -20,6 +20,8 @@ namespace Gamma {
    * OpenGLScreenQuad
    * ----------------
    */
+  u32 OpenGLScreenQuad::totalDrawCalls = 0;
+
   OpenGLScreenQuad::OpenGLScreenQuad() {
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
@@ -45,6 +47,8 @@ namespace Gamma {
     glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    totalDrawCalls++;
   }
 
   void OpenGLScreenQuad::render() {

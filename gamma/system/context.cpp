@@ -71,6 +71,7 @@ static void Gm_DisplayDevtools(GmContext* context) {
       auto trisLabel = "Tris: " + String(sceneStats.tris);
       auto totalLightsLabel = "Lights: " + String(sceneStats.totalLights);
       auto totalMeshesLabel = "Meshes: " + String(sceneStats.totalMeshes);
+      auto totalDrawCallsLabel = "Draw calls: " + String(renderStats.totalDrawCalls);
       auto objectAllocationLabel = "Object Allocation: " + Gm_ToDebugString(objectAllocationTotalInMegabytes) + "MB";
       auto gpuMemoryLabel = "GPU Memory: " + String(renderStats.gpuMemoryUsed) + "MB / " + String(renderStats.gpuMemoryTotal) + "MB";
 
@@ -84,8 +85,9 @@ static void Gm_DisplayDevtools(GmContext* context) {
       renderer.renderText(font_sm, trisLabel.c_str(), 25, 125, TEXT_COLOR, BACKGROUND_COLOR);
       renderer.renderText(font_sm, totalLightsLabel.c_str(), 25, 150, TEXT_COLOR, BACKGROUND_COLOR);
       renderer.renderText(font_sm, totalMeshesLabel.c_str(), 25, 175, TEXT_COLOR, BACKGROUND_COLOR);
-      renderer.renderText(font_sm, objectAllocationLabel.c_str(), 25, 200, TEXT_COLOR, BACKGROUND_COLOR);
-      renderer.renderText(font_sm, gpuMemoryLabel.c_str(), 25, 225, TEXT_COLOR, BACKGROUND_COLOR);
+      renderer.renderText(font_sm, totalDrawCallsLabel.c_str(), 25, 200, TEXT_COLOR, BACKGROUND_COLOR);
+      renderer.renderText(font_sm, objectAllocationLabel.c_str(), 25, 225, TEXT_COLOR, BACKGROUND_COLOR);
+      renderer.renderText(font_sm, gpuMemoryLabel.c_str(), 25, 250, TEXT_COLOR, BACKGROUND_COLOR);
     }
 
     // Render user-defined debug messages
@@ -96,7 +98,7 @@ static void Gm_DisplayDevtools(GmContext* context) {
       u8 index = 0;
 
       for (auto& message : context->debugMessages) {
-        renderer.renderText(font_sm, message.c_str(), 25, 275 + index++ * 25, TEXT_COLOR, BACKGROUND_COLOR);
+        renderer.renderText(font_sm, message.c_str(), 25, 300 + index++ * 25, TEXT_COLOR, BACKGROUND_COLOR);
       }
     }
 

@@ -22,6 +22,8 @@ namespace Gamma {
     MODEL_MATRIX
   };
 
+  u32 OpenGLMesh::totalDrawCalls = 0;
+
   OpenGLMesh::OpenGLMesh(Mesh* mesh) {
     sourceMesh = mesh;
 
@@ -231,5 +233,7 @@ namespace Gamma {
       // draw all mesh instances together
       glDrawElementsInstanced(primitiveMode, mesh.faceElements.size(), GL_UNSIGNED_INT, (void*)0, mesh.objects.totalVisible());
     }
+
+    totalDrawCalls++;
   }
 }

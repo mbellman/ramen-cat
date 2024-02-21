@@ -9,6 +9,8 @@
 namespace Gamma {
   class OpenGLMesh {
   public:
+    static u32 totalDrawCalls;
+
     OpenGLMesh(Mesh* mesh);
     ~OpenGLMesh();
 

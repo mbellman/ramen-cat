@@ -132,6 +132,9 @@ namespace Gamma {
   }
 
   void OpenGLRenderer::render() {
+    OpenGLMesh::totalDrawCalls = 0;
+    OpenGLScreenQuad::totalDrawCalls = 0;
+
     auto& scene = gmContext->scene;
 
     // @todo allow the clouds texture to be changed
@@ -1629,6 +1632,7 @@ namespace Gamma {
 
     stats.gpuMemoryTotal = total / 1000;
     stats.gpuMemoryUsed = (total - available) / 1000;
+    stats.totalDrawCalls = OpenGLMesh::totalDrawCalls + OpenGLScreenQuad::totalDrawCalls;
     stats.isVSynced = SDL_GL_GetSwapInterval() == 1;
 
     return stats;

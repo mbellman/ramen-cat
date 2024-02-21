@@ -5,6 +5,8 @@
 namespace Gamma {
   class OpenGLScreenQuad {
   public:
+    static u32 totalDrawCalls;
+
     static void render();
 
   private:

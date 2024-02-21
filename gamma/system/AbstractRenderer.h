@@ -24,6 +24,7 @@ namespace Gamma {
   struct RenderStats {
     u32 gpuMemoryTotal = 0;
     u32 gpuMemoryUsed = 0;
+    u32 totalDrawCalls = 0;
     bool isVSynced = false;
   };
 
@@ -53,6 +54,6 @@ namespace Gamma {
   protected:
     GmContext* gmContext = nullptr;
     Area<u32> internalResolution = { 1920, 1080 };
-    RenderStats stats = { 0, 0, false };
+    RenderStats stats = { 0, 0, 0, false };
   };
 }
