@@ -40,6 +40,21 @@ std::vector<MeshAsset> shop_meshes = {
     },
     .attributes = {
       .texture = "./game/assets/wood-beam.png"
+    },
+    .pieces = {
+      {
+        .name = "food-stall-1-canopy",
+        .create = []() {
+          return Mesh::Model("./game/assets/shops/food-stall-1-canopy.obj");
+        },
+        .attributes = {
+          .type = MeshType::PRESET_ANIMATED,
+          .animation = {
+            .type = PresetAnimationType::CLOTH,
+            .factor = 0.5f
+          }
+        }
+      }
     }
   }
 };
