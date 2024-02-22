@@ -211,6 +211,15 @@ internal void handlePlayerParticles(GmContext* context, GameState& state, float 
   }
 }
 
+internal void handlePlayerLight(GmContext* context) {
+  auto& light = get_light("player-light");
+
+  light.position = get_player().position + Vec3f(0, PLAYER_RADIUS * 2.f, 0);
+  light.color = Vec3f(1.f, 0.8f, 0.6f);
+  light.radius = 300.f;
+  light.power = 1.f;
+}
+
 internal void handleDayNightCycle(GmContext* context, GameState& state, float dt) {
   if (state.gameStartTime != 0.f) {
     state.dayNightCycleTime += dt * 0.001f;
@@ -300,6 +309,7 @@ void EffectsSystem::handleGameEffects(GmContext* context, GameState& state, floa
   START_TIMING("handleGameEffects");
 
   handlePlayerParticles(context, state, dt);
+  // handlePlayerLight(context);
   handleDayNightCycle(context, state, dt);
   handleToriiGateEffects(context, state, dt);
 

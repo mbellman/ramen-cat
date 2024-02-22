@@ -7,6 +7,7 @@
 #include "mesh_library/overworld_station.h"
 #include "mesh_library/overworld_stairs.h"
 #include "mesh_library/entity_meshes.h"
+#include "mesh_library/shops.h"
 #include "mesh_library/decorations.h"
 #include "mesh_library/vehicles.h"
 #include "mesh_library/uniques.h"
@@ -568,6 +569,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     .attributes = {
       .texture = "./game/assets/cobblestone.png",
       .normals = "./game/assets/cobblestone-normals.png",
+      .maxCascade = 4,
       .roughness = 0.7f,
       .useXzPlaneTexturing = true
     }
@@ -920,7 +922,8 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     },
     .attributes = {
       .texture = "./game/assets/tiles-1.png",
-      .normals = "./game/assets/tiles-1-normals.png"
+      .normals = "./game/assets/tiles-1-normals.png",
+      .maxCascade = 4
     }
   },
   {
@@ -1111,34 +1114,6 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     },
     .attributes = {
       .texture = "./game/assets/roof.png"
-    }
-  },
-  {
-    .name = "shop-1",
-    .hitboxScale = Vec3f(1.f, 0.3f, 1.f),
-    .create = []() {
-      return Mesh::Model("./game/assets/shop-1.obj");
-    },
-    .attributes = {
-      .texture = "./game/assets/shop-1.png"
-    }
-  },
-  {
-    .name = "ramen-stall",
-    .create = []() {
-      return Mesh::Model("./game/assets/ramen-stall.obj");
-    },
-    .attributes = {
-      .texture = "./game/assets/wood-beam.png"
-    }
-  },
-  {
-    .name = "ramen-stall-2",
-    .create = []() {
-      return Mesh::Model("./game/assets/ramen-stall-2.obj");
-    },
-    .attributes = {
-      .texture = "./game/assets/ramen-stall-2.png"
     }
   },
   {
@@ -1549,6 +1524,7 @@ void GameMeshes::loadAllMeshAssets() {
   add_mesh_assets(assets, overworld_station_meshes);
   add_mesh_assets(assets, overworld_stairs_meshes);
   add_mesh_assets(assets, entity_meshes);
+  add_mesh_assets(assets, shop_meshes);
   add_mesh_assets(assets, decoration_meshes);
   add_mesh_assets(assets, vehicle_meshes);
   add_mesh_assets(assets, unique_meshes);

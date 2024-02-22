@@ -46,6 +46,8 @@ namespace Gamma {
     return Matrix4f::glPerspective(resolution, fov, near, far);
   }
 
+  u32 OpenGLLightDisc::totalDrawCalls = 0;
+
   void OpenGLLightDisc::init() {
     glGenVertexArrays(1, &vao);
     glGenBuffers(2, &buffers[0]);
@@ -160,6 +162,8 @@ namespace Gamma {
 
     glBindVertexArray(vao);
     glDrawArrays(GL_TRIANGLES, 0, DISC_SLICES * 3);
+
+    totalDrawCalls++;
   }
 
   void OpenGLLightDisc::draw(const std::vector<Light*>& lights, const Area<u32>& resolution, const Camera& camera) {
@@ -181,6 +185,8 @@ namespace Gamma {
 
     glBindVertexArray(vao);
     glDrawArraysInstanced(GL_TRIANGLES, 0, DISC_SLICES * 3, lights.size());
+
+    totalDrawCalls++;
 
     delete[] discs;
   }

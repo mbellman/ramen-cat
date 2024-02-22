@@ -918,6 +918,13 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
     mesh("player")->useMipmaps = false;
     mesh("player")->useCloseTranslucency = true;
 
+    auto& playerLight = create_light(LightType::POINT);
+
+    playerLight.radius = 0.f;
+    playerLight.serializable = false;
+
+    save_light("player-light", &playerLight);
+
     add_mesh("glider", 1, Mesh::Model("./game/assets/glider.obj"));
     mesh("glider")->roughness = 0.4f;
     mesh("glider")->useCloseTranslucency = true;

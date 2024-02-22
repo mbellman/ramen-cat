@@ -16,6 +16,8 @@ namespace Gamma {
 
   class OpenGLLightDisc : public Initable, public Destroyable {
   public:
+    static u32 totalDrawCalls;
+  
     virtual void init() override;
     virtual void destroy() override;
     void draw(const Light& light, const Area<u32>& resolution, const Camera& camera);

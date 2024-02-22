@@ -134,6 +134,7 @@ namespace Gamma {
   void OpenGLRenderer::render() {
     OpenGLMesh::totalDrawCalls = 0;
     OpenGLScreenQuad::totalDrawCalls = 0;
+    OpenGLLightDisc::totalDrawCalls = 0;
 
     auto& scene = gmContext->scene;
 
@@ -1632,7 +1633,7 @@ namespace Gamma {
 
     stats.gpuMemoryTotal = total / 1000;
     stats.gpuMemoryUsed = (total - available) / 1000;
-    stats.totalDrawCalls = OpenGLMesh::totalDrawCalls + OpenGLScreenQuad::totalDrawCalls;
+    stats.totalDrawCalls = OpenGLMesh::totalDrawCalls + OpenGLScreenQuad::totalDrawCalls + OpenGLLightDisc::totalDrawCalls;
     stats.isVSynced = SDL_GL_GetSwapInterval() == 1;
 
     return stats;
