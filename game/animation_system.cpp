@@ -566,7 +566,7 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
         timeSinceLastDashLandingJump < AIR_DASH_SPIN_DURATION &&
         timeSinceLastAirDash > timeSinceLastDashLandingJump
       ) {
-        float alpha = Gm_Minf(1.f, timeSinceLastDashLandingJump / 0.5f);
+        float alpha = Gm_Minf(1.f, timeSinceLastAirDash / 0.7f);
 
         spinAlpha = easeOutBack(alpha, 1.5f);
       }

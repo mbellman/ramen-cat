@@ -148,6 +148,16 @@ std::vector<MeshAsset> overworld_city_meshes = {
     }
   },
   {
+    .name = "concrete-b2",
+    .hitboxScale = Vec3f(1.f, 1.f, 0.3f),
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/concrete-b2.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    },
+  },
+  {
     .name = "wood-house",
     .dynamic = true,
     .create = []() {
