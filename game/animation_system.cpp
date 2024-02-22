@@ -547,6 +547,7 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
 
     // Spin when air dashing
     float timeSinceLastAirDash = time_since(state.lastAirDashTime);
+    float timeSinceLastDashLandingJump = time_since(state.lastDashLandingJumpTime);
 
     if (
       state.lastAirDashTime != 0.f &&
@@ -560,6 +561,15 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
       float totalRotation = state.airDashSpinEndYaw - state.airDashSpinStartYaw;
       float spinAlpha = easeOutElastic(timeSinceLastAirDash / AIR_DASH_SPIN_DURATION);
       float targetTurnFactor = 2.f * (1.f - spinAlpha);
+
+      if (
+        timeSinceLastDashLandingJump < AIR_DASH_SPIN_DURATION &&
+        timeSinceLastAirDash > timeSinceLastDashLandingJump
+      ) {
+        float alpha = Gm_Minf(1.f, timeSinceLastDashLandingJump / 0.5f);
+
+        spinAlpha = easeOutBack(alpha, 1.5f);
+      }
 
       yaw = state.airDashSpinStartYaw + spinAlpha * totalRotation;
 

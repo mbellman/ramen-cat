@@ -400,6 +400,7 @@ void CameraSystem::handleVisibilityCulling(GmContext* context, GameState& state)
     "b1-base", "b1-levels", "b1-windows",
     "b2-base", "b2-levels", "b2-columns", "b2-windows",
     "b3-base", "b3-levels", "b3-columns",
+    "b4", "b4-columns", "b4-windows",
     "windmill-base", "windmill-wheel",
     "exhaust-fan", "exhaust-fan-blades",
     "cylinder-1", "cylinder-2", "dome-1",

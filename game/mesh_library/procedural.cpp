@@ -81,6 +81,16 @@ std::vector<MeshAsset> procedural_meshes = {
       .texture = "./game/assets/wood-beam.png",
       .maxCascade = 4
     }
+  },
+  {
+    .name = "wood-planter",
+    .hitboxScale = Vec3f(1.f, 0.2f, 0.2f),
+    .create = []() {
+      return Mesh::Model("./game/assets/plants/wood-planter.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/wood-beam.png"
+    }
   }
 };
 
@@ -129,7 +139,29 @@ std::vector<MeshAsset> procedural_mesh_parts = {
     }
   },
 
-  // plant-strip
+  /**
+   * Procedural plants
+   * -----------------
+   */
+  {
+    .name = "p_croton",
+    .hitboxScale = Vec3f(1.f, 0.3f, 1.f),
+    .create = []() {
+      return Mesh::Model(
+        "./game/assets/plants/croton.obj"
+      );
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .texture = "./game/assets/plants/croton.png",
+      .maxCascade = 4,
+      .animation = {
+        .type = PresetAnimationType::LEAF,
+        .factor = 3.f
+      },
+      .roughness = 0.3f
+    }
+  },
   {
     .name = "p_shrub",
     .maxInstances = 10000,
