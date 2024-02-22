@@ -400,6 +400,23 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
+    .name = "flat-leaves",
+    .hitboxScale = Vec3f(1.f, 1.f, 0.1f),
+    .create = []() {
+      return Mesh::Model("./game/assets/plants/flat-leaves.obj");
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .texture = "./game/assets/plants/leaves.png",
+      .maxCascade = 4,
+      .animation = {
+        .type = PresetAnimationType::FLOWER,
+        .factor = 15.f
+      },
+      .useMipmaps = false
+    }
+  },
+  {
     .name = "hanging-leaves",
     .hitboxScale = Vec3f(0.9f, 0.2f, 0.9f),
     .create = []() {

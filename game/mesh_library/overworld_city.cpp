@@ -156,6 +156,20 @@ std::vector<MeshAsset> overworld_city_meshes = {
     .attributes = {
       .maxCascade = 4
     },
+    .pieces = {
+      {
+        .name = "concrete-b2-windows",
+        .create = []() {
+          return Mesh::Model("./game/assets/buildings/concrete-b2-windows.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(0.1f, 0.2f, 0.4f);
+        },
+        .attributes = {
+          .roughness = 0.1f
+        }
+      }
+    }
   },
   {
     .name = "wood-house",
