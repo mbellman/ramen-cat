@@ -38,6 +38,31 @@ internal void updateThirdPersonCameraRadius(GmContext* context, GameState& state
 internal void updateThirdPersonCameraDirection(GmContext* context, GameState& state, float dt) {
   auto& input = get_input();
 
+  // Handle camera orientation adjustments based on player/entity actions
+  {
+    // Dash landing jumps
+    const float DASH_LANDING_JUMP_CAMERA_TRANSITION_TIME = 1.5f;
+
+    if (
+      state.lastDashLandingJumpTime != 0.f &&
+      time_since(state.lastDashLandingJumpTime) < DASH_LANDING_JUMP_CAMERA_TRANSITION_TIME
+    ) {
+      auto alpha = easeOutQuint(time_since(state.lastDashLandingJumpTime) / DASH_LANDING_JUMP_CAMERA_TRANSITION_TIME);
+
+      state.camera3p.altitude = Gm_Lerpf(state.dashLandingJumpStartCameraAltitude, Gm_PI * 0.4f, alpha);
+    }
+
+    // Launch pad jumps
+    if (
+      state.lastJumpPadLaunchTime != 0.f &&
+      time_since(state.lastJumpPadLaunchTime) < 0.2f
+    ) {
+      auto alpha = time_since(state.lastJumpPadLaunchTime) / 0.2f;
+
+      state.camera3p.altitude = Gm_Lerpf(state.camera3p.altitude, 0.f, alpha);
+    }
+  }
+
   if (
     !input.didPressKey(Key::SHIFT) &&
     (
@@ -231,18 +256,6 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
 
     // Wrap the azimuth to [0, Gm_TAU]
     state.camera3p.azimuth = Gm_Modf(state.camera3p.azimuth, Gm_TAU);
-  }
-
-  // Handle camera orientation adjustments based on entity interactions
-  {
-    if (
-      state.lastJumpPadLaunchTime != 0.f &&
-      time_since(state.lastJumpPadLaunchTime) < 0.2f
-    ) {
-      auto alpha = time_since(state.lastJumpPadLaunchTime) / 0.2f;
-
-      state.camera3p.altitude = Gm_Lerpf(state.camera3p.altitude, 0.f, alpha);
-    }
   }
 
   // @todo move to game_constants.h

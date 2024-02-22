@@ -73,6 +73,8 @@ struct GameState {
   // @temporary
   float gameStartTime = 0.f;
 
+  float dayNightCycleTime = 0.f;
+
   std::string currentLevelName;
 
   Gamma::ThirdPersonCamera camera3p;
@@ -95,6 +97,8 @@ struct GameState {
   float lastWallKickTime = 0.f;
   float lastAirDashTime = 0.f;
   float lastHardLandingTime = 0.f;
+  float lastDashLandingTime = 0.f;
+  float lastDashLandingJumpTime = 0.f;
   float lastLedgeTurnaroundTime = 0.f;
   float lastGroundParticleSpawnTime = 0.f;
   float lastAirParticleSpawnTime = 0.f;
@@ -102,9 +106,10 @@ struct GameState {
   float lastMouseMoveTime = 0.f;
   float lastBoostTime = 0.f;
 
-  float superjumpChargeTime = 0.f;
+  float dashLandingJumpStartCameraAltitude = 0.f;
 
-  float dayNightCycleTime = 0.f;
+  // @todo remove charged super jumps
+  float superjumpChargeTime = 0.f;
 
   bool isOnSolidGround = false;
   bool isMovingPlayerThisFrame = false;

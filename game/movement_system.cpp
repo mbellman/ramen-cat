@@ -388,6 +388,14 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
           context->scene.fx.screenWarpTime = sceneTime;
         }
 
+        if (time_since(state.lastDashLandingTime) < 0.5f) {
+          jumpFactor *= 1.25f;
+
+          state.velocity += camera.orientation.getDirection().xz() * 250.f;
+          state.lastDashLandingJumpTime = sceneTime;
+          state.dashLandingJumpStartCameraAltitude = state.camera3p.altitude;
+        }
+
         state.velocity.y = DEFAULT_JUMP_Y_VELOCITY * jumpFactor;
         state.lastJumpTime = sceneTime;
 
@@ -425,7 +433,12 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
           // Normal air dash
           airDashDirection = camera.orientation.getDirection();
 
-          if (airDashDirection.y < 0.f) {
+          if (time_since(state.lastJumpTime) < 1.f) {
+            airDashDirection += Vec3f(0, -2.f, 0);
+            airDashDirection = airDashDirection.unit();
+
+            state.lastDashLandingTime = sceneTime;
+          } else if (airDashDirection.y < 0.f) {
             airDashDirection = (airDashDirection * Vec3f(2.f, 1.f, 2.f)).unit();
           }
 

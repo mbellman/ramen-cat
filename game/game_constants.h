@@ -28,7 +28,7 @@ constexpr static float BIRD_AT_REST_RESPAWN_DISTANCE = 2500.f;
  * Movement/physics constants
  * --------------------------
  */
-constexpr static float FORCE_GRAVITY = 750.f;
+constexpr static float FORCE_GRAVITY = 1000.f;
 constexpr static float FORCE_WALL = 1000.f;
 constexpr static float MAXIMUM_HORIZONTAL_GROUND_SPEED = 650.f;
 constexpr static float MAXIMUM_HORIZONTAL_AIR_SPEED = 1500.f;
