@@ -144,6 +144,18 @@ std::vector<MeshAsset> overworld_city_meshes = {
         .rebuild = [](auto& source, auto& piece) {
           piece.color = source.color;
         }
+      },
+      {
+        .name = "b3-windows",
+        .create = []() {
+          return Mesh::Model("./game/assets/buildings/b3-windows.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(0.1f, 0.2f, 0.4f);
+        },
+        .attributes = {
+          .roughness = 0.1f
+        }
       }
     }
   },
@@ -169,6 +181,16 @@ std::vector<MeshAsset> overworld_city_meshes = {
           .roughness = 0.1f
         }
       }
+    }
+  },
+  {
+    .name = "cylinder-b1",
+    .hitboxScale = Vec3f(0.4f, 1.f, 0.4f),
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/cylinder-b1.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
     }
   },
   {

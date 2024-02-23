@@ -67,7 +67,7 @@ float getScreenSpaceAmbientOcclusionContribution(float fragment_depth, vec3 frag
   const int TOTAL_SAMPLES = 8;
   float linearized_fragment_depth = getLinearizedDepth(fragment_depth, zNear, zFar);
   float radius_depth_ratio = saturate(linearized_fragment_depth / (zFar * 0.5));
-  float radius = mix(16.0, (zFar / 10.0), radius_depth_ratio);
+  float radius = mix(16.0, (zFar / 5.0), pow(radius_depth_ratio, 1.2));
   float occlusion = 0.0;
 
   #if USE_DENOISING == 1

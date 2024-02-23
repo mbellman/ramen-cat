@@ -302,12 +302,15 @@ internal void handleAnimatedMeshWithRig(Mesh& mesh, AnimationRig& rig) {
 }
 
 internal void handleWaterfallAnimations(GmContext* context, float dt) {
-  auto displacement = get_scene_time() * 0.2f;
+  auto t = get_scene_time();
+  auto displacement = t * 0.2f;
   auto& mesh = *mesh("waterfall-1");
 
   for (u32 i = 0; i < mesh.vertices.size(); i++) {
     mesh.transformedVertices[i] = mesh.vertices[i];
 
+    mesh.transformedVertices[i].position.x *= 1.f + sinf(t * 2.f + mesh.vertices[i].position.y * 2.f) * 0.1f;
+    mesh.transformedVertices[i].position.z *= 1.f + sinf(t * 2.f + mesh.vertices[i].position.y * 2.f) * 0.1f;
     mesh.transformedVertices[i].uv.y = Gm_Modf(mesh.vertices[i].uv.y - displacement, 1.f);
   }
 }
