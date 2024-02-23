@@ -173,6 +173,7 @@ std::vector<MeshAsset> unique_meshes = {
   },
   {
     .name = "city-tree-trunk",
+    .hitboxScale = Vec3f(0.2f, 1.f, 0.2f),
     .maxInstances = 5,
     .create = []() {
       return Mesh::Model("./game/assets/uniques/city-tree-trunk.obj");

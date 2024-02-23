@@ -191,6 +191,22 @@ std::vector<MeshAsset> overworld_city_meshes = {
     },
     .attributes = {
       .maxCascade = 4
+    },
+    .pieces = {
+      {
+        .name = "cylinder-b1-roof",
+        .create = []() {
+          return Mesh::Model("./game/assets/buildings/dome-1.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.position = source.position + Vec3f(0, source.scale.y * 1.45f, 0);
+          piece.scale = source.scale * Vec3f(0.55f, 0.65f, 0.55f);
+          piece.color = Vec3f(0.9f);
+        },
+        .attributes = {
+          .roughness = 0.8f
+        }
+      }
     }
   },
   {
