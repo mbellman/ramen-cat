@@ -67,10 +67,16 @@ vec3 getToonShadedColor(vec3 current_out_color, vec2 uv, float depth, float line
   vec2 uv2 = uv + texel_size * vec2(1.0, 0) * OUTLINE_THICKNESS;
   vec2 uv3 = uv + texel_size * vec2(0, -1.0) * OUTLINE_THICKNESS;
   vec2 uv4 = uv + texel_size * vec2(0, 1.0) * OUTLINE_THICKNESS;
-  float depth1 = getLinearizedDepth(texture(texColorAndDepth, uv1).w, zNear, zFar);
-  float depth2 = getLinearizedDepth(texture(texColorAndDepth, uv2).w, zNear, zFar);
-  float depth3 = getLinearizedDepth(texture(texColorAndDepth, uv3).w, zNear, zFar);
-  float depth4 = getLinearizedDepth(texture(texColorAndDepth, uv4).w, zNear, zFar);
+
+  vec4 t1 = texture(texColorAndDepth, uv1);
+  vec4 t2 = texture(texColorAndDepth, uv2);
+  vec4 t3 = texture(texColorAndDepth, uv3);
+  vec4 t4 = texture(texColorAndDepth, uv4);
+
+  float depth1 = getLinearizedDepth(t1.w, zNear, zFar);
+  float depth2 = getLinearizedDepth(t2.w, zNear, zFar);
+  float depth3 = getLinearizedDepth(t3.w, zNear, zFar);
+  float depth4 = getLinearizedDepth(t4.w, zNear, zFar);
 
   // Determine how sharp of an angle the surface is being viewed at
   vec3 world_position = getWorldPosition(depth, uv, matInverseProjection, matInverseView);

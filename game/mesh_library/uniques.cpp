@@ -145,5 +145,51 @@ std::vector<MeshAsset> unique_meshes = {
         }
       }
     }
+  },
+  {
+    .name = "landmark-sign",
+    .maxInstances = 20,
+    .create = []() {
+      return Mesh::Model("./game/assets/uniques/landmark-sign-supports.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    },
+    .pieces = {
+      {
+        .name = "landmark-sign-roof",
+        .maxInstances = 20,
+        .create = []() {
+          return Mesh::Model("./game/assets/uniques/landmark-sign-roof.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(0.1f, 0.3f, 0.6f);
+        },
+        .attributes = {
+          .roughness = 0.3f
+        }
+      }
+    }
+  },
+  {
+    .name = "city-tree-trunk",
+    .maxInstances = 5,
+    .create = []() {
+      return Mesh::Model("./game/assets/uniques/city-tree-trunk.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    },
+    .pieces = {
+      {
+        .name = "city-tree-branches",
+        .create = []() {
+          return Mesh::Model("./game/assets/uniques/city-tree-branches.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(1.f, 0.7f, 0.4f);
+        }
+      }
+    }
   }
 };
