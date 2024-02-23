@@ -34,6 +34,18 @@ std::vector<MeshAsset> vehicle_meshes = {
     }
   },
 
+  {
+    .name = "cable-car-pole",
+    .hitboxScale = Vec3f(0.2f, 1.f, 0.2f),
+    .create = []() {
+      return Mesh::Model("./game/assets/vehicles/cable-car-pole.obj");
+    },
+    .attributes = {
+      .maxCascade = 4,
+      .roughness = 0.2f
+    }
+  },
+
   // Vehicles
   {
     .name = "small-train",
