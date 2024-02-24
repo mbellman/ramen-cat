@@ -6,6 +6,48 @@ using namespace Gamma;
 
 std::vector<MeshAsset> unique_meshes = {
   {
+    .name = "umimura-tree-base",
+    .defaultScale = Vec3f(1000.f),
+    .maxInstances = 2,
+    .create = []() {
+      return Mesh::Model("./game/assets/umimura-tree-base.obj");
+    },
+    .attributes = {
+      .roughness = 0.2f
+    }
+  },
+  {
+    .name = "umimura-tree-branches",
+    .defaultScale = Vec3f(1000.f),
+    .maxInstances = 2,
+    .create = []() {
+      return Mesh::Model("./game/assets/umimura-tree-branches.obj");
+    },
+    .attributes = {
+      .emissivity = 0.5f
+    }
+  },
+  {
+    .name = "umimura-sculpture-stand",
+    .hitboxScale = Vec3f(0.1f, 1.f, 0.1f),
+    .maxInstances = 20,
+    .create = []() {
+      return Mesh::Model("./game/assets/sculpture-stand.obj");
+    }
+  },
+  {
+    .name = "umimura-sculpture-fan",
+    .moving = true,
+    .hitboxScale = Vec3f(1.f, 0.2f, 1.f),
+    .maxInstances = 20,
+    .create = []() {
+      return Mesh::Model("./game/assets/sculpture-fan.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/sculpture-fan.png"
+    }
+  },
+  {
     .name = "big-tree-trunk",
     .hitboxScale = Vec3f(0.3f, 1.f, 0.3f),
     .maxInstances = 5,
@@ -26,18 +68,6 @@ std::vector<MeshAsset> unique_meshes = {
     .attributes = {
       .maxCascade = 4,
       .roughness = 0.2f
-    }
-  },
-  {
-    .name = "water-wheel",
-    .moving = true,
-    .hitboxScale = Vec3f(0.2f, 1.f, 1.f),
-    .maxInstances = 5,
-    .create = []() {
-      return Mesh::Model("./game/assets/uniques/water-wheel.obj");
-    },
-    .attributes = {
-      .maxCascade = 4
     }
   },
   {

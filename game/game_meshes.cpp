@@ -11,6 +11,7 @@
 #include "mesh_library/shops.h"
 #include "mesh_library/lights.h"
 #include "mesh_library/decorations.h"
+#include "mesh_library/spinners.h"
 #include "mesh_library/vehicles.h"
 #include "mesh_library/uniques.h"
 #include "mesh_library/procedural.h"
@@ -494,32 +495,6 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
-    .name = "windmill-wheel",
-    .moving = true,
-    .defaultScale = Vec3f(75.f),
-    .hitboxScale = Vec3f(1.f, 1.f, 0.1f),
-    .create = []() {
-      return Mesh::Model("./game/assets/windmill-wheel.obj");
-    },
-    .attributes = {
-      .texture = "./game/assets/wood-beam.png",
-      .maxCascade = 4
-    }
-  },
-  {
-    .name = "windmill-wheel-2",
-    .moving = true,
-    .defaultScale = Vec3f(75.f),
-    .hitboxScale = Vec3f(1.f, 1.f, 0.1f),
-    .create = []() {
-      return Mesh::Model("./game/assets/windmill-wheel-2.obj");
-    },
-    .attributes = {
-      .texture = "./game/assets/wood-beam.png",
-      .maxCascade = 4
-    }
-  },
-  {
     .name = "wind-turbine-base",
     .hitboxScale = Vec3f(0.1f, 1.f, 0.1f),
     .create = []() {
@@ -801,53 +776,6 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       .roughness = 0.3f
     }
   },
-
-  /**
-   * Level-specific structures
-   * ------------------------
-   */
-  {
-    .name = "umimura-tree-base",
-    .defaultScale = Vec3f(1000.f),
-    .maxInstances = 2,
-    .create = []() {
-      return Mesh::Model("./game/assets/umimura-tree-base.obj");
-    },
-    .attributes = {
-      .roughness = 0.2f
-    }
-  },
-  {
-    .name = "umimura-tree-branches",
-    .defaultScale = Vec3f(1000.f),
-    .maxInstances = 2,
-    .create = []() {
-      return Mesh::Model("./game/assets/umimura-tree-branches.obj");
-    },
-    .attributes = {
-      .emissivity = 0.5f
-    }
-  },
-  {
-    .name = "umimura-sculpture-stand",
-    .hitboxScale = Vec3f(0.1f, 1.f, 0.1f),
-    .maxInstances = 2,
-    .create = []() {
-      return Mesh::Model("./game/assets/sculpture-stand.obj");
-    }
-  },
-  {
-    .name = "umimura-sculpture-fan",
-    .moving = true,
-    .hitboxScale = Vec3f(1.f, 0.2f, 1.f),
-    .maxInstances = 2,
-    .create = []() {
-      return Mesh::Model("./game/assets/sculpture-fan.obj");
-    },
-    .attributes = {
-      .texture = "./game/assets/sculpture-fan.png"
-    }
-  }
 };
 
 // @todo remove + define these meshes as pieces for parent meshes
@@ -1093,6 +1021,7 @@ void GameMeshes::loadAllMeshAssets() {
   add_mesh_assets(assets, shop_meshes);
   add_mesh_assets(assets, light_meshes);
   add_mesh_assets(assets, decoration_meshes);
+  add_mesh_assets(assets, spinner_meshes);
   add_mesh_assets(assets, vehicle_meshes);
   add_mesh_assets(assets, unique_meshes);
   add_mesh_assets(assets, procedural_meshes);
