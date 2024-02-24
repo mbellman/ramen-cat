@@ -425,10 +425,13 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
         if (state.hasAirDashTarget) {
           // Targeted air dash
           auto& target = objects("air-dash-target")[0];
+
           airDashDirection = (target.position - player.position).unit();
 
           state.isDoingTargetedAirDash = true;
           state.velocity = airDashDirection * MAXIMUM_HORIZONTAL_GROUND_SPEED * DASH_LEVEL_2_SPEED_FACTOR * 1.5f;
+
+          point_camera_at(target);
         } else {
           // Normal air dash
           airDashDirection = camera.orientation.getDirection();
