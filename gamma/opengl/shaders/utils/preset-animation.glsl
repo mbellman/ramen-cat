@@ -54,8 +54,8 @@ vec3 getClothAnimationOffset(vec3 vertex_position, vec3 world_position) {
   float rate = 3.0 * time * animation.speed;
 
   float displacement_factor = animation.factor * sqrt(abs(vertex_position.y));
-  float x = displacement_factor * 2.0 * sin(rate + vertex_position.y * 10.0 + vertex_position.x * 5.0);
-  float z = displacement_factor * cos(rate + vertex_position.y * 10.0 + vertex_position.x * 10.0);
+  float x = displacement_factor * 2.0 * sin(rate + vertex_position.y * 10.0 + world_position.x * 0.05);
+  float z = displacement_factor * cos(rate + vertex_position.y * 10.0 + world_position.x * 0.05);
 
   return vec3(x, 0, z);
 }
