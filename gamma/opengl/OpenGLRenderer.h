@@ -13,7 +13,7 @@
 #include "opengl/shader.h"
 #include "opengl/shadowmaps.h"
 #include "system/AbstractRenderer.h"
-#include "system/entities.h"
+#include "system/lights_objects_meshes.h"
 #include "system/type_aliases.h"
 
 namespace Gamma {

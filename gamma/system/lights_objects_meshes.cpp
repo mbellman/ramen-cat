@@ -6,7 +6,7 @@
 #include "math/vector.h"
 #include "math/utilities.h"
 #include "system/assert.h"
-#include "system/entities.h"
+#include "system/lights_objects_meshes.h"
 #include "system/ObjLoader.h"
 
 namespace Gamma {

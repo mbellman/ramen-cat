@@ -7,7 +7,7 @@
 #include "performance/benchmark.h"
 #include "system/console.h"
 #include "system/context.h"
-#include "system/entities.h"
+#include "system/lights_objects_meshes.h"
 #include "system/file.h"
 #include "system/flags.h"
 #include "system/immediate_ui.h"

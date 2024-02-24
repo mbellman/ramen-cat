@@ -1,6 +1,6 @@
 #include "system/assert.h"
 #include "system/camera.h"
-#include "system/entities.h"
+#include "system/lights_objects_meshes.h"
 #include "system/ObjectPool.h"
 
 #define UNUSED_OBJECT_INDEX 0xffff

@@ -17,8 +17,8 @@
 #include "system/camera.h"
 #include "system/console.h"
 #include "system/context.h"
-#include "system/entities.h"
 #include "system/flags.h"
+#include "system/lights_objects_meshes.h"
 #include "system/scene.h"
 #include "system/vector_helpers.h"
 

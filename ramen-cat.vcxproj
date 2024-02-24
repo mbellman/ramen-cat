@@ -125,7 +125,7 @@
     <ClCompile Include="game\inventory_system.cpp" />
     <ClCompile Include="game\main.cpp" />
     <ClCompile Include="game\mesh_library\decorations.cpp" />
-    <ClCompile Include="game\mesh_library\entity_meshes.cpp" />
+    <ClCompile Include="game\mesh_library\entities.cpp" />
     <ClCompile Include="game\mesh_library\lights.cpp" />
     <ClCompile Include="game\mesh_library\overworld_city.cpp" />
     <ClCompile Include="game\mesh_library\overworld_crossing.cpp" />
@@ -166,11 +166,11 @@
     <ClCompile Include="gamma\system\Commander.cpp" />
     <ClCompile Include="gamma\system\console.cpp" />
     <ClCompile Include="gamma\system\context.cpp" />
-    <ClCompile Include="gamma\system\entities.cpp" />
     <ClCompile Include="gamma\system\file.cpp" />
     <ClCompile Include="gamma\system\flags.cpp" />
     <ClCompile Include="gamma\system\immediate_ui.cpp" />
     <ClCompile Include="gamma\system\InputSystem.cpp" />
+    <ClCompile Include="gamma\system\lights_objects_meshes.cpp" />
     <ClCompile Include="gamma\system\ObjectPool.cpp" />
     <ClCompile Include="gamma\system\ObjLoader.cpp" />
     <ClCompile Include="gamma\system\packed_data.cpp" />
@@ -282,7 +282,7 @@
     <ClInclude Include="game\inventory_system.h" />
     <ClInclude Include="game\macros.h" />
     <ClInclude Include="game\mesh_library\decorations.h" />
-    <ClInclude Include="game\mesh_library\entity_meshes.h" />
+    <ClInclude Include="game\mesh_library\entities.h" />
     <ClInclude Include="game\mesh_library\lights.h" />
     <ClInclude Include="game\mesh_library\mesh_asset.h" />
     <ClInclude Include="game\mesh_library\overworld_city.h" />
@@ -309,6 +309,7 @@
     <ClInclude Include="gamma\math\orientation.h" />
     <ClInclude Include="gamma\math\plane.h" />
     <ClInclude Include="gamma\math\Quaternion.h" />
+    <ClInclude Include="gamma\math\utilities.h" />
     <ClInclude Include="gamma\math\vector.h" />
     <ClInclude Include="gamma\opengl\errors.h" />
     <ClInclude Include="gamma\opengl\framebuffer.h" />
@@ -330,11 +331,11 @@
     <ClInclude Include="gamma\system\Commander.h" />
     <ClInclude Include="gamma\system\console.h" />
     <ClInclude Include="gamma\system\context.h" />
-    <ClInclude Include="gamma\system\entities.h" />
     <ClInclude Include="gamma\system\file.h" />
     <ClInclude Include="gamma\system\flags.h" />
     <ClInclude Include="gamma\system\immediate_ui.h" />
     <ClInclude Include="gamma\system\InputSystem.h" />
+    <ClInclude Include="gamma\system\lights_objects_meshes.h" />
     <ClInclude Include="gamma\system\macros.h" />
     <ClInclude Include="gamma\system\ObjectPool.h" />
     <ClInclude Include="gamma\system\ObjLoader.h" />

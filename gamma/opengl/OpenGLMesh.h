@@ -3,7 +3,7 @@
 #include <string>
 
 #include "opengl/OpenGLTexture.h"
-#include "system/entities.h"
+#include "system/lights_objects_meshes.h"
 #include "system/type_aliases.h"
 
 namespace Gamma {

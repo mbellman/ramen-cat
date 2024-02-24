@@ -1,6 +1,6 @@
 #include "Gamma.h"
 
-#include "mesh_library/entity_meshes.h"
+#include "mesh_library/entities.h"
 
 using namespace Gamma;
 

@@ -6,7 +6,7 @@
 #include "mesh_library/overworld_crossing.h"
 #include "mesh_library/overworld_station.h"
 #include "mesh_library/overworld_stairs.h"
-#include "mesh_library/entity_meshes.h"
+#include "mesh_library/entities.h"
 #include "mesh_library/plants.h"
 #include "mesh_library/shops.h"
 #include "mesh_library/lights.h"

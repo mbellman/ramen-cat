@@ -4,7 +4,7 @@
 #include "performance/tools.h"
 #include "system/AbstractRenderer.h"
 #include "system/Commander.h"
-#include "system/entities.h"
+#include "system/lights_objects_meshes.h"
 #include "system/macros.h"
 #include "system/scene.h"
 #include "system/traits.h"

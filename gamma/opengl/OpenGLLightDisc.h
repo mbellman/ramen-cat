@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "math/plane.h"
-#include "system/entities.h"
+#include "system/lights_objects_meshes.h"
 #include "system/traits.h"
 #include "system/type_aliases.h"
 

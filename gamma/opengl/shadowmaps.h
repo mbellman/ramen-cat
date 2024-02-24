@@ -5,7 +5,7 @@
 #include "opengl/framebuffer.h"
 #include "opengl/shader.h"
 #include "system/camera.h"
-#include "system/entities.h"
+#include "system/lights_objects_meshes.h"
 
 namespace Gamma {
   struct OpenGLBaseShadowMap {

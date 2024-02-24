@@ -36,9 +36,6 @@
     <ClCompile Include="gamma\system\AbstractLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="gamma\system\entities.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="gamma\system\camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -189,9 +186,6 @@
     <ClCompile Include="game\mesh_library\decorations.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="game\mesh_library\entity_meshes.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="game\mesh_library\overworld_town.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -205,6 +199,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="game\mesh_library\spinners.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gamma\system\lights_objects_meshes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="game\mesh_library\entities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -515,9 +515,6 @@
     <ClInclude Include="gamma\system\AbstractLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="gamma\system\entities.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="gamma\system\Signaler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -692,9 +689,6 @@
     <ClInclude Include="game\mesh_library\decorations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="game\mesh_library\entity_meshes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="game\mesh_library\overworld_town.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -708,6 +702,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="game\mesh_library\spinners.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gamma\system\lights_objects_meshes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\mesh_library\entities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gamma\math\utilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

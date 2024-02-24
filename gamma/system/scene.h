@@ -8,8 +8,8 @@
 #include <vector>
 
 #include "system/camera.h"
-#include "system/entities.h"
 #include "system/InputSystem.h"
+#include "system/lights_objects_meshes.h"
 #include "system/Signaler.h"
 #include "system/traits.h"
 #include "system/type_aliases.h"
