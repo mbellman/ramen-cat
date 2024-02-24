@@ -137,8 +137,8 @@
     <ClCompile Include="game\mesh_library\procedural.cpp" />
     <ClCompile Include="game\mesh_library\shops.cpp" />
     <ClCompile Include="game\mesh_library\spinners.cpp" />
+    <ClCompile Include="game\mesh_library\transportation.cpp" />
     <ClCompile Include="game\mesh_library\uniques.cpp" />
-    <ClCompile Include="game\mesh_library\vehicles.cpp" />
     <ClCompile Include="game\movement_system.cpp" />
     <ClCompile Include="game\procedural_meshes.cpp" />
     <ClCompile Include="game\ui_system.cpp" />
@@ -295,8 +295,8 @@
     <ClInclude Include="game\mesh_library\procedural.h" />
     <ClInclude Include="game\mesh_library\shops.h" />
     <ClInclude Include="game\mesh_library\spinners.h" />
+    <ClInclude Include="game\mesh_library\transportation.h" />
     <ClInclude Include="game\mesh_library\uniques.h" />
-    <ClInclude Include="game\mesh_library\vehicles.h" />
     <ClInclude Include="game\movement_system.h" />
     <ClInclude Include="game\procedural_meshes.h" />
     <ClInclude Include="game\ui_system.h" />

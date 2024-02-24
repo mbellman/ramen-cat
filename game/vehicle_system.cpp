@@ -29,6 +29,23 @@ void VehicleSystem::rebuildVehicleTracks(GmContext* context, GameState& state) {
       }
     }
 
+    // @todo do this for all vehicle meshes (e.g. define a list of vehicle mesh names + speed)
+    for (auto& object : objects("cable-car")) {
+      if ((object.position - spawn.position).magnitude() < 2000.f) {
+        Vehicle vehicle = {
+          .object = object._record,
+          .trackPointTarget = 0,
+          .speed = 500.f
+        };
+
+        object.position = spawn.position;
+
+        commit(object);
+
+        track.vehicles.push_back(vehicle);
+      }
+    }
+
     track.points.push_back(spawn.position);
 
     Vec3f start = spawn.position;

@@ -4,4 +4,4 @@
 
 #include "mesh_library/mesh_asset.h"
 
-extern std::vector<MeshAsset> vehicle_meshes;
+extern std::vector<MeshAsset> transportation_meshes;

@@ -12,7 +12,7 @@
 #include "mesh_library/lights.h"
 #include "mesh_library/decorations.h"
 #include "mesh_library/spinners.h"
-#include "mesh_library/vehicles.h"
+#include "mesh_library/transportation.h"
 #include "mesh_library/uniques.h"
 #include "mesh_library/procedural.h"
 
@@ -1022,7 +1022,7 @@ void GameMeshes::loadAllMeshAssets() {
   add_mesh_assets(assets, light_meshes);
   add_mesh_assets(assets, decoration_meshes);
   add_mesh_assets(assets, spinner_meshes);
-  add_mesh_assets(assets, vehicle_meshes);
+  add_mesh_assets(assets, transportation_meshes);
   add_mesh_assets(assets, unique_meshes);
   add_mesh_assets(assets, procedural_meshes);
 }

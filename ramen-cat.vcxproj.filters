@@ -177,9 +177,6 @@
     <ClCompile Include="game\procedural_meshes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="game\mesh_library\vehicles.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="game\vehicle_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -205,6 +202,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="game\mesh_library\entities.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="game\mesh_library\transportation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -680,9 +680,6 @@
     <ClInclude Include="game\procedural_meshes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="game\mesh_library\vehicles.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="game\vehicle_system.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -711,6 +708,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="gamma\math\utilities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\mesh_library\transportation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
