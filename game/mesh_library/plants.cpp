@@ -6,6 +6,36 @@ using namespace Gamma;
 
 std::vector<MeshAsset> plant_meshes = {
   {
+    .name = "small-leaves",
+    .create = []() {
+      return Mesh::Model("./game/assets/plants/small-leaves.obj");
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .texture = "./game/assets/plants/small-leaves.png",
+      .maxCascade = 2,
+      .animation = {
+        .type = PresetAnimationType::FLOWER,
+        .factor = 4.f
+      }
+    }
+  },
+  {
+    .name = "small-flower",
+    .create = []() {
+      return Mesh::Model("./game/assets/plants/small-flower.obj");
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .texture = "./game/assets/plants/small-flower.png",
+      .maxCascade = 2,
+      .animation = {
+        .type = PresetAnimationType::FLOWER,
+        .factor = 4.f
+      }
+    }
+  },
+  {
     .name = "weeds",
     .hitboxScale = Vec3f(1.f, 1.f, 0.2f),
     .create = []() {

@@ -935,6 +935,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
 
     add_mesh("speech-bubble", 1, Mesh::Model("./game/assets/entities/speech-bubble.obj"));
     mesh("speech-bubble")->emissivity = 0.5f;
+    mesh("speech-bubble")->canCastShadows = false;
 
     add_mesh("ocean", 1, Mesh::Disc(12));
     add_mesh("ocean-floor", 1, Mesh::Disc(12));
