@@ -13,7 +13,7 @@ vec4 getSkyColor(vec3 sky_direction, vec3 sun_direction, vec3 base_sun_color, ve
   vec3 BASE_NIGHTTIME_COLOR = vec3(0.1, 0.2, 0.6);
 
   float daylight_factor = dot(sun_direction, vec3(0, 1, 0));
-  float altitude_factor = pow(cos_y, 3);
+  float altitude_factor = pow(cos_y + 0.1, 3);
   vec3 ambient_sky_color = mix(BASE_NIGHTTIME_COLOR, BASE_DAYLIGHT_COLOR, daylight_factor) * altitude_factor;
 
   float sun_radius_factor = dot(sky_direction, sun_direction);

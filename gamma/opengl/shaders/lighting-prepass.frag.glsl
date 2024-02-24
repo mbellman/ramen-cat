@@ -46,7 +46,7 @@ vec3 getIndirectSkyLightContribution(vec3 fragment_position, vec3 fragment_norma
   vec3 specular_contribution = getSkyColor(reflection_vector, sunDirection, sunColor, atmosphereColor, altitude).rgb;
 
   float up_factor = dot(fragment_normal, vec3(0, 1, 0)) * 0.5 + 0.5;
-  float intensity_factor = 0.4 + 0.6 * up_factor;
+  float intensity_factor = 0.3 + 0.7 * up_factor;
   float alpha = pow(1.0 - roughness, 5);
 
   return mix(diffuse_contribution, specular_contribution, alpha) * intensity_factor;
