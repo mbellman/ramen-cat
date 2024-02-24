@@ -132,6 +132,7 @@
     <ClCompile Include="game\mesh_library\overworld_stairs.cpp" />
     <ClCompile Include="game\mesh_library\overworld_station.cpp" />
     <ClCompile Include="game\mesh_library\overworld_town.cpp" />
+    <ClCompile Include="game\mesh_library\plants.cpp" />
     <ClCompile Include="game\mesh_library\procedural.cpp" />
     <ClCompile Include="game\mesh_library\shops.cpp" />
     <ClCompile Include="game\mesh_library\uniques.cpp" />
@@ -287,6 +288,7 @@
     <ClInclude Include="game\mesh_library\overworld_stairs.h" />
     <ClInclude Include="game\mesh_library\overworld_station.h" />
     <ClInclude Include="game\mesh_library\overworld_town.h" />
+    <ClInclude Include="game\mesh_library\plants.h" />
     <ClInclude Include="game\mesh_library\procedural.h" />
     <ClInclude Include="game\mesh_library\shops.h" />
     <ClInclude Include="game\mesh_library\uniques.h" />
