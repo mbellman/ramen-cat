@@ -173,6 +173,23 @@ std::vector<MeshAsset> decoration_meshes = {
     }
   },
   {
+    .name = "ramen-sign",
+    .hitboxScale = Vec3f(1.f, 0.25f, 0.05f),
+    .hitboxOffset = Vec3f(0, -1.f, 0),
+    .create = []() {
+      return Mesh::Model("./game/assets/ramen-sign.obj");
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .texture = "./game/assets/ramen-sign.png",
+      .animation = {
+        .type = PresetAnimationType::CLOTH
+      },
+      .roughness = 1.f,
+      .useMipmaps = false
+    }
+  },
+  {
     .name = "billboards-1",
     .create = []() {
       return Mesh::Model("./game/assets/texture-cube.obj");

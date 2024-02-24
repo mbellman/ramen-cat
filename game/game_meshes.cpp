@@ -9,6 +9,7 @@
 #include "mesh_library/entity_meshes.h"
 #include "mesh_library/plants.h"
 #include "mesh_library/shops.h"
+#include "mesh_library/lights.h"
 #include "mesh_library/decorations.h"
 #include "mesh_library/vehicles.h"
 #include "mesh_library/uniques.h"
@@ -79,78 +80,6 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     .defaultColor = Vec3f(1.f, 0.5f, 0.5f),
     .create = []() {
       return Mesh::Sphere(8);
-    }
-  },
-
-  /**
-   * Lights
-   * ------
-   */
-  {
-    .name = "lamp",
-    .create = []() {
-      return Mesh::Model("./game/assets/lamp.obj");
-    },
-    .attributes = {
-      .texture = "./game/assets/lamp.png",
-      .maxCascade = 2,
-      .emissivity = 1.f
-    }
-  },
-  {
-    .name = "lantern",
-    .moving = true,
-    .create = []() {
-      return Mesh::Model("./game/assets/lantern.obj");
-    },
-    .attributes = {
-      .texture = "./game/assets/lantern.png",
-      .emissivity = 0.5f,
-      .useMipmaps = false
-    }
-  },
-  {
-    .name = "paper-lantern",
-    .moving = true,
-    .create = []() {
-      return Mesh::Model("./game/assets/paper-lantern.obj");
-    },
-    .attributes = {
-      .texture = "./game/assets/paper-lantern.png",
-      .emissivity = 0.5f,
-      .useMipmaps = false
-    }
-  },
-  {
-    .name = "small-light",
-    .defaultColor = Vec3f(1.f, 0.9f, 0.7f),
-    .hitboxScale = Vec3f(1.5f),
-    .create = []() {
-      return Mesh::Model("./game/assets/small-light.obj");
-    },
-    .attributes = {
-      .maxCascade = 2,
-      .emissivity = 1.f
-    }
-  },
-  {
-    .name = "japanese-lamppost",
-    .hitboxScale = Vec3f(0.4f, 1.f, 0.25f),
-    .create = []() {
-      return Mesh::Model("./game/assets/japanese-lamppost.obj");
-    },
-    .attributes = {
-      .texture = "./game/assets/japanese-lamppost.png"
-    }
-  },
-  {
-    .name = "streetlamp",
-    .hitboxScale = Vec3f(0.4f, 1.f, 0.15f),
-    .create = []() {
-      return Mesh::Model("./game/assets/streetlamp.obj");
-    },
-    .attributes = {
-      .roughness = 0.3f
     }
   },
 
@@ -812,36 +741,6 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
-    .name = "ramen-lamp",
-    .moving = true,
-    .hitboxScale = Vec3f(0.7f, 1.2f, 0.7f),
-    .create = []() {
-      return Mesh::Model("./game/assets/ramen-lamp.obj");
-    },
-    .attributes = {
-      .texture = "./game/assets/ramen-lamp.png",
-      .useMipmaps = false
-    }
-  },
-
-  {
-    .name = "ramen-sign",
-    .hitboxScale = Vec3f(1.f, 0.25f, 0.05f),
-    .hitboxOffset = Vec3f(0, -1.f, 0),
-    .create = []() {
-      return Mesh::Model("./game/assets/ramen-sign.obj");
-    },
-    .attributes = {
-      .type = MeshType::PRESET_ANIMATED,
-      .texture = "./game/assets/ramen-sign.png",
-      .animation = {
-        .type = PresetAnimationType::CLOTH
-      },
-      .roughness = 1.f,
-      .useMipmaps = false
-    }
-  },
-  {
     .name = "ramen-bowl",
     .hitboxScale = Vec3f(1.f, 0.4f, 1.f),
     .create = []() {
@@ -1221,6 +1120,7 @@ void GameMeshes::loadAllMeshAssets() {
   add_mesh_assets(assets, entity_meshes);
   add_mesh_assets(assets, plant_meshes);
   add_mesh_assets(assets, shop_meshes);
+  add_mesh_assets(assets, light_meshes);
   add_mesh_assets(assets, decoration_meshes);
   add_mesh_assets(assets, vehicle_meshes);
   add_mesh_assets(assets, unique_meshes);
