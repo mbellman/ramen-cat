@@ -39,6 +39,8 @@ static struct EditorState {
   bool isObservingObject = false;
   bool isObjectSelected = false;
   bool isGiantMode = false;
+  bool useUniformScaling = false;
+  bool useCameraRelativeMovement = false;
   float lastClickTime = 0.f;
   EditorMode mode = EditorMode::OBJECTS;
   ActionType currentActionType = ActionType::POSITION;
@@ -458,10 +460,7 @@ internal Vec3f getCurrentActionDelta(GmContext* context, float mouseDx, float mo
 
       if (isVerticalMotion) {
         axis = camera.orientation.getUpDirection().alignToAxis();
-      } else if (input.isKeyHeld(Key::Q)) {
-        axis = camera.orientation.getRightDirection().alignToAxis();
-      } else if (input.isKeyHeld(Key::NUM_2)) {
-        // @todo make this a toggleable option
+      } else if (editor.useCameraRelativeMovement) {
         axis = camera.orientation.getRightDirection();
       } else {
         axis = getMostSimilarObjectAxis(camera.orientation.getRightDirection(), object);
@@ -1389,6 +1388,10 @@ namespace Editor {
         }
       } else if (input.didPressKey(Key::G)) {
         editor.isGiantMode = !editor.isGiantMode;
+      } else if (input.didPressKey(Key::Q)) {
+        editor.useUniformScaling = !editor.useUniformScaling;
+      } else if (input.didPressKey(Key::NUM_2)) {
+        editor.useCameraRelativeMovement = !editor.useCameraRelativeMovement;
       }
 
       // Handle click-drag actions on objects
@@ -1417,8 +1420,8 @@ namespace Editor {
         if (editor.currentActionType == ActionType::POSITION) {
           originalObject.position += actionDelta;
         } else if (editor.currentActionType == ActionType::SCALE) {
-          if (editor.mode == EditorMode::LIGHTS || input.isKeyHeld(Key::Q)) {
-            // Scale light spheres, or objects while holding Q, uniformly
+          if (editor.mode == EditorMode::LIGHTS || editor.useUniformScaling) {
+            // Scale light spheres uniformly, or objects with uniform scaling enabled
             originalObject.scale += actionDelta.magnitude() * actionDelta.sign();
           } else {
             // Scale objects/collision planes along the action axis
@@ -1535,7 +1538,12 @@ namespace Editor {
     {
       add_debug_message(getEditorModeName(editor.mode) + " Editor" + (editor.isGiantMode ? " (GIANT)" : ""));
       add_debug_message("Camera position: " + Gm_ToDebugString(camera.position));
-      add_debug_message("Action: " + getActionTypeName(editor.currentActionType));
+
+      add_debug_message("Action: "
+        + getActionTypeName(editor.currentActionType)
+        + (editor.currentActionType == ActionType::POSITION && editor.useCameraRelativeMovement ? " (camera-relative)" : "")
+        + (editor.currentActionType == ActionType::SCALE && editor.useUniformScaling ? " (uniform)" : "")
+      );
 
       if (editor.mode == EditorMode::OBJECTS) {
         auto& meshName = GameMeshes::meshAssets[editor.currentSelectedMeshIndex].name;
