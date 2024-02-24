@@ -741,35 +741,6 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
-    .name = "ramen-bowl",
-    .hitboxScale = Vec3f(1.f, 0.4f, 1.f),
-    .create = []() {
-      return Mesh::Model("./game/assets/ramen-bowl.obj");
-    },
-    .attributes = {
-      .texture = "./game/assets/ramen-bowl.png",
-      .roughness = 0.4f
-    }
-  },
-  {
-    .name = "hot-air-balloon",
-    .moving = true,
-    .defaultScale = Vec3f(200.f),
-    .create = []() {
-      return Mesh::Model({
-        "./game/assets/hot-air-balloon.obj",
-        "./game/assets/hot-air-balloon-lod.obj"
-      });
-    },
-    .attributes = {
-      .texture = "./game/assets/hot-air-balloon.png",
-      .normals = "./game/assets/hot-air-balloon-normals.png",
-      .emissivity = 0.2f,
-      .roughness = 0.7f,
-      .canCastShadows = false
-    }
-  },
-  {
     .name = "electrical-pole",
     .defaultScale = Vec3f(275.f),
     .hitboxScale = Vec3f(0.05f, 1.f, 0.15f),

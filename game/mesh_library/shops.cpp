@@ -56,5 +56,18 @@ std::vector<MeshAsset> shop_meshes = {
         }
       }
     }
+  },
+
+  // @todo move to procedural
+  {
+    .name = "ramen-bowl",
+    .hitboxScale = Vec3f(1.f, 0.4f, 1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/ramen-bowl.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/ramen-bowl.png",
+      .roughness = 0.4f
+    }
   }
 };
