@@ -1122,6 +1122,7 @@ namespace Editor {
       }
 
       mesh("light-sphere")->disabled = true;
+      mesh("position-action-indicator")->disabled = true;
       mesh("air-dash-target")->disabled = false;
     }
   }
@@ -1213,10 +1214,16 @@ namespace Editor {
 
     // Visual aide meshes
     {
+      // Light spheres
       add_mesh("light-sphere", 1000, Mesh::Sphere(10));
-
       mesh("light-sphere")->emissivity = 0.7f;
       mesh("light-sphere")->disabled = true;
+
+      // Action indicators
+      add_mesh("position-action-indicator", 1, Mesh::Model("./game/assets/editor/position-action-indicator.obj"));
+      mesh("position-action-indicator")->disabled = true;
+      mesh("position-action-indicator")->type = MeshType::DEFAULT_WITH_OCCLUSION_SILHOUETTE;
+      create_object_from("position-action-indicator");
     }
 
     // Generate light spheres for each light
@@ -1237,7 +1244,7 @@ namespace Editor {
         direction.yaw += Gm_HALF_PI;
 
         // @bug the resolved rotation is just a smidge off; investigate and see if this
-        // can be fixed another approach.
+        // can be fixed/a different approach taken to light direction handling
         sphere.rotation = direction.toQuaternion();
 
         commit(sphere);
@@ -1577,6 +1584,31 @@ namespace Editor {
           add_debug_message("Rotation: " + Gm_ToDebugString(object.rotation));
           add_debug_message("Color: " + Gm_ToDebugString(object.color.toVec3f()));
         }
+      }
+    }
+
+    // Action indicators
+    {
+      if (editor.currentActionType == ActionType::POSITION && editor.isObjectSelected) {
+        mesh("position-action-indicator")->disabled = false;
+
+        auto& indicator = objects("position-action-indicator")[0];
+        auto distance = (camera.position - editor.selectedObject.position).magnitude();
+
+        indicator.position = editor.selectedObject.position;
+        indicator.scale = Vec3f(distance * 0.15f);
+        indicator.rotation = editor.selectedObject.rotation;
+
+        if (editor.useCameraRelativeMovement) {
+          auto view = camera.orientation.getDirection().xz();
+          float angle = atan2f(view.x, view.z) + Gm_PI;
+
+          indicator.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angle);
+        }
+
+        commit(indicator);
+      } else {
+        mesh("position-action-indicator")->disabled = true;
       }
     }
 
