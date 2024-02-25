@@ -146,6 +146,54 @@ internal void rebuildPlantStrips(GmContext* context) {
   }
 }
 
+internal void rebuildPottedPlants(GmContext* context) {
+  const u8 TOTAL_LEAF_PLANTS = 4;
+  const u8 TOTAL_FLOWERS = 3;
+
+  for (auto& planter : objects("wood-planter")) {
+    auto left = planter.rotation.getLeftDirection();
+    auto side = planter.rotation.getDirection();
+    auto start = planter.position - left * planter.scale.x;
+    auto end = planter.position + left * planter.scale.x;
+
+    for (u8 i = 0; i < TOTAL_LEAF_PLANTS; i++) {
+      auto alpha = float(i) / float(TOTAL_LEAF_PLANTS) + 1.f / float(TOTAL_LEAF_PLANTS) * 0.5f;
+      auto spawn = Vec3f::lerp(start, end, alpha);
+      auto random = randomFromVec3f(spawn);
+      auto angle = random * Gm_TAU;
+      auto& plant = create_object_from("p_small-leaves");
+
+      plant.position = (
+        // Base spawn position
+        spawn +
+        // Upward displacement
+        Vec3f(0, planter.scale.y * 0.3f, 0) +
+        // Sideways displacement
+        side * ((random - 0.5f) * 2.f) * planter.scale.z * 0.05f
+      );
+
+      plant.scale = Vec3f(20.f + random * 30.f);
+      plant.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angle);
+
+      commit(plant);
+    }
+
+    for (u8 i = 0; i < TOTAL_FLOWERS; i++) {
+      auto alpha = float(i) / float(TOTAL_FLOWERS) + 1.f / float(TOTAL_FLOWERS) * 0.5f;
+      auto spawn = Vec3f::lerp(start, end, alpha);
+      auto random = randomFromVec3f(spawn);
+      auto angle = random * Gm_TAU;
+      auto& plant = create_object_from("p_small-flower");
+
+      plant.position = spawn + Vec3f(0, planter.scale.y * 0.5f * random, 0);
+      plant.scale = Vec3f(20.f + random * 30.f);
+      plant.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angle);
+
+      commit(plant);
+    }
+  }
+}
+
 internal void rebuildConcreteStacks(GmContext* context) {
   const auto PIECE_SIZE = 600.f;
 
@@ -369,6 +417,7 @@ void ProceduralMeshes::rebuildProceduralMeshes(GmContext* context) {
 
   rebuildCollectables(context);
   rebuildPlantStrips(context);
+  rebuildPottedPlants(context);
   rebuildConcreteStacks(context);
   rebuildMiniHouses(context);
   rebuildWoodBuildings(context);
@@ -378,7 +427,8 @@ void ProceduralMeshes::rebuildProceduralMeshes(GmContext* context) {
 void ProceduralMeshes::handleProceduralMeshes(GmContext* context, GameState& state, float dt) {
   START_TIMING("handleProceduralMeshes");
 
-  // @todo handleBalloonWindmills()
+  // @todo rebuildRuntimeProceduralMeshes()
+  // @todo rebuildBalloonWindmills()
   objects("p_balloon-windmill-blades").reset();
 
   auto t = get_scene_time();

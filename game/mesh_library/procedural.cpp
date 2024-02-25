@@ -82,6 +82,8 @@ std::vector<MeshAsset> procedural_meshes = {
       .maxCascade = 4
     }
   },
+
+  // Pots/planters/etc.
   {
     .name = "wood-planter",
     .hitboxScale = Vec3f(1.f, 0.2f, 0.2f),
@@ -154,7 +156,6 @@ std::vector<MeshAsset> procedural_mesh_parts = {
     .attributes = {
       .type = MeshType::PRESET_ANIMATED,
       .texture = "./game/assets/plants/croton.png",
-      .maxCascade = 4,
       .animation = {
         .type = PresetAnimationType::LEAF,
         .factor = 3.f
@@ -235,6 +236,36 @@ std::vector<MeshAsset> procedural_mesh_parts = {
       },
       .emissivity = 0.1f,
       .roughness = 1.f
+    }
+  },
+  {
+    .name = "p_small-leaves",
+    .create = []() {
+      return Mesh::Model("./game/assets/plants/small-leaves.obj");
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .texture = "./game/assets/plants/small-leaves.png",
+      .maxCascade = 2,
+      .animation = {
+        .type = PresetAnimationType::FLOWER,
+        .factor = 4.f
+      }
+    }
+  },
+  {
+    .name = "p_small-flower",
+    .create = []() {
+      return Mesh::Model("./game/assets/plants/small-flower.obj");
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .texture = "./game/assets/plants/small-flower.png",
+      .maxCascade = 2,
+      .animation = {
+        .type = PresetAnimationType::FLOWER,
+        .factor = 4.f
+      }
     }
   },
 
