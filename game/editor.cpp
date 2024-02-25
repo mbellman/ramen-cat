@@ -1371,6 +1371,11 @@ namespace Editor {
           state.collisionPlanes;
 
         for (auto& plane : collisionPlanes) {
+          // Early out for non-local collision planes
+          // @todo optimize this further if possible
+          if (camera.position.y > plane.maxY && lineOfSightEnd.y > plane.maxY) continue;
+          if (camera.position.y < plane.minY && lineOfSightEnd.y < plane.minY) continue;
+
           float nDotC = Vec3f::dot(plane.normal, inverseCameraDirection);
 
           // Only consider planes facing the camera
