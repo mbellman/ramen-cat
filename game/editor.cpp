@@ -1005,6 +1005,76 @@ internal void saveLightsData(GmContext* context, GameState& state) {
   Gm_WriteFileContents("./game/levels/" + state.currentLevelName + "/data_lights.txt", data);
 }
 
+internal void handlePositionActionIndicator(GmContext* context) {
+  auto& camera = get_camera();
+
+  if (editor.currentActionType == ActionType::POSITION && editor.isObjectSelected) {
+    mesh("position-action-indicator")->disabled = false;
+
+    auto& indicator = objects("position-action-indicator")[0];
+    auto distance = (camera.position - editor.selectedObject.position).magnitude();
+
+    indicator.position = editor.selectedObject.position;
+    indicator.scale = Vec3f(distance * 0.15f);
+    indicator.rotation = editor.selectedObject.rotation;
+
+    if (editor.useCameraRelativeMovement) {
+      auto view = camera.orientation.getDirection().xz();
+      float angle = atan2f(view.x, view.z) + Gm_PI;
+
+      indicator.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angle);
+    }
+
+    commit(indicator);
+  } else {
+    mesh("position-action-indicator")->disabled = true;
+  }
+}
+
+internal void handleRotateActionIndicator(GmContext* context) {
+  auto& camera = get_camera();
+
+  if (editor.currentActionType == ActionType::ROTATE && editor.isObjectSelected) {
+    mesh("rotate-action-indicator")->disabled = false;
+
+    auto& indicator = objects("rotate-action-indicator")[0];
+    auto distance = (camera.position - editor.selectedObject.position).magnitude();
+
+    indicator.position = editor.selectedObject.position;
+    indicator.scale = Vec3f(distance * 0.15f);
+    indicator.rotation = editor.selectedObject.rotation;
+
+    commit(indicator);
+  } else {
+    mesh("rotate-action-indicator")->disabled = true;
+  }
+}
+
+internal void handleScaleActionIndicator(GmContext* context) {
+  auto& camera = get_camera();
+
+  if (editor.currentActionType == ActionType::SCALE && editor.isObjectSelected) {
+    mesh("scale-action-indicator")->disabled = false;
+
+    auto& indicator = objects("scale-action-indicator")[0];
+    auto distance = (camera.position - editor.selectedObject.position).magnitude();
+
+    indicator.position = editor.selectedObject.position;
+    indicator.scale = Vec3f(distance * 0.15f);
+    indicator.rotation = editor.selectedObject.rotation;
+
+    if (editor.useUniformScaling) {
+      indicator.color = Vec3f(0.2f, 1.f, 1.f);
+    } else {
+      indicator.color = Vec3f(1.f);
+    }
+
+    commit(indicator);
+  } else {
+    mesh("scale-action-indicator")->disabled = true;
+  }
+}
+
 namespace Editor {
   void enableGameEditor(GmContext* context, GameState& state) {
     state.isEditorEnabled = true;
@@ -1122,8 +1192,11 @@ namespace Editor {
       }
 
       mesh("light-sphere")->disabled = true;
-      mesh("position-action-indicator")->disabled = true;
       mesh("air-dash-target")->disabled = false;
+
+      mesh("position-action-indicator")->disabled = true;
+      mesh("rotate-action-indicator")->disabled = true;
+      mesh("scale-action-indicator")->disabled = true;
     }
   }
 
@@ -1220,10 +1293,19 @@ namespace Editor {
       mesh("light-sphere")->disabled = true;
 
       // Action indicators
-      add_mesh("position-action-indicator", 1, Mesh::Model("./game/assets/editor/position-action-indicator.obj"));
-      mesh("position-action-indicator")->disabled = true;
-      mesh("position-action-indicator")->type = MeshType::DEFAULT_WITH_OCCLUSION_SILHOUETTE;
-      create_object_from("position-action-indicator");
+      const std::initializer_list<std::string> actions = { "position", "rotate", "scale" };
+
+      for (auto& action : actions) {
+        auto modelPath = "./game/assets/editor/" + action + "-action-indicator.obj";
+
+        add_mesh(action + "-action-indicator", 1, Mesh::Model(modelPath.c_str()));
+        mesh(action + "-action-indicator")->type = MeshType::DEFAULT_WITH_OCCLUSION_SILHOUETTE;
+        mesh(action + "-action-indicator")->canCastShadows = false;
+        mesh(action + "-action-indicator")->emissivity = 0.2f;
+        mesh(action + "-action-indicator")->disabled = true;
+
+        create_object_from(action + "-action-indicator");
+      }
     }
 
     // Generate light spheres for each light
@@ -1589,27 +1671,9 @@ namespace Editor {
 
     // Action indicators
     {
-      if (editor.currentActionType == ActionType::POSITION && editor.isObjectSelected) {
-        mesh("position-action-indicator")->disabled = false;
-
-        auto& indicator = objects("position-action-indicator")[0];
-        auto distance = (camera.position - editor.selectedObject.position).magnitude();
-
-        indicator.position = editor.selectedObject.position;
-        indicator.scale = Vec3f(distance * 0.15f);
-        indicator.rotation = editor.selectedObject.rotation;
-
-        if (editor.useCameraRelativeMovement) {
-          auto view = camera.orientation.getDirection().xz();
-          float angle = atan2f(view.x, view.z) + Gm_PI;
-
-          indicator.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angle);
-        }
-
-        commit(indicator);
-      } else {
-        mesh("position-action-indicator")->disabled = true;
-      }
+      handlePositionActionIndicator(context);
+      handleRotateActionIndicator(context);
+      handleScaleActionIndicator(context);
     }
 
     LOG_TIME();

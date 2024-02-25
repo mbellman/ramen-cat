@@ -10,6 +10,7 @@ std::vector<MeshAsset> entity_meshes = {
     .dynamic = true,
     .defaultColor = Vec3f(1.f, 0, 0),
     .defaultScale = Vec3f(60.f),
+    .hitboxScale = Vec3f(1.f, 0.2f, 1.f),
     .create = []() {
       return Mesh::Model("./game/assets/entities/target.obj");
     },
