@@ -191,7 +191,7 @@ std::vector<MeshAsset> decoration_meshes = {
       .animation = {
         .type = PresetAnimationType::CLOTH,
         .speed = 0.5f,
-        .factor = 20.f
+        .factor = 30.f
       }
     }
   },

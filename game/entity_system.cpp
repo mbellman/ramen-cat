@@ -592,7 +592,7 @@ internal void handleWindmillWheels(GmContext* context, GameState& state, float d
       // Rotate larger windmill wheels more slowly
       float scaleRatio = Gm_Clampf(initial.scale.magnitude() / 2000.f, 0.f, 1.f);
       float rotationSpeedFactor = Gm_Lerpf(MAX_SPEED, MIN_SPEED, scaleRatio);
-      float angle = rotationSpeedFactor * get_scene_time();
+      float angle = rotationSpeedFactor * t;
 
       object.rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initial.rotation;
 
@@ -607,7 +607,7 @@ internal void handleWindmillWheels(GmContext* context, GameState& state, float d
       // Rotate larger windmill wheels more slowly
       float scaleRatio = Gm_Clampf(initial.scale.magnitude() / 2000.f, 0.f, 1.f);
       float rotationSpeedFactor = Gm_Lerpf(MAX_SPEED, MIN_SPEED, scaleRatio);
-      float angle = rotationSpeedFactor * get_scene_time();
+      float angle = rotationSpeedFactor * t;
 
       object.rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initial.rotation;
 
@@ -647,6 +647,17 @@ internal void handleFans(GmContext* context, GameState& state, float dt) {
     for_moving_objects("exhaust-fan-blades", {
       auto rotationAxis = initial.rotation.getUpDirection();
       float angle = t;
+
+      object.rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initial.rotation;
+
+      commit(object);
+    });
+  }
+
+  {
+    for_moving_objects("solar-turbine", {
+      auto rotationAxis = initial.rotation.getUpDirection();
+      float angle = t / (initial.scale.magnitude() * 0.002f);
 
       object.rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initial.rotation;
 

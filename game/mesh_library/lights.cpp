@@ -84,4 +84,24 @@ std::vector<MeshAsset> light_meshes = {
       .useMipmaps = false
     }
   },
+  {
+    .name = "wall-lamp",
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/wall-lamp.obj");
+    },
+    .attributes = {
+      .roughness = 0.2f
+    },
+    .pieces = {
+      {
+        .name = "wall-lamp-bulb",
+        .create = []() {
+          return Mesh::Model("./game/assets/decorations/wall-lamp-bulb.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(1.f, 0.9f, 0.6f);
+        }
+      }
+    }
+  }
 };

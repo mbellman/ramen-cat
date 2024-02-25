@@ -44,4 +44,18 @@ std::vector<MeshAsset> spinner_meshes = {
       .maxCascade = 4
     }
   },
+  {
+    .name = "solar-turbine",
+    .moving = true,
+    .hitboxScale = Vec3f(1.f, 0.2f, 1.f),
+    .maxInstances = 100,
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/solar-turbine.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/decorations/solar-turbine.png",
+      .maxCascade = 4,
+      .roughness = 0.2f
+    }
+  }
 };

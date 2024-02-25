@@ -982,6 +982,7 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
   // flag-wire-spawn
   {
     .name = "mini-flag",
+    .maxInstances = 10000,
     .create = []() {
       return Mesh::Model({
         "./game/assets/decorations/mini-flag.obj",
