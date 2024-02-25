@@ -390,7 +390,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
 void CameraSystem::handleVisibilityCulling(GmContext* context, GameState& state) {
   START_TIMING("handleVisibilityCulling");
 
-  use_frustum_culling({ "weeds", "lamp", "ladder", "ac-unit", "ac-fan", "petal" });
+  use_frustum_culling({ "weeds", "lamp", "ladder", "ac-unit", "ac-fan", "petal", "p_small-leaves", "p_small-flower" });
   use_distance_culling(3000.f, { "flower" });
   use_distance_culling(10000.f, { "onigiri", "nitamago", "chashu" });
 

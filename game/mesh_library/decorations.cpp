@@ -181,6 +181,21 @@ std::vector<MeshAsset> decoration_meshes = {
     }
   },
   {
+    .name = "large-kite",
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/large-kite.obj");
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .maxCascade = 4,
+      .animation = {
+        .type = PresetAnimationType::CLOTH,
+        .speed = 0.5f,
+        .factor = 20.f
+      }
+    }
+  },
+  {
     .name = "balloon-windmill",
     .moving = true,
     .create = []() {
