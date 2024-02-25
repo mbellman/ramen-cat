@@ -59,5 +59,25 @@ std::vector<MeshAsset> overworld_town_meshes = {
         }
       }
     }
+  },
+  {
+    .name = "town-table",
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/table-top.obj");
+    },
+    .pieces = {
+      {
+        .name = "town-table-legs",
+        .create = []() {
+          return Mesh::Model("./game/assets/decorations/table-legs.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(0.4f);
+        },
+        .attributes = {
+          .roughness = 0.1f
+        }
+      }
+    }
   }
 };

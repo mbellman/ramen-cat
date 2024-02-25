@@ -222,7 +222,7 @@ internal void handlePlayerLight(GmContext* context) {
 
 internal void handleDayNightCycle(GmContext* context, GameState& state, float dt) {
   if (state.gameStartTime != 0.f) {
-    state.dayNightCycleTime += dt * 0.001f;
+    // state.dayNightCycleTime += dt * 0.001f;
     state.dayNightCycleTime = Gm_Modf(state.dayNightCycleTime, Gm_TAU);
   }
 

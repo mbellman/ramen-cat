@@ -49,10 +49,12 @@ internal void handlePlayerTrottingAnimation(GmContext* context, GameState& state
 
   float speed = state.velocity.xz().magnitude();
   float speedRatio = sqrtf(speed / (speed + MAXIMUM_HORIZONTAL_GROUND_SPEED));
-  float alpha = state.totalDistanceTraveled * 0.03f;
   float timeOnSolidGround = time_since(state.lastTimeInAir);
   float periodicHeadTurnFactor = timeOnSolidGround / (timeOnSolidGround + 1.f);
   float periodicHeadTurn = getPeriodicHeadTurn(get_scene_time()) * periodicHeadTurnFactor;
+  
+  // Controls the rate of the walk cycle
+  float alpha = state.totalDistanceTraveled * 0.03f;
 
   rig.joints[PLAYER_HEAD].offset = Vec3f(0, 0.025f, 0) * speedRatio * sinf(alpha * 2.f);
   rig.joints[PLAYER_NECK].offset = Vec3f(0, 0.15f, 0) * speedRatio * sinf(alpha * 2.f);

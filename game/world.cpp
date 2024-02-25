@@ -867,7 +867,7 @@ internal void applyLevelSettings_Overworld(GmContext* context, GameState& state)
 
   auto& player = get_player();
 
-  player.position = Vec3f(7588.f, 29412.f, 23176.f);
+  player.position = Vec3f(6400.f, 28980.f, 20530.f);
 
   context->scene.zFar = 200000.f;
 
