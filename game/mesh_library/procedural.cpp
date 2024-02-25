@@ -268,6 +268,21 @@ std::vector<MeshAsset> procedural_mesh_parts = {
       }
     }
   },
+  {
+    .name = "p_small-cosmo",
+    .create = []() {
+      return Mesh::Model("./game/assets/plants/small-flower.obj");
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .texture = "./game/assets/plants/small-cosmo.png",
+      .maxCascade = 2,
+      .animation = {
+        .type = PresetAnimationType::FLOWER,
+        .factor = 4.f
+      }
+    }
+  },
 
   // concrete-stack
   {

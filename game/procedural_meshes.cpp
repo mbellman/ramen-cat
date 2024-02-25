@@ -183,7 +183,10 @@ internal void rebuildPottedPlants(GmContext* context) {
       auto spawn = Vec3f::lerp(start, end, alpha);
       auto random = randomFromVec3f(spawn);
       auto angle = random * Gm_TAU;
-      auto& plant = create_object_from("p_small-flower");
+
+      auto& plant = u32(random * 10.f) % 2 == 0
+        ? create_object_from("p_small-flower")
+        : create_object_from("p_small-cosmo");
 
       plant.position = spawn + Vec3f(0, planter.scale.y * 0.5f * random, 0);
       plant.scale = Vec3f(20.f + random * 30.f);
