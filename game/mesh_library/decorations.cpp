@@ -6,6 +6,24 @@ using namespace Gamma;
 
 std::vector<MeshAsset> decoration_meshes = {
   {
+    .name = "vent-piece",
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/vent-piece.obj");
+    },
+    .attributes = {
+      .roughness = 0.2f
+    }
+  },
+  {
+    .name = "vent-corner",
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/vent-corner.obj");
+    },
+    .attributes = {
+      .roughness = 0.2f
+    }
+  },
+  {
     .name = "hot-air-balloon",
     .moving = true,
     .defaultScale = Vec3f(200.f),

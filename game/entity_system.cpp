@@ -959,12 +959,13 @@ internal void handleAirDashTarget(GmContext* context, GameState& state) {
     for (auto& point : objects("air-dash-landing-point")) {
       auto cameraToPoint = (point.position - camera.position);
       auto pointToPlayer = player.position - point.position;
+      auto distance = pointToPlayer.magnitude();
       auto dot = Vec3f::dot(cameraDirection, cameraToPoint.unit());
 
       if (
         pointToPlayer.unit().y > 0.5f &&
         pointToPlayer.xz().magnitude() < 1500.f &&
-        pointToPlayer.magnitude() < 4000.f &&
+        (distance > 500.f && distance < 4000.f) &&
         (dot > 0.95f && dot > maxDot)
       ) {
         target.position = point.position;
