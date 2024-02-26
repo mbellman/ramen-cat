@@ -459,61 +459,14 @@ internal void rebuildStreetlampLights(GmContext* context) {
   }
 }
 
-internal void buildWireFromStartToEnd(GmContext* context, const Vec3f& start, const Vec3f& end, const float scale, const Vec3f& color) {
-  std::vector<Vec3f> points;
-
-  u8 totalWirePieces = 10;
-  float sagDistance = (end - start).magnitude() / 10.f;
-
-  // Define a discrete set of points forming the wire curve
-  for (u8 i = 0; i <= totalWirePieces; i++) {
-    float alpha = float(i) / float(totalWirePieces);
-    float sag = (1.f - powf(alpha * 2.f - 1.f, 2)) * sagDistance;
-    Vec3f point = Vec3f::lerp(start, end, alpha) - Vec3f(0, sag, 0);
-
-    points.push_back(point);
-  }
-
-  // Create wire segments connecting the wire points
-  for (u8 i = 0; i < points.size() - 1; i++) {
-    auto& currentPoint = points[i];
-    auto& nextPoint = points[i + 1];
-    Vec3f path = nextPoint - currentPoint;
-    float distance = path.magnitude();
-
-    // Calculate the wire rotation (pitch + yaw)
-    float yaw = atan2f(path.x, path.z);
-
-    // Rotate the path onto the y/z plane so we can
-    // calculate the pitch as a function of y/z
-    path.z = path.x * sinf(yaw) + path.z * cosf(yaw);
-
-    float pitch = atan2f(path.y, path.z);
-
-    // Create the individual wire segment
-    {
-      auto& wire = create_object_from("wire");
-
-      wire.position = (currentPoint + nextPoint) / 2.f;
-      wire.scale = Vec3f(scale, scale, distance / 2.f);
-      wire.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), yaw);
-      wire.rotation *= Quaternion::fromAxisAngle(wire.rotation.getLeftDirection(), pitch);
-      wire.color = color;
-
-      commit(wire);
-    }
-  }
-}
-
+// @todo move to a common file
 #define is_same_object(a, b) a._record.id == b._record.id && a._record.generation == b._record.generation
 
 internal void rebuildElectricalWires(GmContext* context) {
   // Electrical pole wires
   for (auto& p1 : objects("electrical-pole")) {
     for (auto& p2 : objects("electrical-pole")) {
-      if (is_same_object(p1, p2)) {
-        continue;
-      }
+      if (is_same_object(p1, p2)) continue;
 
       float distance = (p1.position - p2.position).magnitude();
       float yDistance = p1.position.y - p2.position.y;
@@ -524,7 +477,7 @@ internal void rebuildElectricalWires(GmContext* context) {
         Vec3f start = p1.position + Vec3f(0, p1.scale.y, 0);
         Vec3f end = p2.position + Vec3f(0, p2.scale.y, 0);
 
-        buildWireFromStartToEnd(context, start, end, 3.f, Vec3f(0.1f));
+        ProceduralMeshes::buildWireFromStartToEnd(context, start, end, 3.f, Vec3f(0.1f));
       }
     }
   }
@@ -547,7 +500,7 @@ internal void rebuildElectricalWires(GmContext* context) {
           Vec3f start = p1.position + Vec3f(0, p1.scale.y * 1.2f, 0) + (p1.rotation.toMatrix4f() * Vec3f(0, 0, p1.scale.z * 0.8f)).toVec3f();
           Vec3f end = p2.position + Vec3f(0, p2.scale.y * 1.2f, 0) + (p2.rotation.toMatrix4f() * Vec3f(0, 0, p2.scale.z * 0.8f)).toVec3f();
 
-          buildWireFromStartToEnd(context, start, end, 10.f, Vec3f(0.7f));
+          ProceduralMeshes::buildWireFromStartToEnd(context, start, end, 10.f, Vec3f(0.7f));
         }
 
         // Wire 2
@@ -555,7 +508,7 @@ internal void rebuildElectricalWires(GmContext* context) {
           Vec3f start = p1.position + Vec3f(0, p1.scale.y * 1.63f, 0) + (p1.rotation.toMatrix4f() * Vec3f(0, 0, p1.scale.z * 0.8f)).toVec3f();
           Vec3f end = p2.position + Vec3f(0, p2.scale.y * 1.63f, 0) + (p2.rotation.toMatrix4f() * Vec3f(0, 0, p2.scale.z * 0.8f)).toVec3f();
 
-          buildWireFromStartToEnd(context, start, end, 10.f, Vec3f(0.7f));
+          ProceduralMeshes::buildWireFromStartToEnd(context, start, end, 10.f, Vec3f(0.7f));
         }
       }
     }
@@ -586,7 +539,7 @@ internal void rebuildMiniFlagWires(GmContext* context) {
         auto& end = s2.position;
 
         // Construct the wire
-        buildWireFromStartToEnd(context, start, end, 4.f, Vec3f(0.5f));
+        ProceduralMeshes::buildWireFromStartToEnd(context, start, end, 4.f, Vec3f(0.5f));
 
         // Add mini flag decorations
         u8 totalWirePieces = 10;
@@ -1048,6 +1001,7 @@ void World::rebuildDynamicMeshes(GmContext* context) {
   rebuildSignRoofs(context);
   rebuildPetals(context);
 
+  // @todo move these to procedural_meshes.cpp
   {
     objects("wire").reset();
 

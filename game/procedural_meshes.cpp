@@ -413,6 +413,99 @@ internal void rebuildTownSigns(GmContext* context) {
   }
 }
 
+// @todo move to a common file
+#define is_same_object(a, b) a._record.id == b._record.id && a._record.generation == b._record.generation
+
+internal void rebuildFlagPivots(GmContext* context) {
+  const static auto FLAG_COLORS = {
+    Vec3f(1.f, 0.8f, 0.2f),
+    Vec3f(1.f, 0.3f, 0.1f)
+  };
+
+  for (auto& p1 : objects("flag-pivot")) {
+    for (auto& p2 : objects("flag-pivot")) {
+      if (is_same_object(p1, p2)) continue;
+
+      auto start = p1.position;
+      auto end = p2.position;
+
+      if ((start - end).magnitude() < 750.f && start.y > end.y) {
+        // Build the wire
+        ProceduralMeshes::buildWireFromStartToEnd(context, start, end, 1.f, Vec3f(0.3f));
+
+        // Add mini flag decorations
+        u8 totalWirePieces = 10;
+        Vec3f direction = end - start;
+        float sagDistance = direction.magnitude() / 10.f;
+        float angle = atan2f(direction.x, direction.z) + Gm_HALF_PI;
+
+        for (u8 i = 1; i < totalWirePieces; i++) {
+          float alpha = float(i) / float(totalWirePieces);
+          float sag = (1.f - powf(alpha * 2.f - 1.f, 2)) * sagDistance;
+          Vec3f position = Vec3f::lerp(start, end, alpha) - Vec3f(0, sag + 10.f, 0);
+          u8 colorIndex = u8(Gm_Modf(position.x + position.z, 2.f));
+
+          auto& flag = create_object_from("mini-flag");
+          float sizeVariance = Gm_Modf(position.x, 10.f);
+
+          flag.position = position - Vec3f(0, 15.f, 0) - Vec3f(0, sizeVariance * 0.25f, 0);
+          flag.scale = Vec3f(20.f - sizeVariance, 20.f + sizeVariance, 20.f);
+          flag.color = *(FLAG_COLORS.begin() + colorIndex);
+          flag.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angle);
+
+          commit(flag);
+        }
+      }
+    }
+  }
+}
+
+void ProceduralMeshes::buildWireFromStartToEnd(GmContext* context, const Vec3f& start, const Vec3f& end, const float scale, const Vec3f& color) {
+  std::vector<Vec3f> points;
+
+  u8 totalWirePieces = 10;
+  float sagDistance = (end - start).magnitude() / 10.f;
+
+  // Define a discrete set of points forming the wire curve
+  for (u8 i = 0; i <= totalWirePieces; i++) {
+    float alpha = float(i) / float(totalWirePieces);
+    float sag = (1.f - powf(alpha * 2.f - 1.f, 2)) * sagDistance;
+    Vec3f point = Vec3f::lerp(start, end, alpha) - Vec3f(0, sag, 0);
+
+    points.push_back(point);
+  }
+
+  // Create wire segments connecting the wire points
+  for (u8 i = 0; i < points.size() - 1; i++) {
+    auto& currentPoint = points[i];
+    auto& nextPoint = points[i + 1];
+    Vec3f path = nextPoint - currentPoint;
+    float distance = path.magnitude();
+
+    // Calculate the wire rotation (pitch + yaw)
+    float yaw = atan2f(path.x, path.z);
+
+    // Rotate the path onto the y/z plane so we can
+    // calculate the pitch as a function of y/z
+    path.z = path.x * sinf(yaw) + path.z * cosf(yaw);
+
+    float pitch = atan2f(path.y, path.z);
+
+    // Create the individual wire segment
+    {
+      auto& wire = create_object_from("wire");
+
+      wire.position = (currentPoint + nextPoint) / 2.f;
+      wire.scale = Vec3f(scale, scale, distance / 2.f);
+      wire.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), yaw);
+      wire.rotation *= Quaternion::fromAxisAngle(wire.rotation.getLeftDirection(), pitch);
+      wire.color = color;
+
+      commit(wire);
+    }
+  }
+}
+
 void ProceduralMeshes::rebuildProceduralMeshes(GmContext* context) {
   for (auto& asset : GameMeshes::proceduralMeshParts) {
     objects(asset.name).reset();
@@ -425,6 +518,7 @@ void ProceduralMeshes::rebuildProceduralMeshes(GmContext* context) {
   rebuildMiniHouses(context);
   rebuildWoodBuildings(context);
   rebuildTownSigns(context);
+  rebuildFlagPivots(context);
 }
 
 void ProceduralMeshes::handleProceduralMeshes(GmContext* context, GameState& state, float dt) {

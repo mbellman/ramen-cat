@@ -100,7 +100,7 @@ std::vector<MeshAsset> light_meshes = {
         },
         .rebuild = [](auto& source, auto& piece) {
           piece.color = Vec3f(1.f, 0.9f, 0.6f);
-        }
+        },
       }
     }
   }

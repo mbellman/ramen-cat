@@ -994,7 +994,7 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
       .maxCascade = 4,
       .animation = {
         .type = PresetAnimationType::CLOTH,
-        .factor = 3.f
+        .factor = 1.5f
       },
     }
   },

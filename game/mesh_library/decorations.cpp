@@ -129,6 +129,12 @@ std::vector<MeshAsset> decoration_meshes = {
     }
   },
   {
+    .name = "flag-pivot",
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/flag-pivot.obj");
+    }
+  },
+  {
     .name = "fish-kite",
     .moving = true,
     .hitboxScale = Vec3f(1.f, 0.5f, 0.5f),
