@@ -98,6 +98,15 @@ void VehicleSystem::rebuildVehicleTracks(GmContext* context, GameState& state) {
       }
     }
 
+    for (auto& vehicle : track.vehicles) {
+      if (track.points.size() > 1) {
+        auto firstTrackSectionDirection = (track.points[1] - track.points[0]).unit();
+        auto initialAngle = atan2f(firstTrackSectionDirection.x, firstTrackSectionDirection.z);
+
+        vehicle.trackSectionStartAngle = initialAngle;
+      }
+    }
+
     state.vehicleTracks.push_back(track);
   }
 
@@ -117,28 +126,40 @@ void VehicleSystem::handleVehicles(GmContext* context, GameState& state, float d
         auto target = track.points[vehicle.trackPointTarget];
         auto objectToTarget = target - object->position;
         auto targetDistance = objectToTarget.magnitude();
+        auto objectDirection = object->rotation.getDirection();
+        float currentAngle = atan2f(objectDirection.x, objectDirection.z);
 
         if (targetDistance < 20.f) {
           vehicle.trackPointTarget++;
+          vehicle.trackSectionStartAngle = currentAngle;
         }
 
         if (vehicle.trackPointTarget > track.points.size() - 1) {
+          // Reset vehicle to start
           auto direction = (track.points[1] - track.points[0]).unit();
-          auto angle = atan2f(direction.x, direction.z);
+          auto initialAngle = atan2f(direction.x, direction.z);
 
           vehicle.trackPointTarget = 0;
+          vehicle.trackSectionStartAngle = initialAngle;
 
           object->position = track.points[0];
-          object->rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angle);
+          object->rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), initialAngle);
         } else {
-          auto finalTarget = track.points[vehicle.trackPointTarget];
-          auto objectToFinalTarget = finalTarget - object->position;
-          auto objectDirection = object->rotation.getDirection();
-          float currentAngle = atan2f(objectDirection.x, objectDirection.z);
-          float targetAngle = atan2f(objectToFinalTarget.x, objectToFinalTarget.z);
-          float angle = Gm_LerpCircularf(currentAngle, targetAngle, dt, Gm_PI);
+          auto previousTarget = vehicle.trackPointTarget > 0
+            ? track.points[vehicle.trackPointTarget - 1]
+            : track.points[0];
 
-          object->position += objectToFinalTarget.unit() * vehicle.speed * dt;
+          auto nextTarget = track.points[vehicle.trackPointTarget];
+          auto previousToNextTarget = nextTarget - previousTarget;
+          auto objectToNextTarget = nextTarget - object->position;
+          auto objectToPreviousTarget = previousTarget - object->position;
+          auto objectDirection = object->rotation.getDirection();
+          float targetAngle = atan2f(objectToNextTarget.x, objectToNextTarget.z);
+          float turnProgress = 1.f - objectToNextTarget.magnitude() / previousToNextTarget.magnitude();
+          float angle = Gm_LerpCircularf(vehicle.trackSectionStartAngle, targetAngle, turnProgress, Gm_PI);
+
+          // @todo use proper curved interpolation between points (cubic spline will probably work)
+          object->position += objectToNextTarget.unit() * vehicle.speed * dt;
           object->rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angle);
         }
 

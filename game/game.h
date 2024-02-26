@@ -42,6 +42,7 @@ struct Jetstream {
 struct Vehicle {
   Gamma::ObjectRecord object;
   u32 trackPointTarget;
+  float trackSectionStartAngle;
   float speed;
 };
 
