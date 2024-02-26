@@ -793,6 +793,27 @@ internal void deleteObject(GmContext* context, GameState& state, Object& object)
   }
 }
 
+internal void cloneSelectedObjectToPosition(GmContext* context, GameState& state, const Vec3f& position) {
+  auto& camera = get_camera();
+  auto cameraDirection = camera.orientation.getDirection();
+  auto& object = create_object_from(editor.selectedObject._record.meshIndex);
+
+  object.position = position;
+  object.scale = editor.selectedObject.scale;
+  object.rotation = editor.selectedObject.rotation;
+  object.color = editor.selectedObject.color;
+
+  commit(object);
+
+  selectObject(context, object);
+  createObjectHistoryAction(context, ActionType::CREATE, object);
+  rebuildCollisionPlanes(context, state);
+
+  World::rebuildDynamicMeshes(context);
+
+  editor.currentActionType = ActionType::POSITION;
+}
+
 internal void respawnPlayer(GmContext* context, GameState& state) {
   auto& player = get_player();
   auto& camera = get_camera();
@@ -1463,22 +1484,58 @@ namespace Editor {
       } else if (input.didPressKey(Key::BACKSPACE) && editor.isObjectSelected) {
         deleteObject(context, state, editor.selectedObject);
       } else if (input.didPressKey(Key::ARROW_RIGHT)) {
-        cycleEditorMode(context, +1);
-      } else if (input.didPressKey(Key::ARROW_LEFT)) {
-        cycleEditorMode(context, -1);
-      } else if (input.didPressKey(Key::ARROW_UP)) {
-        // @todo cycleCurrentObject
-        editor.currentSelectedMeshIndex++;
+        if (editor.isObjectSelected) {
+          auto position = editor.selectedObject.position;
+          auto right = getMostSimilarObjectAxis(camera.orientation.getRightDirection(), editor.selectedObject);
+          // @todo use the camera-relative scale component
+          auto factor = editor.selectedObject.scale.x * 2.f;
 
-        if (editor.currentSelectedMeshIndex > GameMeshes::meshAssets.size() - 1) {
-          editor.currentSelectedMeshIndex = 0;
+          cloneSelectedObjectToPosition(context, state, position + right * factor);
+        } else {
+          cycleEditorMode(context, +1);
+        }
+      } else if (input.didPressKey(Key::ARROW_LEFT)) {
+        if (editor.isObjectSelected) {
+          auto position = editor.selectedObject.position;
+          auto left = getMostSimilarObjectAxis(camera.orientation.getLeftDirection(), editor.selectedObject);
+          // @todo use the camera-relative scale component
+          auto factor = editor.selectedObject.scale.x * 2.f;
+
+          cloneSelectedObjectToPosition(context, state, position + left * factor);
+        } else {
+          cycleEditorMode(context, -1);
+        }
+      } else if (input.didPressKey(Key::ARROW_UP)) {
+        if (editor.isObjectSelected) {
+          auto position = editor.selectedObject.position;
+          auto up = getMostSimilarObjectAxis(camera.orientation.getUpDirection(), editor.selectedObject);
+          // @todo use the camera-relative scale component
+          auto factor = editor.selectedObject.scale.y * 2.f;
+
+          cloneSelectedObjectToPosition(context, state, position + up * factor);
+        } else {
+          // @todo cycleCurrentObject
+          editor.currentSelectedMeshIndex++;
+
+          if (editor.currentSelectedMeshIndex > GameMeshes::meshAssets.size() - 1) {
+            editor.currentSelectedMeshIndex = 0;
+          }
         }
       } else if (input.didPressKey(Key::ARROW_DOWN)) {
-        // @todo cycleCurrentObject
-        if (editor.currentSelectedMeshIndex == 0) {
-          editor.currentSelectedMeshIndex = (u8)GameMeshes::meshAssets.size() - 1;
+        if (editor.isObjectSelected) {
+          auto position = editor.selectedObject.position;
+          auto down = getMostSimilarObjectAxis(camera.orientation.getUpDirection().invert(), editor.selectedObject);
+          // @todo use the camera-relative scale component
+          auto factor = editor.selectedObject.scale.y * 2.f;
+
+          cloneSelectedObjectToPosition(context, state, position + down * factor);
         } else {
-          editor.currentSelectedMeshIndex--;
+          // @todo cycleCurrentObject
+          if (editor.currentSelectedMeshIndex == 0) {
+            editor.currentSelectedMeshIndex = (u8)GameMeshes::meshAssets.size() - 1;
+          } else {
+            editor.currentSelectedMeshIndex--;
+          }
         }
       } else if (input.didPressKey(Key::G)) {
         editor.isGiantMode = !editor.isGiantMode;
