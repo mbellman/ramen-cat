@@ -3,6 +3,26 @@
 
 using namespace Gamma;
 
+struct VehicleConfig {
+  std::string name;
+  float speed;
+};
+
+static std::vector<VehicleConfig> vehicleConfigs = {
+  {
+    .name = "small-train",
+    .speed = 3000.f
+  },
+  {
+    .name = "area-train",
+    .speed = 4000.f
+  },
+  {
+    .name = "cable-car",
+    .speed = 500.f
+  }
+};
+
 // @todo @cleanup the code here is a first-pass and a little messy
 void VehicleSystem::rebuildVehicleTracks(GmContext* context, GameState& state) {
   auto start = Gm_GetMicroseconds();
@@ -12,37 +32,21 @@ void VehicleSystem::rebuildVehicleTracks(GmContext* context, GameState& state) {
   for (auto& spawn : objects("vehicle-spawn")) {
     VehicleTrack track;
 
-    // @todo do this for all vehicle meshes (e.g. define a list of vehicle mesh names + speed)
-    for (auto& object : objects("small-train")) {
-      if ((object.position - spawn.position).magnitude() < 2000.f) {
-        Vehicle vehicle = {
-          .object = object._record,
-          .trackPointTarget = 0,
-          .speed = 3000.f
-        };
+    for (auto& config : vehicleConfigs) {
+      for (auto& object : objects(config.name)) {
+        if ((object.position - spawn.position).magnitude() < 2000.f) {
+          Vehicle vehicle = {
+            .object = object._record,
+            .trackPointTarget = 0,
+            .speed = config.speed
+          };
 
-        object.position = spawn.position;
+          object.position = spawn.position;
 
-        commit(object);
+          commit(object);
 
-        track.vehicles.push_back(vehicle);
-      }
-    }
-
-    // @todo do this for all vehicle meshes (e.g. define a list of vehicle mesh names + speed)
-    for (auto& object : objects("cable-car")) {
-      if ((object.position - spawn.position).magnitude() < 2000.f) {
-        Vehicle vehicle = {
-          .object = object._record,
-          .trackPointTarget = 0,
-          .speed = 500.f
-        };
-
-        object.position = spawn.position;
-
-        commit(object);
-
-        track.vehicles.push_back(vehicle);
+          track.vehicles.push_back(vehicle);
+        }
       }
     }
 

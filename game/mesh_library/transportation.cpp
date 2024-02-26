@@ -99,6 +99,17 @@ std::vector<MeshAsset> transportation_meshes = {
     }
   },
   {
+    .name = "area-train",
+    .moving = true,
+    .create = []() {
+      // @todo update
+      return Mesh::Model("./game/assets/transportation/small-train.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    }
+  },
+  {
     .name = "cable-car",
     .moving = true,
     .create = []() {
