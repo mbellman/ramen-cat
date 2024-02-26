@@ -558,7 +558,7 @@ internal void handleGliderMovementInput(GmContext* context, GameState& state, fl
 internal bool willPlayerFallOffLedge(GmContext* context, GameState& state) {
   auto& player = get_player();
   auto start = player.position;
-  auto end = player.position - Vec3f(0, PLAYER_RADIUS + 5.f, 0);
+  auto end = player.position - Vec3f(0, PLAYER_RADIUS + 10.f, 0);
 
   for (auto& plane : state.collisionPlanes) {
     if (plane.minY > start.y) continue;
