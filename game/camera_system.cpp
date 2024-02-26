@@ -231,6 +231,16 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
 
       // Handle view mode changes
       {
+        // @todo use a different input for this
+        // @todo handle first-person mode
+        if (input.didPressKey(Key::CONTROLLER_Y)) {
+          if (state.cameraMode == CameraMode::NORMAL) {
+            state.cameraMode = CameraMode::ZOOM_OUT;
+          } else {
+            state.cameraMode = CameraMode::NORMAL;
+          }
+        }
+
         if (input.didMoveMouseWheel()) {
           if (input.getMouseWheelDirection() == MouseWheelEvent::DOWN) {
             // Zoom further out
