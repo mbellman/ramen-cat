@@ -21,6 +21,7 @@ layout (location = 8) in float lightFov;
 
 noperspective out vec2 fragUv;
 flat out Light light;
+flat out vec2 center;
 out float intensity;
 
 void main() {
@@ -28,5 +29,6 @@ void main() {
 
   fragUv = gl_Position.xy * 0.5 + 0.5;
   light = Light(lightPosition, lightRadius, lightColor, lightPower, lightDirection, lightFov);
+  center = discOffset * 0.5 + 0.5;
   intensity = 1.0 - sqrt(vertexPosition.x*vertexPosition.x + vertexPosition.y*vertexPosition.y);
 }

@@ -383,6 +383,7 @@ void EffectsSystem::updateDayNightCycleLighting(GmContext* context, GameState& s
     mesh("solar-turbine")->emissivity = lightSourceEmissivity * 0.2f;
 
     mesh("lantern")->emissivity = lanternEmissivity;
+    mesh("orange-lantern")->emissivity = 0.4f + 0.3f * lanternEmissivity;
     mesh("streetlamp-light")->emissivity = lanternEmissivity;
 
     mesh("b1-windows")->emissivity = lightSourceEmissivity;

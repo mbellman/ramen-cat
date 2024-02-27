@@ -85,6 +85,18 @@ std::vector<MeshAsset> light_meshes = {
     }
   },
   {
+    .name = "orange-lantern",
+    .moving = true,
+    .hitboxScale = Vec3f(0.5f, 1.f, 0.5f),
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/orange-lantern.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/decorations/orange-lantern.png",
+      .useMipmaps = false
+    }
+  },
+  {
     .name = "wall-lamp",
     .create = []() {
       return Mesh::Model("./game/assets/decorations/wall-lamp.obj");

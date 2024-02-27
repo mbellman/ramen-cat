@@ -551,7 +551,7 @@ internal void handleLanterns(GmContext* context, GameState& state, float dt) {
 
   {
     for_moving_objects("ramen-lamp", {
-      float alpha = get_scene_time() * 1.5f + initial.position.z / 200.f;
+      float alpha = t * 1.5f + initial.position.z / 200.f;
       float sineAlpha = sinf(alpha);
       float swing = 0.05f * sineAlpha;
 
@@ -559,6 +559,23 @@ internal void handleLanterns(GmContext* context, GameState& state, float dt) {
       float y = 0.25f * LANTERN_VERTICAL_DRIFT * powf(Gm_Absf(x) / LANTERN_HORIZONTAL_DRIFT, 2);
 
       object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 0, 1.f), swing); 
+      object.position = initial.position + Vec3f(x, y, 0);
+
+      commit(object);
+    });
+  }
+
+  {
+    for_moving_objects("orange-lantern", {
+      float alpha = t * 1.5f + initial.position.z / 200.f;
+      float sineAlpha = sinf(alpha);
+      float swing = 0.05f * sineAlpha;
+      float turn = 0.3f * sinf(t * 0.5f + initial.position.x);
+
+      float x = 0.25f * LANTERN_HORIZONTAL_DRIFT * sineAlpha;
+      float y = 0.25f * LANTERN_VERTICAL_DRIFT * powf(Gm_Absf(x) / LANTERN_HORIZONTAL_DRIFT, 2);
+
+      object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 0, 1.f), swing) * Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), turn);
       object.position = initial.position + Vec3f(x, y, 0);
 
       commit(object);

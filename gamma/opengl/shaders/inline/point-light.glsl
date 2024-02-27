@@ -4,12 +4,9 @@ vec4 frag_color_and_depth = texture(texColorAndDepth, fragUv);
 vec3 position = getWorldPosition(frag_color_and_depth.w, fragUv, matInverseProjection, matInverseView);
 vec3 surface_to_light = light.position - position;
 float light_distance = length(surface_to_light);
-
-if (light_distance > light.radius) {
-  #if USE_DEV_LIGHT_DISCS == 0
-    discard;
-  #endif
-}
+// @todo cleanup/optimize
+float surface_distance_from_camera = length(cameraPosition - position);
+float light_distance_from_camera = length(cameraPosition - light.position);
 
 vec4 frag_normal_and_material = texture(texNormalAndMaterial, fragUv);
 vec3 frag_normal = frag_normal_and_material.xyz;
@@ -27,7 +24,7 @@ float incidence = max(dot(normalized_surface_to_light, frag_normal), 0.0);
 float attenuation = pow(1.0 / light_distance, 2);
 float specularity = pow(max(dot(half_vector, frag_normal), 0.0), 50) * (1.0 - roughness);
 
-if (incidence == 0.0) specularity = 0.0;
+if (incidence == 0.0) discard;
 
 // Define a non-linear light intensity fall-off toward the radius boundary
 float hack_diffuse_radial_influence = (1.0 - pow(clamp(light_distance / light.radius, 0.0, 1.0), 2));
