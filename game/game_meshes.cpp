@@ -213,6 +213,19 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
+    .name = "metal-floor",
+    .hitboxScale = Vec3f(1.f, 0.025f, 1.f),
+    .create = []() {
+      return Mesh::Plane(2);
+    },
+    .attributes = {
+      .texture = "./game/assets/metal-floor.png",
+      .normals = "./game/assets/metal-floor-normals.png",
+      .roughness = 0.1f,
+      .useXzPlaneTexturing = true
+    }
+  },
+  {
     .name = "building-1",
     .dynamic = true,
     .create = []() {

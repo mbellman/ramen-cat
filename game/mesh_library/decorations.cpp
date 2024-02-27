@@ -11,6 +11,7 @@ std::vector<MeshAsset> decoration_meshes = {
       return Mesh::Model("./game/assets/decorations/vent-piece.obj");
     },
     .attributes = {
+      .normals = "./game/assets/pipe-1-normals.png",
       .roughness = 0.2f
     }
   },
@@ -20,6 +21,7 @@ std::vector<MeshAsset> decoration_meshes = {
       return Mesh::Model("./game/assets/decorations/vent-corner.obj");
     },
     .attributes = {
+      .normals = "./game/assets/pipe-1-normals.png",
       .roughness = 0.2f
     }
   },
