@@ -50,6 +50,7 @@ namespace Gamma {
     file.flush();
   }
 
+  // @todo warn if file is not found
   void Gm_WatchFile(const std::string& path, const std::function<void()>& handler) {
     FileWatcher watcher;
 

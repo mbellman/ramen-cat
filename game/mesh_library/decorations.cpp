@@ -301,5 +301,14 @@ std::vector<MeshAsset> decoration_meshes = {
       .maxCascade = 4,
       .useMipmaps = false
     }
+  },
+  {
+    .name = "barred-window",
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/barred-window.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/decorations/barred-window.png"
+    }
   }
 };

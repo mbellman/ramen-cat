@@ -1013,6 +1013,8 @@ internal void handleAirDashTarget(GmContext* context, GameState& state) {
       target.position = Vec3f::lerp(initialTargetPosition, target.position, 0.5f);
     }
 
+    target.scale.debug();
+
     target.scale = Vec3f::lerp(target.scale, Vec3f(PLAYER_RADIUS) * 4.f + 30.f * sinf(t * 2.f), 0.3f);
     target.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), t);
 

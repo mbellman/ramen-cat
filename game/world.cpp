@@ -1125,6 +1125,12 @@ void World::loadLevel(GmContext* context, GameState& state, const std::string& l
 
       state.previousPlayerPosition = player.position;
       state.levelSpawnPosition = player.position;
+
+      // Set the air dash target as local to the player so it
+      // doesn't have to lerp too far the first time it appears
+      objects("air-dash-target")[0].position = player.position;
+
+      commit(objects("air-dash-target")[0]);
     }
   }
 
