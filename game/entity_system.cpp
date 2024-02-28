@@ -982,7 +982,7 @@ internal void handleAirDashTarget(GmContext* context, GameState& state) {
       if (
         pointToPlayer.unit().y > 0.5f &&
         pointToPlayer.xz().magnitude() < 1500.f &&
-        (distance > 500.f && distance < 4000.f) &&
+        (distance > 300.f && distance < 4000.f) &&
         (dot > 0.95f && dot > maxDot)
       ) {
         target.position = point.position;

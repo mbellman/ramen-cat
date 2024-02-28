@@ -26,6 +26,26 @@ std::vector<MeshAsset> decoration_meshes = {
     }
   },
   {
+    .name = "round-vent-piece",
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/round-vent-piece.obj");
+    },
+    .attributes = {
+      .normals = "./game/assets/pipe-1-normals.png",
+      .roughness = 0.4f
+    }
+  },
+  {
+    .name = "round-vent-corner",
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/round-vent-corner.obj");
+    },
+    .attributes = {
+      .normals = "./game/assets/pipe-1-normals.png",
+      .roughness = 0.4f
+    }
+  },
+  {
     .name = "hot-air-balloon",
     .moving = true,
     .defaultScale = Vec3f(200.f),
