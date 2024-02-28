@@ -672,6 +672,17 @@ internal void handleFans(GmContext* context, GameState& state, float dt) {
   }
 
   {
+    for_moving_objects("metal-fan", {
+      auto rotationAxis = initial.rotation.getUpDirection();
+      float angle = t * 0.75f;
+
+      object.rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initial.rotation;
+
+      commit(object);
+    });
+  }
+
+  {
     for_moving_objects("solar-turbine", {
       auto rotationAxis = initial.rotation.getUpDirection();
       float angle = t / (initial.scale.magnitude() * 0.002f);
@@ -1012,8 +1023,6 @@ internal void handleAirDashTarget(GmContext* context, GameState& state) {
     if (target.scale.x > 1.f) {
       target.position = Vec3f::lerp(initialTargetPosition, target.position, 0.5f);
     }
-
-    target.scale.debug();
 
     target.scale = Vec3f::lerp(target.scale, Vec3f(PLAYER_RADIUS) * 4.f + 30.f * sinf(t * 2.f), 0.3f);
     target.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), t);

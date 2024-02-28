@@ -5,6 +5,20 @@
 using namespace Gamma;
 
 std::vector<MeshAsset> decoration_meshes = {
+  // @todo move to special.cpp
+  {
+    .name = "ocean-plane-piece",
+    .create = []() {
+      return Mesh::Plane(2);
+    },
+    .attributes = {
+      .type = MeshType::OCEAN,
+      .ocean = {
+        .turbulence = 0.1f
+      }
+    }
+  },
+
   {
     .name = "vent-piece",
     .create = []() {
@@ -299,6 +313,17 @@ std::vector<MeshAsset> decoration_meshes = {
     .attributes = {
       .texture = "./game/assets/decorations/circle-billboard-1.png",
       .maxCascade = 4,
+      .useMipmaps = false
+    }
+  },
+
+  {
+    .name = "circle-billboard-2",
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/circle-billboard.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/decorations/circle-billboard-2.png",
       .useMipmaps = false
     }
   },
