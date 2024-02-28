@@ -57,5 +57,33 @@ std::vector<MeshAsset> spinner_meshes = {
       .maxCascade = 4,
       .roughness = 0.2f
     }
+  },
+  {
+    .name = "generator",
+    .hitboxScale = Vec3f(1.f, 0.1f, 1.f),
+    .maxInstances = 100,
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/generator.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/decorations/generator.png",
+      .roughness = 0.2f
+    },
+    .pieces = {
+      {
+        .name = "generator-fan",
+        .moving = true,
+        .create = []() {
+          return Mesh::Model("./game/assets/decorations/exhaust-fan.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(0.4f);
+          piece.position -= piece.rotation.getUpDirection() * source.scale.y * 0.2f;
+        },
+        .attributes = {
+          .roughness = 0.1f
+        }
+      }
+    }
   }
 };

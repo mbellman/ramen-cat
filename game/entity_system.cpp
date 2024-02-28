@@ -681,6 +681,17 @@ internal void handleFans(GmContext* context, GameState& state, float dt) {
       commit(object);
     });
   }
+
+  {
+    for_moving_objects("generator-fan", {
+      auto rotationAxis = initial.rotation.getUpDirection();
+      float angle = t * 6.f;
+
+      object.rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initial.rotation;
+
+      commit(object);
+    });
+  }
 }
 
 internal void handleKites(GmContext* context, GameState& state, float dt) {
