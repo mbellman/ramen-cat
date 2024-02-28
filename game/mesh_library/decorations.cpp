@@ -8,7 +8,10 @@ std::vector<MeshAsset> decoration_meshes = {
   {
     .name = "vent-piece",
     .create = []() {
-      return Mesh::Model("./game/assets/decorations/vent-piece.obj");
+      return Mesh::Model({
+        "./game/assets/decorations/vent-piece.obj",
+        "./game/assets/decorations/vent-piece-lod.obj"
+      });
     },
     .attributes = {
       .normals = "./game/assets/pipe-1-normals.png",

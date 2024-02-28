@@ -254,7 +254,10 @@ std::vector<MeshAsset> overworld_city_meshes = {
     .defaultColor = Vec3f(1.f, 0.8f, 0.4f),
     .hitboxScale = Vec3f(1.f, 1.2f, 1.f),
     .create = []() {
-      return Mesh::Model("./game/assets/buildings/wood-tower.obj");
+      return Mesh::Model({
+        "./game/assets/buildings/wood-tower.obj",
+        "./game/assets/buildings/wood-tower-lod.obj"
+      });
     },
     .attributes = {
       .maxCascade = 4

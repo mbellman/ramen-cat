@@ -223,7 +223,10 @@ std::vector<MeshAsset> plant_meshes = {
   {
     .name = "japanese-tree",
     .create = []() {
-      return Mesh::Model("./game/assets/japanese-tree-trunk.obj");
+      return Mesh::Model({
+        "./game/assets/japanese-tree-trunk.obj",
+        "./game/assets/japanese-tree-trunk-lod.obj"
+      });
     },
     .attributes = {
       .maxCascade = 4
@@ -232,7 +235,10 @@ std::vector<MeshAsset> plant_meshes = {
       {
         .name = "japanese-tree-leaves",
         .create = []() {
-          return Mesh::Model("./game/assets/japanese-tree-leaves.obj");
+          return Mesh::Model({
+            "./game/assets/japanese-tree-leaves.obj",
+            "./game/assets/japanese-tree-leaves-lod.obj"
+          });
         },
         .rebuild = [](auto& source, auto& piece) {
           float g = Gm_Modf(piece.position.x, 10.f) / 10.f;
@@ -315,7 +321,10 @@ std::vector<MeshAsset> plant_meshes = {
     .name = "bamboo",
     .hitboxScale = Vec3f(0.2f, 1.f, 0.2f),
     .create = []() {
-      return Mesh::Model("./game/assets/bamboo.obj");
+      return Mesh::Model({
+        "./game/assets/bamboo.obj",
+        "./game/assets/bamboo-lod.obj"
+      });
     },
     .attributes = {
       .maxCascade = 4

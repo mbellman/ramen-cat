@@ -101,7 +101,10 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
   {
     .name = "garden-terrain",
     .create = []() {
-      return Mesh::Model("./game/assets/garden-terrain.obj");
+      return Mesh::Model({
+        "./game/assets/garden-terrain.obj",
+        "./game/assets/garden-terrain-lod.obj"
+      });
     },
     .attributes = {
       .maxCascade = 4,

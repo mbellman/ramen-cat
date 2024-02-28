@@ -194,6 +194,30 @@ void updateGame(GmContext* context, GameState& state, float dt) {
 
   START_TIMING("updateGame");
 
+  if (input.didPressKey(Key::M)) {
+    printf("\n");
+    printf("Stats for all meshes:\n");
+
+    for (auto& mesh : context->scene.meshes) {
+      if (mesh->disabled) continue;
+
+      auto totalVerts = 0;
+      auto totalInstances = 0;
+
+      if (mesh->lods.size() > 0) {
+        for (auto& lod : mesh->lods) {
+          totalVerts += lod.vertexCount * lod.instanceCount;
+          totalInstances += lod.instanceCount;
+        }
+      } else {
+        totalVerts += mesh->vertices.size() * mesh->objects.totalVisible();
+        totalInstances += mesh->objects.totalVisible();
+      }
+
+      printf("%s: %d vertices (%d visible instances)\n", mesh->name.c_str(), totalVerts, totalInstances);
+    }
+  }
+
   // Set start-of-frame variables
   {
     state.isMovingPlayerThisFrame = false;

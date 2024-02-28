@@ -401,7 +401,9 @@ void CameraSystem::handleVisibilityCulling(GmContext* context, GameState& state)
   START_TIMING("handleVisibilityCulling");
 
   use_frustum_culling({ "weeds", "lamp", "ladder", "ac-unit", "ac-fan", "petal", "p_small-leaves", "p_small-flower" });
+
   use_distance_culling(3000.f, { "flower" });
+  use_distance_culling(4000.f, { "p_weeds" });
   use_distance_culling(10000.f, { "onigiri", "nitamago", "chashu" });
 
   // @todo store somewhere as a constant
@@ -427,7 +429,7 @@ void CameraSystem::handleVisibilityCulling(GmContext* context, GameState& state)
     // Procedural meshes
     "mini-flag",
     "p_mini-house", "p_mini-house-roof", "p_mini-house-wood-beam", "p_mini-house-window",
-    "p_shrub", "p_shrub-2", "p_banana-plant", "p_weeds"
+    "p_shrub", "p_shrub-2", "p_banana-plant"
   };
 
   use_frustum_culling_at_distance(10000.f, meshesToFrustumCullAtDistance);
@@ -438,14 +440,19 @@ void CameraSystem::handleVisibilityCulling(GmContext* context, GameState& state)
 void CameraSystem::handleLevelsOfDetail(GmContext* context) {
   START_TIMING("handleLevelsOfDetail");
 
+  use_lod_by_distance(3000.f, { "vent-piece" });
+
   use_lod_by_distance(5000.f, {
     "b1-levels", "circle-sign-frame", "hot-air-balloon", "mini-flag", "vertical-banner", "branch-1",
-    "p_shrub", "p_shrub-2"
+    "p_shrub", "p_shrub-2",
+    "japanese-tree", "japanese-tree-leaves"
   });
 
   use_lod_by_distance(8000.f, {
     "b2-levels", "banana-plant",
-    "p_mini-house-roof", "p_banana-plant"
+    "p_mini-house-roof", "p_banana-plant",
+    "garden-terrain", "bamboo",
+    "wood-tower"
   });
 
   use_lod_by_distance(10000.f, {
