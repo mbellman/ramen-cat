@@ -191,6 +191,8 @@ struct GameState {
   Gamma::Object activeJumpPadPlatform;
   float lastJumpPadLaunchTime = 0.f;
 
+  std::vector<Gamma::Light*> proceduralLights;
+
   #if GAMMA_DEVELOPER_MODE
     std::vector<Gamma::Vec3f> lastSolidGroundPositions;
     float gameSpeed = 1.f;

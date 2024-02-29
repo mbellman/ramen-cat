@@ -15,6 +15,80 @@ internal float randomVariance(float random, float variance) {
   return -variance + random * variance * 2.f;
 }
 
+internal void rebuildFoodStalls(GmContext* context) {
+  static auto flagColors = {
+    Vec3f(0.8f, 0.1f, 0.2f),
+    Vec3f(0.3f, 1.f, 0.8f),
+    Vec3f(0.3f, 0.7f, 1.f),
+  };
+
+  // @temporary
+  // @todo store procedural lights some other way and clear them on procedural mesh rebuild
+  static std::vector<Light*> lights;
+
+  for (auto* light : lights) {
+    remove_light(light);
+  }
+
+  lights.clear();
+
+  for (auto& stall : objects("food-stall-1")) {
+    auto random = randomFromVec3f(stall.position);
+
+    auto& light = create_light(LightType::POINT);
+
+    light.color = Vec3f(1.f, 0.8f, 0.5f);
+    light.radius = 400.f;
+    light.power = 2.f;
+    light.position = stall.position + Vec3f(0, stall.scale.y * 0.5f, 0);
+    light.serializable = false;
+
+    // @temporary
+    // @see above
+    lights.push_back(&light);
+
+    auto& curtain = create_object_from("mini-flag");
+    auto colorIndex = u8(Gm_Modf(stall.position.x + stall.position.z, 3.f));
+
+    curtain.position = stall.position + stall.rotation.getDirection() * stall.scale.z * 0.7f + Vec3f(0, stall.scale.y * 0.8f, 0);
+    curtain.scale = Vec3f(stall.scale.x * 0.7f, stall.scale.y * 0.3f, 1.f);
+    curtain.color = *(flagColors.begin() + colorIndex);
+    curtain.rotation = stall.rotation;
+
+    commit(curtain);
+
+    // @todo have alternate dish setups
+    auto& dishes = create_object_from("p_dishes-1");
+    auto& dumplings = create_object_from("p_dumplings-1");
+    auto& fish = create_object_from("p_fish-1");
+    auto& meat = create_object_from("p_meat-1");
+
+    dishes.position = stall.position;
+    dishes.scale = stall.scale;
+    dishes.rotation = stall.rotation;
+
+    dumplings.position = stall.position;
+    dumplings.scale = stall.scale;
+    dumplings.rotation = stall.rotation;
+    dumplings.color = Vec3f(0.8f, 0.4f, 0.2f);
+
+    fish.position = stall.position;
+    fish.scale = stall.scale;
+    fish.rotation = stall.rotation;
+    fish.color = Vec3f(0.5f, 0.6f, 0.8f);
+
+    meat.position = stall.position;
+    meat.scale = stall.scale;
+    meat.rotation = stall.rotation;
+    meat.color = Vec3f(1.f, 0.3f, 0.1f);
+
+    commit(dishes);
+    commit(dumplings);
+    commit(fish);
+    commit(meat);
+  }
+}
+
 internal void rebuildCollectableStrips(GmContext* context, const std::string& collectableMeshName) {
   const float DEFAULT_SCALE = 40.f;
 
@@ -511,6 +585,7 @@ void ProceduralMeshes::rebuildProceduralMeshes(GmContext* context) {
     objects(asset.name).reset();
   }
 
+  rebuildFoodStalls(context);
   rebuildCollectables(context);
   rebuildPlantStrips(context);
   rebuildPottedPlants(context);

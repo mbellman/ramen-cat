@@ -222,5 +222,26 @@ std::vector<MeshAsset> unique_meshes = {
         }
       }
     }
+  },
+  {
+    .name = "clock-tower",
+    .maxInstances = 5,
+    .create = []() {
+      return Mesh::Model("./game/assets/uniques/clock-tower.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
+    },
+    .pieces = {
+      {
+        .name = "clock-tower-clock",
+        .create = []() {
+          return Mesh::Model("./game/assets/uniques/clock.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(0.2f, 0.6f, 0.2f);
+        }
+      }
+    }
   }
 };

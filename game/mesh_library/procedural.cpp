@@ -373,5 +373,43 @@ std::vector<MeshAsset> procedural_mesh_parts = {
     .create = []() {
       return Mesh::Model("./game/assets/decorations/town-sign-spinner.obj");
     }
+  },
+
+  // food stalls/shops
+  {
+    .name = "p_dishes-1",
+    .create = []() {
+      return Mesh::Model("./game/assets/shops/dishes-1.obj");
+    },
+    .attributes = {
+      .roughness = 0.2f
+    }
+  },
+  {
+    .name = "p_dumplings-1",
+    .create = []() {
+      return Mesh::Model("./game/assets/shops/dumplings-1.obj");
+    },
+    .attributes = {
+      .roughness = 0.6f
+    }
+  },
+  {
+    .name = "p_fish-1",
+    .create = []() {
+      return Mesh::Model("./game/assets/shops/fish-1.obj");
+    },
+    .attributes = {
+      .roughness = 0.4f
+    }
+  },
+  {
+    .name = "p_meat-1",
+    .create = []() {
+      return Mesh::Model("./game/assets/shops/meat-1.obj");
+    },
+    .attributes = {
+      .roughness = 0.5f
+    }
   }
 };
