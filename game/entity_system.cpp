@@ -595,6 +595,17 @@ internal void handleSigns(GmContext* context, GameState& state, float dt) {
       commit(object);
     });
   }
+
+  {
+    for_moving_objects("hanging-sign", {
+      auto axis = initial.rotation.getLeftDirection();
+      auto angle = sinf(t + initial.position.x) * 0.15f;
+
+      object.rotation = Quaternion::fromAxisAngle(axis, angle) * initial.rotation;
+
+      commit(object);
+    });
+  }
 }
 
 internal void handleWindmillWheels(GmContext* context, GameState& state, float dt) {

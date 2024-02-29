@@ -867,7 +867,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
     mesh("player")->type = MeshType::DEFAULT_WITH_OCCLUSION_SILHOUETTE;
     mesh("player")->texture = "./game/assets/cat.png";
     mesh("player")->roughness = 0.9f;
-    mesh("player")->emissivity = 0.3f;
+    mesh("player")->emissivity = 0.5f;
     mesh("player")->useMipmaps = false;
     mesh("player")->useCloseTranslucency = true;
 

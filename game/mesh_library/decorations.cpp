@@ -8,6 +8,7 @@ std::vector<MeshAsset> decoration_meshes = {
   // @todo move to special.cpp
   {
     .name = "ocean-plane-piece",
+    .hitboxScale = Vec3f(1.f, 0.1f, 1.f),
     .create = []() {
       return Mesh::Plane(2);
     },
@@ -334,6 +335,16 @@ std::vector<MeshAsset> decoration_meshes = {
     },
     .attributes = {
       .texture = "./game/assets/decorations/barred-window.png"
+    }
+  },
+  {
+    .name = "hanging-sign",
+    .moving = true,
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/hanging-sign.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/decorations/hanging-sign.png"
     }
   }
 };
