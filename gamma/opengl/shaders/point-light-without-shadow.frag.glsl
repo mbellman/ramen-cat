@@ -29,11 +29,11 @@ void main() {
 
   // @todo cleanup
   float radius = length(fragUv - center) * (light_distance_from_camera * 0.0005);
-  float radius_factor = clamp(pow(1.0 - radius, 30), 0.0, 1.0);
+  float glow_factor = clamp(pow(1.0 - radius, 30), 0.0, 1.0);
 
   if (light_distance_from_camera < light.radius * 3.0) {
-    radius_factor *= pow(light_distance_from_camera / (light.radius * 3.0), 3);
+    glow_factor *= pow(light_distance_from_camera / (light.radius * 3.0), 3);
   }
 
-  out_colorAndDepth = vec4(illuminated_color + light.color * radius_factor, frag_color_and_depth.w);
+  out_colorAndDepth = vec4(illuminated_color + light.color * glow_factor, frag_color_and_depth.w);
 }

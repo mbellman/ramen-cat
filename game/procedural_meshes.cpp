@@ -70,7 +70,7 @@ internal void rebuildFoodStalls(GmContext* context) {
     dumplings.position = stall.position;
     dumplings.scale = stall.scale;
     dumplings.rotation = stall.rotation;
-    dumplings.color = Vec3f(0.8f, 0.4f, 0.2f);
+    dumplings.color = Vec3f(1.f, 0.9f, 0.7f);
 
     fish.position = stall.position;
     fish.scale = stall.scale;
@@ -86,6 +86,94 @@ internal void rebuildFoodStalls(GmContext* context) {
     commit(dumplings);
     commit(fish);
     commit(meat);
+  }
+
+  for (auto& stall : objects("ramen-stall")) {
+    auto& light = create_light(LightType::POINT);
+
+    light.color = Vec3f(1.f, 0.4f, 0.2f);
+    light.radius = 400.f;
+    light.power = 2.f;
+    light.position = stall.position + Vec3f(0, stall.scale.y * 0.5f, 0);
+    light.serializable = false;
+
+    // @temporary
+    // @see above
+    lights.push_back(&light);
+
+    auto& sign = create_object_from("p_ramen-sign");
+
+    sign.position = stall.position;
+    sign.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), Gm_PI) * stall.rotation;
+    sign.scale = stall.scale * 0.7f;
+
+    sign.position.y += stall.scale.y * 0.65f;
+    sign.position += stall.rotation.getDirection().invert() * stall.scale.z * 0.7f;
+
+    commit(sign);
+
+    float random = randomFromVec3f(stall.position);
+
+    for (u8 i = 0; i < 2; i++) {
+      auto& bowl = create_object_from("p_ramen-bowl");
+
+      bowl.position =
+        stall.position +
+        Vec3f(0, stall.scale.y * 0.025f, 0) +
+        stall.rotation.getDirection().invert() * stall.scale.z * 0.9f +
+        stall.rotation.getLeftDirection() * randomVariance(random, stall.scale.x);
+
+      bowl.scale = Vec3f(25.f);
+      bowl.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), random * Gm_TAU);
+
+      commit(bowl);
+
+      random = randomFromVec3f(bowl.position);
+    }
+  }
+
+  for (auto& stall : objects("ramen-stall-2")) {
+    auto& light = create_light(LightType::POINT);
+
+    light.color = Vec3f(1.f, 0.4f, 0.2f);
+    light.radius = 400.f;
+    light.power = 2.f;
+    light.position = stall.position + Vec3f(0, stall.scale.y * 0.5f, 0);
+    light.serializable = false;
+
+    // @temporary
+    // @see above
+    lights.push_back(&light);
+
+    auto& sign = create_object_from("p_ramen-sign");
+
+    sign.position = stall.position;
+    sign.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), Gm_PI) * stall.rotation;
+    sign.scale = stall.scale * 0.65f;
+
+    sign.position.y += stall.scale.y * 0.95f;
+    sign.position += stall.rotation.getDirection().invert() * stall.scale.z * 0.7f;
+
+    commit(sign);
+
+    float random = randomFromVec3f(stall.position);
+
+    for (u8 i = 0; i < 2; i++) {
+      auto& bowl = create_object_from("p_ramen-bowl");
+
+      bowl.position =
+        stall.position +
+        Vec3f(0, stall.scale.y * 0.15f, 0) +
+        stall.rotation.getDirection().invert() * stall.scale.z +
+        stall.rotation.getLeftDirection() * randomVariance(random, stall.scale.x);
+
+      bowl.scale = Vec3f(25.f);
+      bowl.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), random * Gm_TAU);
+
+      commit(bowl);
+
+      random = randomFromVec3f(bowl.position);
+    }
   }
 }
 

@@ -377,6 +377,31 @@ std::vector<MeshAsset> procedural_mesh_parts = {
 
   // food stalls/shops
   {
+    .name = "p_ramen-sign",
+    .create = []() {
+      return Mesh::Model("./game/assets/ramen-sign.obj");
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .texture = "./game/assets/ramen-sign.png",
+      .animation = {
+        .type = PresetAnimationType::CLOTH
+      },
+      .roughness = 1.f,
+      .useMipmaps = false
+    }
+  },
+  {
+    .name = "p_ramen-bowl",
+    .create = []() {
+      return Mesh::Model("./game/assets/ramen-bowl.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/ramen-bowl.png",
+      .roughness = 0.4f
+    }
+  },
+  {
     .name = "p_dishes-1",
     .create = []() {
       return Mesh::Model("./game/assets/shops/dishes-1.obj");

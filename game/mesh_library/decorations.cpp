@@ -346,5 +346,12 @@ std::vector<MeshAsset> decoration_meshes = {
     .attributes = {
       .texture = "./game/assets/decorations/hanging-sign.png"
     }
+  },
+  {
+    .name = "sphere-sign",
+    .hitboxScale = Vec3f(0.1f, 1.f, 0.1f),
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/sphere-sign.obj");
+    }
   }
 };

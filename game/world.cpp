@@ -477,7 +477,7 @@ internal void rebuildElectricalWires(GmContext* context) {
         Vec3f start = p1.position + Vec3f(0, p1.scale.y, 0);
         Vec3f end = p2.position + Vec3f(0, p2.scale.y, 0);
 
-        ProceduralMeshes::buildWireFromStartToEnd(context, start, end, 3.f, Vec3f(0.1f));
+        ProceduralMeshes::buildWireFromStartToEnd(context, start, end, 2.f, Vec3f(0.1f));
       }
     }
   }
