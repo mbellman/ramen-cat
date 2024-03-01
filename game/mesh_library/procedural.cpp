@@ -93,6 +93,15 @@ std::vector<MeshAsset> procedural_meshes = {
     .attributes = {
       .texture = "./game/assets/wood-beam.png"
     }
+  },
+  {
+    .name = "plant-pot",
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/plant-pot.obj");
+    },
+    .attributes = {
+      .roughness = 0.9f
+    }
   }
 };
 

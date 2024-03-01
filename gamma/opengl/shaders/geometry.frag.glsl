@@ -42,11 +42,12 @@ void main() {
     discard;
   }
 
-  if (useCloseTranslucency) {
+  // @todo disableCloseTranslucency instead
+  // if (useCloseTranslucency) {
     if (gl_FragCoord.z < 0.95 && int(gl_FragCoord.x) % 3 < 2) {
       discard;
     }
-  }
+  // }
 
   float material = 0.0;
 

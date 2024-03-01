@@ -357,6 +357,27 @@ internal void rebuildPottedPlants(GmContext* context) {
       commit(plant);
     }
   }
+
+  for (auto& pot : objects("plant-pot")) {
+    auto random = randomFromVec3f(pot.position);
+    auto& leaves = create_object_from("p_small-leaves");
+
+    leaves.position = pot.position + Vec3f(0, pot.scale.y, 0);
+    leaves.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), random * Gm_TAU);
+    leaves.scale = Vec3f(40.f + 10.f * random);
+
+    commit(leaves);
+
+    auto& flower = random > 0.5f
+      ? create_object_from("p_small-flower")
+      : create_object_from("p_small-cosmo");
+
+    flower.position = leaves.position + Vec3f(0, leaves.scale.y * 0.7f, 0);
+    flower.scale = Vec3f(40.f);
+    flower.rotation = leaves.rotation;
+
+    commit(flower);
+  }
 }
 
 internal void rebuildConcreteStacks(GmContext* context) {

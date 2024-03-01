@@ -1697,9 +1697,15 @@ namespace Editor {
       );
 
       if (editor.mode == EditorMode::OBJECTS) {
-        auto& meshName = GameMeshes::meshAssets[editor.currentSelectedMeshIndex].name;
+        auto& meshAsset = GameMeshes::meshAssets[editor.currentSelectedMeshIndex];
+        auto& meshName = meshAsset.name;
         auto* mesh = mesh(meshName);
         u32 verticesPerMesh = mesh->vertices.size();
+
+        for (auto& pieceAsset : meshAsset.pieces) {
+          verticesPerMesh += mesh(pieceAsset.name)->vertices.size();
+        }
+
         u16 totalInstances = mesh->objects.totalActive();
         u32 totalVertices = verticesPerMesh * (u32)totalInstances;
 

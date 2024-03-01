@@ -256,7 +256,8 @@ std::vector<MeshAsset> decoration_meshes = {
         .type = PresetAnimationType::CLOTH,
         .speed = 0.5f,
         .factor = 20.f
-      }
+      },
+      .emissivity = 0.3f
     }
   },
   {
