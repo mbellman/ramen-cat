@@ -6,6 +6,16 @@ using namespace Gamma;
 
 std::vector<MeshAsset> entity_meshes = {
   {
+    .name = "power-flower",
+    .moving = true,
+    .create = []() {
+      return Mesh::Model("./game/assets/collectibles/flower.obj");
+    },
+    .attributes = {
+      .emissivity = 0.3f
+    }
+  },
+  {
     .name = "air-dash-landing-point",
     .dynamic = true,
     .defaultColor = Vec3f(1.f, 0, 0),

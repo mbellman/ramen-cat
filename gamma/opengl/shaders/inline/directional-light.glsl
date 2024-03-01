@@ -6,6 +6,9 @@ vec3 half_vector = normalize(normalized_surface_to_light + normalized_surface_to
 float incidence = max(dot(normalized_surface_to_light, normal), 0.0);
 float specularity = pow(max(dot(half_vector, normal), 0.0), 50) * (1.0 - roughness);
 
+// @experiment subtle cel-shading effect near lighting edges
+if (incidence > 0.0 && incidence < 0.2) incidence = 0.2;
+
 vec3 diffuse_term = color * adjusted_light_color * incidence * sqrt(roughness) * (1.0 - specularity);
 vec3 specular_term = adjusted_light_color * specularity;
 

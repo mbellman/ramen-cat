@@ -151,6 +151,42 @@ std::vector<MeshAsset> procedural_mesh_parts = {
   },
 
   /**
+   * Effects
+   * -------
+   */
+  {
+    .name = "p_flower-spawn",
+    .create = []() {
+      return Mesh::Model("./game/assets/fx/flower-petals.obj");
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .animation = {
+        .type = PresetAnimationType::LEAF
+      },
+      .emissivity = 0.3f
+    }
+  },
+  {
+    .name = "p_flower-center",
+    .create = []() {
+      return Mesh::Model("./game/assets/fx/flower-center.obj");
+    },
+    .attributes = {
+      .emissivity = 0.3f
+    }
+  },
+  {
+    .name = "p_flower-leaves",
+    .create = []() {
+      return Mesh::Model("./game/assets/fx/flower-leaves.obj");
+    },
+    .attributes = {
+      .emissivity = 0.3f
+    }
+  },
+
+  /**
    * Procedural plants
    * -----------------
    */

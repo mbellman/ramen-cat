@@ -123,6 +123,8 @@ internal void setTargetCameraStateForDialogue(GmContext* context, GameState& sta
 internal bool canPlayerInteractWithSign(const Object& player, const Object& sign, GameState& state) {
   return (
     (sign.position - player.position).magnitude() < 200.f &&
+    // @todo change to checking whether we're issuing directional controls,
+    // since this logic runs before movement now
     !state.isMovingPlayerThisFrame &&
     !state.isFreeCameraMode
   );
@@ -866,6 +868,93 @@ internal void handleCollectables(GmContext* context, GameState& state, float dt)
     for_moving_objects("chashu", {
       handleCollectable(context, state, dt, t, player, initial, object, state.inventory.demonChashu, state.inventory.chashu);
     });
+  }
+
+  {
+    auto isDashFlowerActive = (
+      state.lastPowerFlowerCollectionTime != 0.f &&
+      time_since(state.lastPowerFlowerCollectionTime) < 10.f
+    );
+
+    for_moving_objects("power-flower", {
+      if (object.scale.x == 0.f) continue;
+
+      if (object.scale.x != initial.scale.x) {
+        object.scale = Vec3f::lerp(object.scale, Vec3f(0.f), 20.f * dt);        
+
+        if (object.scale.x < 1.f) object.scale = Vec3f(0.f);
+      } else if ((player.position - object.position).magnitude() < PLAYER_RADIUS * 3.f) {
+        object.scale *= 0.99f;
+
+        state.lastPowerFlowerCollectionTime = t;
+
+        if (state.dashLevel < 2) {
+          state.dashLevel++;
+        }
+      }
+
+      object.position = initial.position + Vec3f(0, sinf(t * 2.f) * 20.f, 0);
+      object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), t) * initial.rotation;
+
+      commit(object);
+    });
+
+    for (auto& flower : objects("p_flower-spawn")) {
+      auto maxScale = 20.f + Gm_Modf(flower.position.x, 10.f);
+      auto angle = flower.scale.x / maxScale * Gm_HALF_PI;
+
+      flower.scale = Vec3f::lerp(flower.scale, Vec3f(maxScale), 10.f * dt);
+      flower.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angle + Gm_Modf(flower.position.x, Gm_PI));
+
+      commit(flower);
+    }
+
+    const static std::vector<Vec3f> colors = {
+      Vec3f(1.f, 0.4f, 0.2f),
+      Vec3f(1.f, 0.5f, 0.4f),
+      Vec3f(1.f, 0.7f, 0.3f),
+      Vec3f(1.f, 0.7f, 0.8f)
+    };
+
+    if (
+      state.lastPowerFlowerCollectionTime != 0.f &&
+      time_since(state.lastPowerFlowerCollectionTime) < 10.f
+    ) {
+      auto cooldown = (
+        state.dashLevel == 0
+          ? 0.2f
+        : state.dashLevel == 1
+          ? 0.1f
+        : 0.05f
+      );
+
+      if (
+        state.isOnSolidGround &&
+        time_since(state.lastFlowerSpawnTime) > cooldown
+      ) {
+        auto& flower = create_object_from("p_flower-spawn");
+        auto& center = create_object_from("p_flower-center");
+        auto& leaves = create_object_from("p_flower-leaves");
+        auto colorIndex = (u32)Gm_Randomf(0.f, (float)colors.size());
+
+        flower.position = player.position + Vec3f(Gm_Randomf(-50.f, 50.f), -PLAYER_RADIUS * 0.7f, Gm_Randomf(-50.f, 50.f));
+        flower.scale = Vec3f(1.f);
+        flower.color = colors[colorIndex];
+
+        center.position = flower.position;
+        center.scale = Vec3f(25.f);
+        center.color = Vec3f(1.f, 0.9f, 0.2f);
+
+        leaves.position = flower.position;
+        leaves.scale = Vec3f(25.f);
+        leaves.color = Vec3f(0.1f, 0.5f, 0.2f);
+
+        commit(center);
+        commit(leaves);
+
+        state.lastFlowerSpawnTime = t;
+      }
+    }
   }
 }
 

@@ -191,6 +191,10 @@ struct GameState {
   Gamma::Object activeJumpPadPlatform;
   float lastJumpPadLaunchTime = 0.f;
 
+  // Power flowers
+  float lastPowerFlowerCollectionTime = 0.f;
+  float lastFlowerSpawnTime = 0.f;
+
   std::vector<Gamma::Light*> proceduralLights;
 
   #if GAMMA_DEVELOPER_MODE
