@@ -130,13 +130,13 @@ internal bool canPlayerInteractWithSign(const Object& player, const Object& sign
 
 internal void interactWithNpc(GmContext* context, GameState& state, NonPlayerCharacter& npc) {
   auto& player = get_player();
-  Vec3f npcFacePosition = npc.position + Vec3f(0, 30.f, 0);
+  Vec3f npcFacePosition = npc.position + Vec3f(0, 60.f, 0);
 
   state.activeNpc = &npc;
   state.velocity = Vec3f(0.f);
   state.hasActiveDialogue = true;
 
-  setTargetCameraStateForDialogue(context, state, npc.position - player.position, npcFacePosition, NPC_INTERACTION_CAMERA_RADIUS);
+  setTargetCameraStateForDialogue(context, state, npc.position - player.position, npcFacePosition, 1.5f * NPC_INTERACTION_CAMERA_RADIUS);
 
   UISystem::queueDialogue(context, state, npc.dialogue);
 }
@@ -227,6 +227,7 @@ internal void handleInteractibleEntitiesWithDialogue(GmContext* context, GameSta
           float npcXzDistance = (npc.position - player.position).xz().magnitude();
 
           if (
+            // @todo canPlayerInteractWithNpc()
             npcXzDistance < NPC_INTERACTION_TRIGGER_DISTANCE &&
             player.position.y < npc.position.y + NPC_HEIGHT &&
             player.position.y > npc.position.y - NPC_HEIGHT
@@ -269,19 +270,7 @@ internal void handleInteractibleEntitiesWithDialogue(GmContext* context, GameSta
 internal void handlePeople(GmContext* context, GameState& state) {
   auto& player = get_player();
 
-  for_moving_objects("person", {
-    Vec3f personToPlayer = player.position - object.position;
-    Vec3f baseDirection = initial.rotation.getDirection();
-    float baseAngle = atan2f(baseDirection.x, baseDirection.z);
-    float facingAngle = atan2f(personToPlayer.x, personToPlayer.z);
-    float distance = personToPlayer.magnitude();
-    float alpha = powf(1.f - distance / (distance + 1000.f), 2.f);
-    float angle = Gm_LerpCircularf(baseAngle, facingAngle, alpha, Gm_PI);
-
-    object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angle);
-
-    commit(object);
-  });
+  // @todo
 }
 
 internal void handleSpeechBubbleTargets(GmContext* context, GameState& state) {
@@ -289,6 +278,21 @@ internal void handleSpeechBubbleTargets(GmContext* context, GameState& state) {
   auto& player = get_player();
   auto& speechBubble = objects("speech-bubble")[0];
   bool isNearSpeechBubbleTarget = false;
+
+  for (auto& person : objects("person")) {
+    if (canPlayerInteractWithSign(player, person, state)) {
+      isNearSpeechBubbleTarget = true;
+
+      speechBubble.position =
+        person.position +
+        Vec3f(0, person.scale.y * 1.1f + sinf(t * 3.f) * 15.f, 0) +
+        person.rotation.getDirection() * person.scale.z * 0.8f;
+
+      speechBubble.scale = Vec3f::lerp(speechBubble.scale, Vec3f(25.f), 0.1f);
+
+      break;
+    }
+  }
 
   for (auto& sign : objects("town-sign")) {
     if (canPlayerInteractWithSign(player, sign, state)) {
@@ -434,9 +438,9 @@ internal void handleAmbientParticles(GmContext* context, GameState& state, float
       float progress = Gm_Modf(alpha, 5.f) / 5.f;
       float piProgress = progress * Gm_PI;
 
-      float x = progress * 1000.f;
+      float x = -(progress * 100.f);
       float y = -(progress * 250.f) + sin(alpha) * 50.f;
-      float z = -(progress * 100.f);
+      float z = -progress * 1000.f;
 
       auto offset = Vec3f(x, y, z);
 
@@ -600,6 +604,21 @@ internal void handleSigns(GmContext* context, GameState& state, float dt) {
     for_moving_objects("hanging-sign", {
       auto axis = initial.rotation.getLeftDirection();
       auto angle = sinf(t + initial.position.x) * 0.15f;
+
+      object.rotation = Quaternion::fromAxisAngle(axis, angle) * initial.rotation;
+
+      commit(object);
+    });
+  }
+}
+
+internal void handleOrnaments(GmContext* context, GameState& state) {
+  auto t = get_scene_time();
+
+  {
+    for_moving_objects("spinner-1", {
+      auto axis = initial.rotation.getUpDirection();
+      auto angle = t;
 
       object.rotation = Quaternion::fromAxisAngle(axis, angle) * initial.rotation;
 
@@ -1175,6 +1194,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   handleAmbientParticles(context, state, dt);
   handleLanterns(context, state, dt);
   handleSigns(context, state, dt);
+  handleOrnaments(context, state);
   handleWindmillWheels(context, state, dt);
   handleWindTurbines(context, state, dt);
   handleFans(context, state, dt);

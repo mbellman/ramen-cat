@@ -53,7 +53,9 @@ vec3 getBirdAnimationOffset(vec3 vertex_position, vec3 world_position) {
 vec3 getClothAnimationOffset(vec3 vertex_position, vec3 world_position) {
   float rate = 3.0 * time * animation.speed;
 
-  float displacement_factor = animation.factor * sqrt(abs(vertex_position.y));
+  float scale = modelMatrix[1][1];
+
+  float displacement_factor = (1.0 + scale / 2000.0) * animation.factor * sqrt(abs(vertex_position.y));
   float x = displacement_factor * 2.0 * sin(rate + vertex_position.y * 10.0 + world_position.x * 0.05);
   float z = displacement_factor * cos(rate + vertex_position.y * 10.0 + world_position.x * 0.05);
 

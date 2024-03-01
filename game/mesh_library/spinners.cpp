@@ -6,6 +6,17 @@ using namespace Gamma;
 
 std::vector<MeshAsset> spinner_meshes = {
   {
+    .name = "spinner-1",
+    .moving = true,
+    .hitboxScale = Vec3f(1.f, 0.1f, 1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/spinner-1.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/decorations/spinner-1.png"
+    }
+  },
+  {
     .name = "windmill-wheel",
     .moving = true,
     .defaultScale = Vec3f(75.f),

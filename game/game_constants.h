@@ -10,7 +10,7 @@ constexpr static float PLAYER_RADIUS = 25.f;
 
 constexpr static float NPC_RADIUS = 20.f;
 constexpr static float NPC_HEIGHT = 70.f;
-constexpr static float NPC_INTERACTION_TRIGGER_DISTANCE = 120.f;
+constexpr static float NPC_INTERACTION_TRIGGER_DISTANCE = 180.f;
 constexpr static float NPC_INTERACTION_CAMERA_RADIUS = 150.f;
 
 constexpr static float SLINGSHOT_INTERACTION_TRIGGER_DISTANCE = 150.f;

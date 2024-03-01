@@ -119,6 +119,18 @@ internal void loadLights(GmContext* context, const std::string& levelName) {
 }
 
 internal void loadNpcData(GmContext* context, GameState& state, const std::string& levelName) {
+  // @temporary
+  for (auto& person : objects("person")) {
+    NonPlayerCharacter npc;
+
+    npc.position = person.position;
+
+    npc.dialogue.push_back("I'm a chuckster!");
+
+    state.npcs.push_back(npc);
+  }
+
+
   // @todo eventually store as binary data
   auto npcDataContents = Gm_LoadFileContents("./game/levels/" + levelName + "/data_npcs.txt");
   auto lines = Gm_SplitString(npcDataContents, "\n");
@@ -163,17 +175,6 @@ internal void loadNpcData(GmContext* context, GameState& state, const std::strin
     } else {
       i++;
     }
-  }
-
-  // @temporary
-  for (auto& npc : state.npcs) {
-    auto& object = create_object_from("npc");
-
-    object.position = npc.position;
-    object.color = Vec3f(1.f, 0, 1.f);
-    object.scale = Vec3f(NPC_RADIUS, NPC_HEIGHT, NPC_RADIUS);
-
-    commit(object);
   }
 }
 

@@ -94,7 +94,7 @@ std::vector<MeshAsset> decoration_meshes = {
       .type = MeshType::PRESET_ANIMATED,
       .animation = {
         .type = PresetAnimationType::CLOTH,
-        .factor = 6.f
+        .factor = 3.f
       },
       .emissivity = 0.1f,
       .roughness = 0.4f
@@ -239,7 +239,7 @@ std::vector<MeshAsset> decoration_meshes = {
       .maxCascade = 4,
       .animation = {
         .type = PresetAnimationType::CLOTH,
-        .factor = 20.f
+        .factor = 12.f
       },
       .emissivity = 0.6f
     }
@@ -255,7 +255,7 @@ std::vector<MeshAsset> decoration_meshes = {
       .animation = {
         .type = PresetAnimationType::CLOTH,
         .speed = 0.5f,
-        .factor = 30.f
+        .factor = 20.f
       }
     }
   },
@@ -352,6 +352,9 @@ std::vector<MeshAsset> decoration_meshes = {
     .hitboxScale = Vec3f(0.1f, 1.f, 0.1f),
     .create = []() {
       return Mesh::Model("./game/assets/decorations/sphere-sign.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/decorations/sphere-sign.png"
     }
   }
 };

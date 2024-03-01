@@ -751,6 +751,9 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     .hitboxScale = Vec3f(0.6f, 1.4f, 0.2f),
     .create = []() {
       return Mesh::Model("./game/assets/person.obj");
+    },
+    .attributes = {
+      .emissivity = 0.3f
     }
   },
 
