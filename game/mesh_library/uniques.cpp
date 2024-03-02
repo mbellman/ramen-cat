@@ -243,5 +243,16 @@ std::vector<MeshAsset> unique_meshes = {
         }
       }
     }
+  },
+  {
+    .name = "intro-bridge-supports-curve",
+    .maxInstances = 5,
+    .create = []() {
+      return Mesh::Model("./game/assets/uniques/intro-bridge-supports-curve.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/wood-beam.png",
+      .maxCascade = 4
+    }
   }
 };

@@ -108,6 +108,7 @@ struct GameState {
   float lastBoostTime = 0.f;
 
   float dashLandingJumpStartCameraAltitude = 0.f;
+  float currentCameraLookatHeightAbovePlayer = 50.f;
 
   // @todo remove charged super jumps
   float superjumpChargeTime = 0.f;

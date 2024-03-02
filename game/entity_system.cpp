@@ -627,6 +627,17 @@ internal void handleOrnaments(GmContext* context, GameState& state) {
       commit(object);
     });
   }
+
+  {
+    for_moving_objects("pinwheel", {
+      auto axis = initial.rotation.getUpDirection();
+      auto angle = t;
+
+      object.rotation = Quaternion::fromAxisAngle(axis, angle) * initial.rotation;
+
+      commit(object);
+    });
+  }
 }
 
 internal void handleWindmillWheels(GmContext* context, GameState& state, float dt) {

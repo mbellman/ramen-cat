@@ -47,6 +47,9 @@ std::vector<MeshAsset> shop_meshes = {
         .create = []() {
           return Mesh::Model("./game/assets/shops/food-stall-1-canopy.obj");
         },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(1.f - Gm_Modf(source.position.x, 10.f) * 0.05f, 1.f, 1.f - Gm_Modf(source.position.z, 10.f) * 0.05f);
+        },
         .attributes = {
           .type = MeshType::PRESET_ANIMATED,
           .animation = {

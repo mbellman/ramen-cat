@@ -581,7 +581,7 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
       state.turnFactor = Gm_Lerpf(state.turnFactor, targetTurnFactor, 10.f * dt);
     }
 
-    float yawTurnRate = timeSinceLastAirDash < 0.6f * AIR_DASH_SPIN_DURATION ? 50.f : 10.f;
+    float yawTurnRate = timeSinceLastAirDash < 0.6f * AIR_DASH_SPIN_DURATION ? 50.f : 3.f + 7.f * Gm_Minf(1.f, state.velocity.magnitude() / 650.f);
 
     yaw = Gm_LerpCircularf(state.currentYaw, yaw, Gm_Minf(1.f, yawTurnRate * dt), Gm_PI);
 

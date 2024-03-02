@@ -17,6 +17,18 @@ std::vector<MeshAsset> spinner_meshes = {
     }
   },
   {
+    .name = "pinwheel",
+    .moving = true,
+    .hitboxScale = Vec3f(1.f, 0.1f, 1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/pinwheel.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/decorations/pinwheel.png",
+      .roughness = 0.3f
+    }
+  },
+  {
     .name = "windmill-wheel",
     .moving = true,
     .defaultScale = Vec3f(75.f),
