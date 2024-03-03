@@ -805,18 +805,33 @@ internal void handleKites(GmContext* context, GameState& state, float dt) {
   mesh("flower-kite")->emissivity = 0.7f + 0.2f * sinf(state.dayNightCycleTime - Gm_PI);
 }
 
-internal void handleHotAirBalloons(GmContext* context, GameState& state, float dt) {
-  for_moving_objects("hot-air-balloon", {
-    float offset = object.position.x + object.position.z;
-    float heightRate = 0.5f * get_scene_time() + offset;
-    float heightOscillation = object.scale.x / 5.f;
-    float rotationRate = 0.7f * get_scene_time() + offset;
+internal void handleBalloons(GmContext* context, GameState& state, float dt) {
+  auto t = get_scene_time();
 
-    object.position = initial.position + Vec3f(0, heightOscillation, 0) * sinf(heightRate);
-    object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), 0.05f * sinf(rotationRate));
+  {
+    for_moving_objects("hot-air-balloon", {
+      float offset = object.position.x + object.position.z;
+      float heightRate = 0.5f * t + offset;
+      float heightOscillation = object.scale.x / 5.f;
+      float rotationRate = 0.7f * t + offset;
 
-    commit(object);
-  });
+      object.position = initial.position + Vec3f(0, heightOscillation, 0) * sinf(heightRate);
+      object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), 0.05f * sinf(rotationRate));
+
+      commit(object);
+    });
+  }
+
+  {
+    for_moving_objects("bathhouse-balloon", {
+      float offset = object.position.x + object.position.z;
+      float heightOscillation = object.scale.x / 5.f;
+
+      object.position = initial.position + Vec3f(0, sinf(t * 0.5f + offset) * heightOscillation, 0);
+
+      commit(object);
+    });
+  }
 }
 
 internal void handleCollectable(GmContext* context, GameState& state, float dt, float time, Object& player, Object& initial, Object& object, InventoryItem& demonItem, InventoryItem& item) {
@@ -1307,7 +1322,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   handleInteractibleEntitiesWithDialogue(context, state);
   handlePeople(context, state);
   handleSpeechBubbleTargets(context, state);
-  handleHotAirBalloons(context, state, dt);
+  handleBalloons(context, state, dt);
   handleCollectables(context, state, dt);
   handleJetstreams(context, state, dt);
   handleToriiGates(context, state);

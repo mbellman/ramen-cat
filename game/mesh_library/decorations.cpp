@@ -82,6 +82,20 @@ std::vector<MeshAsset> decoration_meshes = {
     }
   },
   {
+    .name = "bathhouse-balloon",
+    .moving = true,
+    .create = []() {
+      // @todo update
+      return Mesh::Model("./game/assets/lantern.obj");
+    },
+    .attributes = {
+      // @todo update
+      .texture = "./game/assets/lantern.png",
+      .emissivity = 0.5f,
+      .useMipmaps = false
+    }
+  },
+  {
     .name = "vertical-banner",
     .hitboxScale = Vec3f(0.2f, 1.f, 0.05f),
     .create = []() {

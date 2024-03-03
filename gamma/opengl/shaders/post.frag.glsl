@@ -59,14 +59,16 @@ vec3 getAtmosphericsColor(vec3 current_out_color, vec2 uv, float frag_depth, flo
 
   vec3 horizon_atmosphere_color = mix(current_out_color, atmosphereColor, horizon_atmosphere_factor);
 
+  // return horizon_atmosphere_color;
+
   // Do sky atmosphere
-  float sky_atmosphere_factor = dot(sky_direction_2d, vec2(0.5, 0.5)) * frag_depth_ratio * frag_depth_ratio * 0.5;
+  float sky_atmosphere_factor = pow(dot(sky_direction_2d, vec2(0.5, 0.5)), 3) * frag_depth_ratio * frag_depth_ratio;
   sky_atmosphere_factor = sky_atmosphere_factor > 1 ? 1 : sky_atmosphere_factor;
   sky_atmosphere_factor = isnan(sky_atmosphere_factor) ? 0 : sky_atmosphere_factor;
 
   if (sky_atmosphere_factor < 0.0) sky_atmosphere_factor = 0.0;
 
-  return mix(horizon_atmosphere_color, atmosphereColor, sky_atmosphere_factor);
+  return mix(horizon_atmosphere_color, vec3(0.7, 0.7, 1.0), sky_atmosphere_factor);
 }
 
 vec3 getToonShadedColor(vec3 current_out_color, vec2 uv, float depth, float linear_frag_depth) {

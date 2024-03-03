@@ -285,7 +285,7 @@ internal void rebuildPlantStrips(GmContext* context) {
 
       auto& bush =
         random > 0.7f ? create_object_from("p_shrub") :
-        random > 0.3f ? create_object_from("p_shrub-2") :
+        random > 0.3f ? create_object_from("p_small-leaves") :
         create_object_from("p_banana-plant");
 
       bush.position = basePosition + Vec3f(
@@ -334,7 +334,7 @@ internal void rebuildPottedPlants(GmContext* context) {
         side * ((random - 0.5f) * 2.f) * planter.scale.z * 0.05f
       );
 
-      plant.scale = Vec3f(20.f + random * 30.f);
+      plant.scale = Vec3f(20.f + random * 30.f) * planter.scale.magnitude() / 220.f;
       plant.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angle);
 
       commit(plant);

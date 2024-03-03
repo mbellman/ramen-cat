@@ -115,10 +115,11 @@ internal Vec3f getLookAtTargetPosition(GmContext* context, GameState& state) {
 
   float currentCameraRadius = (camera.position - player.position).magnitude();
   auto playerUp = player.rotation.getUpDirection();
-  float targetHeightAbovePlayer = state.cameraMode == CameraMode::FIRST_PERSON ? 20.f : 50.f;// * (1.f + state.velocity.magnitude() / 1500.f);
+  float targetHeightAbovePlayer = state.cameraMode == CameraMode::FIRST_PERSON ? 20.f : 50.f;
+  float lookAbovePlayerAdjustmentFactor = state.cameraMode == CameraMode::FIRST_PERSON ? 0.f : powf((1.f - state.camera3p.altitude - (-Gm_PI)) / Gm_TAU, 6.f);
   auto cameraUnitXzDirection = camera.orientation.getDirection().xz().unit();
 
-  state.currentCameraLookatHeightAbovePlayer = targetHeightAbovePlayer;// Gm_Lerpf(state.currentCameraLookatHeightAbovePlayer, targetHeightAbovePlayer, 0.05f);
+  state.currentCameraLookatHeightAbovePlayer = targetHeightAbovePlayer + lookAbovePlayerAdjustmentFactor * 150.f;
 
   Vec3f defaultLookAtTarget = player.position + Vec3f(0, state.currentCameraLookatHeightAbovePlayer, 0);
 
