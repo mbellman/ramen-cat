@@ -49,13 +49,24 @@ vec3 getAtmosphericsColor(vec3 current_out_color, vec2 uv, float frag_depth, flo
   float frag_depth_ratio = min(1.0, frag_distance / depth_divisor);
   float atmosphere_altitude_thickness = max(frag_depth_ratio, saturate(1 - world_position.y / max_atmosphere_altitude));
   float atmosphere_intensity = pow(frag_depth_ratio, 1.0 / atmosphere_density);
-  float atmosphere_factor = atmosphere_altitude_thickness * atmosphere_intensity;
 
-  atmosphere_factor *= sky_direction_2d.y < horizon_direction_2d.y ? 1.0 : pow(dot(sky_direction_2d, horizon_direction_2d), 20);
-  atmosphere_factor = atmosphere_factor > 1 ? 1 : atmosphere_factor;
-  atmosphere_factor = isnan(atmosphere_factor) ? 0 : atmosphere_factor;
+  // Do horizon atmosphere
+  float horizon_atmosphere_factor = atmosphere_altitude_thickness * atmosphere_intensity;
 
-  return mix(current_out_color, atmosphereColor, atmosphere_factor);
+  horizon_atmosphere_factor *= sky_direction_2d.y < horizon_direction_2d.y ? 1.0 : pow(dot(sky_direction_2d, horizon_direction_2d), 20);
+  horizon_atmosphere_factor = horizon_atmosphere_factor > 1 ? 1 : horizon_atmosphere_factor;
+  horizon_atmosphere_factor = isnan(horizon_atmosphere_factor) ? 0 : horizon_atmosphere_factor;
+
+  vec3 horizon_atmosphere_color = mix(current_out_color, atmosphereColor, horizon_atmosphere_factor);
+
+  // Do sky atmosphere
+  float sky_atmosphere_factor = dot(sky_direction_2d, vec2(0.5, 0.5)) * frag_depth_ratio * frag_depth_ratio * 0.5;
+  sky_atmosphere_factor = sky_atmosphere_factor > 1 ? 1 : sky_atmosphere_factor;
+  sky_atmosphere_factor = isnan(sky_atmosphere_factor) ? 0 : sky_atmosphere_factor;
+
+  if (sky_atmosphere_factor < 0.0) sky_atmosphere_factor = 0.0;
+
+  return mix(horizon_atmosphere_color, atmosphereColor, sky_atmosphere_factor);
 }
 
 vec3 getToonShadedColor(vec3 current_out_color, vec2 uv, float depth, float linear_frag_depth) {
