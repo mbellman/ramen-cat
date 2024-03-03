@@ -599,6 +599,7 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
     handleAnimatedMeshWithRig(*mesh("player"), state.animation.playerRig);
 
     // Stretch when launching through boost rings
+    // @todo remove all boost ring logic, since they've been removed
     if (state.lastBoostRingLaunchTime != 0.f && time_since(state.lastBoostRingLaunchTime) < 1.f) {
       float somersaultAlpha = time_since(state.lastBoostRingLaunchTime) * (1.f / BOOST_RING_DURATION);
       float somersaultScale = Gm_Maxf(0.f, sinf(somersaultAlpha * Gm_PI) * 0.5f);
