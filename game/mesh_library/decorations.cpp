@@ -91,8 +91,20 @@ std::vector<MeshAsset> decoration_meshes = {
     .attributes = {
       // @todo update
       .texture = "./game/assets/lantern.png",
+      .maxCascade = 4,
       .emissivity = 0.5f,
       .useMipmaps = false
+    }
+  },
+  {
+    .name = "bathhouse-trim",
+    .hitboxScale = Vec3f(0.1f, 1.f, 0.1f),
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/bathhouse-trim.obj");
+    },
+    .attributes = {
+      .maxCascade = 4,
+      .roughness = 0.2f
     }
   },
   {
@@ -370,6 +382,18 @@ std::vector<MeshAsset> decoration_meshes = {
     },
     .attributes = {
       .texture = "./game/assets/decorations/sphere-sign.png"
+    }
+  },
+  {
+    .name = "small-boat",
+    .moving = true,
+    .hitboxScale = Vec3f(0.2f, 0.2f, 1.f),
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/small-boat.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/wood-beam.png",
+      .maxCascade = 4
     }
   }
 };

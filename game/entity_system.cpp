@@ -123,8 +123,6 @@ internal void setTargetCameraStateForDialogue(GmContext* context, GameState& sta
 internal bool canPlayerInteractWithSign(const Object& player, const Object& sign, GameState& state) {
   return (
     (sign.position - player.position).magnitude() < 200.f &&
-    // @todo change to checking whether we're issuing directional controls,
-    // since this logic runs before movement now
     !state.isMovingPlayerThisFrame &&
     !state.isFreeCameraMode
   );
@@ -1214,6 +1212,26 @@ internal void handleUniqueLevelStructures(GmContext* context, GameState& state, 
   }
 }
 
+internal void handleBoats(GmContext* context, GameState& state) {
+  auto t = get_scene_time();
+
+  {
+    for_moving_objects("small-boat", {
+      auto alpha = t + initial.position.x + initial.position.z;
+
+      object.position = initial.position + Vec3f(
+        0,
+        initial.scale.y * 0.1f * sinf(alpha),
+        0
+      );
+
+      object.rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), sinf(alpha + 1.f) * 0.075f) * initial.rotation;
+
+      commit(object);
+    });
+  }
+}
+
 internal void handleGlider(GmContext* context, GameState& state) {
   auto& glider = objects("glider")[0];
   auto& player = get_player();
@@ -1315,6 +1333,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   handleFans(context, state, dt);
   handleKites(context, state, dt);
   handleUniqueLevelStructures(context, state, dt);
+  handleBoats(context, state);
   handleOcean(context);
 
   // Interactible/player-dependent entities

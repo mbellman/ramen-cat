@@ -223,9 +223,9 @@ void updateGame(GmContext* context, GameState& state, float dt) {
     state.isMovingPlayerThisFrame = false;
   }
 
-  EntitySystem::handleGameEntities(context, state, dt);
   MovementSystem::handlePlayerMovementInput(context, state, dt);
   MovementSystem::handlePlayerMovementPhysics(context, state, dt);
+  EntitySystem::handleGameEntities(context, state, dt);
   VehicleSystem::handleVehicles(context, state, dt);
   ProceduralMeshes::handleProceduralMeshes(context, state, dt);
   AnimationSystem::handleAnimations(context, state, dt);

@@ -12,7 +12,13 @@ std::vector<MeshAsset> entity_meshes = {
       return Mesh::Model("./game/assets/collectibles/flower.obj");
     },
     .attributes = {
-      .emissivity = 0.3f
+      .type = MeshType::PRESET_ANIMATED,
+      .animation = {
+        .type = PresetAnimationType::LEAF,
+        .factor = 2.f
+      },
+      .emissivity = 0.3f,
+      .roughness = 0.2f
     }
   },
   {
