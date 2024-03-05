@@ -373,6 +373,16 @@ std::vector<MeshAsset> decoration_meshes = {
     }
   },
   {
+    .name = "billboards-3",
+    .create = []() {
+      return Mesh::Model("./game/assets/texture-cube.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/decorations/billboards-3.png",
+      .useMipmaps = false
+    }
+  },
+  {
     .name = "circle-billboard-1",
     .create = []() {
       return Mesh::Model("./game/assets/decorations/circle-billboard.obj");
