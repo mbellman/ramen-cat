@@ -81,6 +81,25 @@ std::vector<MeshAsset> decoration_meshes = {
       .canCastShadows = false
     }
   },
+
+  {
+    .name = "hot-air-balloon-2",
+    .moving = true,
+    .defaultScale = Vec3f(200.f),
+    .create = []() {
+      return Mesh::Model({
+        "./game/assets/hot-air-balloon.obj",
+        "./game/assets/hot-air-balloon-lod.obj"
+      });
+    },
+    .attributes = {
+      .texture = "./game/assets/hot-air-balloon-2.png",
+      .normals = "./game/assets/hot-air-balloon-normals.png",
+      .emissivity = 0.2f,
+      .roughness = 0.7f,
+      .canCastShadows = false
+    }
+  },
   {
     .name = "bathhouse-balloon",
     .moving = true,
@@ -118,6 +137,26 @@ std::vector<MeshAsset> decoration_meshes = {
     },
     .attributes = {
       .type = MeshType::PRESET_ANIMATED,
+      .animation = {
+        .type = PresetAnimationType::CLOTH,
+        .factor = 3.f
+      },
+      .emissivity = 0.1f,
+      .roughness = 0.4f
+    }
+  },
+  {
+    .name = "vertical-banner-2",
+    .hitboxScale = Vec3f(0.2f, 1.f, 0.05f),
+    .create = []() {
+      return Mesh::Model({
+        "./game/assets/decorations/vertical-banner.obj",
+        "./game/assets/decorations/vertical-banner-lod.obj"
+      });
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .texture = "./game/assets/decorations/vertical-banner.png",
       .animation = {
         .type = PresetAnimationType::CLOTH,
         .factor = 3.f
@@ -390,6 +429,17 @@ std::vector<MeshAsset> decoration_meshes = {
     .hitboxScale = Vec3f(0.2f, 0.2f, 1.f),
     .create = []() {
       return Mesh::Model("./game/assets/decorations/small-boat.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/wood-beam.png",
+      .maxCascade = 4
+    }
+  },
+  {
+    .name = "train-track-cover",
+    .hitboxScale = Vec3f(1.f, 0.2f, 0.2f),
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/train-track-cover.obj");
     },
     .attributes = {
       .texture = "./game/assets/wood-beam.png",

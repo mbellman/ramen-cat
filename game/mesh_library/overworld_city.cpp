@@ -160,6 +160,17 @@ std::vector<MeshAsset> overworld_city_meshes = {
     }
   },
   {
+    .name = "mini-building",
+    .hitboxScale = Vec3f(1.f, 0.4f, 0.4f),
+    .create = []() {
+      return Mesh::Model("./game/assets/buildings/mini-building.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/buildings/mini-building.png",
+      .maxCascade = 4
+    }
+  },
+  {
     .name = "concrete-b2",
     .hitboxScale = Vec3f(1.f, 1.f, 0.3f),
     .create = []() {

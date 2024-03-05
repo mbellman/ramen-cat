@@ -15,6 +15,7 @@ std::vector<MeshAsset> entity_meshes = {
       .type = MeshType::PRESET_ANIMATED,
       .animation = {
         .type = PresetAnimationType::LEAF,
+        .speed = 3.f,
         .factor = 2.f
       },
       .emissivity = 0.3f,

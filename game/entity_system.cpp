@@ -704,7 +704,8 @@ internal void handleFans(GmContext* context, GameState& state, float dt) {
   {
     for_moving_objects("exhaust-fan-blades", {
       auto rotationAxis = initial.rotation.getUpDirection();
-      float angle = t;
+      float speed = 1.f + Gm_Modf(initial.position.x, 1.f);
+      float angle = t * speed + initial.position.x;
 
       object.rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initial.rotation;
 
@@ -808,6 +809,20 @@ internal void handleBalloons(GmContext* context, GameState& state, float dt) {
 
   {
     for_moving_objects("hot-air-balloon", {
+      float offset = object.position.x + object.position.z;
+      float heightRate = 0.5f * t + offset;
+      float heightOscillation = object.scale.x / 5.f;
+      float rotationRate = 0.7f * t + offset;
+
+      object.position = initial.position + Vec3f(0, heightOscillation, 0) * sinf(heightRate);
+      object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), 0.05f * sinf(rotationRate));
+
+      commit(object);
+    });
+  }
+
+  {
+    for_moving_objects("hot-air-balloon-2", {
       float offset = object.position.x + object.position.z;
       float heightRate = 0.5f * t + offset;
       float heightOscillation = object.scale.x / 5.f;

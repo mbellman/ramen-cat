@@ -95,6 +95,7 @@ std::vector<MeshAsset> transportation_meshes = {
       return Mesh::Model("./game/assets/transportation/small-train.obj");
     },
     .attributes = {
+      .texture = "./game/assets/transportation/small-train.png",
       .maxCascade = 4
     }
   },

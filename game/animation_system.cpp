@@ -255,8 +255,6 @@ internal void handlePlayerAnimation(GmContext* context, GameState& state, float 
     }
   }
 
-  // @temporary
-  // @todo use dynamic tail animations based on action
   {
     auto& rig = state.animation.playerRig;
     float t = get_scene_time();
@@ -269,9 +267,23 @@ internal void handlePlayerAnimation(GmContext* context, GameState& state, float 
 
     rig.joints[PLAYER_TAIL_JOINT_2].offset = Vec3f(
       cosf(t * 2.f) * sinf(t * 0.7f) * 0.2f - state.turnFactor,
-      sinf(t * 2.f + 1.f) * cosf(t * 1.7f) * 0.2f - 0.1f,
+      sinf(t * 2.f + 1.f) * cosf(t * 1.7f) * 0.1f - 0.05f,
       0
     );
+
+    if (state.isOnSolidGround) {
+      auto tailRaiseFactor = state.velocity.magnitude() / MAXIMUM_HORIZONTAL_GROUND_SPEED;
+      if (tailRaiseFactor > 1.f) tailRaiseFactor = 1.f;
+      if (state.dashLevel > 0) tailRaiseFactor = 0.f;
+
+      rig.joints[PLAYER_TAIL_JOINT_1].offset += Vec3f(0, 0.05f * tailRaiseFactor, 0);
+
+      rig.joints[PLAYER_TAIL_JOINT_2].offset += Vec3f(
+        0,
+        0.6f * tailRaiseFactor + sinf(state.totalDistanceTraveled * 0.02f) * 0.1f,
+        -0.1f * tailRaiseFactor
+      );
+    }
   }
 
   // Recalculate joint rotation matrices

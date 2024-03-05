@@ -294,7 +294,7 @@ std::vector<MeshAsset> procedural_mesh_parts = {
       .maxCascade = 2,
       .animation = {
         .type = PresetAnimationType::FLOWER,
-        .factor = 4.f
+        .factor = 6.f
       }
     }
   },
