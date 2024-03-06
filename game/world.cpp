@@ -178,54 +178,6 @@ internal void loadNpcData(GmContext* context, GameState& state, const std::strin
   }
 }
 
-internal void loadEntityData(GmContext* context, GameState& state, const std::string& levelName) {
-  // @todo eventually store as binary data
-  auto entityDataContents = Gm_LoadFileContents("./game/levels/" + levelName + "/data_entities.txt");
-  auto lines = Gm_SplitString(entityDataContents, "\n");
-
-  // @temporary
-  std::string entityName;
-
-  // @temporary
-  for (u32 i = 0; i < lines.size(); i++) {
-    auto& line = lines[i];
-
-    if (line.size() == 0) {
-      continue;
-    }
-
-    if (line[0] == '@') {
-      entityName = line.substr(1);
-    } else if (entityName == "slingshot") {
-      auto parts = Gm_SplitString(line, ",");
-
-      Vec3f position = Vec3f(stof(parts[0]), stof(parts[1]), stof(parts[2]));
-      float xzVelocity = stof(parts[3]);
-      float yVelocity = stof(parts[4]);
-      float initialRotation = stof(parts[5]);
-
-      state.slingshots.push_back({
-        .position = position,
-        .xzVelocity = xzVelocity,
-        .yVelocity = yVelocity,
-        .initialRotation = initialRotation
-      });
-    }
-  }
-
-  // @temporary
-  for (auto& slingshot : state.slingshots) {
-    auto& object = create_object_from("slingshot");
-
-    object.position = slingshot.position;
-    object.scale = Vec3f(60.f);
-    object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), slingshot.initialRotation);
-    object.color = DEFAULT_SLINGSHOT_COLOR;
-
-    commit(object);
-  }
-}
-
 internal void unloadCurrentLevel(GmContext* context, GameState& state) {
   for (auto& asset : GameMeshes::meshAssets) {
     mesh(asset.name)->objects.reset();
@@ -1147,7 +1099,6 @@ void World::loadLevel(GmContext* context, GameState& state, const std::string& l
   loadWorldObjects(context, state, levelName);
   loadLights(context, levelName);
   loadNpcData(context, state, levelName);
-  loadEntityData(context, state, levelName);
 
   World::rebuildDynamicMeshes(context);
   World::rebuildDynamicCollisionPlanes(context, state);

@@ -585,6 +585,15 @@ internal void handleLanterns(GmContext* context, GameState& state, float dt) {
       commit(object);
     });
   }
+
+  {
+    for_moving_objects("floating-lantern", {
+      object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), t * 0.3f) * initial.rotation;
+      object.position = initial.position + Vec3f(0, sinf(t + initial.position.x) * 20.f, 0);
+
+      commit(object);
+    });
+  }
 }
 
 internal void handleSigns(GmContext* context, GameState& state, float dt) {

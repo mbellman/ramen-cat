@@ -41,6 +41,17 @@ std::vector<MeshAsset> light_meshes = {
     }
   },
   {
+    .name = "floating-lantern",
+    .moving = true,
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/floating-lantern.obj");
+    },
+    .attributes = {
+      .emissivity = 0.5f,
+      .canCastShadows = false
+    }
+  },
+  {
     .name = "small-light",
     .defaultColor = Vec3f(1.f, 0.9f, 0.7f),
     .hitboxScale = Vec3f(1.5f),
