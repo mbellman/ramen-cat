@@ -30,11 +30,35 @@ std::vector<MeshAsset> procedural_meshes = {
     }
   },
   {
+    .name = "nitamago-spawn",
+    .dynamic = true,
+    .defaultColor = Vec3f(0.5f, 1.f, 0.5f),
+    .create = []() {
+      return Mesh::Sphere(8);
+    }
+  },
+  {
     .name = "chashu-strip",
     .dynamic = true,
     .defaultColor = Vec3f(1.f, 0.6f, 0.2f),
     .create = []() {
       return Mesh::Cube();
+    }
+  },
+  {
+    .name = "narutomaki-strip",
+    .dynamic = true,
+    .defaultColor = Vec3f(1.f, 0.5f, 1.f),
+    .create = []() {
+      return Mesh::Cube();
+    }
+  },
+  {
+    .name = "narutomaki-spawn",
+    .dynamic = true,
+    .defaultColor = Vec3f(0.5f, 1.f, 0.5f),
+    .create = []() {
+      return Mesh::Sphere(8);
     }
   },
 
@@ -145,6 +169,20 @@ std::vector<MeshAsset> procedural_mesh_parts = {
     },
     .attributes = {
       .texture = "./game/assets/chashu.png",
+      .emissivity = 0.3f,
+      .useMipmaps = false
+    }
+  },
+  {
+    .name = "narutomaki",
+    .moving = true,
+    .defaultScale = Vec3f(40.f),
+    .hitboxScale = Vec3f(0.8f, 0.8f, 0.2f),
+    .create = []() {
+      return Mesh::Model("./game/assets/collectibles/narutomaki.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/collectibles/narutomaki.png",
       .emissivity = 0.3f,
       .useMipmaps = false
     }

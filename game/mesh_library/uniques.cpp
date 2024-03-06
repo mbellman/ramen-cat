@@ -59,6 +59,18 @@ std::vector<MeshAsset> unique_meshes = {
     }
   },
   {
+    .name = "water-tower",
+    .maxInstances = 5,
+    .create = []() {
+      return Mesh::Model("./game/assets/uniques/water-tower.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/uniques/water-tower.png",
+      .maxCascade = 4,
+      .roughness = 0.4f
+    }
+  },
+  {
     .name = "water-tower-pipe",
     .hitboxScale = Vec3f(0.2f, 0.3f, 1.f),
     .maxInstances = 5,

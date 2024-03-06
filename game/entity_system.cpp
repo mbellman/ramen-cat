@@ -910,6 +910,13 @@ internal void handleCollectables(GmContext* context, GameState& state, float dt)
   }
 
   {
+    for_moving_objects("narutomaki", {
+      // @todo update inventory with type
+      handleCollectable(context, state, dt, t, player, initial, object, state.inventory.demonOnigiri, state.inventory.onigiri);
+    });
+  }
+
+  {
     auto isDashFlowerActive = (
       state.lastPowerFlowerCollectionTime != 0.f &&
       time_since(state.lastPowerFlowerCollectionTime) < 10.f

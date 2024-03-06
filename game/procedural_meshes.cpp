@@ -231,9 +231,11 @@ internal void rebuildCollectables(GmContext* context) {
   rebuildCollectableStrips(context, "onigiri");
   rebuildCollectableStrips(context, "nitamago");
   rebuildCollectableStrips(context, "chashu");
+  rebuildCollectableStrips(context, "narutomaki");
 
   rebuildCollectableSpawns(context, "onigiri");
-  // rebuildCollectableSpawns(context, "nitamago");
+  rebuildCollectableSpawns(context, "narutomaki");
+  rebuildCollectableSpawns(context, "nitamago");
   // rebuildCollectableSpawns(context, "chashu");
 }
 
