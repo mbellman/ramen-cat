@@ -370,7 +370,15 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
     float alpha = Gm_Clampf(10.f * dt, 0.f, 1.f);
 
     if (state.dashLevel == 1) targetFov *= 1.1f;
-    if (state.dashLevel == 2) targetFov *= 1.2f;
+
+    if (state.dashLevel == 2) {
+      targetFov *= 1.2f;
+
+      if (state.lastBoostTime != 0.f) {
+        targetFov *= 1.f + 0.2f * (time_since(state.lastBoostTime) / (time_since(state.lastBoostTime) + 3.f));
+      }
+    }
+
     if (state.isDoingTargetedAirDash) targetFov *= 1.2f;
 
     if (state.lastBoostTime != 0.f && time_since(state.lastBoostTime) < 0.2f) {

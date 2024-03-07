@@ -303,6 +303,8 @@ namespace Gamma {
     /**
      * Controls whether mesh object pixels should be made 'translucent'
      * when close up to the near plane.
+     *
+     * @todo change this to disableCloseTranslucency, since we do this by default now
      */
     bool useCloseTranslucency = false;
     /**

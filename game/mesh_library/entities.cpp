@@ -39,6 +39,7 @@ std::vector<MeshAsset> entity_meshes = {
     }
   },
   {
+    // @todo remove
     .name = "boost-pad",
     .hitboxScale = Vec3f(0.5f, 0.2f, 1.f),
     .create = []() {
@@ -70,6 +71,17 @@ std::vector<MeshAsset> entity_meshes = {
           .normals = "./game/assets/wood-plank-normals.png"
         }
       }
+    }
+  },
+  {
+    .name = "torii-platform",
+    .moving = true,
+    .create = []() {
+      return Mesh::Cube();
+    },
+    .attributes = {
+      .emissivity = 0.3f,
+      .roughness = 0.2f
     }
   }
 };

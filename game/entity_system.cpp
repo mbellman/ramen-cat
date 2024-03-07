@@ -944,10 +944,7 @@ internal void handleCollectables(GmContext* context, GameState& state, float dt)
 
         state.lastDashFlowerCollectionTime = t;
         state.lastBoostTime = t;
-
-        if (state.dashLevel < 2) {
-          state.dashLevel++;
-        }
+        state.dashLevel = 2;
       }
 
       object.position = initial.position + Vec3f(0, sinf(t * 2.f) * 20.f, 0);
@@ -983,11 +980,12 @@ internal void handleCollectables(GmContext* context, GameState& state, float dt)
       Vec3f(1.f, 0.7f, 0.8f)
     };
 
+    // Spawn flowers near the player
     if (
       state.lastDashFlowerCollectionTime != 0.f &&
       time_since(state.lastDashFlowerCollectionTime) < 10.f
     ) {
-      auto cooldown = (
+      auto flowerSpawnInterval = (
         state.dashLevel == 0
           ? 0.2f
         : state.dashLevel == 1
@@ -997,7 +995,7 @@ internal void handleCollectables(GmContext* context, GameState& state, float dt)
 
       if (
         state.isOnSolidGround &&
-        time_since(state.lastFlowerSpawnTime) > cooldown
+        time_since(state.lastFlowerSpawnTime) > flowerSpawnInterval
       ) {
         auto& flower = create_object_from("p_flower-spawn");
         auto& center = create_object_from("p_flower-center");
@@ -1075,6 +1073,7 @@ internal void handleJetstreams(GmContext* context, GameState& state, float dt) {
 internal void handleToriiGates(GmContext* context, GameState& state) {
   auto& player = get_player();
 
+  // Handle torii gate interactions
   for (auto& gate : objects("torii-gate")) {
     Vec3f forward = gate.rotation.getDirection();
     Vec3f lastPlayerDirection = (state.previousPlayerPosition - gate.position);
@@ -1093,6 +1092,25 @@ internal void handleToriiGates(GmContext* context, GameState& state) {
 
       break;
     }
+  }
+
+  // Handle torii gate entities
+  {
+    auto alpha = easeOutQuint(Gm_Minf(1.f, time_since(state.toriiGateTransitionTime) / 2.f));
+
+    for_moving_objects("torii-platform", {
+      if (state.toriiGateTransitionTime == 0.f) {
+        object.scale = Vec3f(0.f);
+      } else if (state.isInToriiGateZone) {
+        object.scale = Vec3f::lerp(Vec3f(0.f), initial.scale, alpha);
+        object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), Gm_HALF_PI * (1.f - alpha)) * initial.rotation;
+      } else {
+        object.scale = Vec3f::lerp(initial.scale, Vec3f(0.f), alpha);
+        object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), Gm_HALF_PI * alpha) * initial.rotation;
+      }
+
+      commit(object);
+    });
   }
 }
 

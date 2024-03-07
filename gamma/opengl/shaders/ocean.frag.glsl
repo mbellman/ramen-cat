@@ -215,6 +215,8 @@ void main() {
   // @todo make configurable
   vec3 BASE_OCEAN_COLOR = vec3(0, 0.4 - 0.2 * (1.0 - plane_fresnel), 1.0);
 
+  // BASE_OCEAN_COLOR = vec3(1.0, 0.2, 0.6);
+
   #if BLOCK_SKYLIGHT_IN_SHADOW == 1
     // Substantially reduce the sky intensity in shadowed areas
     // to avoid erroneously reflecting sunlight/clouds
