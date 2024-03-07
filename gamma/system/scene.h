@@ -33,6 +33,7 @@
 #define use_frustum_culling(...) Gm_UseFrustumCulling(context, __VA_ARGS__)
 #define use_frustum_culling_at_distance(distanceThreshold, meshNames) Gm_UseFrustumCulling(context, meshNames, distanceThreshold)
 #define use_distance_culling(...) Gm_UseDistanceCulling(context, __VA_ARGS__)
+#define use_distance_and_frustum_culling(...) Gm_UseDistanceAndFrustumCulling(context, __VA_ARGS__)
 #define use_lod_by_distance(distance, ...) Gm_UseLodByDistance(context, distance, __VA_ARGS__)
 
 #define render_image(image, x, y, w, h) Gm_RenderImage(context, image, x, y, w, h)
@@ -147,6 +148,7 @@ void Gm_HandleFreeCameraMode(GmContext* context, float speed, float dt);
 
 void Gm_UseFrustumCulling(GmContext* context, const std::initializer_list<std::string>& meshNames, float distanceThreshold = 0.f);
 void Gm_UseDistanceCulling(GmContext* context, float distance, const std::initializer_list<std::string>& meshNames);
+void Gm_UseDistanceAndFrustumCulling(GmContext* context, float distance, const std::initializer_list<std::string>& meshNames);
 void Gm_UseLodByDistance(GmContext* context, float distance, const std::initializer_list<std::string>& meshNames);
 
 void Gm_RenderImage(GmContext* context, SDL_Surface* image, u32 x, u32 y, u32 w, u32 h);

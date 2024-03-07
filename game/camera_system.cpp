@@ -404,18 +404,21 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
 void CameraSystem::handleVisibilityCulling(GmContext* context, GameState& state) {
   START_TIMING("handleVisibilityCulling");
 
-  // @todo use_frustum_and_distance_culling()
   use_frustum_culling({
     "petal", "p_small-leaves",
     "lamp", "ladder",
     "ac-unit", "ac-fan",
     "vent-piece", "vent-corner",
     "round-vent-piece", "round-vent-corner",
-    "p_ramen-sign", "p_ramen-bowl",
-    "p_dishes-1", "p_dumplings-1", "p_fish-1", "p_meat-1",
-    "sphere-sign", "small-boat",
+    "p_ramen-sign",
+    "sphere-sign",
     "stair-step",
     "bird-at-rest", "bird-flying"
+  });
+
+  use_distance_and_frustum_culling(10000.f, {
+    "p_ramen-bowl",
+    "p_dishes-1", "p_dumplings-1", "p_fish-1", "p_meat-1"
   });
 
   use_distance_culling(3000.f, { "flower" });
@@ -427,13 +430,12 @@ void CameraSystem::handleVisibilityCulling(GmContext* context, GameState& state)
     "onigiri", "nitamago", "chashu", "narutomaki"
   });
 
+  // @todo store somewhere as a constant
   static std::initializer_list<std::string> meshesToFrustumCullAt1K = {
     "wood-planter", "plant-pot",
     "generator",
     "p_town-sign-spinner", "spinner-1", "pinwheel"
   };
-
-  use_frustum_culling_at_distance(1000.f, meshesToFrustumCullAt1K);
 
   // @todo store somewhere as a constant
   static std::initializer_list<std::string> meshesToFrustumCullAt10K = {
@@ -457,6 +459,7 @@ void CameraSystem::handleVisibilityCulling(GmContext* context, GameState& state)
     "japanese-tree", "japanese-tree-leaves", "bamboo", "rock-1",
     "circle-sign", "circle-sign-frame",
     "dynamic-wave-sign",
+    "small-boat",
 
     // Procedural meshes
     "mini-flag",
@@ -464,6 +467,7 @@ void CameraSystem::handleVisibilityCulling(GmContext* context, GameState& state)
     "p_shrub", "p_shrub-2", "p_banana-plant"
   };
 
+  use_frustum_culling_at_distance(1000.f, meshesToFrustumCullAt1K);
   use_frustum_culling_at_distance(10000.f, meshesToFrustumCullAt10K);
 
   LOG_TIME();
