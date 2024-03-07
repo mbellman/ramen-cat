@@ -455,5 +455,17 @@ std::vector<MeshAsset> decoration_meshes = {
       .texture = "./game/assets/wood-beam.png",
       .maxCascade = 4
     }
+  },
+  {
+    .name = "cloud",
+    .moving = true,
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/cloud.obj");
+    },
+    .attributes = {
+      .emissivity = 0.3f,
+      .roughness = 0.9f,
+      .canCastShadows = false
+    }
   }
 };

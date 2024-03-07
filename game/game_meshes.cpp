@@ -40,7 +40,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       return Mesh::Cube();
     },
     .attributes = {
-      .maxCascade = 4
+      .maxCascade = 4,
     }
   },
   {

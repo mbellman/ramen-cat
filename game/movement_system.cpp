@@ -482,7 +482,9 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
 
   // Movement state resets
   {
-    if (state.dashLevel > 0 && state.isOnSolidGround && !state.isMovingPlayerThisFrame) {
+    auto isDashFlowerActive = state.lastDashFlowerCollectionTime != 0.f && time_since(state.lastDashFlowerCollectionTime) < 10.f;
+
+    if (state.dashLevel > 0 && state.isOnSolidGround && !state.isMovingPlayerThisFrame && !isDashFlowerActive) {
       // Stop dashing when we cease movement while dashing along the ground
       state.dashLevel = 0;
     }

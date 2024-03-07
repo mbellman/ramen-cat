@@ -1096,9 +1096,12 @@ internal void handleToriiGates(GmContext* context, GameState& state) {
 
   // Handle torii gate entities
   {
-    auto alpha = easeOutQuint(Gm_Minf(1.f, time_since(state.toriiGateTransitionTime) / 2.f));
+    auto timeSinceToriiGateTransition = time_since(state.toriiGateTransitionTime);
 
     for_moving_objects("torii-platform", {
+      auto offset = Gm_Maxf(Gm_Modf(initial.position.x, 0.5f) - timeSinceToriiGateTransition + 0.1f, 0.f);
+      auto alpha = easeInOutQuart(Gm_Clampf(timeSinceToriiGateTransition / 1.2f - offset, 0.f, 1.f));
+
       if (state.toriiGateTransitionTime == 0.f) {
         object.scale = Vec3f(0.f);
       } else if (state.isInToriiGateZone) {
@@ -1293,6 +1296,19 @@ internal void handleBoats(GmContext* context, GameState& state) {
   }
 }
 
+internal void handleClouds(GmContext* context, GameState& state) {
+  auto t = get_scene_time();
+
+  {
+    for_moving_objects("cloud", {
+      object.scale = initial.scale * (1.f + sinf(t * 2.f) * 0.1f);
+      object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), t * 0.2f) * initial.rotation;
+
+      commit(object);
+    });
+  }
+}
+
 internal void handleGlider(GmContext* context, GameState& state) {
   auto& glider = objects("glider")[0];
   auto& player = get_player();
@@ -1395,6 +1411,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   handleKites(context, state, dt);
   handleUniqueLevelStructures(context, state, dt);
   handleBoats(context, state);
+  handleClouds(context, state);
   handleOcean(context);
 
   // Interactible/player-dependent entities
