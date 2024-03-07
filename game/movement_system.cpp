@@ -429,7 +429,7 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
           airDashDirection = (target.position - player.position).unit();
 
           state.isDoingTargetedAirDash = true;
-          state.velocity = airDashDirection * MAXIMUM_HORIZONTAL_GROUND_SPEED * DASH_LEVEL_2_SPEED_FACTOR * 1.5f;
+          state.velocity = airDashDirection * MAXIMUM_HORIZONTAL_GROUND_SPEED * DASH_LEVEL_2_SPEED_FACTOR * 2.f;
 
           point_camera_at(target);
         } else {

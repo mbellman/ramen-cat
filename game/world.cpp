@@ -808,7 +808,7 @@ internal void applyLevelSettings_Zone1(GmContext* context, GameState& state) {
 
   auto& player = get_player();
 
-  player.position = Vec3f(6400.f, 27085.f, 20530.f);
+  player.position = Vec3f(6405.f, 27085.f, 20530.f);
 
   context->scene.zFar = 200000.f;
 

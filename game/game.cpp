@@ -121,7 +121,7 @@ void initializeGame(GmContext* context, GameState& state) {
   initializeInputHandlers(context, state);
 
   World::initializeGameWorld(context, state);
-  World::loadLevel(context, state, "overworld");
+  World::loadLevel(context, state, "zone-1");
   AnimationSystem::initializeAnimations(context, state);
   CameraSystem::initializeGameCamera(context, state);
   EntitySystem::initializeGameEntities(context, state);
@@ -135,6 +135,7 @@ void initializeGame(GmContext* context, GameState& state) {
     Editor::initializeGameEditor(context, state);
 
     auto& player = get_player();
+    auto& scene = context->scene;
 
     // Allow resetting to the original level spawn position with R
     get_input().on<Key>("keystart", [&](Key key) {
@@ -143,6 +144,13 @@ void initializeGame(GmContext* context, GameState& state) {
 
         state.velocity = Vec3f(0.f);
         state.previousPlayerPosition = state.levelSpawnPosition;
+
+        if (state.isInToriiGateZone) {
+          state.isInToriiGateZone = false;
+          state.toriiGateTransitionTime = scene.sceneTime;
+
+          scene.fx.redshiftSpawn = player.position;
+        }
       }
     });
   #endif
