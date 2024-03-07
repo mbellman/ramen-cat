@@ -301,7 +301,6 @@ internal void handleToriiGateEffects(GmContext* context, GameState& state, float
 
 void EffectsSystem::initializeGameEffects(GmContext* context, GameState& state) {
   context->scene.clouds = "./game/assets/clouds.png";
-  state.dayNightCycleTime = INITIAL_DAY_NIGHT_CYCLE_TIME;
 
   initializePlayerParticles(context);
   initializeToriiGateZoneParticles(context);

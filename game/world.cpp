@@ -808,9 +808,11 @@ internal void applyLevelSettings_Zone1(GmContext* context, GameState& state) {
 
   auto& player = get_player();
 
-  player.position = Vec3f(6405.f, 27085.f, 20530.f);
+  player.position = Vec3f(6405.f, 27080.f, 20530.f);
 
   context->scene.zFar = 200000.f;
+
+  state.dayNightCycleTime = 1.f;
 
   mesh("ocean")->disabled = false;
   mesh("ocean-floor")->disabled = false;
@@ -1009,6 +1011,10 @@ void World::rebuildDynamicCollisionPlanes(GmContext* context, GameState& state) 
     commit(box);
   }
 
+  for (auto& platform : objects("torii-platform")) {
+    Collisions::addObjectCollisionPlanes(platform, state.collisionPlanes);
+  }
+
   for (auto& staircase : objects("staircase")) {
     auto& box = create_object_from("dynamic_collision_box");
 
@@ -1092,6 +1098,8 @@ void World::loadLevel(GmContext* context, GameState& state, const std::string& l
       { "yukimura", applyLevelSettings_Yukimura },
       { "zone-1", applyLevelSettings_Zone1 }
     };
+
+    state.dayNightCycleTime = INITIAL_DAY_NIGHT_CYCLE_TIME;
 
     if (levelSettingsFunctionMap.find(levelName) != levelSettingsFunctionMap.end()) {
       auto applyLevelSettings = levelSettingsFunctionMap.at(levelName);

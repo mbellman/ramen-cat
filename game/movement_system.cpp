@@ -101,6 +101,8 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
   bool resolvedCollisionWithSolidGround = false;
   float highestPlane = -Gm_FLOAT_MAX;
 
+  auto toriiGatePlatformMeshIndex = mesh("torii-platform")->index;
+
   // @todo implement world chunks + only consider collision planes local to the player
   for (auto& plane : state.collisionPlanes) {
     if (
@@ -108,6 +110,11 @@ internal void resolveAllPlaneCollisions(GmContext* context, GameState& state, fl
       player.position.y < plane.minY - 2.f * PLAYER_RADIUS
     ) {
       // Early out for collision planes not local to the player y position
+      continue;
+    }
+
+    if (!state.isInToriiGateZone && plane.sourceObjectRecord.meshIndex == toriiGatePlatformMeshIndex) {
+      // Early out for torii gate platform collision planes when not in torii gate zones
       continue;
     }
 
