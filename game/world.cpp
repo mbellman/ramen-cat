@@ -859,7 +859,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
 
     add_mesh("air-dash-target", 1, Mesh::Model("./game/assets/entities/target.obj"));
     mesh("air-dash-target")->roughness = 0.2f;
-    mesh("air-dash-target")->emissivity = 0.4f;
+    mesh("air-dash-target")->emissivity = 0.5f;
 
     add_mesh("speech-bubble", 1, Mesh::Model("./game/assets/entities/speech-bubble.obj"));
     mesh("speech-bubble")->emissivity = 0.5f;

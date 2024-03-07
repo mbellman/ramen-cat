@@ -925,13 +925,14 @@ internal void handleCollectables(GmContext* context, GameState& state, float dt)
     });
   }
 
+  // @todo cleanup
   {
     auto isDashFlowerActive = (
-      state.lastPowerFlowerCollectionTime != 0.f &&
-      time_since(state.lastPowerFlowerCollectionTime) < 10.f
+      state.lastDashFlowerCollectionTime != 0.f &&
+      time_since(state.lastDashFlowerCollectionTime) < 10.f
     );
 
-    for_moving_objects("power-flower", {
+    for_moving_objects("dash-flower", {
       if (object.scale.x == 0.f) continue;
 
       if (object.scale.x != initial.scale.x) {
@@ -941,7 +942,8 @@ internal void handleCollectables(GmContext* context, GameState& state, float dt)
       } else if ((player.position - object.position).magnitude() < PLAYER_RADIUS * 3.f) {
         object.scale *= 0.99f;
 
-        state.lastPowerFlowerCollectionTime = t;
+        state.lastDashFlowerCollectionTime = t;
+        state.lastBoostTime = t;
 
         if (state.dashLevel < 2) {
           state.dashLevel++;
@@ -964,6 +966,16 @@ internal void handleCollectables(GmContext* context, GameState& state, float dt)
       commit(flower);
     }
 
+    for (auto& flower : objects("p_flower-leaves")) {
+      auto maxScale = 20.f + Gm_Modf(flower.position.x, 10.f);
+      auto angle = flower.scale.x / maxScale * Gm_HALF_PI;
+
+      flower.scale = Vec3f::lerp(flower.scale, Vec3f(maxScale), 10.f * dt);
+      flower.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angle + Gm_Modf(flower.position.x, Gm_PI));
+
+      commit(flower);
+    }
+
     const static std::vector<Vec3f> colors = {
       Vec3f(1.f, 0.4f, 0.2f),
       Vec3f(1.f, 0.5f, 0.4f),
@@ -972,8 +984,8 @@ internal void handleCollectables(GmContext* context, GameState& state, float dt)
     };
 
     if (
-      state.lastPowerFlowerCollectionTime != 0.f &&
-      time_since(state.lastPowerFlowerCollectionTime) < 10.f
+      state.lastDashFlowerCollectionTime != 0.f &&
+      time_since(state.lastDashFlowerCollectionTime) < 10.f
     ) {
       auto cooldown = (
         state.dashLevel == 0
@@ -1001,7 +1013,7 @@ internal void handleCollectables(GmContext* context, GameState& state, float dt)
         center.color = Vec3f(1.f, 0.9f, 0.2f);
 
         leaves.position = flower.position;
-        leaves.scale = Vec3f(25.f);
+        leaves.scale = Vec3f(1.f);
         leaves.color = Vec3f(0.1f, 0.5f, 0.2f);
 
         commit(center);

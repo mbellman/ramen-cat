@@ -76,17 +76,17 @@ internal void resolveSingleCollision(GmContext* context, GameState& state, const
 
     if (time_since(state.lastTimeOnSolidGround) > 0.1f && time_since(state.lastWallBumpTime) > WALL_KICK_WINDOW_DURATION) {
       // Automatic wall kick
-      state.lastWallBumpTime = get_scene_time();
-      state.lastWallBumpVelocity = state.velocity;
+      // state.lastWallBumpTime = get_scene_time();
+      // state.lastWallBumpVelocity = state.velocity;
 
-      Vec3f wallPlaneVelocity = state.lastWallBumpVelocity.alignToPlane(state.lastWallBumpNormal);
-      Vec3f kickDirection = (state.lastWallBumpNormal + Vec3f(0, 1.f, 0)).unit();
+      // Vec3f wallPlaneVelocity = state.lastWallBumpVelocity.alignToPlane(state.lastWallBumpNormal);
+      // Vec3f kickDirection = (state.lastWallBumpNormal + Vec3f(0, 1.f, 0)).unit();
 
-      state.velocity = wallPlaneVelocity + kickDirection * state.lastWallBumpVelocity.magnitude() * 0.75f;
-      state.lastWallKickTime = get_scene_time();
+      // state.velocity = wallPlaneVelocity + kickDirection * state.lastWallBumpVelocity.magnitude() * 0.75f;
+      // state.lastWallKickTime = get_scene_time();
 
-      state.canPerformAirDash = true;
-      state.canPerformWallKick = true;
+      // state.canPerformAirDash = true;
+      // state.canPerformWallKick = true;
     }
   }
 }

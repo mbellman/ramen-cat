@@ -6,20 +6,22 @@ using namespace Gamma;
 
 std::vector<MeshAsset> entity_meshes = {
   {
-    .name = "power-flower",
+    .name = "dash-flower",
     .moving = true,
     .create = []() {
-      return Mesh::Model("./game/assets/collectibles/flower.obj");
+      return Mesh::Model("./game/assets/collectibles/dash-flower.obj");
     },
     .attributes = {
       .type = MeshType::PRESET_ANIMATED,
+      .texture = "./game/assets/collectibles/dash-flower.png",
       .animation = {
         .type = PresetAnimationType::LEAF,
         .speed = 3.f,
         .factor = 2.f
       },
       .emissivity = 0.3f,
-      .roughness = 0.2f
+      .roughness = 0.2f,
+      .useMipmaps = false
     }
   },
   {

@@ -374,7 +374,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
     if (state.isDoingTargetedAirDash) targetFov *= 1.2f;
 
     if (state.lastBoostTime != 0.f && time_since(state.lastBoostTime) < 0.2f) {
-      // Boost ring FoV adjustments
+      // Instantaneous peed boost FoV adjustments
       float alpha = 1.f - time_since(state.lastBoostTime) / 0.2f;
 
       targetFov += 15.f * alpha;

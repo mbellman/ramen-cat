@@ -32,7 +32,7 @@ layout (location = 0) out vec3 out_color;
 
 vec3 getAtmosphericsColor(vec3 current_out_color, vec2 uv, float frag_depth, float linear_frag_depth, vec3 world_position) {
   // @todo make configurable
-  const float atmosphere_density = 0.5;
+  const float atmosphere_density = 1.0;
   const float atmosphere_distance_limit = 0.8;
   const float max_atmosphere_altitude = 100000.0;
   const float horizon_altitude = -2000.0;

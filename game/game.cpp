@@ -145,6 +145,9 @@ void initializeGame(GmContext* context, GameState& state) {
         state.velocity = Vec3f(0.f);
         state.previousPlayerPosition = state.levelSpawnPosition;
 
+        // Reset dash flower behavior
+        state.lastDashFlowerCollectionTime = 0.f;
+
         if (state.isInToriiGateZone) {
           state.isInToriiGateZone = false;
           state.toriiGateTransitionTime = scene.sceneTime;

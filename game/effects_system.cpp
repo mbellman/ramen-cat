@@ -242,6 +242,8 @@ internal void handleToriiGateEffects(GmContext* context, GameState& state, float
     } else if (state.toriiGateTransitionTime != 0.f) {
       fx.redshiftOutProgress = time_since(state.toriiGateTransitionTime);
     }
+
+    mesh("air-dash-target")->emissivity = state.isInToriiGateZone ? 1.f : 0.5f;
   }
 
   // Zone effects
