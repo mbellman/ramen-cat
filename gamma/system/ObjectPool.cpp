@@ -141,8 +141,8 @@ namespace Gamma {
     return current;
   }
 
-  void ObjectPool::partitionByVisibility(const Camera& camera, float distanceThreshold) {
-    const float visibilityDotThreshold = 1.f - camera.fov / 90.f;
+  void ObjectPool::partitionByVisibility(const Camera& camera, float distanceThreshold, float fovDivisor) {
+    const float visibilityDotThreshold = 1.f - camera.fov / fovDivisor;
 
     u16 current = 0;
     u16 end = totalActive();

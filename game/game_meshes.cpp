@@ -356,7 +356,10 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     .defaultScale = Vec3f(100.f),
     .hitboxScale = Vec3f(1.f, 0.3f, 0.8f),
     .create = []() {
-      return Mesh::Model("./game/assets/bathhouse-roof-segment.obj");
+      return Mesh::Model({
+        "./game/assets/bathhouse-roof-segment.obj",
+        "./game/assets/bathhouse-roof-segment-lod.obj"
+      });
     },
     .attributes = {
       .normals = "./game/assets/metal-guard-normals.png",
@@ -370,7 +373,10 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     .defaultScale = Vec3f(100.f),
     .hitboxScale = Vec3f(0.7f, 0.25f, 0.7f),
     .create = []() {
-      return Mesh::Model("./game/assets/bathhouse-roof-corner.obj");
+      return Mesh::Model({
+        "./game/assets/bathhouse-roof-corner.obj",
+        "./game/assets/bathhouse-roof-corner-lod.obj",
+      });
     },
     .attributes = {
       .normals = "./game/assets/metal-guard-normals.png",

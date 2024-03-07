@@ -407,9 +407,10 @@ void Gm_HandleFreeCameraMode(GmContext* context, float speed, float dt) {
 
 void Gm_UseFrustumCulling(GmContext* context, const std::initializer_list<std::string>& meshNames, float distanceThreshold) {
   auto& meshMap = context->scene.meshMap;
+  auto fovDivisor = 90.f + 90.f * Gm_Minf(1.f, distanceThreshold / 10000.f);
 
   for (auto& meshName : meshNames) {
-    meshMap[meshName]->objects.partitionByVisibility(context->scene.camera, distanceThreshold);
+    meshMap[meshName]->objects.partitionByVisibility(context->scene.camera, distanceThreshold, fovDivisor);
   }
 }
 

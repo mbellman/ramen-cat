@@ -404,19 +404,45 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
 void CameraSystem::handleVisibilityCulling(GmContext* context, GameState& state) {
   START_TIMING("handleVisibilityCulling");
 
-  use_frustum_culling({ "weeds", "lamp", "ladder", "ac-unit", "ac-fan", "petal", "p_small-leaves", "p_small-flower" });
+  // @todo use_frustum_and_distance_culling()
+  use_frustum_culling({
+    "petal", "p_small-leaves",
+    "lamp", "ladder",
+    "ac-unit", "ac-fan",
+    "vent-piece", "vent-corner",
+    "round-vent-piece", "round-vent-corner",
+    "p_ramen-sign", "p_ramen-bowl",
+    "p_dishes-1", "p_dumplings-1", "p_fish-1", "p_meat-1",
+    "sphere-sign", "small-boat",
+    "stair-step",
+    "bird-at-rest", "bird-flying"
+  });
 
   use_distance_culling(3000.f, { "flower" });
-  use_distance_culling(4000.f, { "p_weeds" });
-  use_distance_culling(10000.f, { "onigiri", "nitamago", "chashu" });
+  use_distance_culling(4000.f, { "weeds", "p_weeds", "p_small-flower", "p_small-cosmo" });
+  use_distance_culling(8000.f, { "electrical-pole" });
+  use_distance_culling(10000.f, {
+    "tree-trunk", "tall-trunk",
+    "paper-lantern", "orange-lantern",
+    "onigiri", "nitamago", "chashu", "narutomaki"
+  });
+
+  static std::initializer_list<std::string> meshesToFrustumCullAt1K = {
+    "wood-planter", "plant-pot",
+    "generator",
+    "p_town-sign-spinner", "spinner-1", "pinwheel"
+  };
+
+  use_frustum_culling_at_distance(1000.f, meshesToFrustumCullAt1K);
 
   // @todo store somewhere as a constant
-  static std::initializer_list<std::string> meshesToFrustumCullAtDistance = {
+  static std::initializer_list<std::string> meshesToFrustumCullAt10K = {
     // Static meshes
     "b1-base", "b1-levels", "b1-windows",
     "b2-base", "b2-levels", "b2-columns", "b2-windows",
     "b3-base", "b3-levels", "b3-columns",
     "b4", "b4-columns", "b4-windows",
+    "mini-building",
     "windmill-base", "windmill-wheel",
     "exhaust-fan", "exhaust-fan-blades",
     "cylinder-1", "cylinder-2", "dome-1",
@@ -424,8 +450,10 @@ void CameraSystem::handleVisibilityCulling(GmContext* context, GameState& state)
     "round-tower-base", "round-tower-supports", "round-tower-roof",
     "wood-house-base", "wood-house-roof",
     "wood-tower", "wood-tower-top",
+    "bridge-1-supports",
+    "clock-tower",
     "wood-supports",
-    "tree-trunk", "tall-trunk", "branch-1", "bush", "leaves", "banana-plant",
+    "branch-1", "bush", "leaves", "banana-plant",
     "japanese-tree", "japanese-tree-leaves", "bamboo", "rock-1",
     "circle-sign", "circle-sign-frame",
     "dynamic-wave-sign",
@@ -436,7 +464,7 @@ void CameraSystem::handleVisibilityCulling(GmContext* context, GameState& state)
     "p_shrub", "p_shrub-2", "p_banana-plant"
   };
 
-  use_frustum_culling_at_distance(10000.f, meshesToFrustumCullAtDistance);
+  use_frustum_culling_at_distance(10000.f, meshesToFrustumCullAt10K);
 
   LOG_TIME();
 }
@@ -461,6 +489,10 @@ void CameraSystem::handleLevelsOfDetail(GmContext* context) {
 
   use_lod_by_distance(10000.f, {
     "bush"
+  });
+
+  use_lod_by_distance(30000.f, {
+    "bathhouse-roof-segment", "bathhouse-roof-corner"
   });
 
   LOG_TIME();
