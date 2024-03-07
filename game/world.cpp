@@ -803,6 +803,28 @@ internal void applyLevelSettings_Yukimura(GmContext* context, GameState& state) 
   mesh("ocean-floor")->disabled = true;
 }
 
+internal void applyLevelSettings_Zone1(GmContext* context, GameState& state) {
+  Gm_EnableFlags(GammaFlags::RENDER_HORIZON_ATMOSPHERE);
+
+  auto& player = get_player();
+
+  player.position = Vec3f(6400.f, 27085.f, 20530.f);
+
+  context->scene.zFar = 200000.f;
+
+  mesh("ocean")->disabled = false;
+  mesh("ocean-floor")->disabled = false;
+
+  auto& ocean = mesh("ocean")->objects[0];
+  auto& oceanFloor = mesh("ocean-floor")->objects[0];
+
+  ocean.scale = Vec3f(200000.f, 1.f, 200000.f);
+  oceanFloor.scale = Vec3f(200000.f, 1.f, 200000.f);
+
+  commit(ocean);
+  commit(oceanFloor);
+}
+
 void World::initializeGameWorld(GmContext* context, GameState& state) {
   context->scene.zNear = 5.f;
   context->scene.zFar = 50000.f;
@@ -1067,7 +1089,8 @@ void World::loadLevel(GmContext* context, GameState& state, const std::string& l
       { "umimura-alpha", applyLevelSettings_UmimuraAlpha },
       { "umimura", applyLevelSettings_Umimura },
       { "overworld", applyLevelSettings_Overworld },
-      { "yukimura", applyLevelSettings_Yukimura }
+      { "yukimura", applyLevelSettings_Yukimura },
+      { "zone-1", applyLevelSettings_Zone1 }
     };
 
     if (levelSettingsFunctionMap.find(levelName) != levelSettingsFunctionMap.end()) {
@@ -1078,6 +1101,10 @@ void World::loadLevel(GmContext* context, GameState& state, const std::string& l
 
       state.previousPlayerPosition = player.position;
       state.levelSpawnPosition = player.position;
+    }
+
+    if (Gm_StringStartsWith(levelName, "zone")) {
+      // @todo
     }
   }
 
