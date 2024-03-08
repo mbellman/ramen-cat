@@ -1,5 +1,6 @@
 #version 460 core
 
+uniform sampler2D meshTexture;
 uniform mat4 matViewProjection;
 uniform bool useXzPlaneTexturing = false;
 
@@ -45,6 +46,8 @@ void main() {
   // @hack invert Z
   vec4 world_position = glVec4(modelMatrix * vec4(vertexPosition, 1.0));
   mat3 normal_matrix = transpose(inverse(mat3(modelMatrix)));
+  vec2 meshTextureSize = textureSize(meshTexture, 0);
+  float xzPlaneTexturingDivisor = 400.0 * meshTextureSize.x / 1024.0;
 
   gl_Position = matViewProjection * world_position;
 
@@ -55,5 +58,5 @@ void main() {
   fragTangent = normal_matrix * vertexTangent;
   fragBitangent = getFragBitangent(fragNormal, fragTangent);
   // @todo allow scaling factor to be configured
-  fragUv = useXzPlaneTexturing ? world_position.xz / 800.0 : vertexUv;
+  fragUv = useXzPlaneTexturing ? world_position.xz / xzPlaneTexturingDivisor : vertexUv;
 }

@@ -431,8 +431,8 @@ void CameraSystem::handleVisibilityCulling(GmContext* context, GameState& state)
 
   use_distance_culling(3000.f, { "flower" });
   use_distance_culling(4000.f, { "weeds", "p_weeds", "p_small-flower", "p_small-cosmo" });
-  use_distance_culling(8000.f, { "electrical-pole" });
   use_distance_culling(10000.f, {
+    "electrical-pole",
     "tree-trunk", "tall-trunk",
     "paper-lantern", "orange-lantern",
     "onigiri", "nitamago", "chashu", "narutomaki"
