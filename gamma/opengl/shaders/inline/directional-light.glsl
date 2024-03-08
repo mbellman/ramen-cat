@@ -7,7 +7,8 @@ float incidence = max(dot(normalized_surface_to_light, normal), 0.0);
 float specularity = pow(max(dot(half_vector, normal), 0.0), 50) * (1.0 - roughness);
 
 // @experiment subtle cel-shading effect near lighting edges
-if (incidence > 0.0 && incidence < 0.2) incidence = 0.2;
+const float MINIMUM_INCIDENCE = 0.5;
+if (incidence > 0.0 && incidence < MINIMUM_INCIDENCE) incidence = MINIMUM_INCIDENCE;
 
 vec3 diffuse_term = color * adjusted_light_color * incidence * sqrt(roughness) * (1.0 - specularity);
 vec3 specular_term = adjusted_light_color * specularity;
