@@ -121,6 +121,9 @@ internal void handlePlayerDashingAnimation(GmContext* context, GameState& state,
   rig.joints[PLAYER_BACK_LEFT_LEG_KNEE].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -cosf(alpha + 0.5f) * 0.5f);
   rig.joints[PLAYER_BACK_LEFT_LEG_FOOT].offset = Vec3f(0, 0.4f, 1.f) * speedRatio * cosf(alpha + 0.5f);
   rig.joints[PLAYER_BACK_LEFT_LEG_FOOT].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -cosf(alpha + 0.5f));
+
+  rig.joints[PLAYER_TAIL_JOINT_1].offset = Vec3f(0, 0.1f, 0.1f) * speedRatio * sinf(alpha * 0.5f);
+  rig.joints[PLAYER_TAIL_JOINT_2].offset = Vec3f(0, -0.1f, 0.1f) + Vec3f(0, 0.4f, 0) * speedRatio * cosf(alpha * 0.5f);
 }
 
 internal void handlePlayerWallKickAnimation(GmContext* context, GameState& state, float dt) {
@@ -259,13 +262,13 @@ internal void handlePlayerAnimation(GmContext* context, GameState& state, float 
     auto& rig = state.animation.playerRig;
     float t = get_scene_time();
 
-    rig.joints[PLAYER_TAIL_JOINT_1].offset = Vec3f(
+    rig.joints[PLAYER_TAIL_JOINT_1].offset += Vec3f(
       0 - state.turnFactor * 0.5f,
       sinf(t * 2.f) * cosf(t * 1.1f) * 0.05f,
       0
     );
 
-    rig.joints[PLAYER_TAIL_JOINT_2].offset = Vec3f(
+    rig.joints[PLAYER_TAIL_JOINT_2].offset += Vec3f(
       cosf(t * 2.f) * sinf(t * 0.7f) * 0.2f - state.turnFactor,
       sinf(t * 2.f + 1.f) * cosf(t * 1.7f) * 0.1f - 0.05f,
       0
