@@ -58,5 +58,5 @@ void main() {
   fragTangent = normal_matrix * vertexTangent;
   fragBitangent = getFragBitangent(fragNormal, fragTangent);
   // @todo allow scaling factor to be configured
-  fragUv = useXzPlaneTexturing ? world_position.xz / xzPlaneTexturingDivisor : vertexUv;
+  fragUv = useXzPlaneTexturing ? (world_position.xz) / xzPlaneTexturingDivisor : vertexUv;
 }

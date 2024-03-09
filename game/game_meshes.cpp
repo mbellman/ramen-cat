@@ -216,6 +216,18 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
+    .name = "tile-walkway",
+    .create = []() {
+      return Mesh::Cube();
+    },
+    .attributes = {
+      .texture = "./game/assets/tile-walkway.png",
+      .normals = "./game/assets/cobblestone-normals.png",
+      .roughness = 0.7f,
+      .useXzPlaneTexturing = true
+    }
+  },
+  {
     .name = "metal-floor",
     .hitboxScale = Vec3f(1.f, 0.025f, 1.f),
     .create = []() {
