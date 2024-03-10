@@ -24,6 +24,11 @@ internal void updateThirdPersonCameraRadius(GmContext* context, GameState& state
   // Extend the radius outward when moving faster
   baseRadius += 200.f * (speed / (speed + 500.f));
 
+  if (state.dashLevel > 0) {
+    // When dashing, reduce the radius
+    baseRadius -= 150.f * (speed / (speed + 500.0f));
+  }
+
   if (state.superjumpChargeTime != 0.f) {
     float alpha = state.superjumpChargeTime / (state.superjumpChargeTime + 2.f);
 

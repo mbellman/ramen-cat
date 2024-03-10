@@ -67,7 +67,9 @@ vec3 getNpcAnimationOffset(vec3 vertex_position, vec3 world_position) {
   float rate = 5.0 * time * animation.speed;
 
   float displacement_factor = 0.3 * (vertex_position.y - (-1.0));
+  float x = vertex_position.x * sin(rate + world_position.x / 100.0);
   float y = displacement_factor * sin(rate + world_position.y / 300.0 + world_position.x / 100.0);
+  float z = vertex_position.z * sin(rate + world_position.x / 100.0);
 
-  return vec3(0, y, 0);
+  return vec3(x, y, z);
 }
