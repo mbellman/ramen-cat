@@ -124,6 +124,7 @@
     <ClCompile Include="game\game_meshes.cpp" />
     <ClCompile Include="game\inventory_system.cpp" />
     <ClCompile Include="game\main.cpp" />
+    <ClCompile Include="game\mesh_library\characters.cpp" />
     <ClCompile Include="game\mesh_library\decorations.cpp" />
     <ClCompile Include="game\mesh_library\entities.cpp" />
     <ClCompile Include="game\mesh_library\lights.cpp" />
@@ -281,6 +282,7 @@
     <ClInclude Include="external\sdl_image\include\SDL_image.h" />
     <ClInclude Include="game\inventory_system.h" />
     <ClInclude Include="game\macros.h" />
+    <ClInclude Include="game\mesh_library\characters.h" />
     <ClInclude Include="game\mesh_library\decorations.h" />
     <ClInclude Include="game\mesh_library\entities.h" />
     <ClInclude Include="game\mesh_library\lights.h" />

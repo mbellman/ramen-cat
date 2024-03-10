@@ -57,10 +57,10 @@ vec3 getClothAnimationOffset(vec3 vertex_position, vec3 world_position) {
   float scale = modelMatrix[1][1];
 
   float displacement_factor = (1.0 + scale / 2000.0) * animation.factor * sqrt(abs(vertex_position.y));
-  float x = displacement_factor * 2.0 * sin(rate + vertex_position.y * 10.0 + world_position.x * 0.05);
-  float z = displacement_factor * cos(rate + vertex_position.y * 10.0 + world_position.x * 0.05);
+  float x = 2.0 * sin(rate + vertex_position.y * 10.0 + world_position.x * 0.05);
+  float z = cos(rate + vertex_position.y * 10.0 + world_position.x * 0.05);
 
-  return vec3(x, 0, z);
+  return vec3(x, 0, z) * displacement_factor;
 }
 
 vec3 getNpcAnimationOffset(vec3 vertex_position, vec3 world_position) {
@@ -68,8 +68,8 @@ vec3 getNpcAnimationOffset(vec3 vertex_position, vec3 world_position) {
 
   float displacement_factor = 0.3 * (vertex_position.y - (-1.0));
   float x = vertex_position.x * sin(rate + world_position.x / 100.0);
-  float y = displacement_factor * sin(rate + world_position.y / 300.0 + world_position.x / 100.0);
+  float y = sin(rate + world_position.y / 300.0 + world_position.x / 100.0);
   float z = vertex_position.z * sin(rate + world_position.x / 100.0);
 
-  return vec3(x, y, z);
+  return vec3(x, y, z) * displacement_factor;
 }

@@ -207,6 +207,9 @@
     <ClCompile Include="game\mesh_library\transportation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="game\mesh_library\characters.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="external\glew\include\eglew.h">
@@ -711,6 +714,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="game\mesh_library\transportation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\mesh_library\characters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
