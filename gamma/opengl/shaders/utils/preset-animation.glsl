@@ -3,6 +3,7 @@
 #define LEAF 2
 #define BIRD 3
 #define CLOTH 4
+#define NPC 5
 
 struct PresetAnimation {
   int type;
@@ -60,4 +61,13 @@ vec3 getClothAnimationOffset(vec3 vertex_position, vec3 world_position) {
   float z = displacement_factor * cos(rate + vertex_position.y * 10.0 + world_position.x * 0.05);
 
   return vec3(x, 0, z);
+}
+
+vec3 getNpcAnimationOffset(vec3 vertex_position, vec3 world_position) {
+  float rate = 5.0 * time * animation.speed;
+
+  float displacement_factor = 0.3 * (vertex_position.y - (-1.0));
+  float y = displacement_factor * sin(rate + world_position.y / 300.0 + world_position.x / 100.0);
+
+  return vec3(0, y, 0);
 }

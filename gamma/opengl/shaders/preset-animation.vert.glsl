@@ -63,6 +63,9 @@ void main() {
     case CLOTH:
       world_position.xyz += getClothAnimationOffset(vertexPosition, world_position.xyz);
       break;
+    case NPC:
+      world_position.xyz += getNpcAnimationOffset(vertexPosition, world_position.xyz);
+      break;
   }
 
   gl_Position = matViewProjection * world_position;

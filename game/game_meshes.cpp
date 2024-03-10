@@ -771,7 +771,69 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
       return Mesh::Model("./game/assets/person.obj");
     },
     .attributes = {
-      .emissivity = 0.3f
+      .type = MeshType::PRESET_ANIMATED,
+      .animation = {
+        .type = PresetAnimationType::NPC,
+      },
+      .emissivity = 0.5f,
+      .roughness = 0.8f
+    },
+    .pieces = {
+      {
+        .name = "t-shirt",
+        .create = []() {
+          return Mesh::Model("./game/assets/characters/t-shirt.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(
+            0.2f + 0.6f * Gm_Modf(source.position.x, 1.f),
+            0.5f + 0.5f * Gm_Modf(source.position.x + source.position.z, 1.f),
+            0.3f + 0.7f * Gm_Modf(source.position.z, 1.f)
+          );
+        },
+        .attributes = {
+          .type = MeshType::PRESET_ANIMATED,
+          .animation = {
+            .type = PresetAnimationType::NPC,
+          },
+          .emissivity = 0.1f,
+          .roughness = 1.f
+        }
+      },
+      {
+        .name = "pants",
+        .create = []() {
+          return Mesh::Model("./game/assets/characters/pants.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(0.1f, 0.3f, 0.7);
+        },
+        .attributes = {
+          .type = MeshType::PRESET_ANIMATED,
+          .animation = {
+            .type = PresetAnimationType::NPC,
+          },
+          .emissivity = 0.1f,
+          .roughness = 0.9f
+        }
+      },
+      {
+        .name = "hair",
+        .create = []() {
+          return Mesh::Model("./game/assets/characters/hair.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(0.8f, 0.5f, 0.2f) * Gm_Modf(source.position.x, 1.f);
+        },
+        .attributes = {
+          .type = MeshType::PRESET_ANIMATED,
+          .animation = {
+            .type = PresetAnimationType::NPC,
+          },
+          .emissivity = 0.2f,
+          .roughness = 0.5f
+        }
+      }
     }
   },
 

@@ -73,12 +73,14 @@ internal void handlePlayerTrottingAnimation(GmContext* context, GameState& state
   rig.joints[PLAYER_FRONT_LEFT_LEG_FOOT].offset = Vec3f(0, 0.2f, 0.75f) * speedRatio * wcosf(alpha + 1.f);
 
   rig.joints[PLAYER_BACK_RIGHT_LEG_TOP].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * wsinf(alpha);
-  rig.joints[PLAYER_BACK_RIGHT_LEG_KNEE].offset = Vec3f(0, 0, 0.2f) * speedRatio * wsinf(alpha + 0.5f);
+  rig.joints[PLAYER_BACK_RIGHT_LEG_KNEE].offset = Vec3f(0, 0, 0.2f) * speedRatio * wsinf(alpha + 1.2f);
   rig.joints[PLAYER_BACK_RIGHT_LEG_FOOT].offset = Vec3f(0, 0.2f, 0.6f) * speedRatio * wsinf(alpha + 1.5f);
 
   rig.joints[PLAYER_BACK_LEFT_LEG_TOP].offset = Vec3f(0, 0.1f, 0.05f) * speedRatio * wcosf(alpha);
-  rig.joints[PLAYER_BACK_LEFT_LEG_KNEE].offset = Vec3f(0, 0, 0.2f) * speedRatio * wcosf(alpha + 0.5f);
+  rig.joints[PLAYER_BACK_LEFT_LEG_KNEE].offset = Vec3f(0, 0, 0.2f) * speedRatio * wcosf(alpha + 1.2f);
   rig.joints[PLAYER_BACK_LEFT_LEG_FOOT].offset = Vec3f(0, 0.2f, 0.6f) * speedRatio * wcosf(alpha + 1.5f);
+
+  rig.joints[PLAYER_TAIL_JOINT_2].offset = Vec3f(0, 0.2f, 0) * speedRatio * cosf(alpha * 0.5f);
 }
 
 internal void handlePlayerDashingAnimation(GmContext* context, GameState& state, float dt) {
@@ -382,7 +384,7 @@ void AnimationSystem::initializeAnimations(GmContext* context, GameState& state)
 
     // Right leg bottom [7]
     rig.joints.push_back({
-      .position = Vec3f(-0.237f, -1.f, -0.345f),
+      .position = Vec3f(-0.237f, -0.8f, -0.345f),
       .rotation = Quaternion(1.f, 0, 0, 0)
     });
 
@@ -400,7 +402,7 @@ void AnimationSystem::initializeAnimations(GmContext* context, GameState& state)
 
     // Left leg bottom [10]
     rig.joints.push_back({
-      .position = Vec3f(0.237f, -1.f, -0.351f),
+      .position = Vec3f(0.237f, -0.8f, -0.351f),
       .rotation = Quaternion(1.f, 0, 0, 0)
     });
 
@@ -418,7 +420,7 @@ void AnimationSystem::initializeAnimations(GmContext* context, GameState& state)
 
     // Rear right leg bottom [12]
     rig.joints.push_back({
-      .position = Vec3f(-0.28f, -0.88f, 0.394f),
+      .position = Vec3f(-0.28f, -0.7f, 0.394f),
       .rotation = Quaternion(1.f, 0, 0, 0)
     });
 
@@ -436,7 +438,7 @@ void AnimationSystem::initializeAnimations(GmContext* context, GameState& state)
 
     // Rear left leg bottom [16]
     rig.joints.push_back({
-      .position = Vec3f(0.303f, -0.898f, 0.358f),
+      .position = Vec3f(0.303f, -0.7f, 0.358f),
       .rotation = Quaternion(1.f, 0, 0, 0)
     });
 

@@ -209,7 +209,8 @@ namespace Gamma {
     FLOWER,
     LEAF,
     BIRD,
-    CLOTH
+    CLOTH,
+    NPC
   };
 
   /**
