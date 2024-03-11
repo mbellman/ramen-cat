@@ -779,7 +779,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
    * ------
    */
   {
-    .name = "staircase",
+    .name = "metal-staircase",
     .dynamic = true,
     .defaultColor = Vec3f(0, 1.f, 0),
     .create = []() {
@@ -799,7 +799,7 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
   },
 };
 
-// @todo remove + define these meshes as pieces for parent meshes
+// @todo remove + define these meshes as pieces for parent meshes (or move to procedural)
 std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
   {
     .name = "stair-step",

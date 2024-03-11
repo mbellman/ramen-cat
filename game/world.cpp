@@ -316,7 +316,7 @@ internal void rebuildDynamicStaircases(GmContext* context) {
 
   std::vector<Vec3f> t_points;
 
-  for (auto& staircase : objects("staircase")) {
+  for (auto& staircase : objects("metal-staircase")) {
     auto& scale = staircase.scale;
     auto rotation = staircase.rotation.toMatrix4f();
     Vec3f rotationDirectionXz = staircase.rotation.getDirection().xz();
@@ -1015,7 +1015,7 @@ void World::rebuildDynamicCollisionPlanes(GmContext* context, GameState& state) 
     Collisions::addObjectCollisionPlanes(platform, state.collisionPlanes);
   }
 
-  for (auto& staircase : objects("staircase")) {
+  for (auto& staircase : objects("metal-staircase")) {
     auto& box = create_object_from("dynamic_collision_box");
 
     box.position = staircase.position;

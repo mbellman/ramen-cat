@@ -436,9 +436,9 @@ void CameraSystem::handleVisibilityCulling(GmContext* context, GameState& state)
 
   use_distance_culling(3000.f, { "flower" });
   use_distance_culling(4000.f, { "weeds", "p_weeds", "p_small-flower", "p_small-cosmo" });
+
   use_distance_culling(10000.f, {
     "electrical-pole",
-    "tree-trunk", "tall-trunk",
     "paper-lantern", "orange-lantern",
     "onigiri", "nitamago", "chashu", "narutomaki"
   });
@@ -468,6 +468,7 @@ void CameraSystem::handleVisibilityCulling(GmContext* context, GameState& state)
     "bridge-1-supports",
     "clock-tower",
     "wood-supports",
+    "tree-trunk", "tall-trunk",
     "branch-1", "bush", "leaves", "banana-plant",
     "japanese-tree", "japanese-tree-leaves", "bamboo", "rock-1",
     "circle-sign", "circle-sign-frame",
