@@ -120,10 +120,11 @@ internal void loadLights(GmContext* context, const std::string& levelName) {
 
 internal void loadNpcData(GmContext* context, GameState& state, const std::string& levelName) {
   // @temporary
-  for (auto& person : objects("person")) {
+  // @todo handle all npc types
+  for (auto& guy : objects("guy")) {
     NonPlayerCharacter npc;
 
-    npc.position = person.position;
+    npc.position = guy.position;
 
     npc.dialogue.push_back("I'm a chuckster!");
 

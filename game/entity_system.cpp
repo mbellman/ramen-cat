@@ -267,10 +267,35 @@ internal void handleInteractibleEntitiesWithDialogue(GmContext* context, GameSta
   }
 }
 
-internal void handlePeople(GmContext* context, GameState& state) {
+internal void handleNpcHeadTurning(GmContext* context, GameState& state, const std::string& meshName) {
   auto& player = get_player();
 
-  // @todo
+  for_moving_objects(meshName, {
+    auto objectToPlayer = player.position - initial.position;
+    Quaternion targetRotation;
+
+    if (Gm_Absf(objectToPlayer.x) < 500.f && Gm_Absf(objectToPlayer.z) < 500.f) {
+      auto angleToPlayer = atan2f(objectToPlayer.x, objectToPlayer.z);
+
+      targetRotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angleToPlayer);
+    } else {
+      targetRotation = initial.rotation;
+    }
+
+    object.rotation = Quaternion::slerp(object.rotation, targetRotation, 0.05f);
+
+    commit(object);
+  });
+}
+
+internal void handleNpcs(GmContext* context, GameState& state) {
+  auto& player = get_player();
+
+  handleNpcHeadTurning(context, state, "guy-hair");
+  handleNpcHeadTurning(context, state, "guy-head");
+
+  handleNpcHeadTurning(context, state, "girl-hair");
+  handleNpcHeadTurning(context, state, "girl-head");
 }
 
 internal void handleSpeechBubbleTargets(GmContext* context, GameState& state) {
@@ -279,14 +304,15 @@ internal void handleSpeechBubbleTargets(GmContext* context, GameState& state) {
   auto& speechBubble = objects("speech-bubble")[0];
   bool isNearSpeechBubbleTarget = false;
 
-  for (auto& person : objects("person")) {
-    if (canPlayerInteractWithSign(player, person, state)) {
+  // @todo handle all character types
+  for (auto& guy : objects("guy")) {
+    if (canPlayerInteractWithSign(player, guy, state)) {
       isNearSpeechBubbleTarget = true;
 
       speechBubble.position =
-        person.position +
-        Vec3f(0, person.scale.y * 1.1f + sinf(t * 3.f) * 15.f, 0) +
-        person.rotation.getDirection() * person.scale.z * 0.8f;
+        guy.position +
+        Vec3f(0, guy.scale.y * 1.1f + sinf(t * 3.f) * 15.f, 0) +
+        guy.rotation.getLeftDirection() * guy.scale.x * 0.7f;
 
       speechBubble.scale = Vec3f::lerp(speechBubble.scale, Vec3f(25.f), 0.1f);
 
@@ -1417,7 +1443,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   // Interactible/player-dependent entities
   handleSlingshots(context, state, dt);
   handleInteractibleEntitiesWithDialogue(context, state);
-  handlePeople(context, state);
+  handleNpcs(context, state);
   handleSpeechBubbleTargets(context, state);
   handleBalloons(context, state, dt);
   handleCollectables(context, state, dt);
