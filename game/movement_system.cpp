@@ -440,6 +440,10 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
           state.velocity = airDashDirection * MAXIMUM_HORIZONTAL_GROUND_SPEED * DASH_LEVEL_2_SPEED_FACTOR * 2.f;
 
           point_camera_at(target);
+        } else if (time_since(state.lastJumpTime) > 1.f) {
+          airDashDirection = camera.orientation.getDirection();
+
+          state.velocity = airDashDirection * MAXIMUM_HORIZONTAL_GROUND_SPEED * DASH_LEVEL_2_SPEED_FACTOR * 2.f;
         } else {
           // Normal air dash
           airDashDirection = camera.orientation.getDirection();

@@ -188,7 +188,7 @@ std::vector<MeshAsset> shop_meshes = {
       return Mesh::Model("./game/assets/shops/storefront-4.obj");
     },
     .attributes = {
-      .texture = "./game/assets/wood-beam.png",
+      .texture = "./game/assets/shops/storefront-4.png",
     },
     .pieces = {
       {
@@ -227,7 +227,7 @@ std::vector<MeshAsset> shop_meshes = {
       return Mesh::Model("./game/assets/shops/storefront-5.obj");
     },
     .attributes = {
-      .texture = "./game/assets/wood-beam.png",
+      .texture = "./game/assets/shops/storefront-5.png",
     },
     .pieces = {
       {
@@ -236,7 +236,7 @@ std::vector<MeshAsset> shop_meshes = {
           return Mesh::Model("./game/assets/shops/storefront-5-cover.obj");
         },
         .rebuild = [](auto& source, auto& piece) {
-          piece.color = Vec3f(1.f, 0.8f, 0.6f);
+          piece.color = Vec3f(1.f, 0.2f, 0.1f);
         },
         .attributes = {
           .roughness = 0.8f
