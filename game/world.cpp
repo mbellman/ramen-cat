@@ -255,6 +255,7 @@ internal void copyMeshAttributes(Mesh& mesh, const MeshAttributes& attributes) {
   mesh.useMipmaps = attributes.useMipmaps;
   mesh.useCloseTranslucency = attributes.useCloseTranslucency;
   mesh.useXzPlaneTexturing = attributes.useXzPlaneTexturing;
+  mesh.useYPlaneTexturing = attributes.useYPlaneTexturing;
 }
 
 // @todo create a loadGameMeshFromAsset() function to simplify this
@@ -588,23 +589,23 @@ internal void rebuildDynamicBuildings(GmContext* context) {
     commit(frame);
   }
 
-  objects("wood-facade-base").reset();
-  objects("wood-facade-cover").reset();
+  // objects("wood-facade-base").reset();
+  // objects("wood-facade-cover").reset();
 
-  for (auto& it : objects("wood-facade")) {
-    auto& base = create_object_from("wood-facade-base");
-    auto& cover = create_object_from("wood-facade-cover");
+  // for (auto& it : objects("wood-facade")) {
+  //   auto& base = create_object_from("wood-facade-base");
+  //   auto& cover = create_object_from("wood-facade-cover");
 
-    base.position = cover.position = it.position;
-    base.scale = cover.scale = it.scale;
-    base.rotation = cover.rotation = it.rotation;
+  //   base.position = cover.position = it.position;
+  //   base.scale = cover.scale = it.scale;
+  //   base.rotation = cover.rotation = it.rotation;
 
-    base.color = Vec3f(1.f, 0.8f, 0.6f);
-    cover.color = Vec3f(0.8f, 0.4f, 0.1f);
+  //   base.color = Vec3f(1.f, 0.8f, 0.6f);
+  //   cover.color = Vec3f(0.8f, 0.4f, 0.1f);
 
-    commit(base);
-    commit(cover);
-  }
+  //   commit(base);
+  //   commit(cover);
+  // }
 
   objects("bridge-1-floor").reset();
   objects("bridge-1-supports").reset();

@@ -535,6 +535,7 @@ namespace Gamma {
       shaders.geometry.setBool("hasNormalMap", glMesh->hasNormalMap());\
       shaders.geometry.setBool("useCloseTranslucency", mesh.useCloseTranslucency);\
       shaders.geometry.setBool("useXzPlaneTexturing", mesh.useXzPlaneTexturing);\
+      shaders.geometry.setBool("useYPlaneTexturing", mesh.useYPlaneTexturing);\
       shaders.geometry.setFloat("emissivity", mesh.emissivity);\
       shaders.geometry.setFloat("roughness", mesh.roughness);\
       glMesh->render(ctx.primitiveMode)\

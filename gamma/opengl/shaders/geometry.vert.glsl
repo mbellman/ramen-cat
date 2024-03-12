@@ -3,6 +3,7 @@
 uniform sampler2D meshTexture;
 uniform mat4 matViewProjection;
 uniform bool useXzPlaneTexturing = false;
+uniform bool useYPlaneTexturing = false;
 
 layout (location = 0) in vec3 vertexPosition;
 layout (location = 1) in vec3 vertexNormal;
@@ -47,7 +48,7 @@ void main() {
   vec4 world_position = glVec4(modelMatrix * vec4(vertexPosition, 1.0));
   mat3 normal_matrix = transpose(inverse(mat3(modelMatrix)));
   vec2 meshTextureSize = textureSize(meshTexture, 0);
-  float xzPlaneTexturingDivisor = 400.0 * meshTextureSize.x / 1024.0;
+  float planeTexturingDivisor = 400.0 * meshTextureSize.x / 1024.0;
 
   gl_Position = matViewProjection * world_position;
 
@@ -57,6 +58,23 @@ void main() {
   fragNormal = normal_matrix * vertexNormal;
   fragTangent = normal_matrix * vertexTangent;
   fragBitangent = getFragBitangent(fragNormal, fragTangent);
-  // @todo allow scaling factor to be configured
-  fragUv = useXzPlaneTexturing ? (world_position.xz) / xzPlaneTexturingDivisor : vertexUv;
+
+  if (useXzPlaneTexturing) {
+    fragUv = world_position.xz / planeTexturingDivisor;
+  } else if (useYPlaneTexturing) {
+    
+    float dotXf = dot(fragNormal, vec3(1, 0, 0));
+    float dotZb = dot(fragNormal, vec3(0, 0, -1));
+
+    // @todo don't hard-code the divisor
+    if (dotXf > 0 && dotZb > 0) {
+      fragUv = vec2(world_position.x - world_position.z, world_position.y) / 1200.0;      
+    } else if (dotXf > 0 || dotZb > 0) {
+      fragUv = vec2(world_position.x + world_position.z, world_position.y) / 1200.0;
+    } else {
+      fragUv = vec2(world_position.x - world_position.z, world_position.y) / 1200.0;
+    }
+  } else {
+    fragUv = vertexUv;
+  }
 }

@@ -298,10 +298,13 @@ std::vector<MeshAsset> overworld_city_meshes = {
   },
   {
     .name = "wood-facade",
-    .dynamic = true,
     .hitboxScale = Vec3f(1.f, 1.f, 0.1f),
     .create = []() {
       return Mesh::Model("./game/assets/buildings/wood-facade-base.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/wood-beam.png",
+      .useYPlaneTexturing = true
     }
   },
   {

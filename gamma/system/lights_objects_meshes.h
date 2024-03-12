@@ -312,6 +312,10 @@ namespace Gamma {
      * Controls whether geometry is textured across the xz plane.
      */
     bool useXzPlaneTexturing = false;
+    /**
+     * Controls whether geometry is textured across the xy/zy planes.
+     */
+    bool useYPlaneTexturing = false;
   };
 
   /**
