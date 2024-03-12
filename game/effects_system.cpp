@@ -70,9 +70,11 @@ internal void handlePlayerParticles(GmContext* context, GameState& state, float 
           float scale = GROUND_PARTICLE_SIZE * state.velocity.magnitude() / MAXIMUM_HORIZONTAL_GROUND_SPEED;
           if (scale > GROUND_PARTICLE_SIZE) scale = GROUND_PARTICLE_SIZE;
 
+          scale += Gm_Randomf(0.f, 0.2f);
+
           particle.position = player.position - Vec3f(0, PLAYER_RADIUS * 0.8f, 0);
           particle.scale = Vec3f(scale);
-          particle.color = Vec3f(0.5f);
+          particle.color = Vec3f(0.7f);
         } else {
           particle.scale = Vec3f(0.f);
         }

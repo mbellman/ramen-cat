@@ -131,6 +131,119 @@ std::vector<MeshAsset> shop_meshes = {
       }
     }
   },
+  {
+    .name = "storefront-3",
+    .create = []() {
+      return Mesh::Model("./game/assets/shops/storefront-3.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/shops/red-wood.png",
+    },
+    .pieces = {
+      {
+        .name = "storefront-3-roof",
+        .create = []() {
+          return Mesh::Model("./game/assets/shops/storefront-3-roof.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(0.1f, 0.5f, 0.3f);
+        },
+        .attributes = {
+          .roughness = 0.8f
+        }
+      },
+      {
+        .name = "storefront-3-flags",
+        .create = []() {
+          return Mesh::Model("./game/assets/shops/storefront-3-flags.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(0.6f, 0.8f, 1.f);
+        },
+        .attributes = {
+          .type = MeshType::PRESET_ANIMATED,
+          .animation = {
+            .type = PresetAnimationType::CLOTH
+          },
+          .roughness = 0.8f
+        }
+      },
+      {
+        .name = "storefront-3-windows",
+        .create = []() {
+          return Mesh::Model("./game/assets/shops/storefront-3-windows.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(0.1f, 0.3f, 0.6f);
+        },
+        .attributes = {
+          .roughness = 0.1f
+        }
+      }
+    }
+  },
+  {
+    .name = "storefront-4",
+    .create = []() {
+      return Mesh::Model("./game/assets/shops/storefront-4.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/wood-beam.png",
+    },
+    .pieces = {
+      {
+        .name = "storefront-4-cover",
+        .create = []() {
+          return Mesh::Model("./game/assets/shops/storefront-4-cover.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(0.1f, 0.5f, 0.8f);
+        },
+        .attributes = {
+          .roughness = 0.8f
+        }
+      },
+      {
+        .name = "storefront-4-flags",
+        .create = []() {
+          return Mesh::Model("./game/assets/shops/storefront-4-flags.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(0.6f, 1.f, 0.8f);
+        },
+        .attributes = {
+          .type = MeshType::PRESET_ANIMATED,
+          .animation = {
+            .type = PresetAnimationType::CLOTH
+          },
+          .roughness = 0.8f
+        }
+      }
+    }
+  },
+  {
+    .name = "storefront-5",
+    .create = []() {
+      return Mesh::Model("./game/assets/shops/storefront-5.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/wood-beam.png",
+    },
+    .pieces = {
+      {
+        .name = "storefront-5-cover",
+        .create = []() {
+          return Mesh::Model("./game/assets/shops/storefront-5-cover.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(1.f, 0.8f, 0.6f);
+        },
+        .attributes = {
+          .roughness = 0.8f
+        }
+      }
+    }
+  },
 
   // @todo move to procedural
   {

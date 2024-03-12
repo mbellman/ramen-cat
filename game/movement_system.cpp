@@ -381,8 +381,9 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
 
         if (state.isNearJumpPad) {
           // Jump pad
-          jumpFactor *= 2.f;
+          jumpFactor = 6.f;
 
+          state.velocity = Vec3f(0.f);
           state.lastJumpPadLaunchTime = sceneTime;
 
           // @note this is copied from the air dash spin code below;
