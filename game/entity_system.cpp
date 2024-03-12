@@ -728,7 +728,7 @@ internal void handleFans(GmContext* context, GameState& state, float dt) {
   {
     for_moving_objects("ac-fan", {
       auto rotationAxis = initial.rotation.getDirection();
-      float angle = 3.f * t;
+      float angle = 16.f * t;
 
       object.rotation = Quaternion::fromAxisAngle(rotationAxis, angle) * initial.rotation;
 

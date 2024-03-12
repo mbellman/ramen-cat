@@ -671,6 +671,19 @@ internal void rebuildAcUnitFans(GmContext* context) {
 
     commit(fan);
   }
+
+  for (auto& box : objects("ac-box")) {
+    auto& fan = create_object_from("ac-fan");
+    Vec3f horizontalOffset = box.rotation.getLeftDirection() * box.scale.x * 0.4f;
+    Vec3f forwardOffset = box.rotation.getDirection() * box.scale.z * 0.4f;
+
+    fan.position = box.position + horizontalOffset + forwardOffset;
+    fan.scale = box.scale * 0.4f;
+    fan.rotation = box.rotation;
+    fan.color = Vec3f(0.1f);
+
+    commit(fan);
+  }
 }
 
 internal void rebuildWindTurbines(GmContext* context) {

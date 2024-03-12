@@ -21,6 +21,15 @@ std::vector<MeshAsset> decoration_meshes = {
   },
 
   {
+    .name = "ac-box",
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/ac-box.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/decorations/ac-box.png"
+    }
+  },
+  {
     .name = "vent-piece",
     .create = []() {
       return Mesh::Model({
