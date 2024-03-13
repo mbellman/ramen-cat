@@ -112,6 +112,7 @@ struct GmScene {
     Gamma::Vec3f redshiftSpawn;
     float redshiftInProgress = 0.f;
     float redshiftOutProgress = 0.f;
+    float dashRainbowIntensity = 0.f;
   } fx;
 
   struct GmUI {

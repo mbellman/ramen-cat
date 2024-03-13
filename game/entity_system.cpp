@@ -968,6 +968,10 @@ internal void handleCollectables(GmContext* context, GameState& state, float dt)
       } else if ((player.position - object.position).magnitude() < PLAYER_RADIUS * 3.f) {
         object.scale *= 0.99f;
 
+        if (state.dashLevel < 2) {
+          state.lastDashLevel2Time = t;
+        }
+
         state.lastDashFlowerCollectionTime = t;
         state.lastBoostTime = t;
         state.dashLevel = 2;
@@ -1155,6 +1159,7 @@ internal void restoreLastUsedBoostRing(GmContext* context, GameState& state) {
   }
 }
 
+// @todo remove
 internal void handleBoostPads(GmContext* context, GameState& state, float dt) {
   auto& player = get_player();
 

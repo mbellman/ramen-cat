@@ -301,6 +301,18 @@ internal void handleToriiGateEffects(GmContext* context, GameState& state, float
   }
 }
 
+internal void handleDashEffects(GmContext* context, GameState& state, float dt) {
+  auto& scene = context->scene;
+
+  if (state.dashLevel == 2) {
+    auto timeSinceDashLevel2 = time_since(state.lastDashLevel2Time);
+
+    scene.fx.dashRainbowIntensity = timeSinceDashLevel2 / (timeSinceDashLevel2 + 5.f);
+  } else {
+    scene.fx.dashRainbowIntensity = 0.f;
+  }
+}
+
 void EffectsSystem::initializeGameEffects(GmContext* context, GameState& state) {
   context->scene.clouds = "./game/assets/clouds.png";
 
@@ -315,6 +327,7 @@ void EffectsSystem::handleGameEffects(GmContext* context, GameState& state, floa
   // handlePlayerLight(context);
   handleDayNightCycle(context, state, dt);
   handleToriiGateEffects(context, state, dt);
+  handleDashEffects(context, state, dt);
 
   LOG_TIME();
 }

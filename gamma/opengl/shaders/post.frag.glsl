@@ -17,10 +17,13 @@ uniform vec3 atmosphereColor;
 uniform float zNear;
 uniform float zFar;
 
+uniform float time;
+
 // Game-specific modifications
 uniform vec3 redshiftSpawn;
 uniform float redshiftInProgress;
 uniform float redshiftOutProgress;
+uniform float dashRainbowIntensity;
 
 in vec2 fragUv;
 
@@ -128,7 +131,7 @@ void main() {
   float screen_warp_radius = length(fragUv * frag_uv_ratio - vec2(0.5, 0.5) * frag_uv_ratio);
   float screen_warp_offset = min(1.0, distance(screen_warp_radius, screenWarpTime));
   float screen_warp_displacement = pow(1.0 - screen_warp_offset, 30);
-  vec2 screen_warp_uv = (fragUv - 0.5) * (1.0 - screen_warp_displacement * 0.1) + 0.5;
+  vec2 screen_warp_uv = (fragUv - 0.5) * (1.0 - screen_warp_displacement * 0.2) + 0.5;
   vec4 frag_color_and_depth = texture(texColorAndDepth, screen_warp_uv);
   float linear_frag_depth = getLinearizedDepth(frag_color_and_depth.w, zNear, zFar);
   vec3 world_position = getWorldPosition(frag_color_and_depth.w, screen_warp_uv, matInverseProjection, matInverseView);
@@ -181,6 +184,22 @@ void main() {
     float vignette_factor = max(0.0, distance(screen_warp_uv, vec2(0.5)) * torii_gate_zone_factor);
 
     out_color = mix(out_color, vec3(0.2, 0, 0), vignette_factor);
+  }
+
+  // Dash rainbow effects
+  {
+    float centerFactor = distance(fragUv, vec2(0.5)) / 0.77;
+    float intensity = dashRainbowIntensity* pow(centerFactor, 5.0);
+    float t = time * 0.5;
+    const float pi = 3.141592;
+
+    out_color = mix(out_color, vec3(cos(t * pi), sin(t * pi), sin(t * pi + pi / 2.0)), intensity);
+
+    vec2 texel_size = 1.0 / textureSize(texColorAndDepth, 0);
+    vec2 offset = texel_size * 20.0 * centerFactor * intensity;
+    vec3 offset_color = texture(texColorAndDepth, fragUv - offset).rgb;
+
+    out_color = mix(out_color, offset_color, intensity);
   }
 
   // @todo gamma correction/tone-mapping

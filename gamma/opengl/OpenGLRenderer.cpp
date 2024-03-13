@@ -1494,12 +1494,14 @@ namespace Gamma {
     shaders.post.setVec3f("atmosphereColor", scene.sky.atmosphereColor);
     shaders.post.setFloat("zNear", scene.zNear);
     shaders.post.setFloat("zFar", scene.zFar);
+    shaders.post.setFloat("time", scene.sceneTime);
 
     // Game-specific modifications
     {
       shaders.post.setVec3f("redshiftSpawn", scene.fx.redshiftSpawn);
       shaders.post.setFloat("redshiftInProgress", scene.fx.redshiftInProgress);
       shaders.post.setFloat("redshiftOutProgress", scene.fx.redshiftOutProgress);
+      shaders.post.setFloat("dashRainbowIntensity", scene.fx.dashRainbowIntensity);
     }
 
     OpenGLScreenQuad::render();

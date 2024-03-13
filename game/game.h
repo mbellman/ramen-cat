@@ -107,6 +107,7 @@ struct GameState {
   float lastGliderChangeTime = 0.f;
   float lastMouseMoveTime = 0.f;
   float lastBoostTime = 0.f;
+  float lastDashLevel2Time = 0.f;
 
   float dashLandingJumpStartCameraAltitude = 0.f;
   float currentCameraLookatHeightAbovePlayer = 50.f;

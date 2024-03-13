@@ -473,6 +473,10 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
         // @todo configure upper limit
         if (state.dashLevel < 2) {
           state.dashLevel++;
+
+          if (state.dashLevel == 2) {
+            state.lastDashLevel2Time = sceneTime;
+          }
         }
 
         state.lastAirDashTime = sceneTime;
