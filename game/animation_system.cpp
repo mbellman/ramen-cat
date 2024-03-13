@@ -569,7 +569,7 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
 
     // Spin when air dashing
     float timeSinceLastAirDash = time_since(state.lastAirDashTime);
-    float timeSinceLastDashLandingJump = time_since(state.lastDashLandingJumpTime);
+    float timeSinceLastDashLandingJump = time_since(state.lastGroundPoundJumpTime);
 
     if (
       state.lastAirDashTime != 0.f &&
@@ -588,6 +588,7 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
         timeSinceLastDashLandingJump < AIR_DASH_SPIN_DURATION &&
         timeSinceLastAirDash > timeSinceLastDashLandingJump
       ) {
+        // Ground pound jump
         float alpha = Gm_Minf(1.f, timeSinceLastAirDash / 0.7f);
 
         spinAlpha = easeOutBack(alpha, 1.5f);

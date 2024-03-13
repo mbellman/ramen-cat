@@ -85,6 +85,7 @@ struct GameState {
   Gamma::Vec3f levelSpawnPosition;
   Gamma::Vec3f lastSolidGroundPosition;
   Gamma::Vec3f lastHardLandingPosition;
+  Gamma::Vec3f lastHardLandingVelocity;
   Gamma::Vec3f lastWallBumpNormal;
   Gamma::Vec3f lastWallBumpVelocity;
   Plane lastPlaneCollidedWith;
@@ -98,8 +99,8 @@ struct GameState {
   float lastWallKickTime = 0.f;
   float lastAirDashTime = 0.f;
   float lastHardLandingTime = 0.f;
-  float lastDashLandingTime = 0.f;
-  float lastDashLandingJumpTime = 0.f;
+  float lastGroundPoundTime = 0.f;
+  float lastGroundPoundJumpTime = 0.f;
   float lastLedgeTurnaroundTime = 0.f;
   float lastGroundParticleSpawnTime = 0.f;
   float lastAirParticleSpawnTime = 0.f;

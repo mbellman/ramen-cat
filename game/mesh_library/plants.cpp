@@ -318,6 +318,23 @@ std::vector<MeshAsset> plant_meshes = {
     }
   },
   {
+    .name = "hanging-sakura",
+    .hitboxScale = Vec3f(0.9f, 0.2f, 0.9f),
+    .create = []() {
+      return Mesh::Model("./game/assets/plants/hanging-sakura.obj");
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .texture = "./game/assets/plants/hanging-sakura.png",
+      .animation = {
+        .type = PresetAnimationType::FLOWER,
+        .factor = 16.f
+      },
+      .emissivity = 0.3f,
+      .useMipmaps = false
+    }
+  },
+  {
     .name = "bamboo",
     .hitboxScale = Vec3f(0.2f, 1.f, 0.2f),
     .create = []() {

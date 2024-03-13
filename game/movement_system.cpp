@@ -396,11 +396,11 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
           context->scene.fx.screenWarpTime = sceneTime;
         }
 
-        if (time_since(state.lastDashLandingTime) < 0.5f) {
+        if (time_since(state.lastGroundPoundTime) < 0.5f) {
           jumpFactor *= 1.25f;
 
           state.velocity += camera.orientation.getDirection().xz() * 250.f;
-          state.lastDashLandingJumpTime = sceneTime;
+          state.lastGroundPoundJumpTime = sceneTime;
           state.dashLandingJumpStartCameraAltitude = state.camera3p.altitude;
         }
 
@@ -452,7 +452,7 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
             airDashDirection += Vec3f(0, -2.f, 0);
             airDashDirection = airDashDirection.unit();
 
-            state.lastDashLandingTime = sceneTime;
+            state.lastGroundPoundTime = sceneTime;
           } else if (airDashDirection.y < 0.f) {
             airDashDirection = (airDashDirection * Vec3f(2.f, 1.f, 2.f)).unit();
           }
@@ -684,6 +684,7 @@ namespace MovementSystem {
 
       if (initialVelocity.magnitude() > 550.f && initialVelocity.y < -200.f) {
         state.lastHardLandingPosition = player.position - Vec3f(0, PLAYER_RADIUS * 0.5f, 0);
+        state.lastHardLandingVelocity = initialVelocity;
         state.lastHardLandingTime = get_scene_time();
       }
     }

@@ -49,10 +49,10 @@ internal void updateThirdPersonCameraDirection(GmContext* context, GameState& st
     const float DASH_LANDING_JUMP_CAMERA_TRANSITION_TIME = 1.5f;
 
     if (
-      state.lastDashLandingJumpTime != 0.f &&
-      time_since(state.lastDashLandingJumpTime) < DASH_LANDING_JUMP_CAMERA_TRANSITION_TIME
+      state.lastGroundPoundJumpTime != 0.f &&
+      time_since(state.lastGroundPoundJumpTime) < DASH_LANDING_JUMP_CAMERA_TRANSITION_TIME
     ) {
-      auto alpha = easeOutQuint(time_since(state.lastDashLandingJumpTime) / DASH_LANDING_JUMP_CAMERA_TRANSITION_TIME);
+      auto alpha = easeOutQuint(time_since(state.lastGroundPoundJumpTime) / DASH_LANDING_JUMP_CAMERA_TRANSITION_TIME);
 
       state.camera3p.altitude = Gm_Lerpf(state.dashLandingJumpStartCameraAltitude, Gm_PI * 0.4f, alpha);
     }
@@ -405,6 +405,16 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
       time_since(state.lastAirDashTime) < AIR_DASH_SPIN_DURATION
     ) {
       targetFov += 10.f * (1.f - time_since(state.lastAirDashTime) / AIR_DASH_SPIN_DURATION);
+    }
+
+    if (
+      state.lastHardLandingTime != 0.f &&
+      time_since(state.lastHardLandingTime) < 1.f &&
+      time_since(state.lastJumpTime) > 0.75f
+    ) {
+      auto alpha = powf(1.f - time_since(state.lastHardLandingTime), 4.f);
+
+      targetFov -= 30.f * alpha;
     }
 
     camera.fov = Gm_Lerpf(camera.fov, targetFov, alpha);

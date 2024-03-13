@@ -375,15 +375,19 @@ void EffectsSystem::updateDayNightCycleLighting(GmContext* context, GameState& s
     mesh("windows-1")->emissivity = lightSourceEmissivity;
     mesh("window-2")->emissivity = lightSourceEmissivity;
     mesh("lamp")->emissivity = lightSourceEmissivity;
+    mesh("wall-lamp-bulb")->emissivity = lightSourceEmissivity;
+    mesh("umimura-tree-branches")->emissivity = lightSourceEmissivity;
+    mesh("b1-windows")->emissivity = lightSourceEmissivity;
+    mesh("b2-windows")->emissivity = lightSourceEmissivity;
+    mesh("b4-windows")->emissivity = lightSourceEmissivity;
+
+    mesh("barred-window")->emissivity = 0.3f + 0.7f * lightSourceEmissivity;
+    mesh("vertical-sign-1")->emissivity = 0.7f * lightSourceEmissivity;
     mesh("ramen-lamp")->emissivity = 0.3f + 0.7f * lightSourceEmissivity;
     mesh("ramen-sign")->emissivity = 0.3f * lightSourceEmissivity;
     mesh("p_ramen-sign")->emissivity = 0.3f + 0.3f * lightSourceEmissivity;
     mesh("paper-lantern")->emissivity = 0.2f + 0.6f * lightSourceEmissivity;
-    mesh("wall-lamp-bulb")->emissivity = lightSourceEmissivity;
-    mesh("umimura-tree-branches")->emissivity = lightSourceEmissivity;
-
     mesh("p_mini-house-window")->emissivity = lightSourceEmissivity * 0.5f;
-
     mesh("solar-turbine")->emissivity = lightSourceEmissivity * 0.2f;
 
     mesh("lantern")->emissivity = lanternEmissivity;
@@ -391,11 +395,6 @@ void EffectsSystem::updateDayNightCycleLighting(GmContext* context, GameState& s
     mesh("bathhouse-balloon")->emissivity = 0.2f + 0.8f * lanternEmissivity;
     mesh("orange-lantern")->emissivity = 0.4f + 0.3f * lanternEmissivity;
     mesh("streetlamp-light")->emissivity = lanternEmissivity;
-
-    mesh("b1-windows")->emissivity = lightSourceEmissivity;
-    mesh("b2-windows")->emissivity = lightSourceEmissivity;
-    mesh("b4-windows")->emissivity = lightSourceEmissivity;
-    mesh("barred-window")->emissivity = 0.3f + 0.7f * lightSourceEmissivity;
   }
 
   // Adjust (serializable) point + spot light power by time of day

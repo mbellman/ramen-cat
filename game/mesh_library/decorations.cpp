@@ -136,6 +136,16 @@ std::vector<MeshAsset> decoration_meshes = {
     }
   },
   {
+    .name = "vertical-sign-1",
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/vertical-sign-1.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/decorations/vertical-sign-1.png",
+      .roughness = 0.3f
+    }
+  },
+  {
     .name = "vertical-banner",
     .hitboxScale = Vec3f(0.2f, 1.f, 0.05f),
     .create = []() {

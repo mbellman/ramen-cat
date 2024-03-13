@@ -332,6 +332,7 @@ std::vector<MeshAsset> procedural_mesh_parts = {
   },
   {
     .name = "p_small-leaves",
+    .maxInstances = 10000,
     .create = []() {
       return Mesh::Model("./game/assets/plants/small-leaves.obj");
     },
@@ -347,6 +348,7 @@ std::vector<MeshAsset> procedural_mesh_parts = {
   },
   {
     .name = "p_small-flower",
+    .maxInstances = 10000,
     .create = []() {
       return Mesh::Model("./game/assets/plants/small-flower.obj");
     },
@@ -362,6 +364,7 @@ std::vector<MeshAsset> procedural_mesh_parts = {
   },
   {
     .name = "p_small-cosmo",
+    .maxInstances = 10000,
     .create = []() {
       return Mesh::Model("./game/assets/plants/small-flower.obj");
     },
