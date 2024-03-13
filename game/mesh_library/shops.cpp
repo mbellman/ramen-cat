@@ -100,7 +100,7 @@ std::vector<MeshAsset> shop_meshes = {
       return Mesh::Model("./game/assets/shops/storefront-2.obj");
     },
     .attributes = {
-      .texture = "./game/assets/wood-beam.png",
+      .texture = "./game/assets/shops/storefront-2.png",
       .maxCascade = 4
     },
     .pieces = {
@@ -130,6 +130,19 @@ std::vector<MeshAsset> shop_meshes = {
           .animation = {
             .type = PresetAnimationType::CLOTH
           }
+        }
+      },
+      {
+        .name = "storefront-2-windows",
+        .create = []() {
+          return Mesh::Model("./game/assets/shops/storefront-2-windows.obj");
+        },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(0.2f, 0.4f, 0.7f);
+        },
+        .attributes = {
+          .roughness = 0.2f,
+          .canCastShadows = false
         }
       }
     }
