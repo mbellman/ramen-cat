@@ -15,7 +15,7 @@ std::vector<MeshAsset> decoration_meshes = {
     .attributes = {
       .type = MeshType::OCEAN,
       .ocean = {
-        .turbulence = 0.1f
+        .turbulence = 0.04f
       }
     }
   },

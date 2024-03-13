@@ -126,6 +126,15 @@ std::vector<MeshAsset> procedural_meshes = {
     .attributes = {
       .roughness = 0.9f
     }
+  },
+  {
+    .name = "square-pot",
+    .create = []() {
+      return Mesh::Model("./game/assets/decorations/square-pot.obj");
+    },
+    .attributes = {
+      .roughness = 0.7f
+    }
   }
 };
 
@@ -359,6 +368,21 @@ std::vector<MeshAsset> procedural_mesh_parts = {
     .attributes = {
       .type = MeshType::PRESET_ANIMATED,
       .texture = "./game/assets/plants/small-cosmo.png",
+      .maxCascade = 2,
+      .animation = {
+        .type = PresetAnimationType::FLOWER,
+        .factor = 4.f
+      }
+    }
+  },
+  {
+    .name = "p_bamboo",
+    .create = []() {
+      return Mesh::Model("./game/assets/plants/bamboo-plant.obj");
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .texture = "./game/assets/plants/bamboo-plant.png",
       .maxCascade = 2,
       .animation = {
         .type = PresetAnimationType::FLOWER,

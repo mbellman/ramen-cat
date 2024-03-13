@@ -86,6 +86,7 @@ vec3 getNormal(vec3 world_position) {
   n += vec2(simplex_noise(vec2(t * 0.08 + wx * 0.0002, t * 0.1 + wz * 0.00005)));
   n += vec2(simplex_noise(vec2(t * 0.1 - wx * 0.0005, t * 0.1 - wz * 0.0005))) * 0.3;
   n += vec2(simplex_noise(vec2(t * 0.1 + wx * 0.002, t * 0.1 - wz * 0.002))) * 0.2;
+  n += vec2(simplex_noise(vec2(t * 0.1 + wx * 0.02, t * 0.1 - wz * 0.02))) * 0.2;
 
   n *= turbulence;
 

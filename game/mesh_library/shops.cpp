@@ -122,6 +122,9 @@ std::vector<MeshAsset> shop_meshes = {
         .create = []() {
           return Mesh::Model("./game/assets/shops/storefront-2-flags.obj");
         },
+        .rebuild = [](auto& source, auto& piece) {
+          piece.color = Vec3f(0.2f, 0.4f, 0.6f);
+        },
         .attributes = {
           .type = MeshType::PRESET_ANIMATED,
           .animation = {
@@ -216,6 +219,16 @@ std::vector<MeshAsset> shop_meshes = {
           .animation = {
             .type = PresetAnimationType::CLOTH
           },
+          .roughness = 0.8f
+        }
+      },
+      {
+        .name = "storefront-4-seats",
+        .create = []() {
+          return Mesh::Model("./game/assets/shops/storefront-4-seats.obj");
+        },
+        .attributes = {
+          .texture = "./game/assets/shops/storefront-4-seats.png",
           .roughness = 0.8f
         }
       }

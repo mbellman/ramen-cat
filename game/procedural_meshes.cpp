@@ -380,6 +380,17 @@ internal void rebuildPottedPlants(GmContext* context) {
 
     commit(flower);
   }
+
+  for (auto& pot : objects("square-pot")) {
+    auto random = randomFromVec3f(pot.position);
+    auto& bamboo = create_object_from("p_bamboo");
+
+    bamboo.position = pot.position + Vec3f(0, pot.scale.y, 0);
+    bamboo.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), random * Gm_TAU);
+    bamboo.scale = Vec3f(pot.scale.magnitude() * 2.f + 50.f * random);
+
+    commit(bamboo);
+  }
 }
 
 internal void rebuildConcreteStacks(GmContext* context) {
