@@ -46,6 +46,14 @@ std::vector<MeshAsset> procedural_meshes = {
     }
   },
   {
+    .name = "chashu-spawn",
+    .dynamic = true,
+    .defaultColor = Vec3f(1.f, 0.6f, 0.2f),
+    .create = []() {
+      return Mesh::Sphere(8);
+    }
+  },
+  {
     .name = "narutomaki-strip",
     .dynamic = true,
     .defaultColor = Vec3f(1.f, 0.5f, 1.f),

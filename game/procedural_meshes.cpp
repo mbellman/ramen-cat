@@ -177,7 +177,7 @@ internal void rebuildFoodStalls(GmContext* context) {
   }
 }
 
-internal void rebuildCollectableStrips(GmContext* context, const std::string& collectableMeshName) {
+internal void rebuildCollectibleStrips(GmContext* context, const std::string& collectableMeshName) {
   const float DEFAULT_SCALE = 40.f;
 
   for (auto& strip : objects(collectableMeshName + "-strip")) {
@@ -210,7 +210,7 @@ internal void rebuildCollectableStrips(GmContext* context, const std::string& co
   }
 }
 
-internal void rebuildCollectableSpawns(GmContext* context, const std::string& collectableMeshName) {
+internal void rebuildCollectibleSpawns(GmContext* context, const std::string& collectableMeshName) {
   const float DEFAULT_SCALE = 40.f;
   const float DEFAULT_RADIUS = 80.f;
 
@@ -227,16 +227,16 @@ internal void rebuildCollectableSpawns(GmContext* context, const std::string& co
   }
 }
 
-internal void rebuildCollectables(GmContext* context) {
-  rebuildCollectableStrips(context, "onigiri");
-  rebuildCollectableStrips(context, "nitamago");
-  rebuildCollectableStrips(context, "chashu");
-  rebuildCollectableStrips(context, "narutomaki");
+internal void rebuildCollectibles(GmContext* context) {
+  rebuildCollectibleStrips(context, "onigiri");
+  rebuildCollectibleStrips(context, "nitamago");
+  rebuildCollectibleStrips(context, "chashu");
+  rebuildCollectibleStrips(context, "narutomaki");
 
-  rebuildCollectableSpawns(context, "onigiri");
-  rebuildCollectableSpawns(context, "narutomaki");
-  rebuildCollectableSpawns(context, "nitamago");
-  // rebuildCollectableSpawns(context, "chashu");
+  rebuildCollectibleSpawns(context, "onigiri");
+  rebuildCollectibleSpawns(context, "nitamago");
+  rebuildCollectibleSpawns(context, "chashu");
+  rebuildCollectibleSpawns(context, "narutomaki");
 }
 
 internal void rebuildPlantStrips(GmContext* context) {
@@ -708,7 +708,7 @@ void ProceduralMeshes::rebuildProceduralMeshes(GmContext* context) {
   }
 
   rebuildFoodStalls(context);
-  rebuildCollectables(context);
+  rebuildCollectibles(context);
   rebuildPlantStrips(context);
   rebuildPottedPlants(context);
   rebuildConcreteStacks(context);
