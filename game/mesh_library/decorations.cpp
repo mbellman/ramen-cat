@@ -176,7 +176,28 @@ std::vector<MeshAsset> decoration_meshes = {
     },
     .attributes = {
       .type = MeshType::PRESET_ANIMATED,
-      .texture = "./game/assets/decorations/vertical-banner.png",
+      .texture = "./game/assets/decorations/vertical-banner-2.png",
+      .maxCascade = 4,
+      .animation = {
+        .type = PresetAnimationType::CLOTH,
+        .factor = 3.f
+      },
+      .emissivity = 0.1f,
+      .roughness = 0.4f
+    }
+  },
+  {
+    .name = "vertical-banner-3",
+    .hitboxScale = Vec3f(0.2f, 1.f, 0.05f),
+    .create = []() {
+      return Mesh::Model({
+        "./game/assets/decorations/vertical-banner.obj",
+        "./game/assets/decorations/vertical-banner-lod.obj"
+      });
+    },
+    .attributes = {
+      .type = MeshType::PRESET_ANIMATED,
+      .texture = "./game/assets/decorations/vertical-banner-3.png",
       .maxCascade = 4,
       .animation = {
         .type = PresetAnimationType::CLOTH,

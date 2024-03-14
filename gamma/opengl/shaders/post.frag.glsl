@@ -193,11 +193,11 @@ void main() {
     float t = time * 0.5;
     const float pi = 3.141592;
 
-    out_color = mix(out_color, vec3(cos(t * pi), sin(t * pi), sin(t * pi + pi / 2.0)), intensity * 0.2);
+    // out_color = mix(out_color, 2.0 * vec3(cos(t * pi), sin(t * pi), sin(t * pi + pi / 2.0)), intensity * 0.2);
 
     vec2 texel_size = 1.0 / textureSize(texColorAndDepth, 0);
     vec2 offset = texel_size * 300.0 * sqrt(centerFactor) * intensity;
-    vec2 frag_to_center = vec2(0.5, 0.5) - fragUv;
+    vec2 frag_to_center = vec2(0.5) - fragUv;
     vec3 offset_color = texture(texColorAndDepth, fragUv + frag_to_center * offset).rgb;
 
     out_color = mix(out_color, offset_color, intensity);
