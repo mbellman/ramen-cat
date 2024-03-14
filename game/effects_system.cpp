@@ -307,7 +307,7 @@ internal void handleDashEffects(GmContext* context, GameState& state, float dt) 
   if (state.dashLevel == 2) {
     auto timeSinceDashLevel2 = time_since(state.lastDashLevel2Time);
 
-    scene.fx.dashRainbowIntensity = timeSinceDashLevel2 / (timeSinceDashLevel2 + 5.f);
+    scene.fx.dashRainbowIntensity = timeSinceDashLevel2 / (timeSinceDashLevel2 + 1.f);
   } else {
     scene.fx.dashRainbowIntensity = 0.f;
   }

@@ -640,17 +640,17 @@ namespace MovementSystem {
 
       if (
         time_since(state.lastJumpTime) < 1.f &&
-        !input.isKeyHeld(Key::SPACE) &&
-        !input.isKeyHeld(Key::CONTROLLER_A) &&
-        state.velocity.y > 0.f &&
-        !didUseBoostRing
+        state.velocity.y > 0.f && (
+          input.isKeyHeld(Key::SPACE) ||
+          input.isKeyHeld(Key::CONTROLLER_A)
+        )
       ) {
-        // When releasing the jump key shortly after a jump,
-        // diminish y velocity more quickly to reduce the
-        // total jump height.
-        state.velocity.y *= 1.f - 2.f * dt;
+        // Gain jump height when holding down the jump button
+        auto alpha = 1.f - time_since(state.lastJumpTime);
+
+        state.velocity.y += 750.f * alpha * dt;
       }
-        
+
       if (!didUseBoostRing && !state.isDoingTargetedAirDash) {
         state.velocity.y -= gravity;
       }

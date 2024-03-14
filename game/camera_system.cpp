@@ -48,14 +48,14 @@ internal void updateThirdPersonCameraDirection(GmContext* context, GameState& st
     // Dash landing jumps
     const float DASH_LANDING_JUMP_CAMERA_TRANSITION_TIME = 1.5f;
 
-    if (
-      state.lastGroundPoundJumpTime != 0.f &&
-      time_since(state.lastGroundPoundJumpTime) < DASH_LANDING_JUMP_CAMERA_TRANSITION_TIME
-    ) {
-      auto alpha = easeOutQuint(time_since(state.lastGroundPoundJumpTime) / DASH_LANDING_JUMP_CAMERA_TRANSITION_TIME);
+    // if (
+    //   state.lastGroundPoundJumpTime != 0.f &&
+    //   time_since(state.lastGroundPoundJumpTime) < DASH_LANDING_JUMP_CAMERA_TRANSITION_TIME
+    // ) {
+    //   auto alpha = easeOutQuint(time_since(state.lastGroundPoundJumpTime) / DASH_LANDING_JUMP_CAMERA_TRANSITION_TIME);
 
-      state.camera3p.altitude = Gm_Lerpf(state.dashLandingJumpStartCameraAltitude, Gm_PI * 0.4f, alpha);
-    }
+    //   state.camera3p.altitude = Gm_Lerpf(state.dashLandingJumpStartCameraAltitude, Gm_PI * 0.4f, alpha);
+    // }
 
     // Launch pad jumps
     if (
@@ -414,7 +414,7 @@ void CameraSystem::handleGameCamera(GmContext* context, GameState& state, float 
     ) {
       auto alpha = powf(1.f - time_since(state.lastHardLandingTime), 4.f);
 
-      targetFov -= 30.f * alpha;
+      targetFov -= 15.f * alpha;
     }
 
     camera.fov = Gm_Lerpf(camera.fov, targetFov, alpha);
@@ -509,8 +509,9 @@ void CameraSystem::handleLevelsOfDetail(GmContext* context) {
   });
 
   use_lod_by_distance(8000.f, {
-    "b2-levels", "banana-plant",
-    "p_mini-house-roof", "p_banana-plant",
+    "b2-levels",
+    "japanese-roof", "p_mini-house-roof",
+    "banana-plant", "p_banana-plant",
     "garden-terrain", "bamboo",
     "wood-tower"
   });

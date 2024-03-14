@@ -28,7 +28,7 @@ constexpr static float BIRD_AT_REST_RESPAWN_DISTANCE = 2500.f;
  * Movement/physics constants
  * --------------------------
  */
-constexpr static float FORCE_GRAVITY = 1000.f;
+constexpr static float FORCE_GRAVITY = 1200.f;
 constexpr static float FORCE_WALL = 1000.f;
 constexpr static float MAXIMUM_HORIZONTAL_GROUND_SPEED = 600.f;
 constexpr static float MAXIMUM_HORIZONTAL_AIR_SPEED = 1500.f;
@@ -36,7 +36,7 @@ constexpr static float MAXIMUM_GLIDER_SPEED = 2250.f;
 constexpr static float BASE_AIR_DASH_SPEED = 1000.f;
 constexpr static float DASH_LEVEL_1_SPEED_FACTOR = 1.8f;
 constexpr static float DASH_LEVEL_2_SPEED_FACTOR = 2.6f;
-constexpr static float DEFAULT_JUMP_Y_VELOCITY = 500.f;
+constexpr static float DEFAULT_JUMP_Y_VELOCITY = 450.f;
 constexpr static float WALL_KICK_WINDOW_DURATION = 0.3f;
 constexpr static float SUPER_JUMP_WINDOW_DURATION = 0.6f;
 constexpr static float AIR_DASH_SPIN_DURATION = 1.5f;

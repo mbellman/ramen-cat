@@ -284,7 +284,13 @@ void Gm_RemoveLight(GmContext* context, Gamma::Light* light) {
   auto& scene = context->scene;
   auto& renderer = context->renderer;
 
-  renderer->destroyShadowMap(light);
+  if (
+    light->type == LightType::DIRECTIONAL_SHADOWCASTER ||
+    light->type == LightType::POINT_SHADOWCASTER ||
+    light->type == LightType::SPOT_SHADOWCASTER
+  ) {
+    renderer->destroyShadowMap(light);
+  }
 
   Gm_VectorRemove(scene.lights, light);
 

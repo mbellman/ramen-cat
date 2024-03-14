@@ -638,6 +638,14 @@ void AnimationSystem::handleAnimations(GmContext* context, GameState& state, flo
       player.scale.z += 6.f * alpha;
     }
 
+    // Squash when hard landing
+    if (state.lastHardLandingTime != 0.f && time_since(state.lastHardLandingTime) < 0.3f) {
+      auto alpha = time_since(state.lastHardLandingTime) / 0.3f;
+      auto intensity = 10.f * Gm_Minf(1.f, state.lastHardLandingVelocity.magnitude() / 2000.f);
+
+      player.scale.y -= powf(cosf(alpha * Gm_HALF_PI), 2.f) * intensity;
+    }
+
     state.currentYaw = yaw;
     state.currentPitch = pitch;
 

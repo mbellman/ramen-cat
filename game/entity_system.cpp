@@ -920,7 +920,7 @@ internal void handleCollectable(GmContext* context, GameState& state, float dt, 
   commit(object);
 }
 
-internal void handleCollectables(GmContext* context, GameState& state, float dt) {
+internal void handleCollectibles(GmContext* context, GameState& state, float dt) {
   auto& player = get_player();
   float t = get_scene_time();
   float t2 = t * 2.f;
@@ -946,6 +946,13 @@ internal void handleCollectables(GmContext* context, GameState& state, float dt)
 
   {
     for_moving_objects("narutomaki", {
+      // @todo update inventory with type
+      handleCollectable(context, state, dt, t, player, initial, object, state.inventory.demonOnigiri, state.inventory.onigiri);
+    });
+  }
+
+  {
+    for_moving_objects("pepper", {
       // @todo update inventory with type
       handleCollectable(context, state, dt, t, player, initial, object, state.inventory.demonOnigiri, state.inventory.onigiri);
     });
@@ -1451,7 +1458,7 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   handleNpcs(context, state);
   handleSpeechBubbleTargets(context, state);
   handleBalloons(context, state, dt);
-  handleCollectables(context, state, dt);
+  handleCollectibles(context, state, dt);
   handleJetstreams(context, state, dt);
   handleToriiGates(context, state);
   handleBoostPads(context, state, dt);

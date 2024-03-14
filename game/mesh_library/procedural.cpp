@@ -69,6 +69,22 @@ std::vector<MeshAsset> procedural_meshes = {
       return Mesh::Sphere(8);
     }
   },
+  {
+    .name = "pepper-strip",
+    .dynamic = true,
+    .defaultColor = Vec3f(1.f, 0.2f, 0.2f),
+    .create = []() {
+      return Mesh::Cube();
+    }
+  },
+  {
+    .name = "pepper-spawn",
+    .dynamic = true,
+    .defaultColor = Vec3f(1.f, 0.2f, 0.2f),
+    .create = []() {
+      return Mesh::Sphere(8);
+    }
+  },
 
   {
     .name = "plant-strip",
@@ -151,8 +167,6 @@ std::vector<MeshAsset> procedural_mesh_parts = {
   {
     .name = "onigiri",
     .moving = true,
-    .defaultScale = Vec3f(40.f),
-    .hitboxScale = Vec3f(0.7f, 1.f, 0.5f),
     .create = []() {
       return Mesh::Model("./game/assets/onigiri.obj");
     },
@@ -165,8 +179,6 @@ std::vector<MeshAsset> procedural_mesh_parts = {
   {
     .name = "nitamago",
     .moving = true,
-    .defaultScale = Vec3f(40.f),
-    .hitboxScale = Vec3f(0.8f, 0.8f, 0.6f),
     .create = []() {
       return Mesh::Model("./game/assets/nitamago.obj");
     },
@@ -179,8 +191,6 @@ std::vector<MeshAsset> procedural_mesh_parts = {
   {
     .name = "chashu",
     .moving = true,
-    .defaultScale = Vec3f(40.f),
-    .hitboxScale = Vec3f(0.8f, 0.8f, 0.2f),
     .create = []() {
       return Mesh::Model("./game/assets/chashu.obj");
     },
@@ -193,13 +203,23 @@ std::vector<MeshAsset> procedural_mesh_parts = {
   {
     .name = "narutomaki",
     .moving = true,
-    .defaultScale = Vec3f(40.f),
-    .hitboxScale = Vec3f(0.8f, 0.8f, 0.2f),
     .create = []() {
       return Mesh::Model("./game/assets/collectibles/narutomaki.obj");
     },
     .attributes = {
       .texture = "./game/assets/collectibles/narutomaki.png",
+      .emissivity = 0.3f,
+      .useMipmaps = false
+    }
+  },
+  {
+    .name = "pepper",
+    .moving = true,
+    .create = []() {
+      return Mesh::Model("./game/assets/collectibles/pepper.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/collectibles/pepper.png",
       .emissivity = 0.3f,
       .useMipmaps = false
     }

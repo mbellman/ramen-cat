@@ -232,11 +232,13 @@ internal void rebuildCollectibles(GmContext* context) {
   rebuildCollectibleStrips(context, "nitamago");
   rebuildCollectibleStrips(context, "chashu");
   rebuildCollectibleStrips(context, "narutomaki");
+  rebuildCollectibleStrips(context, "pepper");
 
   rebuildCollectibleSpawns(context, "onigiri");
   rebuildCollectibleSpawns(context, "nitamago");
   rebuildCollectibleSpawns(context, "chashu");
   rebuildCollectibleSpawns(context, "narutomaki");
+  rebuildCollectibleSpawns(context, "pepper");
 }
 
 internal void rebuildPlantStrips(GmContext* context) {

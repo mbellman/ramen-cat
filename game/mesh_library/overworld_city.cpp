@@ -303,7 +303,7 @@ std::vector<MeshAsset> overworld_city_meshes = {
       return Mesh::Model("./game/assets/buildings/wood-facade-base.obj");
     },
     .attributes = {
-      .texture = "./game/assets/wood-beam.png",
+      .texture = "./game/assets/wood-facade.png",
       .useYPlaneTexturing = true
     }
   },

@@ -357,9 +357,13 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     .defaultScale = Vec3f(100.f),
     .hitboxScale = Vec3f(1.f, 0.05f, 1.f),
     .create = []() {
-      return Mesh::Model("./game/assets/japanese-roof.obj");
+      return Mesh::Model({
+        "./game/assets/japanese-roof.obj",
+        "./game/assets/japanese-roof-lod.obj"
+      });
     },
     .attributes = {
+      .maxCascade = 4,
       .roughness = 0.6f
     }
   },
