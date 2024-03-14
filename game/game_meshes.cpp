@@ -844,6 +844,7 @@ std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
       return Mesh::Cube();
     },
     .attributes = {
+      .maxCascade = 4,
       .roughness = 0.3f
     }
   },

@@ -556,7 +556,7 @@ internal void handleLanterns(GmContext* context, GameState& state, float dt) {
       float x = LANTERN_HORIZONTAL_DRIFT * sineAlpha;
       float y = LANTERN_VERTICAL_DRIFT * powf(Gm_Absf(x) / LANTERN_HORIZONTAL_DRIFT, 2);
 
-      object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 0, 1.f), swing); 
+      object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 0, 1.f), swing) * initial.rotation;
       object.position = initial.position + Vec3f(x, y, 0);
 
       commit(object);

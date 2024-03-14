@@ -33,6 +33,9 @@ std::vector<MeshAsset> unique_meshes = {
     .maxInstances = 20,
     .create = []() {
       return Mesh::Model("./game/assets/sculpture-stand.obj");
+    },
+    .attributes = {
+      .maxCascade = 4
     }
   },
   {
@@ -44,7 +47,8 @@ std::vector<MeshAsset> unique_meshes = {
       return Mesh::Model("./game/assets/sculpture-fan.obj");
     },
     .attributes = {
-      .texture = "./game/assets/sculpture-fan.png"
+      .texture = "./game/assets/sculpture-fan.png",
+      .maxCascade = 4
     }
   },
   {

@@ -156,6 +156,7 @@ std::vector<MeshAsset> decoration_meshes = {
     },
     .attributes = {
       .type = MeshType::PRESET_ANIMATED,
+      .maxCascade = 4,
       .animation = {
         .type = PresetAnimationType::CLOTH,
         .factor = 3.f
@@ -176,6 +177,7 @@ std::vector<MeshAsset> decoration_meshes = {
     .attributes = {
       .type = MeshType::PRESET_ANIMATED,
       .texture = "./game/assets/decorations/vertical-banner.png",
+      .maxCascade = 4,
       .animation = {
         .type = PresetAnimationType::CLOTH,
         .factor = 3.f

@@ -393,9 +393,11 @@ void EffectsSystem::updateDayNightCycleLighting(GmContext* context, GameState& s
     mesh("b1-windows")->emissivity = lightSourceEmissivity;
     mesh("b2-windows")->emissivity = lightSourceEmissivity;
     mesh("b4-windows")->emissivity = lightSourceEmissivity;
+    mesh("mini-building")->emissivity = 0.6f * lightSourceEmissivity;
 
     mesh("barred-window")->emissivity = 0.3f + 0.7f * lightSourceEmissivity;
     mesh("vertical-sign-1")->emissivity = 0.7f * lightSourceEmissivity;
+    mesh("lantern")->emissivity = 0.5f + 0.5f * lightSourceEmissivity;
     mesh("ramen-lamp")->emissivity = 0.3f + 0.7f * lightSourceEmissivity;
     mesh("ramen-sign")->emissivity = 0.3f * lightSourceEmissivity;
     mesh("p_ramen-sign")->emissivity = 0.3f + 0.3f * lightSourceEmissivity;
@@ -403,7 +405,6 @@ void EffectsSystem::updateDayNightCycleLighting(GmContext* context, GameState& s
     mesh("p_mini-house-window")->emissivity = lightSourceEmissivity * 0.5f;
     mesh("solar-turbine")->emissivity = lightSourceEmissivity * 0.2f;
 
-    mesh("lantern")->emissivity = lanternEmissivity;
     mesh("floating-lantern")->emissivity = lanternEmissivity;
     mesh("bathhouse-balloon")->emissivity = 0.2f + 0.8f * lanternEmissivity;
     mesh("orange-lantern")->emissivity = 0.4f + 0.3f * lanternEmissivity;
