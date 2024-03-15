@@ -968,6 +968,20 @@ internal void handleTypeCommand(GmContext* context, const std::string& command) 
   }
 }
 
+internal void handleStaticCommand(GmContext* context, const std::string& command) {
+  if (editor.mode != EditorMode::LIGHTS || editor.selectedLight == nullptr) {
+    return;
+  }
+
+  if (Gm_StringContains(command, "true") || Gm_StringContains(command, "1")) {
+    editor.selectedLight->isStatic = true;
+  } else if (Gm_StringContains(command, "false") || Gm_StringContains(command, "0")) {
+    editor.selectedLight->isStatic = false;
+  } else {
+    Console::warn("Invalid static command");
+  }
+}
+
 internal void saveCollisionPlanesData(GmContext* context, GameState& state) {
   std::string data;
 
@@ -1019,7 +1033,11 @@ internal void saveLightsData(GmContext* context, GameState& state) {
       data += Gm_Serialize(light->color) + ",";
       data += std::to_string(light->basePower) + ",";
       data += Gm_Serialize(light->direction) + ",";
-      data += std::to_string(light->fov) + "\n";
+      data += std::to_string(light->fov) + ",";
+
+      std::string staticFlag = light->isStatic ? "1" : "0";
+
+      data += staticFlag + "\n";
     }
   }
 
@@ -1302,6 +1320,8 @@ namespace Editor {
           handleFovCommand(command);
         } else if (Gm_StringStartsWith(command, "type")) {
           handleTypeCommand(context, command);
+        } else if (Gm_StringStartsWith(command, "static")) {
+          handleStaticCommand(context, command);
         }
       }
     });
@@ -1309,7 +1329,7 @@ namespace Editor {
     // Visual aide meshes
     {
       // Light spheres
-      add_mesh("light-sphere", 1000, Mesh::Sphere(10));
+      add_mesh("light-sphere", 5000, Mesh::Sphere(10));
       mesh("light-sphere")->emissivity = 0.7f;
       mesh("light-sphere")->disabled = true;
 
@@ -1332,6 +1352,10 @@ namespace Editor {
     // Generate light spheres for each light
     {
       for (auto* light : context->scene.lights) {
+        if (!light->serializable) {
+          continue;
+        }
+
         auto& sphere = create_object_from("light-sphere");
 
         sphere.position = light->position;
@@ -1718,12 +1742,14 @@ namespace Editor {
         if (editor.selectedLight != nullptr) {
           // Selected light
           auto& light = *editor.selectedLight;
+          std::string staticLabel = light.isStatic ? "true" : "false";
 
           add_debug_message("Active light:");
           add_debug_message("Position: " + Gm_ToDebugString(light.position));
           add_debug_message("Radius: " + std::to_string(light.radius));
           add_debug_message("Color: " + Gm_ToDebugString(light.color));
           add_debug_message("Power: " + std::to_string(light.power));
+          add_debug_message("Static: " + staticLabel);
         } else {
           // Selected object
           auto& object = editor.selectedObject;

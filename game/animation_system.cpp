@@ -408,13 +408,13 @@ void AnimationSystem::initializeAnimations(GmContext* context, GameState& state)
 
     // Rear right leg top [11]
     rig.joints.push_back({
-      .position = Vec3f(-0.247f, -0.103f, 0.408f),
+      .position = Vec3f(-0.247f, -0.354f, 0.408f),
       .rotation = Quaternion(1.f, 0, 0, 0)
     });
 
     // Rear right leg knee [12]
     rig.joints.push_back({
-      .position = Vec3f(-0.276f, -0.631f, 0.41f),
+      .position = Vec3f(-0.276f, -0.62f, 0.41f),
       .rotation = Quaternion(1.f, 0, 0, 0)
     });
 

@@ -28,7 +28,11 @@ void main() {
   #include "inline/point-light.glsl";
 
   // @todo cleanup
-  float radius = length(fragUv - center) * (light_distance_from_camera * 0.0005);
+  float dx = (1920.0 / 1080.0) * (fragUv.x - center.x);
+  float dy = (fragUv.y - center.y);
+  float distance_from_light_disc_center = sqrt(dx*dx + dy*dy);
+
+  float radius = distance_from_light_disc_center * (light_distance_from_camera * 0.0005);
   float glow_factor = clamp(pow(1.0 - radius, 30), 0.0, 1.0);
 
   if (light_distance_from_camera < light.radius * 3.0) {

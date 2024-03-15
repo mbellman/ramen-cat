@@ -34,9 +34,11 @@ namespace Gamma {
     Vec3f position;
     float radius = 100.f;
     Vec3f color = Vec3f(1.f);
-    float power = 1.f;
     Vec3f direction = Vec3f(0.f, -1.f, 0.f);
     float fov = 90.f;
+    // @todo description
+    float power = 1.f;
+    // @todo description
     float basePower = 1.f;
     u32 type = LightType::POINT;
     bool isStatic = false;

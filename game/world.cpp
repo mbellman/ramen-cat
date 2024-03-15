@@ -102,14 +102,19 @@ internal void loadLights(GmContext* context, const std::string& levelName) {
     auto parts = Gm_SplitString(line, ",");
     auto& light = create_light((LightType)stoi(parts[0]));
 
-    #define df(n) stof(parts[n])
+    #define rf(n) stof(parts[n])
+    #define ri(n) stoi(parts[n])
 
-    light.position = Vec3f(df(1), df(2), df(3));
-    light.radius = df(4);
-    light.color = Vec3f(df(5), df(6), df(7));
-    light.power = df(8);
-    light.direction = Vec3f(df(9), df(10), df(11));
-    light.fov = df(12);
+    light.position = Vec3f(rf(1), rf(2), rf(3));
+    light.radius = rf(4);
+    light.color = Vec3f(rf(5), rf(6), rf(7));
+    light.power = rf(8);
+    light.direction = Vec3f(rf(9), rf(10), rf(11));
+    light.fov = rf(12);
+
+    if (parts.size() == 14) {
+      light.isStatic = ri(13) == 1;
+    }
 
     // Keep track of the original light power figure for serialization
     light.basePower = light.power;
