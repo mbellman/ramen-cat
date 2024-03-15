@@ -16,6 +16,7 @@
 #include "mesh_library/transportation.h"
 #include "mesh_library/uniques.h"
 #include "mesh_library/procedural.h"
+#include "mesh_library/teikoku.h"
 
 using namespace Gamma;
 
@@ -1053,4 +1054,5 @@ void GameMeshes::loadAllMeshAssets() {
   add_mesh_assets(assets, transportation_meshes);
   add_mesh_assets(assets, unique_meshes);
   add_mesh_assets(assets, procedural_meshes);
+  add_mesh_assets(assets, teikoku_meshes);
 }

@@ -124,8 +124,10 @@ internal void handlePlayerDashingAnimation(GmContext* context, GameState& state,
   rig.joints[PLAYER_BACK_LEFT_LEG_FOOT].offset = Vec3f(0, 0.4f, 1.f) * speedRatio * cosf(alpha + 0.5f);
   rig.joints[PLAYER_BACK_LEFT_LEG_FOOT].rotation = Quaternion::fromAxisAngle(Vec3f(1.f, 0, 0), -cosf(alpha + 0.5f));
 
-  rig.joints[PLAYER_TAIL_JOINT_1].offset = Vec3f(0, 0.1f, 0.1f) * speedRatio * sinf(alpha * 0.5f);
-  rig.joints[PLAYER_TAIL_JOINT_2].offset = Vec3f(0, -0.1f, 0.1f) + Vec3f(0, 0.4f, 0) * speedRatio * cosf(alpha * 0.5f);
+  float tailWhipSpeed = state.dashLevel == 1 ? 0.8f : 0.5f;
+
+  rig.joints[PLAYER_TAIL_JOINT_1].offset = Vec3f(0, 0.1f, 0.1f) * speedRatio * sinf(alpha * tailWhipSpeed);
+  rig.joints[PLAYER_TAIL_JOINT_2].offset = Vec3f(0, -0.1f, 0.1f) + Vec3f(0, 0.4f, 0) * speedRatio * sinf(alpha * tailWhipSpeed + 0.5f);
 }
 
 internal void handlePlayerWallKickAnimation(GmContext* context, GameState& state, float dt) {

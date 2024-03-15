@@ -780,6 +780,16 @@ internal void handleFans(GmContext* context, GameState& state, float dt) {
       commit(object);
     });
   }
+
+  {
+    for_moving_objects("hanging-light-fan", {
+      float angle = t * 4.f;
+
+      object.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), angle) * initial.rotation;
+
+      commit(object);
+    });
+  }
 }
 
 internal void handleKites(GmContext* context, GameState& state, float dt) {
