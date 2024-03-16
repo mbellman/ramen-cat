@@ -83,5 +83,15 @@ std::vector<MeshAsset> entity_meshes = {
       .emissivity = 0.3f,
       .roughness = 0.2f
     }
+  },
+  {
+    .name = "vending-machine",
+    .hitboxScale = Vec3f(0.6f, 1.f, 0.4f),
+    .create = []() {
+      return Mesh::Model("./game/assets/entities/vending-machine.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/entities/vending-machine.png"
+    }
   }
 };
