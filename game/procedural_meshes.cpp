@@ -177,10 +177,10 @@ internal void rebuildFoodStalls(GmContext* context) {
   }
 }
 
-internal void rebuildCollectibleStrips(GmContext* context, const std::string& collectableMeshName) {
+internal void rebuildCollectibleStrips(GmContext* context, const std::string& collectibleMeshName) {
   const float DEFAULT_SCALE = 40.f;
 
-  for (auto& strip : objects(collectableMeshName + "-strip")) {
+  for (auto& strip : objects(collectibleMeshName + "-strip")) {
     Vec3f start;
     Vec3f end;
 
@@ -198,31 +198,39 @@ internal void rebuildCollectibleStrips(GmContext* context, const std::string& co
     u8 total = u8(distance / 100.f);
 
     while (current <= total) {
-      auto& collectable = create_object_from(collectableMeshName);
+      auto& collectible = create_object_from(collectibleMeshName);
 
-      collectable.position = start + direction * 100.f * float(current);
-      collectable.scale = Vec3f(DEFAULT_SCALE);
+      collectible.position = start + direction * 100.f * float(current);
+      collectible.scale = Vec3f(DEFAULT_SCALE);
 
-      commit(collectable);
+      if (collectibleMeshName == "coin") {
+        collectible.color = Vec3f(1.f, 0.8f, 0.2f);
+      }
+
+      commit(collectible);
 
       current++;
     }
   }
 }
 
-internal void rebuildCollectibleSpawns(GmContext* context, const std::string& collectableMeshName) {
+internal void rebuildCollectibleSpawns(GmContext* context, const std::string& collectibleMeshName) {
   const float DEFAULT_SCALE = 40.f;
   const float DEFAULT_RADIUS = 80.f;
 
-  for (auto& spawn : objects(collectableMeshName + "-spawn")) {
+  for (auto& spawn : objects(collectibleMeshName + "-spawn")) {
     for (u8 i = 0; i < 5; i++) {
-      auto& collectable = create_object_from(collectableMeshName);
+      auto& collectible = create_object_from(collectibleMeshName);
       auto alpha = Gm_TAU * float(i) / 5.f;
 
-      collectable.position = spawn.position + Vec3f(sinf(alpha), 0, cosf(alpha)) * DEFAULT_RADIUS;
-      collectable.scale = Vec3f(DEFAULT_SCALE);
+      collectible.position = spawn.position + Vec3f(sinf(alpha), 0, cosf(alpha)) * DEFAULT_RADIUS;
+      collectible.scale = Vec3f(DEFAULT_SCALE);
 
-      commit(collectable);
+      if (collectibleMeshName == "coin") {
+        collectible.color = Vec3f(1.f, 0.8f, 0.2f);
+      }
+
+      commit(collectible);
     }
   }
 }
@@ -233,12 +241,14 @@ internal void rebuildCollectibles(GmContext* context) {
   rebuildCollectibleStrips(context, "chashu");
   rebuildCollectibleStrips(context, "narutomaki");
   rebuildCollectibleStrips(context, "pepper");
+  rebuildCollectibleStrips(context, "coin");
 
   rebuildCollectibleSpawns(context, "onigiri");
   rebuildCollectibleSpawns(context, "nitamago");
   rebuildCollectibleSpawns(context, "chashu");
   rebuildCollectibleSpawns(context, "narutomaki");
   rebuildCollectibleSpawns(context, "pepper");
+  rebuildCollectibleSpawns(context, "coin");
 }
 
 internal void rebuildPlantStrips(GmContext* context) {

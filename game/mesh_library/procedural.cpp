@@ -85,6 +85,28 @@ std::vector<MeshAsset> procedural_meshes = {
       return Mesh::Sphere(8);
     }
   },
+  {
+    .name = "coin-strip",
+    .dynamic = true,
+    .defaultColor = Vec3f(1.f, 0.8f, 0.2f),
+    .create = []() {
+      return Mesh::Cube();
+    },
+    .attributes = {
+      .roughness = 0.1f
+    }
+  },
+  {
+    .name = "coin-spawn",
+    .dynamic = true,
+    .defaultColor = Vec3f(1.f, 0.8f, 0.2f),
+    .create = []() {
+      return Mesh::Sphere(8);
+    },
+    .attributes = {
+      .roughness = 0.1f
+    }
+  },
 
   {
     .name = "plant-strip",
@@ -221,7 +243,19 @@ std::vector<MeshAsset> procedural_mesh_parts = {
     .attributes = {
       .texture = "./game/assets/collectibles/pepper.png",
       .emissivity = 0.3f,
+      .roughness = 0.4f,
       .useMipmaps = false
+    }
+  },
+  {
+    .name = "coin",
+    .moving = true,
+    .create = []() {
+      return Mesh::Model("./game/assets/collectibles/coin.obj");
+    },
+    .attributes = {
+      .emissivity = 0.2f,
+      .roughness = 0.1f
     }
   },
 

@@ -892,7 +892,7 @@ internal void handleBalloons(GmContext* context, GameState& state, float dt) {
   }
 }
 
-internal void handleCollectable(GmContext* context, GameState& state, float dt, float time, Object& player, Object& initial, Object& object, InventoryItem& demonItem, InventoryItem& item) {
+internal void handleCollectible(GmContext* context, GameState& state, float dt, float time, Object& player, Object& initial, Object& object, InventoryItem& demonItem, InventoryItem& item) {
   if (object.scale.x < 0.1f) {
     // Already collected
     object.scale = Vec3f(0.f);
@@ -938,33 +938,40 @@ internal void handleCollectibles(GmContext* context, GameState& state, float dt)
   // @todo store special entities for collectables to determine appropriate handling
   {
     for_moving_objects("onigiri", {
-      handleCollectable(context, state, dt, t, player, initial, object, state.inventory.demonOnigiri, state.inventory.onigiri);
+      handleCollectible(context, state, dt, t, player, initial, object, state.inventory.demonOnigiri, state.inventory.onigiri);
     });
   }
 
   {
     for_moving_objects("nitamago", {
-      handleCollectable(context, state, dt, t, player, initial, object, state.inventory.demonNitamago, state.inventory.nitamago);
+      handleCollectible(context, state, dt, t, player, initial, object, state.inventory.demonNitamago, state.inventory.nitamago);
     });
   }
 
   {
     for_moving_objects("chashu", {
-      handleCollectable(context, state, dt, t, player, initial, object, state.inventory.demonChashu, state.inventory.chashu);
+      handleCollectible(context, state, dt, t, player, initial, object, state.inventory.demonChashu, state.inventory.chashu);
     });
   }
 
   {
     for_moving_objects("narutomaki", {
       // @todo update inventory with type
-      handleCollectable(context, state, dt, t, player, initial, object, state.inventory.demonOnigiri, state.inventory.onigiri);
+      handleCollectible(context, state, dt, t, player, initial, object, state.inventory.demonOnigiri, state.inventory.onigiri);
     });
   }
 
   {
     for_moving_objects("pepper", {
       // @todo update inventory with type
-      handleCollectable(context, state, dt, t, player, initial, object, state.inventory.demonOnigiri, state.inventory.onigiri);
+      handleCollectible(context, state, dt, t, player, initial, object, state.inventory.demonOnigiri, state.inventory.onigiri);
+    });
+  }
+
+  {
+    for_moving_objects("coin", {
+      // @todo update inventory with type
+      handleCollectible(context, state, dt, t, player, initial, object, state.inventory.demonOnigiri, state.inventory.onigiri);
     });
   }
 
