@@ -309,10 +309,8 @@ internal void loadGameMeshes(GmContext* context, GameState& state) {
   }
 }
 
-internal void rebuildDynamicStaircases(GmContext* context) {
-  objects("stair-step").reset();
-
-  const auto sidePoints = {
+internal void rebuildDynamicStaircase(GmContext* context, const Object& staircase, const std::string& type) {
+  const static auto sidePoints = {
     Vec3f(1.f, 0, 0),
     Vec3f(-1.f, 0, 0),
     Vec3f(0, 1.f, 0),
@@ -323,72 +321,90 @@ internal void rebuildDynamicStaircases(GmContext* context) {
 
   std::vector<Vec3f> t_points;
 
-  for (auto& staircase : objects("metal-staircase")) {
-    auto& scale = staircase.scale;
-    auto rotation = staircase.rotation.toMatrix4f();
-    Vec3f rotationDirectionXz = staircase.rotation.getDirection().xz();
-    float yRotation = -1.f * atan2f(rotationDirectionXz.z, rotationDirectionXz.x) - Gm_PI * 0.5f;
+  auto& scale = staircase.scale;
+  auto rotation = staircase.rotation.toMatrix4f();
+  Vec3f rotationDirectionXz = staircase.rotation.getDirection().xz();
+  float yRotation = -1.f * atan2f(rotationDirectionXz.z, rotationDirectionXz.x) - Gm_PI * 0.5f;
 
-    t_points.clear();
+  t_points.clear();
 
-    // Determine the transformed staircase bounds
-    {
-      for (auto& point : sidePoints) {
-        t_points.push_back(staircase.position + (rotation * (scale * point)).toVec3f());
-      }
+  // Determine the transformed staircase bounds
+  {
+    for (auto& point : sidePoints) {
+      t_points.push_back(staircase.position + (rotation * (scale * point)).toVec3f());
     }
+  }
 
-    Vec3f start;
-    Vec3f end;
+  Vec3f start;
+  Vec3f end;
 
-    // Establish the start and end of the staircase
-    {
-      float furthest = 0.f;
+  // Establish the start and end of the staircase
+  {
+    float furthest = 0.f;
 
-      for (auto& t_point : t_points) {
-        for (auto& t_point2 : t_points) {
-          float distance = (t_point2 - t_point).magnitude();
+    for (auto& t_point : t_points) {
+      for (auto& t_point2 : t_points) {
+        float distance = (t_point2 - t_point).magnitude();
 
-          if (distance > furthest) {
-            start = t_point;
-            end = t_point2;
+        if (distance > furthest) {
+          start = t_point;
+          end = t_point2;
 
-            furthest = distance;
-          }
+          furthest = distance;
         }
-      }
-    }
-
-    // Build the staircase steps
-    {
-      u32 totalSteps = u32((start - end).magnitude() / 30.f);
-
-      for (u32 i = 0; i < totalSteps; i++) {
-        auto& step = create_object_from("stair-step");
-
-        step.position = Vec3f::lerp(start, end, i / float(totalSteps));
-
-        float jitter = Gm_Modf(step.position.x * 1.23f + step.position.z * 4.56f, 1.f) * 0.1f - 0.05f;
-
-        step.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), yRotation + jitter);
-        step.color = Vec3f(0.7f, 0.9f, 1.f);
-
-        // Scale the steps to the width of the staircase platform
-        if (staircase.scale.x > staircase.scale.z) {
-          step.scale = Vec3f(70.f, 70.f, staircase.scale.z);
-        } else {
-          step.scale = Vec3f(staircase.scale.x, 70.f, 70.f);
-        }
-
-        commit(step);
       }
     }
   }
 
-  #if GAMMA_DEVELOPER_MODE
-    u16 totalStairSteps = objects("stair-step").totalActive();
+  // Build the staircase steps
+  {
+    u32 totalSteps = u32((start - end).magnitude() / 30.f);
 
-    Console::log("Generated", std::to_string(totalStairSteps), "stair steps");
+    for (u32 i = 0; i < totalSteps; i++) {
+      auto& step = create_object_from(type + "-stair-step");
+
+      step.position = Vec3f::lerp(start, end, i / float(totalSteps));
+
+      float jitter = Gm_Modf(step.position.x * 1.23f + step.position.z * 4.56f, 1.f) * 0.1f - 0.05f;
+
+      step.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), yRotation + jitter);
+
+      if (type == "metal") {
+        step.color = Vec3f(0.7f, 0.9f, 1.f);
+      } else if (type == "wood") {
+        step.color = Vec3f(1.f);
+      }
+
+      // Scale the steps to the width of the staircase platform
+      if (staircase.scale.x > staircase.scale.z) {
+        step.scale = Vec3f(70.f, 70.f, staircase.scale.z);
+      } else {
+        step.scale = Vec3f(staircase.scale.x, 70.f, 70.f);
+      }
+
+      commit(step);
+    }
+  }
+}
+
+internal void rebuildDynamicStaircases(GmContext* context) {
+  objects("metal-stair-step").reset();
+  objects("wood-stair-step").reset();
+
+  for (auto& staircase : objects("metal-staircase")) {
+    rebuildDynamicStaircase(context, staircase, "metal");
+  }
+
+  for (auto& staircase : objects("wood-staircase")) {
+    rebuildDynamicStaircase(context, staircase, "wood");
+  }
+
+  #if GAMMA_DEVELOPER_MODE
+    u16 totalMetalStairSteps = objects("metal-stair-step").totalActive();
+    u16 totalWoodStairSteps = objects("wood-stair-step").totalActive();
+
+    Console::log("Generated", std::to_string(totalMetalStairSteps), "metal stair steps");
+    Console::log("Generated", std::to_string(totalWoodStairSteps), "wood stair steps");
   #endif
 }
 
@@ -1036,6 +1052,17 @@ void World::rebuildDynamicCollisionPlanes(GmContext* context, GameState& state) 
   }
 
   for (auto& staircase : objects("metal-staircase")) {
+    auto& box = create_object_from("dynamic_collision_box");
+
+    box.position = staircase.position;
+    box.rotation = staircase.rotation;
+    box.scale = staircase.scale;
+    box.color = DEFAULT_COLOR;
+
+    commit(box);
+  }
+
+  for (auto& staircase : objects("wood-staircase")) {
     auto& box = create_object_from("dynamic_collision_box");
 
     box.position = staircase.position;

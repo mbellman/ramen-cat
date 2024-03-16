@@ -792,6 +792,14 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
     }
   },
   {
+    .name = "wood-staircase",
+    .dynamic = true,
+    .defaultColor = Vec3f(1.f, 0.8f, 0.6f),
+    .create = []() {
+      return Mesh::Cube();
+    }
+  },
+  {
     .name = "stairs-1",
     .create = []() {
       return Mesh::Model("./game/assets/stairs-1.obj");
@@ -807,15 +815,27 @@ std::vector<MeshAsset> GameMeshes::meshAssets = {
 // @todo remove + define these meshes as pieces for parent meshes (or move to procedural)
 std::vector<MeshAsset> GameMeshes::dynamicMeshPieces = {
   {
-    .name = "stair-step",
+    .name = "metal-stair-step",
     .maxInstances = 10000,
     .create = []() {
-      return Mesh::Model("./game/assets/stair-step.obj");
+      return Mesh::Model("./game/assets/metal-stair-step.obj");
     },
     .attributes = {
       .texture = "./game/assets/stairs-1.png",
       .normals = "./game/assets/stairs-1-normals.png",
       .roughness = 0.1f
+    }
+  },
+  {
+    .name = "wood-stair-step",
+    .maxInstances = 10000,
+    .create = []() {
+      return Mesh::Model("./game/assets/wood-stair-step.obj");
+    },
+    .attributes = {
+      .texture = "./game/assets/wood-beam.png",
+      .normals = "./game/assets/wood-beam-normals.png",
+      .roughness = 0.7f
     }
   },
 

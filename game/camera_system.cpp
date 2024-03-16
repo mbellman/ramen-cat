@@ -435,7 +435,7 @@ void CameraSystem::handleVisibilityCulling(GmContext* context, GameState& state)
     "round-vent-piece", "round-vent-corner",
     "p_ramen-sign",
     "sphere-sign",
-    "stair-step",
+    "metal-stair-step", "wood-stair-step",
     "bird-at-rest", "bird-flying"
   });
 
