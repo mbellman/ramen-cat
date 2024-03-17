@@ -428,7 +428,7 @@ void CameraSystem::handleVisibilityCulling(GmContext* context, GameState& state)
   START_TIMING("handleVisibilityCulling");
 
   use_frustum_culling({
-    "petal", "p_small-leaves",
+    "p_small-leaves",
     "lamp", "ladder",
     "ac-unit", "ac-fan",
     "vent-piece", "vent-corner",
@@ -439,6 +439,7 @@ void CameraSystem::handleVisibilityCulling(GmContext* context, GameState& state)
   });
 
   use_distance_and_frustum_culling(10000.f, {
+    "petal",
     "p_ramen-bowl",
     "p_dishes-1", "p_dumplings-1", "p_fish-1", "p_meat-1"
   });

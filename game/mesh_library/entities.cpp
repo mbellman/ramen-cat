@@ -91,7 +91,8 @@ std::vector<MeshAsset> entity_meshes = {
       return Mesh::Model("./game/assets/entities/vending-machine.obj");
     },
     .attributes = {
-      .texture = "./game/assets/entities/vending-machine.png"
+      .texture = "./game/assets/entities/vending-machine.png",
+      .emissivity = 0.3f
     }
   }
 };

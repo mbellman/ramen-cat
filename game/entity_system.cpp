@@ -272,12 +272,12 @@ internal void spawnRandomCollectible(GmContext* context, GameState& state) {
     "onigiri",
     "nitamago",
     "chashu",
-    "narutomaki"
+    "narutomaki",
     "pepper"
   };
 
   auto& player = get_player();
-  auto index = (u32)Gm_Randomf(0.f, (float)(collectibles.size() - 1));
+  auto index = (u32)Gm_Randomf(0.f, (float)collectibles.size());
   auto& name = collectibles[index];
   auto& collectible = create_object_from(name);
 
@@ -301,16 +301,16 @@ internal void handleVendingMachines(GmContext* context, GameState& state) {
   state.isNearActionableEntity = false;
 
   for (auto& machine : objects("vending-machine")) {
-    auto xzDistance = (machine.position - player.position).xz().magnitude();
+    auto distance = (machine.position - player.position).magnitude();
 
     machine.color = Vec3f(1.f);
 
     commit(machine);
 
-    if (xzDistance < 175.f && xzDistance < closestDistance) {
+    if (distance < 175.f && distance < closestDistance) {
       state.isNearActionableEntity = true;
 
-      closestDistance = xzDistance;
+      closestDistance = distance;
       lastTargetVendingMachine = &machine;
 
       vendingIcon.position = (

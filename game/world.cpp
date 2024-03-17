@@ -749,13 +749,17 @@ internal void rebuildPetals(GmContext* context) {
   objects("petal").reset();
 
   for (auto& spawn : objects("petal-spawn")) {
-    for (u16 i = 0; i < 1000; i++) {
+    auto factor = spawn.scale.magnitude() * 5.f;
+    u16 total = (u16)factor;
+    float radius = factor * 5.f;
+
+    for (u16 i = 0; i < total; i++) {
       auto& petal = create_object_from("petal");
 
       petal.position = spawn.position + Vec3f(
-        Gm_Randomf(-5000.f, 5000.f),
-        Gm_Randomf(-5000.f, 5000.f),
-        Gm_Randomf(-5000.f, 5000.f)
+        Gm_Randomf(-radius, radius),
+        Gm_Randomf(-radius, radius),
+        Gm_Randomf(-radius, radius)
       );
 
       petal.color = Vec3f(1.f, Gm_Randomf(0.3f, 0.6f), Gm_Randomf(0.3f, 0.6f));
