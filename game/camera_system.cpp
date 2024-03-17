@@ -435,7 +435,6 @@ void CameraSystem::handleVisibilityCulling(GmContext* context, GameState& state)
     "round-vent-piece", "round-vent-corner",
     "p_ramen-sign",
     "sphere-sign",
-    "metal-stair-step", "wood-stair-step",
     "bird-at-rest", "bird-flying"
   });
 
@@ -458,6 +457,10 @@ void CameraSystem::handleVisibilityCulling(GmContext* context, GameState& state)
     "wood-planter", "plant-pot",
     "generator",
     "p_town-sign-spinner", "spinner-1", "pinwheel"
+  };
+
+  static std::initializer_list<std::string> meshesToFrustumCullAt5K = {
+    "metal-stair-step", "wood-stair-step"
   };
 
   // @todo store somewhere as a constant
@@ -492,6 +495,7 @@ void CameraSystem::handleVisibilityCulling(GmContext* context, GameState& state)
   };
 
   use_frustum_culling_at_distance(1000.f, meshesToFrustumCullAt1K);
+  use_frustum_culling_at_distance(5000.f, meshesToFrustumCullAt5K);
   use_frustum_culling_at_distance(10000.f, meshesToFrustumCullAt10K);
 
   LOG_TIME();

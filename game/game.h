@@ -124,6 +124,7 @@ struct GameState {
   bool wasOnSolidGroundLastFrame = false;
   bool hasAirDashTarget = false;
   bool hasActiveDialogue = false;
+  bool isNearActionableEntity = false;
 
   // @todo wall kicks are currently automatic. It may be worthwhile to restore
   // the original behavior, or use a system of briefly running along walls and
@@ -197,6 +198,10 @@ struct GameState {
   // Dash flowers
   float lastDashFlowerCollectionTime = 0.f;
   float lastFlowerSpawnTime = 0.f;
+
+  // Vending machines
+  float lastVendingMachineUseTime = 0.f;
+  Gamma::Object lastUsedVendingMachine;
 
   std::vector<Gamma::Light*> proceduralLights;
 

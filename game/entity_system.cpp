@@ -267,6 +267,109 @@ internal void handleInteractibleEntitiesWithDialogue(GmContext* context, GameSta
   }
 }
 
+internal void spawnRandomCollectible(GmContext* context, GameState& state) {
+  const static std::vector<std::string> collectibles = {
+    "onigiri",
+    "nitamago",
+    "chashu",
+    "narutomaki"
+    "pepper"
+  };
+
+  auto& player = get_player();
+  auto index = (u32)Gm_Randomf(0.f, (float)(collectibles.size() - 1));
+  auto& name = collectibles[index];
+  auto& collectible = create_object_from(name);
+
+  collectible.position = player.position;
+  collectible.scale = Vec3f(40.f);
+
+  commit(collectible);
+
+  state.initialMovingObjects.push_back(collectible);
+  state.lastVendingMachineUseTime = get_scene_time();
+}
+
+internal void handleVendingMachines(GmContext* context, GameState& state) {
+  auto t = get_scene_time();
+  auto& player = get_player();
+  auto& input = get_input();
+  auto& vendingIcon = objects("vending-icon")[0];
+  auto closestDistance = Gm_FLOAT_MAX;
+  Gamma::Object* lastTargetVendingMachine = nullptr;
+
+  state.isNearActionableEntity = false;
+
+  for (auto& machine : objects("vending-machine")) {
+    auto xzDistance = (machine.position - player.position).xz().magnitude();
+
+    machine.color = Vec3f(1.f);
+
+    commit(machine);
+
+    if (xzDistance < 175.f && xzDistance < closestDistance) {
+      state.isNearActionableEntity = true;
+
+      closestDistance = xzDistance;
+      lastTargetVendingMachine = &machine;
+
+      vendingIcon.position = (
+        player.position +
+        Vec3f(0, PLAYER_RADIUS * 4.f, 0) +
+        Vec3f(0, 15.f * sinf(t * 4.f), 0)
+      );
+
+      vendingIcon.scale = Vec3f::lerp(vendingIcon.scale, Vec3f(25.f), 0.1f);
+      vendingIcon.color = Vec3f(1.1f, 0.8f, 0.2f);
+      vendingIcon.rotation = Quaternion::fromAxisAngle(Vec3f(0, 1.f, 0), t * 3.f);
+    }
+  }
+
+  if (lastTargetVendingMachine != nullptr) {
+    lastTargetVendingMachine->color = Vec3f(1.f, 0.8f, 0.2f);
+
+    commit(*lastTargetVendingMachine);
+  }
+
+  if (state.lastVendingMachineUseTime != 0.f) {
+    auto* machine = get_object_by_record(state.lastUsedVendingMachine._record);
+
+    if (machine != nullptr) {
+      auto alpha = time_since(state.lastVendingMachineUseTime) * 3.f;
+
+      if (alpha < 1.f) {
+        auto tilt = 0.1f * sinf(alpha * Gm_TAU);
+        auto forward = state.lastUsedVendingMachine.rotation.getDirection();
+        auto left = state.lastUsedVendingMachine.rotation.getLeftDirection();
+
+        machine->position = state.lastUsedVendingMachine.position - forward * sinf(alpha * Gm_TAU) * 5.f;
+        machine->rotation = Quaternion::fromAxisAngle(left, 0.05f * sinf(alpha * Gm_TAU)) * state.lastUsedVendingMachine.rotation;
+      } else {
+        machine->position = state.lastUsedVendingMachine.position;
+        machine->rotation = state.lastUsedVendingMachine.rotation;
+      }
+
+      commit(*machine);
+    }
+  }
+
+  if (closestDistance == Gm_FLOAT_MAX) {
+    vendingIcon.scale = Vec3f::lerp(vendingIcon.scale, Vec3f(0.f), 0.1f);
+  } else if (
+    lastTargetVendingMachine != nullptr &&
+    time_since(state.lastVendingMachineUseTime) > 0.5f && (
+      input.didPressKey(Key::SPACE) ||
+      input.didPressKey(Key::CONTROLLER_B)
+    )
+  ) {
+    state.lastUsedVendingMachine = *lastTargetVendingMachine;
+
+    spawnRandomCollectible(context, state);
+  }
+
+  commit(vendingIcon);
+}
+
 internal void handleNpcHeadTurning(GmContext* context, GameState& state, const std::string& meshName) {
   auto& player = get_player();
 
@@ -288,7 +391,7 @@ internal void handleNpcHeadTurning(GmContext* context, GameState& state, const s
   });
 }
 
-internal void handleNpcs(GmContext* context, GameState& state) {
+internal void handleNpcBehavior(GmContext* context, GameState& state) {
   auto& player = get_player();
 
   handleNpcHeadTurning(context, state, "guy-hair");
@@ -1472,7 +1575,8 @@ void EntitySystem::handleGameEntities(GmContext* context, GameState& state, floa
   // Interactible/player-dependent entities
   handleSlingshots(context, state, dt);
   handleInteractibleEntitiesWithDialogue(context, state);
-  handleNpcs(context, state);
+  handleVendingMachines(context, state);
+  handleNpcBehavior(context, state);
   handleSpeechBubbleTargets(context, state);
   handleBalloons(context, state, dt);
   handleCollectibles(context, state, dt);

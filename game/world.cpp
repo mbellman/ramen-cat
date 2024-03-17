@@ -903,6 +903,10 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
     mesh("speech-bubble")->emissivity = 0.5f;
     mesh("speech-bubble")->canCastShadows = false;
 
+    add_mesh("vending-icon", 1, Mesh::Model("./game/assets/collectibles/coin.obj"));
+    mesh("vending-icon")->emissivity = 0.2f;
+    mesh("vending-icon")->roughness = 0.1f;
+
     add_mesh("ocean", 1, Mesh::Disc(12));
     add_mesh("ocean-floor", 1, Mesh::Disc(12));
 
@@ -966,6 +970,7 @@ void World::initializeGameWorld(GmContext* context, GameState& state) {
   commit(target);
 
   create_object_from("speech-bubble");
+  create_object_from("vending-icon");
 
   state.direction = Vec3f(0, 0, -1.f);
 
@@ -1042,6 +1047,17 @@ void World::rebuildDynamicCollisionPlanes(GmContext* context, GameState& state) 
     box.position = cube.position;
     box.rotation = cube.rotation;
     box.scale = cube.scale;
+    box.color = DEFAULT_COLOR;
+
+    commit(box);
+  }
+
+  for (auto& machine : objects("vending-machine")) {
+    auto& box = create_object_from("dynamic_collision_box");
+
+    box.position = machine.position;
+    box.rotation = machine.rotation;
+    box.scale = machine.scale * Vec3f(0.6f, 1.f, 0.4f);
     box.color = DEFAULT_COLOR;
 
     commit(box);

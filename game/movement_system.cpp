@@ -341,7 +341,10 @@ internal void handleNormalMovementInput(GmContext* context, GameState& state, fl
       state.superjumpChargeTime = 0.f;
     }
 
-    if (input.didPressKey(Key::SPACE) || input.didPressKey(Key::CONTROLLER_A)) {
+    if (!state.isNearActionableEntity && (
+      input.didPressKey(Key::SPACE) ||
+      input.didPressKey(Key::CONTROLLER_A)
+    )) {
       float sceneTime = get_scene_time();
 
       if (state.isOnSolidGround) {
