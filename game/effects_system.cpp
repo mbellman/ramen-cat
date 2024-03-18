@@ -409,6 +409,14 @@ void EffectsSystem::updateDayNightCycleLighting(GmContext* context, GameState& s
     mesh("ramen-lamp")->emissivity = 0.4f + 0.5f * lanternEmissivity;
     mesh("orange-lantern")->emissivity = 0.4f + 0.3f * lanternEmissivity;
     mesh("bathhouse-balloon")->emissivity = 0.2f + 0.8f * lanternEmissivity;
+
+    mesh("nitamago")->emissivity = 0.3f + 0.4f * lightSourceEmissivity;
+    mesh("onigiri")->emissivity = 0.3f + 0.4f * lightSourceEmissivity;
+    mesh("narutomaki")->emissivity = 0.3f + 0.4f * lightSourceEmissivity;
+    mesh("chashu")->emissivity = 0.3f + 0.4f * lightSourceEmissivity;
+    mesh("pepper")->emissivity = 0.3f + 0.4f * lightSourceEmissivity;
+    mesh("coin")->emissivity = 0.3f + 0.4f * lightSourceEmissivity;
+    mesh("player")->emissivity = 0.6f + 0.4f * lightSourceEmissivity;
   }
 
   // Adjust (serializable) point + spot light power by time of day
