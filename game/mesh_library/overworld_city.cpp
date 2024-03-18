@@ -21,6 +21,10 @@ std::vector<MeshAsset> overworld_city_meshes = {
         },
         .rebuild = [](auto& source, auto& piece) {
           piece.color = Vec3f::lerp(source.color.toVec3f(), Vec3f(1.f), 0.75f);
+        },
+        .attributes = {
+          .texture = "./game/assets/seamless-concrete.png",
+          .useYPlaneTexturing = true
         }
       },
       {
@@ -35,7 +39,9 @@ std::vector<MeshAsset> overworld_city_meshes = {
           piece.color = source.color;
         },
         .attributes = {
-          .useLowestLevelOfDetailForShadows = false
+          .texture = "./game/assets/seamless-concrete.png",
+          .useLowestLevelOfDetailForShadows = false,
+          .useYPlaneTexturing = true
         }
       },
       {
@@ -70,6 +76,10 @@ std::vector<MeshAsset> overworld_city_meshes = {
         },
         .rebuild = [](auto& source, auto& piece) {
           piece.color = Vec3f::lerp(source.color.toVec3f(), Vec3f(1.f), 0.5f);
+        },
+        .attributes = {
+          .texture = "./game/assets/seamless-concrete.png",
+          .useYPlaneTexturing = true
         }
       },
       {
@@ -81,7 +91,9 @@ std::vector<MeshAsset> overworld_city_meshes = {
           });
         },
         .attributes = {
-          .useLowestLevelOfDetailForShadows = false
+          .texture = "./game/assets/seamless-concrete.png",
+          .useLowestLevelOfDetailForShadows = false,
+          .useYPlaneTexturing = true
         }
       },
       {
@@ -125,6 +137,10 @@ std::vector<MeshAsset> overworld_city_meshes = {
         },
         .rebuild = [](auto& source, auto& piece) {
           piece.color = Vec3f::lerp(source.color.toVec3f(), Vec3f(1.f), 0.5f);
+        },
+        .attributes = {
+          .texture = "./game/assets/seamless-concrete.png",
+          .useYPlaneTexturing = true
         }
       },
       {
@@ -134,6 +150,10 @@ std::vector<MeshAsset> overworld_city_meshes = {
         },
         .rebuild = [](auto& source, auto& piece) {
           piece.color = Vec3f(1.f);
+        },
+        .attributes = {
+          .texture = "./game/assets/seamless-concrete.png",
+          .useYPlaneTexturing = true
         }
       },
       {
@@ -177,7 +197,9 @@ std::vector<MeshAsset> overworld_city_meshes = {
       return Mesh::Model("./game/assets/buildings/concrete-b2.obj");
     },
     .attributes = {
-      .maxCascade = 4
+      .texture = "./game/assets/seamless-concrete.png",
+      .maxCascade = 4,
+      .useYPlaneTexturing = true
     },
     .pieces = {
       {

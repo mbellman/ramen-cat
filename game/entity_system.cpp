@@ -335,7 +335,7 @@ internal void handleVendingMachines(GmContext* context, GameState& state) {
     auto* machine = get_object_by_record(state.lastUsedVendingMachine._record);
 
     if (machine != nullptr) {
-      auto alpha = time_since(state.lastVendingMachineUseTime) * 3.f;
+      auto alpha = time_since(state.lastVendingMachineUseTime) * 4.f;
 
       if (alpha < 1.f) {
         auto tilt = 0.1f * sinf(alpha * Gm_TAU);
@@ -357,7 +357,7 @@ internal void handleVendingMachines(GmContext* context, GameState& state) {
     vendingIcon.scale = Vec3f::lerp(vendingIcon.scale, Vec3f(0.f), 0.1f);
   } else if (
     lastTargetVendingMachine != nullptr &&
-    time_since(state.lastVendingMachineUseTime) > 0.5f && (
+    time_since(state.lastVendingMachineUseTime) > 0.3f && (
       input.didPressKey(Key::SPACE) ||
       input.didPressKey(Key::CONTROLLER_B)
     )

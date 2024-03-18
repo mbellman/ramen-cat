@@ -70,7 +70,7 @@ vec3 getAtmosphericsColor(vec3 current_out_color, vec2 uv, float frag_depth, flo
 
   if (sky_atmosphere_factor < 0.0) sky_atmosphere_factor = 0.0;
 
-  return mix(horizon_atmosphere_color, vec3(0.7, 0.8, 1.0), sky_atmosphere_factor);
+  return mix(horizon_atmosphere_color, vec3(0.5, 0.7, 1.0), sky_atmosphere_factor);
 }
 
 vec3 getToonShadedColor(vec3 current_out_color, vec2 uv, float depth, float linear_frag_depth) {

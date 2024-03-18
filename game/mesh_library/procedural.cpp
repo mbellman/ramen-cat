@@ -207,6 +207,7 @@ std::vector<MeshAsset> procedural_mesh_parts = {
     .attributes = {
       .texture = "./game/assets/nitamago.png",
       .emissivity = 0.3f,
+      .roughness = 0.4f,
       .useMipmaps = false
     }
   },
@@ -219,6 +220,7 @@ std::vector<MeshAsset> procedural_mesh_parts = {
     .attributes = {
       .texture = "./game/assets/chashu.png",
       .emissivity = 0.3f,
+      .roughness = 0.4f,
       .useMipmaps = false
     }
   },

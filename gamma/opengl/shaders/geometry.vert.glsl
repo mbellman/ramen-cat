@@ -62,18 +62,9 @@ void main() {
   if (useXzPlaneTexturing) {
     fragUv = world_position.xz / planeTexturingDivisor;
   } else if (useYPlaneTexturing) {
-    
-    float dotXf = dot(fragNormal, vec3(1, 0, 0));
-    float dotZb = dot(fragNormal, vec3(0, 0, -1));
+    vec3 normal = normalize(fragNormal);
 
-    // @todo don't hard-code the divisor
-    if (dotXf > 0 && dotZb > 0) {
-      fragUv = vec2(world_position.x - world_position.z, world_position.y) / 1200.0;      
-    } else if (dotXf > 0 || dotZb > 0) {
-      fragUv = vec2(world_position.x + world_position.z, world_position.y) / 1200.0;
-    } else {
-      fragUv = vec2(world_position.x - world_position.z, world_position.y) / 1200.0;
-    }
+    fragUv = vec2(world_position.x * normal.z + world_position.z * normal.x, world_position.y) / 1200.0;
   } else {
     fragUv = vertexUv;
   }

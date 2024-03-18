@@ -10,7 +10,7 @@ vec4 getSkyColor(vec3 sky_direction, vec3 sun_direction, vec3 base_sun_color, ve
 
   // @todo make configurable
   vec3 BASE_DAYLIGHT_COLOR = vec3(0.5, 0.5, 1.0);
-  vec3 BASE_NIGHTTIME_COLOR = vec3(0.1, 0.2, 0.6);
+  vec3 BASE_NIGHTTIME_COLOR = vec3(0.2, 0.4, 0.8);
 
   float daylight_factor = dot(sun_direction, vec3(0, 1, 0));
   float altitude_factor = pow(cos_y, 3);
