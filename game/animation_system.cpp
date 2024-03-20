@@ -80,7 +80,8 @@ internal void handlePlayerTrottingAnimation(GmContext* context, GameState& state
   rig.joints[PLAYER_BACK_LEFT_LEG_KNEE].offset = Vec3f(0, 0, 0.2f) * speedRatio * wcosf(alpha + 1.2f);
   rig.joints[PLAYER_BACK_LEFT_LEG_FOOT].offset = Vec3f(0, 0.2f, 0.6f) * speedRatio * wcosf(alpha + 1.5f);
 
-  rig.joints[PLAYER_TAIL_JOINT_2].offset = Vec3f(0, 0.2f, 0) * speedRatio * cosf(alpha * 0.5f);
+  rig.joints[PLAYER_TAIL_JOINT_1].offset = Vec3f(0, 0.1f, 0) * speedRatio * sinf(2.f * alpha);
+  rig.joints[PLAYER_TAIL_JOINT_2].offset = Vec3f(0, 0.2f, 0) * speedRatio * cosf(2.f * alpha * 0.7f);
 }
 
 internal void handlePlayerDashingAnimation(GmContext* context, GameState& state, float dt) {

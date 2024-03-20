@@ -416,7 +416,7 @@ void EffectsSystem::updateDayNightCycleLighting(GmContext* context, GameState& s
     mesh("chashu")->emissivity = 0.3f + 0.4f * lightSourceEmissivity;
     mesh("pepper")->emissivity = 0.3f + 0.4f * lightSourceEmissivity;
     mesh("coin")->emissivity = 0.3f + 0.4f * lightSourceEmissivity;
-    mesh("player")->emissivity = 0.6f + 0.4f * lightSourceEmissivity;
+    mesh("player")->emissivity = 0.5f + 0.5f * lightSourceEmissivity;
   }
 
   // Adjust (serializable) point + spot light power by time of day
