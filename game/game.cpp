@@ -121,7 +121,7 @@ void initializeGame(GmContext* context, GameState& state) {
   initializeInputHandlers(context, state);
 
   World::initializeGameWorld(context, state);
-  World::loadLevel(context, state, "overworld");
+  World::loadLevel(context, state, "overworld-2");
   AnimationSystem::initializeAnimations(context, state);
   CameraSystem::initializeGameCamera(context, state);
   EntitySystem::initializeGameEntities(context, state);

@@ -830,6 +830,28 @@ internal void applyLevelSettings_Overworld(GmContext* context, GameState& state)
   commit(oceanFloor);
 }
 
+internal void applyLevelSettings_Overworld2(GmContext* context, GameState& state) {
+  Gm_EnableFlags(GammaFlags::RENDER_HORIZON_ATMOSPHERE);
+
+  auto& player = get_player();
+
+  player.position = Vec3f(5100.f, 16690.f, -15630.f);
+
+  context->scene.zFar = 200000.f;
+
+  mesh("ocean")->disabled = false;
+  mesh("ocean-floor")->disabled = false;
+
+  auto& ocean = mesh("ocean")->objects[0];
+  auto& oceanFloor = mesh("ocean-floor")->objects[0];
+
+  ocean.scale = Vec3f(200000.f, 1.f, 200000.f);
+  oceanFloor.scale = Vec3f(200000.f, 1.f, 200000.f);
+
+  commit(ocean);
+  commit(oceanFloor);
+}
+
 internal void applyLevelSettings_Yukimura(GmContext* context, GameState& state) {
   Gm_DisableFlags(GammaFlags::RENDER_HORIZON_ATMOSPHERE);
 
@@ -1162,6 +1184,7 @@ void World::loadLevel(GmContext* context, GameState& state, const std::string& l
       { "umimura-alpha", applyLevelSettings_UmimuraAlpha },
       { "umimura", applyLevelSettings_Umimura },
       { "overworld", applyLevelSettings_Overworld },
+      { "overworld-2", applyLevelSettings_Overworld2 },
       { "yukimura", applyLevelSettings_Yukimura },
       { "zone-1", applyLevelSettings_Zone1 }
     };
